@@ -4,8 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
 
-from survey.models import Survey
-
 from ..models import SubjectVisit
 
 

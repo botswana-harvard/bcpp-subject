@@ -18,7 +18,6 @@ from edc_constants.constants import NOT_APPLICABLE
 from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import HouseholdInfo
 from household.models import HouseholdLogEntry
-from survey.models import Survey
 from member.models import HouseholdHeadEligibility
 
 from ..constants import BASELINE_SURVEY

@@ -15,7 +15,7 @@ from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.constants import YES, NO
 from edc_offstudy.model_mixins import OffstudyMixin
 
-from member.constants import BHS_ELIGIBLE, BHS
+from member.constants import ELIGIBLE_FOR_CONSENT, BHS
 from member.exceptions import MemberStatusError
 from member.models import EnrollmentChecklist
 
@@ -133,7 +133,7 @@ class BaseSubjectConsent(models.Model):
             household_member=self.household_member)
         if not consents.exists():
             if not self.id:
-                expected_member_status = BHS_ELIGIBLE
+                expected_member_status = ELIGIBLE_FOR_CONSENT
             else:
                 expected_member_status = BHS
             subject_identifier = self.household_member.get_subject_identifier()
