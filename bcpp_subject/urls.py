@@ -1,7 +1,6 @@
 from django.conf.urls import url
-
-from .admin_site import bcpp_subject_admin
+from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', bcpp_subject_admin.urls),
+    url(r'^admin/', admin.site.urls),
 ]
