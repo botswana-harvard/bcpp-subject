@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.db import models
 
+from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
@@ -13,16 +14,15 @@ from edc_consent.managers import ObjectConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO
-from edc_offstudy.model_mixins import OffstudyMixin
-
-from member.models import EnrollmentChecklist
-from member.models.household_member import HouseholdMember
-
-from bcpp_subject.models.model_mixins import SurveyModelMixin
-from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
-from edc_base.model.models.url_mixin import UrlMixin
 from edc_identifier.subject_identifier import SubjectIdentifier
-from bcpp_subject.exceptions import ConsentValidationError
+from edc_offstudy.model_mixins import OffstudyMixin
+from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
+
+from member.models import EnrollmentChecklist, HouseholdMember
+
+from ..exceptions import ConsentValidationError
+
+from .model_mixins import SurveyModelMixin
 
 
 def is_minor(dob, reference_datetime):
@@ -116,7 +116,7 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name))
         # match gender
         if enrollment_checklist.gender != self.gender:
-            raise exception_cls(
+            raise ConsentValidationError(
                 'Gender mismatch. Gender does not match \'{}\''.format(
                     EnrollmentChecklist._meta.verbose_name))
         # minor and guardian name
