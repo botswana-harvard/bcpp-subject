@@ -51,11 +51,8 @@ class DateProvider(BaseProvider):
         return (get_utcnow() - relativedelta(days=1)).date()
 
 
-class MyEdcBaseProvider(EdcBaseProvider):
-    consent_model = 'bcpp_subject.subjectconsent'
-
 fake = Faker()
-fake.add_provider(MyEdcBaseProvider)
+fake.add_provider(EdcBaseProvider)
 fake.add_provider(DateProvider)
 
 # fake.add_provider(EdcLabProvider)
@@ -534,21 +531,18 @@ stigma = Recipe(
 
 subjectconsent = Recipe(
     SubjectConsent,
-    household_member=None,  # fk
-    gender='M',
-    dob=fake.dob_for_consenting_adult,
-    initials=fake.initials,
-    subject_identifier=None,
-    registered_subject=None,  # fk
     consent_datetime=get_utcnow,
-    may_store_samples=YES,
-    is_literate=YES,
     citizen=YES,
-    is_verified=True,
-    identity=seq('12315678'),
     confirm_identity=seq('12315678'),
+    dob=fake.dob_for_consenting_adult,
+    gender=fake.gender,
+    identity=seq('12315678'),
     identity_type='OMANG',
+    initials=fake.initials,
+    is_literate=YES,
     is_signed=True,
+    is_verified=True,
+    may_store_samples=YES,
 )
 
 subjectlocator = Recipe(

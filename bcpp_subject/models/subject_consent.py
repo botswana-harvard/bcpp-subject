@@ -52,6 +52,9 @@ class SubjectIdentifierMixin(models.Model):
                 self.subject_identifier = maternal_identifier.identifier
         super().save(*args, **kwargs)
 
+    class Meta:
+        abstract = True
+
 
 class SubjectConsent(
         ConsentModelMixin, SubjectIdentifierMixin, UpdatesOrCreatesRegistrationModelMixin, SurveyModelMixin,

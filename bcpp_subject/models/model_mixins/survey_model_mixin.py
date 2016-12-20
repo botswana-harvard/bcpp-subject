@@ -9,3 +9,6 @@ class SurveyModelMixin(ParentSurveyModelMixin, models.Model):
         if not self.id:
             self.survey = self.household_member.household_structure.survey
         super().save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
