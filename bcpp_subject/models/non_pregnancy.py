@@ -3,10 +3,10 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_UNSURE
 
-from .model_mixins import CrfModelMixin, PregnancyMixin
+from .model_mixins import CrfModelMixin, PregnancyModelMixin
 
 
-class NonPregnancy (PregnancyMixin, CrfModelMixin):
+class NonPregnancy (PregnancyModelMixin, CrfModelMixin):
 
     """A model completed by the user for female participants who are not pregnant."""
 

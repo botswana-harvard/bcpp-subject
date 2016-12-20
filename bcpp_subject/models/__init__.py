@@ -22,6 +22,7 @@ from .hiv_test_review import HivTestReview
 from .hiv_tested import HivTested
 from .hiv_testing_history import HivTestingHistory
 from .hiv_untested import HivUntested
+from .household_composition import HouseholdComposition
 from .hospital_admission import HospitalAdmission
 from .labour_market_wages import LabourMarketWages
 from .medical_diagnoses import MedicalDiagnoses

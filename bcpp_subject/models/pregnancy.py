@@ -5,10 +5,10 @@ from edc_base.model.validators import date_not_future
 
 from ..choices import ANC_REG_CHOICE
 
-from .model_mixins import CrfModelMixin, PregnancyMixin
+from .model_mixins import CrfModelMixin, PregnancyModelMixin
 
 
-class Pregnancy (PregnancyMixin, CrfModelMixin):
+class Pregnancy (PregnancyModelMixin, CrfModelMixin):
 
     """A model completed by the user for pregnant participants."""
 

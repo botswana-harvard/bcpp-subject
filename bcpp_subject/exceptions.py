@@ -12,3 +12,7 @@ class ConsentError(Exception):
 
 class ClinicReferalDateError(Exception):
     pass
+
+
+class ConsentValidationError(Exception):
+    pass

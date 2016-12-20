@@ -5,10 +5,10 @@ from edc_base.model.models import HistoricalRecords
 
 from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 
-from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionMixin
+from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
 
 
-class Circumcised (CircumcisionMixin, CrfModelMixin):
+class Circumcised (CircumcisionModelMixin, CrfModelMixin):
 
     circ_date = models.DateField(
         verbose_name='When were you circumcised?',

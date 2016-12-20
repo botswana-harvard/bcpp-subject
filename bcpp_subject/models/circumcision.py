@@ -6,10 +6,10 @@ from edc_constants.choices import YES_NO_UNSURE, YES_NO
 
 from ..choices import COMMUNITY_NA
 
-from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionMixin
+from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
 
 
-class Circumcision (CircumcisionMixin, CrfModelMixin):
+class Circumcision (CircumcisionModelMixin, CrfModelMixin):
 
     circumcised = models.CharField(
         verbose_name="Are you circumcised?",

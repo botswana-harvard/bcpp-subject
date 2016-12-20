@@ -6,10 +6,10 @@ from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE
 
 from ..choices import REASON_CIRC_CHOICE, FUTURE_REASONS_SMC_CHOICE, AWARE_FREE_CHOICE
 
-from .model_mixins import CircumcisionMixin, CrfModelMixin
+from .model_mixins import CircumcisionModelMixin, CrfModelMixin
 
 
-class Uncircumcised (CircumcisionMixin, CrfModelMixin):
+class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
 
     reason_circ = models.CharField(
         verbose_name="What is the main reason that you have not yet been circumcised?",
