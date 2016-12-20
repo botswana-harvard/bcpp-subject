@@ -41,12 +41,13 @@ INSTALLED_APPS = [
     'edc_metadata.apps.AppConfig',
     'edc_appointment.apps.AppConfig',
     'member.apps.AppConfig',
-    'plot.apps.AppConfig',
-    'example_survey.apps.AppConfig',
-    'example_survey.apps.SurveyAppConfig',
-    'example_survey.apps.EdcMapAppConfig',
-    'example_survey.apps.EdcDeviceAppConfig',
+    'bcpp.apps.AppConfig',
+    'bcpp.apps.SurveyAppConfig',
+    'bcpp.apps.EdcMapAppConfig',
+    'bcpp.apps.EdcDeviceAppConfig',
     'household.apps.AppConfig',
+    'plot.apps.AppConfig',
+    'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
 ]
 

@@ -1,7 +1,5 @@
 from datetime import date
-from dateutil.relativedelta import relativedelta
 from faker import Faker
-from faker.providers import BaseProvider
 from model_mommy.recipe import Recipe, seq
 
 from edc_base.utils import get_utcnow
@@ -20,26 +18,42 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
                      SubstanceUse, TbSymptoms, ThirdPartner, Tubercolosis, Uncircumcised,
                      ViralLoadResult)
+from edc_base.faker import EdcBaseProvider
+from faker.providers import BaseProvider
+from dateutil.relativedelta import relativedelta
 
 # from .models import Respondent, MostRecentPartner
 
 
-class BcppProvider(BaseProvider):
+class DateProvider(BaseProvider):
+
+    def next_month(self):
+        return (get_utcnow() + relativedelta(months=1)).date()
+
+    def last_year(self):
+        return (get_utcnow() - relativedelta(years=1)).date()
+
+    def three_months_ago(self):
+        return (get_utcnow() - relativedelta(months=3)).date()
 
     def thirty_four_weeks_ago(self):
         return (get_utcnow() - relativedelta(weeks=34)).date()
 
-    def twenty_five_weeks_ago(self):
-        return (get_utcnow() - relativedelta(weeks=25)).date()
-
     def four_weeks_ago(self):
         return (get_utcnow() - relativedelta(weeks=4)).date()
 
-    def next_month(self):
-        return (get_utcnow() + relativedelta(month=1)).date()
+    def yesterday(self):
+        return (get_utcnow() - relativedelta(days=1)).date()
+
+
+class MyEdcBaseProvider(EdcBaseProvider):
+    consent_model = 'bcpp_subject.subjectconsent'
 
 fake = Faker()
-fake.add_provider(BcppProvider)
+fake.add_provider(MyEdcBaseProvider)
+fake.add_provider(DateProvider)
+
+# fake.add_provider(EdcLabProvider)
 
 cancer = Recipe(
     Cancer,
@@ -66,8 +80,8 @@ ceaenrollmentchecklist = Recipe(
     cd4_date=date.today(),
     cd4_count=400,
     opportunistic_illness='Tuberculosis',
-    diagnosis_date=fake.thirty_four_weeks_ago,
-    date_signed=fake.thirty_four_weeks_ago,
+    diagnosis_date=fake.last_year,
+    date_signed=fake.last_year,
 )
 
 circumcised = Recipe(
@@ -158,7 +172,7 @@ grant = Recipe(
 
 heartattack = Recipe(
     HeartAttack,
-    date_heart_attack=fake.thirty_four_weeks_ago,
+    date_heart_attack=fake.last_year,
     dx_heart_attack=None
 )
 
@@ -176,8 +190,7 @@ hivcareadherence = Recipe(
     medical_care=YES,
     ever_recommended_arv=YES,
     ever_taken_arv=YES,
-    ever_taken_arv=YES,
-    first_arv=fake.thirty_four_weeks_ago,
+    first_arv=fake.last_year,
     on_arv=YES,
     clinic_receiving_from='Bokaa',
     next_appointment_date=fake.next_month,
@@ -222,7 +235,7 @@ hivmedicalcare = Recipe(
 
 hivresultdocumentation = Recipe(
     HivResultDocumentation,
-    result_date=fake.thirty_four_weeks_ago,
+    result_date=fake.last_year,
     result_recorded=POS,
     result_doc_type='Tebelopele'
 )
@@ -319,7 +332,7 @@ medicaldiagnoses = Recipe(
 nonpregnancy = Recipe(
     NonPregnancy,
     more_children=YES,
-    last_birth=fake.thirty_four_weeks_ago,
+    last_birth=fake.last_year,
     anc_last_pregnancy=YES,
     hiv_last_pregnancy=YES,
     preg_arv='Yes, AZT (single drug, twice a day)'
@@ -595,7 +608,7 @@ thirdpartner = Recipe(
 
 tubercolosis = Recipe(
     Tubercolosis,
-    date_tb=fake.thirty_four_weeks_ago,
+    date_tb=fake.last_year,
     dx_tb='Pulmonary tuberculosis',
 )
 
@@ -605,7 +618,7 @@ uncircumcised = Recipe(
     health_benefits_smc=None,  # Many2Many
     reason_circ='Circumcision never offered to me',
     future_circ=YES,
-    future_reasons_smc='More information about benefits', 
+    future_reasons_smc='More information about benefits',
     service_facilities=YES,
     aware_free='Radio',
 )
