@@ -1,8 +1,12 @@
 from datetime import date
+from dateutil.relativedelta import relativedelta
 from faker import Faker
+from faker.providers import BaseProvider
 from model_mommy.recipe import Recipe, seq
 
-from edc_base.utils import get_utcnow
+from django.apps import apps as django_apps
+
+from edc_base_test.faker import EdcBaseProvider
 from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
 from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Circumcision,
@@ -18,11 +22,12 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
                      SubstanceUse, TbSymptoms, ThirdPartner, Tubercolosis, Uncircumcised,
                      ViralLoadResult)
-from edc_base.faker import EdcBaseProvider
-from faker.providers import BaseProvider
-from dateutil.relativedelta import relativedelta
 
 # from .models import Respondent, MostRecentPartner
+
+
+def get_utcnow():
+    return django_apps.get_app_config('edc_base_test').get_utcnow()
 
 
 class DateProvider(BaseProvider):
