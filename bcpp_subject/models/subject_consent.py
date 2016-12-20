@@ -145,7 +145,7 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name))
         # match marriage if not citizen
         if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage) or ( 
+            if (enrollment_checklist.legal_marriage != self.legal_marriage) or (
                     enrollment_checklist.marriage_certificate != self.marriage_certificate):
                 raise ConsentValidationError(
                     'Citizenship by marriage mismatch. Answer indicates that this subject is married '

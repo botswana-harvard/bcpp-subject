@@ -39,6 +39,6 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         self.reason = 'consent'
         super(SubjectVisit, self).save(*args, **kwargs)
 
-    class Meta:
+    class Meta(VisitModelMixin.Meta):
         app_label = "bcpp_subject"
         consent_model = 'bcpp_subject.subjectconsent'
