@@ -35,7 +35,7 @@ def is_minor(dob, reference_datetime):
     return age_at_consent >= 16 and age_at_consent <= 17
 
 
-class SubjectIdentifierMixin(models.Model):
+class SubjectIdentifierMixin:
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -51,6 +51,9 @@ class SubjectIdentifierMixin(models.Model):
                     create_registration=False)
                 self.subject_identifier = maternal_identifier.identifier
         super().save(*args, **kwargs)
+
+        class Meta:
+            abstract = True
 
 
 class SubjectConsent(
