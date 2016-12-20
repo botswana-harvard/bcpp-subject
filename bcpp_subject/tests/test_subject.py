@@ -2,12 +2,17 @@ from model_mommy import mommy
 
 from django.test import TestCase, tag
 
-from .test_mixins import SubjectMixin
 from member.constants import ELIGIBLE_FOR_CONSENT
 
+from .test_mixins import SubjectMixin
 
-class TestMembers(SubjectMixin, TestCase):
 
+class TestSubjects(SubjectMixin, TestCase):
+
+    def test_datetime(self):
+        self.assertIsNotNone(self.get_utcnow())
+
+    @tag('me')
     def test_create_subjectconsent(self):
         household_structure = self.make_household_ready_for_enumeration()
         household_member = self.add_household_member(household_structure)
