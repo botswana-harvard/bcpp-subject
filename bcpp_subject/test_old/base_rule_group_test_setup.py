@@ -6,31 +6,31 @@ from django.test.utils import override_settings
 from dateutil.relativedelta import relativedelta
 
 from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, YES, NO
-from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
-from edc.lab.lab_profile.classes import site_lab_profiles
-from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.subject.appointment.models import Appointment
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import site_rule_groups
-from edc.core.bhp_variables.models import StudySite
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
-
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from bhp066.apps.member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from bhp066.apps.member.classes import EnumerationHelper
-from bhp066.apps.member.models import HouseholdMember
-from bhp066.apps.bcpp_survey.models import Survey
-
-from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_lab.models import AliquotType, Panel
-
-from bhp066.apps.bcpp_subject.models import HivResult
-
-from .factories import (SubjectConsentFactory, SubjectVisitFactory)
+# from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
+# from edc.lab.lab_profile.classes import site_lab_profiles
+# from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+# from edc.subject.appointment.models import Appointment
+# from edc.subject.lab_tracker.classes import site_lab_tracker
+# from edc.subject.registration.models import RegisteredSubject
+# from edc.subject.rule_groups.classes import site_rule_groups
+# from edc.core.bhp_variables.models import StudySite
+# from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+# 
+# from bhp066.apps.bcpp_household.models import HouseholdStructure
+# from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
+# from bhp066.apps.member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+# from bhp066.apps.member.classes import EnumerationHelper
+# from bhp066.apps.member.models import HouseholdMember
+# from bhp066.apps.bcpp_survey.models import Survey
+# 
+# from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+# from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+# from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+# from bhp066.apps.bcpp_lab.models import AliquotType, Panel
+# 
+# from bhp066.apps.bcpp_subject.models import HivResult
+# 
+# from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 
 class BaseRuleGroupTestSetup(TestCase):

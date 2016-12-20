@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.subject.appointment.models import Appointment
+from edc_appointment.models import Appointment
 from edc_constants.constants import POS
 
 from ..models import SubjectVisit

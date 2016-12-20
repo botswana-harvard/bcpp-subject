@@ -3,12 +3,12 @@ from datetime import datetime
 from django.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned
 
-from bhp066.apps.member.models import HouseholdMember
-from bhp066.apps.bcpp_clinic.models import ClinicHouseholdMember, ClinicConsent, ClinicOffStudy
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.appointment.models import Appointment
-from edc.entry_meta_data.models import ScheduledEntryMetaData
-from edc.device.sync.models.outgoing_transaction import OutgoingTransaction
+# from bhp066.apps.member.models import HouseholdMember
+# from bhp066.apps.bcpp_clinic.models import ClinicHouseholdMember, ClinicConsent, ClinicOffStudy
+# from edc.subject.registration.models import RegisteredSubject
+# from edc.subject.appointment.models import Appointment
+# from edc.entry_meta_data.models import ScheduledEntryMetaData
+# from edc.device.sync.models.outgoing_transaction import OutgoingTransaction
 
 
 class Command(BaseCommand):

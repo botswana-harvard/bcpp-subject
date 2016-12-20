@@ -4,26 +4,26 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import get_model
 from django.test import TestCase
 
-from edc_map.site_mappers import site_mappers
-from edc.lab.lab_profile.classes import site_lab_profiles
-from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.subject.appointment.models import Appointment
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.rule_groups.classes import site_rule_groups
-from edc.subject.registration.models import RegisteredSubject
-from edc.core.bhp_variables.models import StudySite
-from edc_constants.constants import NOT_APPLICABLE
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
-
-from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
-from bhp066.apps.bcpp_household.tests.factories import PlotFactory
-from bhp066.apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
-from bhp066.apps.member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
-from bhp066.apps.bcpp_survey.models import Survey
-from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+# from edc_map.site_mappers import site_mappers
+# from edc.lab.lab_profile.classes import site_lab_profiles
+# from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+# from edc.subject.appointment.models import Appointment
+# from edc.subject.lab_tracker.classes import site_lab_tracker
+# from edc.subject.rule_groups.classes import site_rule_groups
+# from edc.subject.registration.models import RegisteredSubject
+# from edc.core.bhp_variables.models import StudySite
+# from edc_constants.constants import NOT_APPLICABLE
+# from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+# 
+# from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+# from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+# from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+# from bhp066.apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
+# from bhp066.apps.member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+# from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+# from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
+# from bhp066.apps.bcpp_survey.models import Survey
+# from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 
 class BaseScheduledModelTestCase(TestCase):
