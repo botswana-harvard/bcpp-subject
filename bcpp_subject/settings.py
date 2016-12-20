@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'edc_subset_manager.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
     'edc_consent.apps.AppConfig',
-    'edc_visit_tracking.apps.AppConfig',
+    # 'edc_visit_tracking.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
     'edc_metadata.apps.AppConfig',
     'edc_appointment.apps.AppConfig',
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'plot.apps.AppConfig',
     'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
+    'bcpp_subject.apps.EdcVisitTrackingAppConfig',
 ]
 
 # if 'test' in sys.argv:
