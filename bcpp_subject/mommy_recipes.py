@@ -540,6 +540,7 @@ subjectconsent = Recipe(
     identity_type='OMANG',
     initials=fake.initials,
     is_literate=YES,
+    guardian_name=None,
     is_signed=True,
     is_verified=True,
     may_store_samples=YES,
