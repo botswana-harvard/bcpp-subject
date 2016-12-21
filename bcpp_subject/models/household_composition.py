@@ -36,7 +36,6 @@ class HouseholdComposition (CrfModelMixin):
 
     phone_number = models.IntegerField(
         verbose_name="[To the respondent] What phone numbers can we use to reach you?",
-        max_length=25,
         help_text="",
     )
 
@@ -70,7 +69,6 @@ class Respondent (CrfModelMixin):
     )
     age = models.IntegerField(
         verbose_name="Age",
-        max_length=2,
     )
     present = models.CharField(
         verbose_name="Present Today",
@@ -79,7 +77,6 @@ class Respondent (CrfModelMixin):
     )
     nights_outside = models.IntegerField(
         verbose_name="Nights spent outside of this Community",
-        max_length=2,
     )
 
     history = HistoricalRecords()

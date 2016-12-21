@@ -35,7 +35,7 @@ def is_minor(dob, reference_datetime):
     return age_at_consent >= 16 and age_at_consent <= 17
 
 
-class SubjectIdentifierMixin(models.Model):
+class SubjectIdentifierMixin:
 
     def save(self, *args, **kwargs):
         if not self.id:
