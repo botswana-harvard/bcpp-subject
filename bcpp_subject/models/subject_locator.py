@@ -4,12 +4,12 @@ from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
-from edc_base.model.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords, BaseUuidModel
 from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 from edc_locator.model_mixins import LocatorModelMixin
 
 
-class SubjectLocator(LocatorModelMixin):
+class SubjectLocator(LocatorModelMixin, BaseUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
@@ -154,6 +154,6 @@ class SubjectLocator(LocatorModelMixin):
                             info=info, physical_address=self.physical_address)
         return info
 
-    class Meta(LocatorModelMixin.Meta):
+    class Meta:
         app_label = 'bcpp_subject'
         verbose_name = 'Subject Locator'

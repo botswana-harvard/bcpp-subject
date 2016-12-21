@@ -5,6 +5,7 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..subject_referral_helper import SubjectReferralHelper
@@ -20,7 +21,7 @@ REFERRAL_CLINIC_TYPES = (
 )
 
 
-class SubjectReferral(CrfModelMixin):
+class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
     """A model completed by the user to indicate a referral to care."""
 
     subject_referred = models.CharField(
@@ -261,12 +262,6 @@ class SubjectReferral(CrfModelMixin):
                    'Updated by export_transaction.'),
     )
 
-    subject_identifier = models.CharField(
-        max_length=50,
-        null=True,
-        editable=False,
-    )
-
     comment = models.CharField(
         verbose_name="Comment",
         max_length=250,
@@ -309,6 +304,7 @@ class SubjectReferral(CrfModelMixin):
                                          self.referral_clinic)
 
     def save(self, *args, **kwargs):
+        self.subject_identifier = self.subject_visit.household_member.subject_identifier
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
         if subject_referral_helper.missing_data:

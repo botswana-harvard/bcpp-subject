@@ -22,6 +22,7 @@ from member.models import HouseholdHeadEligibility
 
 from ..constants import BASELINE_SURVEY
 from ..models import SubjectConsent
+from ..exceptions import ConsentValidationError
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
@@ -51,6 +52,11 @@ class ConsentFormMixin:
                 raise forms.ValidationError(
                     'Please fill household head eligibility form before completing subject consent.',
                     code='invalid')
+        try:
+            instance = self._meta.model(id=self.instance.id, **cleaned_data)
+            instance.common_clean()
+        except ConsentValidationError as e:
+            raise forms.ValidationError(str(e))
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):

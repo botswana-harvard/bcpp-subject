@@ -35,7 +35,6 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.household_member.subject_identifier
         self.info_source = 'subject'
         self.reason = SCHEDULED
         super(SubjectVisit, self).save(*args, **kwargs)
