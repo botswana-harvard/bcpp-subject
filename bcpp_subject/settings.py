@@ -90,49 +90,17 @@ WSGI_APPLICATION = 'bcpp_subject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-if 'test' in sys.argv:
-    # postgres causes problems with django-crypto-fields
-    #     DATABASES = {
-    #         'default': {
-    #             'ENGINE': 'django.db.backends.postgresql',
-    #             'NAME': 'edc',
-    #             'USER': 'postgres',
-    #             'PASSWORD': 'postgres',
-    #             'HOST': '127.0.0.1',
-    #             'PORT': '5432',
-    #             'TEST': {'NAME': 'testbcpp_subject'}
-    #         }
-    #     }
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'edc',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'TEST': {'NAME': 'testbcpp_subject'}
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'edc',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': 'cc3721b',
+        'TEST': {'NAME': 'testbcpp_subject'}
     }
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#         }
-#     }
-
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'edc',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'TEST': {'NAME': 'testbcpp_subject'}
-        }
-    }
+}
 
 
 if 'test' in sys.argv:  # and 'mysql' not in DATABASES.get('default').get('ENGINE'):

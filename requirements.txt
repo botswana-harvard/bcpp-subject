@@ -1,13 +1,11 @@
-django
-django-crispy-forms-1.6.1
-django_crypto_fields
+mysqlclient
 git+https://github.com/erikvw/django-crypto-fields
 git+https://github.com/erikvw/django-revision@develop#egg=django-revision
 git+https://github.com/botswana-harvard/edc-identifier.git
 git+https://github.com/botswana-harvard/edc-subset-manager.git
 git+https://github.com/botswana-harvard/edc-device.git
 git+https://github.com/botswana-harvard/edc-protocol.git
- git+https://github.com/botswana-harvard/edc-consent.git
+git+https://github.com/botswana-harvard/edc-consent.git
 git+https://github.com/botswana-harvard/edc-visit-tracking.git
 git+https://github.com/botswana-harvard/edc-visit-schedule.git
 git+https://github.com/botswana-harvard/edc-metadata.git
