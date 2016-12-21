@@ -52,7 +52,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
             household_members = HouseholdMember.objects.none()
-            if HouseholdMember.objects.filter(id=request.GET.get('household_member', 0)):
-                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member', 0))
+            if HouseholdMember.objects.filter(id=request.GET.get('household_member')):
+                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member'))
             kwargs["queryset"] = household_members
         return super(SubjectVisitAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
