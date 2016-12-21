@@ -6,6 +6,7 @@ from edc_visit_schedule.visit_schedule import VisitSchedule
 from edc_visit_schedule.schedule import Schedule
 from edc_visit_schedule.visit import Crf
 from edc_map.site_mappers import site_mappers
+from bcpp.communities import is_intervention
 
 style = color_style()
 
@@ -21,9 +22,9 @@ crfs_baseline = (
     Crf(show_order=90, model='bcpp_subject.hivtested', required=True),
     Crf(show_order=100, model='bcpp_subject.hivuntested', required=True),
     Crf(show_order=120, model='bcpp_subject.sexualbehaviour', required=True),
-    Crf(show_order=130, model='bcpp_subject.monthsrecentpartner', required=True),
-    Crf(show_order=140, model='bcpp_subject.monthssecondpartner', required=True),
-    Crf(show_order=150, model='bcpp_subject.monthsthirdpartner', required=True),
+#     Crf(show_order=130, model='bcpp_subject.monthsrecentpartner', required=True),
+#     Crf(show_order=140, model='bcpp_subject.monthssecondpartner', required=True),
+#     Crf(show_order=150, model='bcpp_subject.monthsthirdpartner', required=True),
     Crf(show_order=160, model='bcpp_subject.hivcareadherence', required=True),
     Crf(show_order=170, model='bcpp_subject.hivmedicalcare', required=True),
     Crf(show_order=180, model='bcpp_subject.circumcision', required=True),
@@ -61,9 +62,10 @@ crfs_annual = (
     Crf(show_order=70, model='bcpp_subject.hivtested', required=True),
     Crf(show_order=80, model='bcpp_subject.hivuntested', NOT_required=True),
     Crf(show_order=90, model='bcpp_subject.sexualbehaviour', required=True),
-    Crf(show_order=100, model='bcpp_subject.monthsrecentpartner', required=True),
-    Crf(show_order=110, model='bcpp_subject.monthssecondpartner', required=True),
-    Crf(show_order=120, model='bcpp_subject.monthsthirdpartner', required=True),
+    # TODO: What about these forms?????
+    # Crf(show_order=100, model='bcpp_subject.monthsrecentpartner', required=True),
+    # Crf(show_order=110, model='bcpp_subject.monthssecondpartner', required=True),
+    # Crf(show_order=120, model='bcpp_subject.monthsthirdpartner', required=True),
     Crf(show_order=130, model='bcpp_subject.hivcareadherence', required=True),
     Crf(show_order=140, model='bcpp_subject.hivmedicalcare', required=True),
     Crf(show_order=150, model='bcpp_subject.circumcision', required=True),
@@ -107,15 +109,18 @@ visit_schedule = VisitSchedule(
 )
 
 try:
-    if site_mappers.current_mapper.intervention:
+    if is_intervention(site_mappers.current_map_area):
         crfs_annual = [crf for crf in crfs_annual
                        if crf.model not in ['bcpp_subject.hivuntested']]
     else:
         crfs_annual = [crf for crf in crfs_annual
                        if crf.model not in ['bcpp_subject.tbsymptoms', 'bcpp_subject.hivuntested']]
-except AttributeError:
-    sys.stdout.write(style.WARNING(
-        '  * WARNING: visit schedule requires the current mapper but the mapper is not set.\n'))
+except AttributeError as e:
+    sys.stdout.write(style.ERROR(
+        '  * ERROR: visit schedule requires the current map area. '
+        'Either the site mapper is not set or the current map area '
+        'is not a valid \'community\'.\n    Got {} ({})\n'.format(
+            site_mappers.current_map_area, str(e))))
 
 schedule = Schedule(name='survey_schedule',)
 

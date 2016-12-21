@@ -4,6 +4,7 @@ from edc_appointment.models import Appointment
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_metadata.model_mixins import CreatesMetadataModelMixin
+from edc_visit_tracking.constants import SCHEDULED
 from edc_visit_tracking.managers import VisitModelManager
 from edc_visit_tracking.model_mixins import VisitModelMixin
 
@@ -34,9 +35,9 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.household_member.registered_subject.subject_identifier
+        self.subject_identifier = self.household_member.subject_identifier
         self.info_source = 'subject'
-        self.reason = 'consent'
+        self.reason = SCHEDULED
         super(SubjectVisit, self).save(*args, **kwargs)
 
     class Meta(VisitModelMixin.Meta):

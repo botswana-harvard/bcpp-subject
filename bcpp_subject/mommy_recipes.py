@@ -568,8 +568,6 @@ subjectreferral = Recipe(
 
 subjectvisit = Recipe(
     SubjectVisit,
-    appointment=None,
-    household_member=None,  # fk
     reason='scheduled'
 )
 

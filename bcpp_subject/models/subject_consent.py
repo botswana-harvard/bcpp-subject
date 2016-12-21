@@ -3,6 +3,7 @@ from django.db import models
 
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
+from edc_base.utils import age
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
     ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
@@ -11,7 +12,8 @@ from edc_consent.managers import ObjectConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
-from edc_identifier.model_mixins import SubjectIdentifierModelMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_map.site_mappers import site_mappers
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
 from member.models import EnrollmentChecklist, HouseholdMember
@@ -19,8 +21,6 @@ from member.models import EnrollmentChecklist, HouseholdMember
 from ..exceptions import ConsentValidationError
 
 from .model_mixins import SurveyModelMixin
-from edc_base.utils import age
-from edc_map.site_mappers import site_mappers
 
 
 def is_minor(dob, reference_datetime):
@@ -28,8 +28,8 @@ def is_minor(dob, reference_datetime):
 
 
 class SubjectConsent(
-        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, SubjectIdentifierModelMixin, SurveyModelMixin,
-        IdentityFieldsMixin, ReviewFieldsMixin,
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
+        SurveyModelMixin, IdentityFieldsMixin, ReviewFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
         UrlMixin, BaseUuidModel):
 
@@ -79,15 +79,16 @@ class SubjectConsent(
             raise ConsentValidationError(
                 'Member has not completed the \'{}\'. Please correct before continuing'.format(
                     EnrollmentChecklist._meta.verbose_name))
-        # other form validations
-#         if YES if is_minor(enrollment_checklist.dob, self.report_datetime) else NO != self.minor:
-#             raise ConsentValidationError(
-#                 'Minor mismatch. Subject is a minor based on {enroll} but {consent} says '
-#                 'subject is not a minor. Got {enroll_dob} != {dob} on {consent}'.format(
-#                     enroll=EnrollmentChecklist._meta.verbose_name,
-#                     consent=self._meta.verbose_name,
-#                     enroll_dob=enrollment_checklist.dob.strftime('%Y-%m-%d'),
-#                     dob=self.dob.strftime('%Y-%m-%d')))
+        # other model/form validations
+        # minor (do this before comparing DoB)
+        if YES if is_minor(enrollment_checklist.dob, self.report_datetime) else NO != self.is_minor:
+            raise ConsentValidationError(
+                'Minor subject mismatch. Subject is a minor based on {enroll} but {consent} says '
+                'subject is not a minor. Got {enroll_dob} != {dob} on {consent}'.format(
+                    enroll=EnrollmentChecklist._meta.verbose_name,
+                    consent=self._meta.verbose_name,
+                    enroll_dob=enrollment_checklist.dob.strftime('%Y-%m-%d'),
+                    dob=self.dob.strftime('%Y-%m-%d')))
         # match DoB
         if enrollment_checklist.dob != self.dob:
             raise ConsentValidationError(
@@ -146,8 +147,9 @@ class SubjectConsent(
             if (enrollment_checklist.legal_marriage != self.legal_marriage) or (
                     enrollment_checklist.marriage_certificate != self.marriage_certificate):
                 raise ConsentValidationError(
-                    'Citizenship by marriage mismatch. Answer indicates that this subject is married '
+                    'Citizenship by marriage mismatch. {} reports subject is married '
                     'to a citizen with a valid marriage certificate. This does not match \'{}\''.format(
+                        self._meta.verbose_name,
                         EnrollmentChecklist._meta.verbose_name))
         super().common_clean()
 

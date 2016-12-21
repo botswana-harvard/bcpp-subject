@@ -16,3 +16,7 @@ class ClinicReferalDateError(Exception):
 
 class ConsentValidationError(Exception):
     pass
+
+
+class EnrollmentError(Exception):
+    pass

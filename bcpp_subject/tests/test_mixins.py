@@ -9,6 +9,7 @@ from member.constants import ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_F
 from member.models.enrollment_checklist import EnrollmentChecklist
 from edc_constants.constants import NO, YES
 from member.models.household_member.household_member import HouseholdMember
+from edc_appointment.models import Appointment
 
 
 fake = Faker()
@@ -55,6 +56,7 @@ class SubjectMixin(SubjectTestMixin):
             self.assertEqual(household_member.member_status, ELIGIBLE_FOR_CONSENT)
         # update options for subject consent from enrollment checklist
         options.update(
+            consent_datetime=options.get('consent_datetime', enrollment_checklist.report_datetime),
             dob=options.get('dob', enrollment_checklist.dob),
             gender=options.get('gender', enrollment_checklist.gender),
             initials=options.get('initials', enrollment_checklist.initials),
@@ -70,3 +72,21 @@ class SubjectMixin(SubjectTestMixin):
             household_member=household_member,
             **options)
         return subject_consent
+
+    def make_subject_visit_for_consented_subject(self, visit_code, report_datetime=None):
+        """Returns a subject visit the given visit_code.
+
+        Creates all needed relations."""
+        household_structure = self.make_household_ready_for_enumeration()
+        household_member = HouseholdMember.objects.get(household_structure=household_structure)
+        self.add_enrollment_checklist(household_member)
+        subject_consent = self.make_subject_consent(household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
+        appointment = Appointment.objects.get(
+            subject_identifier=household_member.subject_identifier,
+            visit_code=visit_code)
+        return mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=household_member,
+            appointment=appointment,
+            report_datetime=report_datetime or self.get_utcnow())

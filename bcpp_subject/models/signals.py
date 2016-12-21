@@ -3,17 +3,35 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .subject_consent import SubjectConsent
+from bcpp_subject.models.enrollment import Enrollment
+from django.db.utils import IntegrityError
+from bcpp_subject.exceptions import EnrollmentError
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
 def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
-        pass
+        # update household member field attrs
         instance.household_member.is_consented = True
         instance.household_member.absent = False
         instance.household_member.undecided = False
         instance.household_member.refused = False
+        instance.household_member.subject_identifier = instance.subject_identifier
         instance.household_member.save()
+        # auto-complete an enrollment for to create appointments
+        # TODO: the survey should probably dictate what you are enrolling to, AHS, ESS
+        try:
+            enrollment = Enrollment.objects.get(subject_identifier=instance.subject_identifier)
+            enrollment.save()
+        except Enrollment.DoesNotExist:
+            try:
+                Enrollment.objects.create(
+                    subject_identifier=instance.subject_identifier,
+                    report_datetime=instance.report_datetime,
+                    survey=instance.household_member.household_structure.survey,
+                    is_eligible=True)
+            except IntegrityError as e:
+                raise EnrollmentError(str(e))
 
 #     """Updates household_structure and household_members to reflect enrollment and
 #     changed member status.
