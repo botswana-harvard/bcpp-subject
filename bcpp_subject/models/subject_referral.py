@@ -261,12 +261,6 @@ class SubjectReferral(CrfModelMixin):
                    'Updated by export_transaction.'),
     )
 
-    subject_identifier = models.CharField(
-        max_length=50,
-        null=True,
-        editable=False,
-    )
-
     comment = models.CharField(
         verbose_name="Comment",
         max_length=250,
