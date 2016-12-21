@@ -1,9 +1,7 @@
-from datetime import date
-from dateutil.relativedelta import relativedelta
-
 from django.apps import apps as django_apps
 from django.db import models
 
+from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
@@ -13,49 +11,24 @@ from edc_consent.managers import ObjectConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO
-from edc_offstudy.model_mixins import OffstudyMixin
-
-from member.models import EnrollmentChecklist
-from member.models.household_member import HouseholdMember
-
-from bcpp_subject.models.model_mixins import SurveyModelMixin
+from edc_identifier.model_mixins import SubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
-from edc_base.model.models.url_mixin import UrlMixin
-from edc_identifier.subject_identifier import SubjectIdentifier
-from bcpp_subject.exceptions import ConsentValidationError
+
+from member.models import EnrollmentChecklist, HouseholdMember
+
+from ..exceptions import ConsentValidationError
+
+from .model_mixins import SurveyModelMixin
+from edc_base.utils import age
 
 
 def is_minor(dob, reference_datetime):
-    # TODO: fix this
-    age_at_consent = relativedelta(
-        date(reference_datetime.year,
-             reference_datetime.month,
-             reference_datetime.day),
-        dob).years
-    return age_at_consent >= 16 and age_at_consent <= 17
-
-
-class SubjectIdentifierMixin:
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            try:
-                RegisteredSubject = django_apps.get_app_config('edc_registration').model
-                registered_subject = RegisteredSubject.objects.get(identity=self.identity)
-                self.subject_identifier = registered_subject.subject_identifier
-            except RegisteredSubject.DoesNotExist:
-                maternal_identifier = SubjectIdentifier(
-                    subject_type_name='subject',
-                    model=self._meta.label_lower,
-                    study_site=self.study_site,
-                    create_registration=False)
-                self.subject_identifier = maternal_identifier.identifier
-        super().save(*args, **kwargs)
+    return 16 <= age(dob, reference_datetime).years < 18
 
 
 class SubjectConsent(
-        ConsentModelMixin, SubjectIdentifierMixin, UpdatesOrCreatesRegistrationModelMixin, SurveyModelMixin,
-        OffstudyMixin, IdentityFieldsMixin, ReviewFieldsMixin,
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, SubjectIdentifierModelMixin, SurveyModelMixin,
+        IdentityFieldsMixin, ReviewFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
         UrlMixin, BaseUuidModel):
 
@@ -113,11 +86,11 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name))
         # match gender
         if enrollment_checklist.gender != self.gender:
-            raise exception_cls(
+            raise ConsentValidationError(
                 'Gender mismatch. Gender does not match \'{}\''.format(
                     EnrollmentChecklist._meta.verbose_name))
         # minor and guardian name
-        if is_minor(self, self.consent_datetime):
+        if is_minor(self.dob, self.consent_datetime):
             if enrollment_checklist.guardian != YES or not self.guardian_name:
                 raise ConsentValidationError(
                     'Enrollment Checklist indicates that subject is a minor with guardian '
@@ -142,7 +115,7 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name))
         # match marriage if not citizen
         if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage) or ( 
+            if (enrollment_checklist.legal_marriage != self.legal_marriage) or (
                     enrollment_checklist.marriage_certificate != self.marriage_certificate):
                 raise ConsentValidationError(
                     'Citizenship by marriage mismatch. Answer indicates that this subject is married '
@@ -151,7 +124,7 @@ class SubjectConsent(
         super().common_clean()
 
     def save(self, *args, **kwargs):
-        self.is_minor = YES if is_minor(self, self.consent_datetime) else NO
+        self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
 
     class Meta:

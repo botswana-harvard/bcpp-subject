@@ -7,6 +7,7 @@ from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement
 from .demographics import Demographics
+from .disenrollment import Disenrollment
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
 from .enrollment import Enrollment

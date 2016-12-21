@@ -8,13 +8,13 @@ from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.utils import formatted_age
-
+from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
 def get_uuid():
     return str(uuid4())
 
 
-class Enrollment(CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+class Enrollment(EnrollmentModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -49,8 +49,8 @@ class Enrollment(CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
         return ret
     dashboard.allow_tags = True
 
-    class Meta:
+    class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'
         consent_model = 'bcpp_subject.subjectconsent'
-        visit_schedule_name = 'visit_schedule'
+        visit_schedule_name = 'visit_schedule.survey_schedule'
         verbose_name = 'Enrollment'

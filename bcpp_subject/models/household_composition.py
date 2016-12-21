@@ -17,7 +17,6 @@ class HouseholdComposition (CrfModelMixin):
         max_length=150,
         blank=True,
         null=True,
-        help_text="",
     )
 
     coordinates = models.DecimalField(
@@ -31,7 +30,6 @@ class HouseholdComposition (CrfModelMixin):
         verbose_name="[To the respondent] Can we contact you by telephone?",
         max_length=3,
         choices=YES_NO,
-        help_text="",
     )
 
     phone_number = models.IntegerField(

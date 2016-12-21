@@ -34,18 +34,21 @@ INSTALLED_APPS = [
     'edc_base.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
     'edc_subset_manager.apps.AppConfig',
-    'edc_protocol.apps.AppConfig',
-    'edc_consent.apps.AppConfig',
+    'edc_registration.apps.AppConfig',
     'edc_visit_tracking.apps.AppConfig',
+    # 'edc_visit_tracking.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
     'edc_metadata.apps.AppConfig',
     'edc_appointment.apps.AppConfig',
-    'member.apps.AppConfig',
     'bcpp.apps.AppConfig',
+    'bcpp.apps.EdcProtocolAppConfig',
+    'bcpp.apps.EdcConsentAppConfig',
     'bcpp.apps.SurveyAppConfig',
     'bcpp.apps.EdcMapAppConfig',
     'bcpp.apps.EdcDeviceAppConfig',
+    'bcpp.apps.EdcBaseTestAppConfig',
     'household.apps.AppConfig',
+    'member.apps.AppConfig',
     'plot.apps.AppConfig',
     'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
@@ -89,22 +92,35 @@ WSGI_APPLICATION = 'bcpp_subject.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'edc',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'TEST': {'NAME': 'testbcpp_subject'}
-        }
-    }
-else:
+    # postgres causes problems with django-crypto-fields
+    #     DATABASES = {
+    #         'default': {
+    #             'ENGINE': 'django.db.backends.postgresql',
+    #             'NAME': 'edc',
+    #             'USER': 'postgres',
+    #             'PASSWORD': 'postgres',
+    #             'HOST': '127.0.0.1',
+    #             'PORT': '5432',
+    #             'TEST': {'NAME': 'testbcpp_subject'}
+    #         }
+    #     }
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'edc',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'TEST': {'NAME': 'testbcpp_subject'}
         }
     }
 
