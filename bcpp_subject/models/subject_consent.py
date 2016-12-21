@@ -10,7 +10,7 @@ from edc_consent.field_mixins import (
 from edc_consent.managers import ObjectConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_identifier.model_mixins import SubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
@@ -20,6 +20,7 @@ from ..exceptions import ConsentValidationError
 
 from .model_mixins import SurveyModelMixin
 from edc_base.utils import age
+from edc_map.site_mappers import site_mappers
 
 
 def is_minor(dob, reference_datetime):
@@ -79,22 +80,40 @@ class SubjectConsent(
                 'Member has not completed the \'{}\'. Please correct before continuing'.format(
                     EnrollmentChecklist._meta.verbose_name))
         # other form validations
+#         if YES if is_minor(enrollment_checklist.dob, self.report_datetime) else NO != self.minor:
+#             raise ConsentValidationError(
+#                 'Minor mismatch. Subject is a minor based on {enroll} but {consent} says '
+#                 'subject is not a minor. Got {enroll_dob} != {dob} on {consent}'.format(
+#                     enroll=EnrollmentChecklist._meta.verbose_name,
+#                     consent=self._meta.verbose_name,
+#                     enroll_dob=enrollment_checklist.dob.strftime('%Y-%m-%d'),
+#                     dob=self.dob.strftime('%Y-%m-%d')))
         # match DoB
         if enrollment_checklist.dob != self.dob:
             raise ConsentValidationError(
-                'DoB mismatch. DoB does not match with that on \'{}\''.format(
-                    EnrollmentChecklist._meta.verbose_name))
+                'DoB mismatch. DoB does not match \'{}\'. Got {} != {}'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self.dob.strftime('%Y-%m-%d'), enrollment_checklist.dob.strftime('%Y-%m-%d')))
         # match gender
         if enrollment_checklist.gender != self.gender:
             raise ConsentValidationError(
-                'Gender mismatch. Gender does not match \'{}\''.format(
-                    EnrollmentChecklist._meta.verbose_name))
+                'Gender mismatch. Gender does not match \'{}\'. Got {} != {}'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self.get_gender_display(), enrollment_checklist.get_gender_display()))
         # minor and guardian name
-        if is_minor(self.dob, self.consent_datetime):
-            if enrollment_checklist.guardian != YES or not self.guardian_name:
-                raise ConsentValidationError(
-                    'Enrollment Checklist indicates that subject is a minor with guardian '
-                    'available, but the consent does not indicate this.')
+        if enrollment_checklist.guardian == YES and not self.guardian_name:
+            raise ConsentValidationError(
+                'Minor/Guardian mismatch. Guardian is available based on {} '
+                'but guardian name not provided on {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self._meta.verbose_name))
+        elif enrollment_checklist.guardian in [NO, NOT_APPLICABLE] and self.guardian_name:
+            raise ConsentValidationError(
+                'Minor/Guardian mismatch. Guardian is {} based on {} '
+                'but a guardian name is provided on {}.'.format(
+                    'not applicable' if enrollment_checklist.guardian == NOT_APPLICABLE else 'not available',
+                    EnrollmentChecklist._meta.verbose_name,
+                    self._meta.verbose_name))
         # match initials
         if not self.household_member.personal_details_changed == YES:
             if enrollment_checklist.initials != self.initials:
@@ -103,16 +122,25 @@ class SubjectConsent(
         # match citizenship
         if enrollment_checklist.citizen != self.citizen:
             raise ConsentValidationError(
-                'Citizenship mismatch. Citizenship does not match \'{}\''.format(
-                    EnrollmentChecklist._meta.verbose_name))
+                'Citizenship mismatch. Citizenship does not match \'{}\'. Got {} != {}'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self.get_citizen_display(), enrollment_checklist.get_citizen_display()))
         # match literacy
-        if (enrollment_checklist.literacy == YES and
-                not (self.is_literate == YES or (self.is_literate == NO) and
-                     self.witness_name)):
+        if enrollment_checklist.literacy == YES and self.is_literate != YES:
             raise ConsentValidationError(
-                'Literacy mismatch. Answer to whether this subject is literate/not literate but with a '
-                'literate witness, does not match \'{}\''.format(
-                    EnrollmentChecklist._meta.verbose_name))
+                'Literacy mismatch. {} reports subject is literate but {} reports subject is not.'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self._meta.verbose_name))
+        elif enrollment_checklist.literacy == NO and self.is_literate != NO:
+            raise ConsentValidationError(
+                'Literacy mismatch. {} reports subject is not literate but {} reports subject is.'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    self._meta.verbose_name))
+        elif enrollment_checklist.literacy == NO and self.is_literate == NO and not self.witness_name:
+            raise ConsentValidationError(
+                'Literacy mismatch. Subject is not literate but '
+                'no witness name is provided on {}.'.format(
+                    self._meta.verbose_name))
         # match marriage if not citizen
         if self.citizen == NO:
             if (enrollment_checklist.legal_marriage != self.legal_marriage) or (
@@ -124,6 +152,7 @@ class SubjectConsent(
         super().common_clean()
 
     def save(self, *args, **kwargs):
+        self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
 

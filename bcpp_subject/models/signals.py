@@ -1,28 +1,28 @@
-# from django.db.models.signals import post_save
-# 
-# from django.dispatch import receiver
-# 
-# from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
-# 
-# from member.exceptions import MemberStatusError
-# 
-# from ..constants import BASELINE_CODES, ANNUAL, BASELINE
-# from ..subject_referral_helper import SubjectReferralHelper
-# 
-# from .subject_referral import SubjectReferral
-# from .subject_consent import SubjectConsent
-# 
-# 
-# @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
-# def subject_consent_on_post_save(sender, instance, raw, created, using, update_fields, **kwargs):
+from django.db.models.signals import post_save
+
+from django.dispatch import receiver
+
+from .subject_consent import SubjectConsent
+
+
+@receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
+def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        pass
+        instance.household_member.is_consented = True
+        instance.household_member.absent = False
+        instance.household_member.undecided = False
+        instance.household_member.refused = False
+        instance.household_member.save()
+
 #     """Updates household_structure and household_members to reflect enrollment and
 #     changed member status.
-# 
+#
 #     Also, update_fields is set when verifying consents using the Admin action
 #     under edc.subject.consent. The list of fields is passed and trapped
 #     here to prevent further modifications to  household_structure and
 #     household_members.
-# 
+#
 #     See also edc.subject.consent.actions.flag_as_verified_against_paper."""
 #     if not raw:
 #         try:
@@ -71,12 +71,12 @@
 #                         household_member.save(update_fields=['member_status'])
 #                     except MemberStatusError:
 #                         pass
-# 
-# 
+#
+#
 # @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='update_or_create_registered_subject_on_post_save')
 # def update_or_create_registered_subject_on_post_save(sender, instance, raw, created, using, **kwargs):
 #     """Updates or creates an instance of RegisteredSubject on the sender instance.
-# 
+#
 #     Sender instance is a Consent"""
 #     if not raw:
 #         try:
@@ -89,12 +89,12 @@
 #             instance.registered_subject.save(using=using)
 #         except AttributeError:
 #             pass
-# 
-# 
+#
+#
 # @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
 # def update_subject_referral_on_post_save(sender, instance, raw, created, using, **kwargs):
 #     """Updates the subject referral if a model that is part of the referral data is changed.
-# 
+#
 #     The sender classes are listed in the SubjectReferralHelper."""
 #     if not raw:
 #         try:
