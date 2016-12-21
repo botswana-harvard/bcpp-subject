@@ -15,157 +15,14 @@ from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
 
 
-class BaseCorrectConsent(models.Model):
+class CorrectConsentMixin:
 
     """A model linked to the subject consent to record corrections."""
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Correction report date ad time",
-        null=True,
-        validators=[
-            datetime_not_future],
-    )
-
-    old_first_name = FirstnameField(
-        null=True,
-        blank=True,
-    )
-
-    new_first_name = FirstnameField(
-        null=True,
-        blank=True,
-    )
-
-    old_last_name = LastnameField(
-        null=True,
-        blank=True,
-    )
-    new_last_name = LastnameField(
-        null=True,
-        blank=True,
-    )
-
-    old_initials = EncryptedCharField(
-        blank=True,
-        null=True,
-        validators=[RegexValidator(
-            regex=r'^[A-Z]{2,3}$',
-            message='Ensure initials consist of letters only in upper case, no spaces.'), ],
-    )
-
-    new_initials = EncryptedCharField(
-        validators=[RegexValidator(
-            regex=r'^[A-Z]{2,3}$',
-            message='Ensure initials consist of letters only in upper case, no spaces.'), ],
-        null=True,
-        blank=True,
-    )
-
-    old_dob = models.DateField(
-        verbose_name="Old Date of birth",
-        null=True,
-        blank=True,
-        validators=[AgeTodayValidator(16, 64)],
-        help_text="Format is YYYY-MM-DD",
-    )
-
-    new_dob = models.DateField(
-        verbose_name="New Date of birth",
-        validators=[AgeTodayValidator(16, 64)],
-        null=True,
-        blank=True,
-        help_text="Format is YYYY-MM-DD",
-    )
-
-    old_gender = models.CharField(
-        choices=GENDER_UNDETERMINED,
-        blank=True,
-        null=True,
-        max_length=1)
-
-    new_gender = models.CharField(
-        choices=GENDER_UNDETERMINED,
-        max_length=1,
-        null=True,
-        blank=True,
-    )
-
-    old_guardian_name = LastnameField(
-        validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is '
-                           '\'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
-        blank=True,
-        null=True,
-    )
-
-    new_guardian_name = LastnameField(
-        validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
-                           'All uppercase separated by a comma')],
-        blank=True,
-        null=True,
-    )
-
-    old_may_store_samples = models.CharField(
-        verbose_name="Old Sample storage",
-        max_length=3,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-    )
-
-    new_may_store_samples = models.CharField(
-        verbose_name="New Sample storage",
-        max_length=3,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-    )
-
-    old_is_literate = models.CharField(
-        verbose_name="(Old) Is the participant LITERATE?",
-        max_length=3,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-    )
-
-    new_is_literate = models.CharField(
-        verbose_name="(New) Is the participant LITERATE?",
-        max_length=3,
-        blank=True,
-        null=True,
-        choices=YES_NO,
-    )
-
-    old_witness_name = LastnameField(
-        verbose_name="Witness\'s Last and first name (illiterates only)",
-        validators=[
-            RegexValidator(
-                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
-                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
-        blank=True,
-        null=True,
-        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
-                   'All uppercase separated by a comma'),
-    )
-
-    new_witness_name = LastnameField(
-        verbose_name="Witness\'s Last and first name (illiterates only)",
-        validators=[
-            RegexValidator(
-                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
-                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
-        blank=True,
-        null=True,
-        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
-                   'All uppercase separated by a comma'),
-    )
 
     def save(self, *args, **kwargs):
         self.compare_old_fields_to_consent()
         self.update_household_member_and_enrollment_checklist()
-        super(BaseCorrectConsent, self).save(*args, **kwargs)
+        super(CorrectConsentMixin, self).save(*args, **kwargs)
 
     def compare_old_fields_to_consent(self, instance=None, exception_cls=None):
         """Raises an exception if an 'old_" field does not match the value
@@ -315,11 +172,154 @@ class BaseCorrectConsent(models.Model):
         abstract = True
 
 
-class CorrectConsent(BaseCorrectConsent, BaseUuidModel):
+class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 
     subject_consent = models.OneToOneField(SubjectConsent)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Correction report date ad time",
+        null=True,
+        validators=[
+            datetime_not_future],
+    )
+
+    old_first_name = FirstnameField(
+        null=True,
+        blank=True,
+    )
+
+    new_first_name = FirstnameField(
+        null=True,
+        blank=True,
+    )
+
+    old_last_name = LastnameField(
+        null=True,
+        blank=True,
+    )
+    new_last_name = LastnameField(
+        null=True,
+        blank=True,
+    )
+
+    old_initials = EncryptedCharField(
+        blank=True,
+        null=True,
+        validators=[RegexValidator(
+            regex=r'^[A-Z]{2,3}$',
+            message='Ensure initials consist of letters only in upper case, no spaces.'), ],
+    )
+
+    new_initials = EncryptedCharField(
+        validators=[RegexValidator(
+            regex=r'^[A-Z]{2,3}$',
+            message='Ensure initials consist of letters only in upper case, no spaces.'), ],
+        null=True,
+        blank=True,
+    )
+
+    old_dob = models.DateField(
+        verbose_name="Old Date of birth",
+        null=True,
+        blank=True,
+        validators=[AgeTodayValidator(16, 64)],
+        help_text="Format is YYYY-MM-DD",
+    )
+
+    new_dob = models.DateField(
+        verbose_name="New Date of birth",
+        validators=[AgeTodayValidator(16, 64)],
+        null=True,
+        blank=True,
+        help_text="Format is YYYY-MM-DD",
+    )
+
+    old_gender = models.CharField(
+        choices=GENDER_UNDETERMINED,
+        blank=True,
+        null=True,
+        max_length=1)
+
+    new_gender = models.CharField(
+        choices=GENDER_UNDETERMINED,
+        max_length=1,
+        null=True,
+        blank=True,
+    )
+
+    old_guardian_name = LastnameField(
+        validators=[
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is '
+                           '\'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+        blank=True,
+        null=True,
+    )
+
+    new_guardian_name = LastnameField(
+        validators=[
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
+                           'All uppercase separated by a comma')],
+        blank=True,
+        null=True,
+    )
+
+    old_may_store_samples = models.CharField(
+        verbose_name="Old Sample storage",
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+    )
+
+    new_may_store_samples = models.CharField(
+        verbose_name="New Sample storage",
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+    )
+
+    old_is_literate = models.CharField(
+        verbose_name="(Old) Is the participant LITERATE?",
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+    )
+
+    new_is_literate = models.CharField(
+        verbose_name="(New) Is the participant LITERATE?",
+        max_length=3,
+        blank=True,
+        null=True,
+        choices=YES_NO,
+    )
+
+    old_witness_name = LastnameField(
+        verbose_name="Witness\'s Last and first name (illiterates only)",
+        validators=[
+            RegexValidator(
+                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+        blank=True,
+        null=True,
+        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+                   'All uppercase separated by a comma'),
+    )
+
+    new_witness_name = LastnameField(
+        verbose_name="Witness\'s Last and first name (illiterates only)",
+        validators=[
+            RegexValidator(
+                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+        blank=True,
+        null=True,
+        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+                   'All uppercase separated by a comma'),
+    )
 
     history = HistoricalRecords()
 

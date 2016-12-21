@@ -17,7 +17,7 @@ class GrantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "labour_market_wages":
-            kwargs["queryset"] = LabourMarketWages.objects.filter(id__exact=request.GET.get('labour_market_wages', 0))
+            kwargs["queryset"] = LabourMarketWages.objects.filter(id__exact=request.GET.get('labour_market_wages'))
         return super(GrantAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
