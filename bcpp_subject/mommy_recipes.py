@@ -543,6 +543,7 @@ subjectconsent = Recipe(
     is_signed=True,
     is_verified=True,
     may_store_samples=YES,
+    subject_identifier=None,
 )
 
 subjectlocator = Recipe(

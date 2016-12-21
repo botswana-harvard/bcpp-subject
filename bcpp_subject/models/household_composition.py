@@ -17,7 +17,6 @@ class HouseholdComposition (CrfModelMixin):
         max_length=150,
         blank=True,
         null=True,
-        help_text="",
     )
 
     coordinates = models.DecimalField(
@@ -31,13 +30,10 @@ class HouseholdComposition (CrfModelMixin):
         verbose_name="[To the respondent] Can we contact you by telephone?",
         max_length=3,
         choices=YES_NO,
-        help_text="",
     )
 
     phone_number = models.IntegerField(
         verbose_name="[To the respondent] What phone numbers can we use to reach you?",
-        max_length=25,
-        help_text="",
     )
 
     history = HistoricalRecords()
@@ -70,7 +66,6 @@ class Respondent (CrfModelMixin):
     )
     age = models.IntegerField(
         verbose_name="Age",
-        max_length=2,
     )
     present = models.CharField(
         verbose_name="Present Today",
@@ -79,7 +74,6 @@ class Respondent (CrfModelMixin):
     )
     nights_outside = models.IntegerField(
         verbose_name="Nights spent outside of this Community",
-        max_length=2,
     )
 
     history = HistoricalRecords()
