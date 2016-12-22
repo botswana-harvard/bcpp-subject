@@ -24,3 +24,7 @@ class EnrollmentError(Exception):
 
 class CircumcisionError(Exception):
     pass
+
+
+class CommunityEngagementError(Exception):
+    pass
