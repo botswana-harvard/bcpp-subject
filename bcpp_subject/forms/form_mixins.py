@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
-from edc_base.form_mixins import CommonCleanModelFormMixin
+from edc_base.modelform_mixins import CommonCleanModelFormMixin
 
 from ..models import SubjectVisit
 
