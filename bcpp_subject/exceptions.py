@@ -28,3 +28,4 @@ class CircumcisionError(Exception):
 
 class ClinicQuestionnaireError(Exception):
     pass
+
