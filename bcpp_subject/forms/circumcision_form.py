@@ -1,6 +1,7 @@
 from django import forms
 
 from ..constants import ANNUAL
+from ..exceptions import CircumcisionError
 from ..models import Circumcision, Uncircumcised, Circumcised
 
 from .form_mixins import SubjectModelFormMixin
@@ -22,15 +23,12 @@ class CircumcisionForm (SubjectModelFormMixin):
 class CircumcisedForm (SubjectModelFormMixin):
 
     def clean(self):
-
         cleaned_data = super(CircumcisedForm, self).clean()
-        if cleaned_data.get('circumcised') == 'Yes' and not cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
-        if cleaned_data.get('when_circ') and not cleaned_data.get('age_unit_circ'):
-            raise forms.ValidationError('If you answered age of circumcision then you must provide time units.')
-        if not cleaned_data.get('when_circ') and cleaned_data.get('age_unit_circ'):
-            raise forms.ValidationError(
-                'If you did not answer age of circumcision then you must not provide time units.')
+        try:
+            instance = self._meta.model(id=self.instance.id, **cleaned_data)
+            instance.common_clean()
+        except (CircumcisionError) as e:
+            raise forms.ValidationError(str(e))
         return cleaned_data
 
     class Meta:

@@ -20,3 +20,7 @@ class ConsentValidationError(Exception):
 
 class EnrollmentError(Exception):
     pass
+
+
+class CircumcisionError(Exception):
+    pass
