@@ -10,7 +10,7 @@ from edc_locator.model_mixins import LocatorModelMixin
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 
 
-class SubjectLocator(LocatorModelMixin, UniqueSubjectIdentifierFieldMixin, BaseUuidModel):
+class SubjectLocator(LocatorModelMixin, BaseUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
