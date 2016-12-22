@@ -24,3 +24,7 @@ class EnrollmentError(Exception):
 
 class CircumcisionError(Exception):
     pass
+
+
+class ClinicQuestionnaireError(Exception):
+    pass

@@ -3,11 +3,12 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
+from edc_base.form_mixins import CommonCleanModelFormMixin
 
 from ..models import SubjectVisit
 
 
-class SubjectModelFormMixin(forms.ModelForm):
+class SubjectModelFormMixin(CommonCleanModelFormMixin, forms.ModelForm):
 
     visit_model = SubjectVisit
 
