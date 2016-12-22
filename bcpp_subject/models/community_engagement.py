@@ -50,6 +50,11 @@ class CommunityEngagement (CrfModelMixin):
     objects = CrfModelManager()
 
     history = HistoricalRecords()
+    
+    def common_clean(self):
+        if self.engaged == YES:
+            raise CommunityEngagementError("You cannot choose Don\'t want to answer and another problem at the same time. Please correct'.'".format(self.engaged)) 
+        super().common_clean()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
