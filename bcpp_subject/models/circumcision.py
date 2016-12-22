@@ -5,7 +5,6 @@ from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_UNSURE, YES_NO
 
 from ..choices import COMMUNITY_NA
-from ..exceptions import CircumcisionError
 
 from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
 
@@ -47,16 +46,6 @@ class Circumcision (CircumcisionModelMixin, CrfModelMixin):
     objects = CrfModelManager()
 
     history = HistoricalRecords()
-
-    def common_clean(self):
-        if self.circumcised == 'Yes' and not self.health_benefits_smc:
-            raise CircumcisionError('if \'YES\', what are the benefits of male circumcision?.')
-        if self.when_circ and not self.age_unit_circ:
-            raise CircumcisionError('If you answered age of circumcision then you must provide time units.')
-        if not self.when_circ and self.age_unit_circ:
-            raise CircumcisionError(
-                'If you did not answer age of circumcision then you must not provide time units.')
-        super().common_clean()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

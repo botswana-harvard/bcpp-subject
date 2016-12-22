@@ -38,10 +38,12 @@ class CircumcisedForm (SubjectModelFormMixin):
 
 class UncircumcisedForm (SubjectModelFormMixin):
     def clean(self):
-
         cleaned_data = super(UncircumcisedForm, self).clean()
-        if cleaned_data.get('circumcised') == 'Yes' and not cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
+        try:
+            instance = self._meta.model(id=self.instance.id, **cleaned_data)
+            instance.common_clean()
+        except (CircumcisionError) as e:
+            raise forms.ValidationError(str(e))
         return cleaned_data
 
     class Meta:

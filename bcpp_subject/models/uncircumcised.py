@@ -3,8 +3,10 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
 from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE
+from edc_constants.constants import YES
 
 from ..choices import REASON_CIRC_CHOICE, FUTURE_REASONS_SMC_CHOICE, AWARE_FREE_CHOICE
+from ..exceptions import CircumcisionError
 
 from .model_mixins import CircumcisionModelMixin, CrfModelMixin
 
@@ -58,6 +60,10 @@ class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
     )
 
     history = HistoricalRecords()
+
+    def common_clean(self):
+        if self.circumcised == YES and not self.health_benefits_smc:
+            raise CircumcisionError('if {}, what are the benefits of male circumcision?.'.format(self.circumcised))
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
