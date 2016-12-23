@@ -66,6 +66,12 @@ class Circumcised (CircumcisionModelMixin, CrfModelMixin):
                 'If you did not answer age of circumcision then you must not provide time units.')
         super().common_clean()
 
+    @property
+    def common_clean_exceptions(self):
+        common_clean_exceptions = super().common_clean_exceptions
+        common_clean_exceptions.extend([CircumcisionError])
+        return common_clean_exceptions
+
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Circumcised"
