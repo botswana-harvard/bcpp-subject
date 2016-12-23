@@ -8,11 +8,11 @@ from edc_constants.choices import YES_NO, YES_NO_REFUSED
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 
 from .model_mixins import CrfModelMixin, CrfModelManager
+from edc_constants.constants import NO, YES
+from bcpp_subject.exceptions import EnrollmentError
 
 
 class CeaEnrollmentChecklist (CrfModelMixin):
-
-    """CE003"""
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
@@ -25,7 +25,7 @@ class CeaEnrollmentChecklist (CrfModelMixin):
         help_text="")
 
     legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+        verbose_name=("If not a citizen, are you legally married to a Botswana citizen?"),
         max_length=3,
         choices=YES_NO,
         null=True,
@@ -97,7 +97,22 @@ class CeaEnrollmentChecklist (CrfModelMixin):
 
     history = HistoricalRecords()
 
+    def common_clean(self):
+        """Raises an exception if subject does not pass citizenship criteria."""
+        if self.citizen == NO and not self.legal_marriage:
+            raise EnrollmentError(
+                'Enrollment criteria not valid. If participant is not a citizen, '
+                'indicate if he/she married to a Botswana citizen.')
+        if self.legal_marriage == YES and not self.marriage_certificate:
+            raise EnrollmentError(
+                'if participant is legally married to a Botswana citizen, subject must '
+                'provide the marriage certificate.')
+        if self.marriage_certificate == YES and not self.marriage_certificate_no:
+            raise EnrollmentError(
+                'Enrollment criteria not valid. if participant is legally married and '
+                'has a marriage certificate, provide the marriage certificate no.')
+        super().common_clean(self)
+
     class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "CEA Enrollment Checklist"
-        verbose_name_plural = "CEA Enrollment Checklist"

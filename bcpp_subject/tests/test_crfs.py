@@ -24,9 +24,5 @@ class TestCrfs(SubjectMixin, TestCase):
     def test_datetime(self):
         self.assertIsNotNone(self.get_utcnow())
 
-#     def test_subject_visit(self):
-#         subject_consent = self.make_subject_consent()
-#         appointment = Appointment.objects.get(household_member=subject_consent.household_member)
-#         mommy.make_recipe(
-#             'bcpp_subject.subjectvisit',
-#             appointment=appointment)
+    def test_cea_enrollment(self):
+        subject_visit = self.make_subject_visit_for_consented_subject()
