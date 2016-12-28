@@ -30,5 +30,12 @@ class SubjectConsentManager(models.Manager):
 
 class CorrectConsentManager(models.Manager):
 
-    def get_by_natural_key(self, subject_identifier_as_pk):
-        return self.get(subject_identifier=subject_identifier_as_pk)
+    def get_by_natural_key(
+            self, subject_identifier, version, internal_identifier, survey, household_identifier, plot_identifier):
+        return self.get(
+            subject_consent__subject_identifier=subject_identifier, version=version,
+            subject_consent__household_member__internal_identifier=internal_identifier,
+            subject_consent__household_member__household_structure__survey=survey,
+            subject_consent__household_member__household_structure__household_identifier=household_identifier,
+            subject_consent__household_member__household_structure__household__plot__plot_identifier=plot_identifier
+        )
