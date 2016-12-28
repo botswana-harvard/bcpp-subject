@@ -56,15 +56,19 @@ class Circumcised (CircumcisionModelMixin, CrfModelMixin):
 
     history = HistoricalRecords()
 
+    def __str__(self):
+        return 'circumcised'
+
     def common_clean(self):
-        if self.circumcised == YES and not self.health_benefits_smc:
-            raise CircumcisionError('if {}, what are the benefits of male circumcision?.'.format(self.circumcised))
         if self.when_circ and not self.age_unit_circ:
-            raise CircumcisionError('If you answered age of circumcision then you must provide time units.')
+            raise CircumcisionError('Please complete.', 'age_unit_circ')
         if not self.when_circ and self.age_unit_circ:
-            raise CircumcisionError(
-                'If you did not answer age of circumcision then you must not provide time units.')
+            raise CircumcisionError('Please leave blank.', 'age_unit_circ')
         super().common_clean()
+
+    @property
+    def common_clean_exceptions(self):
+        return super().common_clean_exceptions + [CircumcisionError]
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
