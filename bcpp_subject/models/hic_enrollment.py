@@ -6,12 +6,13 @@ from django.core.exceptions import ValidationError
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
-from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO, NEG
 
 from .model_mixins import CrfModelMixin
 from .subject_consent import SubjectConsent
+from edc_base.utils import age
+from bcpp_subject.exceptions import EnrollmentError
 
 
 class HicEnrollment (CrfModelMixin):
@@ -45,7 +46,6 @@ class HicEnrollment (CrfModelMixin):
 
     dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[AgeTodayValidator(16, 64)],
         default=None,
         help_text="Format is YYYY-MM-DD. From Subject Consent.",
     )
@@ -81,20 +81,25 @@ class HicEnrollment (CrfModelMixin):
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        if self.hic_permission.lower() == 'yes':
-            # Only enforce the criteria if subjectt agrees to enroll in HIC
+        update_fields = kwargs.get('update_fields')
+        if not update_fields:
+            first_consent = SubjectConsent.consent.first_consent(self.subject_identifier)
+            self.dob, self.consent_datetime = first_consent.dob, first_consent.consent_datetime
+        super(HicEnrollment, self).save(*args, **kwargs)
+
+    def common_clean(self):
+        if self.hic_permission == YES:
+            first_consent = SubjectConsent.consent.first_consent(self.subject_identifier)
+            age = age(first_consent.dob, first_consent.consent_datetime)
+            if not 16 <= age.years <= 64:
+                raise EnrollmentError('Invalid age. Got {}'.format(age.years))
             self.permanent_resident = self.is_permanent_resident()
             self.intend_residency = self.is_intended_residency()
             self.household_residency = self.is_household_residency()
             self.locator_information = self.is_locator_information()
             self.citizen_or_spouse = self.is_citizen_or_spouse()
             self.hiv_status_today = self.get_hiv_status_today()
-        update_fields = kwargs.get('update_fields')
-        if not update_fields:
-            dob, consent_datetime = self.get_dob_consent_datetime()
-            self.dob = dob
-            self.consent_datetime = consent_datetime
-        super(HicEnrollment, self).save(*args, **kwargs)
+        super().common_clean()
 
     def is_permanent_resident(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -138,19 +143,6 @@ class HicEnrollment (CrfModelMixin):
                     'or in Elisa Hiv Result before proceeding with this one.')
         else:
             raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
-
-    def get_dob_consent_datetime(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        subject_consent = SubjectConsent.objects.filter(
-            subject_identifier=self.subject_visit.appointment.registered_subject.subject_identifier)
-        if subject_consent.exists():
-            if subject_consent[0].dob and subject_consent[0].consent_datetime:
-                return (subject_consent[0].dob, subject_consent[0].consent_datetime)
-            else:
-                raise exception_cls('Please review \'dob\' and \'consent_datetime\' in SubjectConsent '
-                                    'form before proceeding with this one.')
-        else:
-            raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
     def is_household_residency(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
