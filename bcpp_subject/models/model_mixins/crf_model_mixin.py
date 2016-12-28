@@ -14,8 +14,13 @@ from ..subject_visit import SubjectVisit
 
 class CrfModelManager(VisitTrackingCrfModelManager):
 
-    def get_by_natural_key(self, subject_visit):
-        return self.get(**{self.model.visit_model_attr(): subject_visit})
+    def get_by_natural_key(self, subject_identifier, visit_schedule_name, schedule_name, visit_code):
+        return self.get(
+            subject_visit__subject_identifier=subject_identifier,
+            subject_visit__visit_schedule_name=visit_schedule_name,
+            subject_visit__schedule_name=schedule_name,
+            subject_visit__visit_code=visit_code
+        )
 
 
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
