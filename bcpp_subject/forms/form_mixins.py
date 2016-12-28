@@ -4,35 +4,36 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
 from edc_base.modelform_mixins import CommonCleanModelFormMixin
-
+from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
 from ..models import SubjectVisit
 
 
-class SubjectModelFormMixin(CommonCleanModelFormMixin, forms.ModelForm):
+class SubjectModelFormMixin(CommonCleanModelFormMixin, RequiresConsentModelFormMixin, forms.ModelForm):
 
     visit_model = SubjectVisit
 
     def clean(self):
-        cleaned_data = super(SubjectModelFormMixin, self).clean()
+        cleaned_data = super().clean()
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
-        try:
-            subject_visit = cleaned_data.get('subject_visit')
-            if not subject_visit:
-                subject_visit = self.instance.subject_visit
-        except ObjectDoesNotExist:
-            raise forms.ValidationError('Field Subject visit cannot be empty')
-        report_datetime = cleaned_data.get('report_datetime')
-        self.instance.consented_for_period_or_raise(
-            report_datetime=report_datetime,
-            subject_identifier=subject_visit.subject_identifier,
-            exception_cls=forms.ValidationError)
+#         try:
+#             subject_visit = cleaned_data.get('subject_visit')
+#             if not subject_visit:
+#                 subject_visit = self.instance.subject_visit
+#         except ObjectDoesNotExist:
+#             raise forms.ValidationError('Field Subject visit cannot be empty')
+#         report_datetime = cleaned_data.get('report_datetime')
+#         self.instance.consented_for_period_or_raise(
+#             report_datetime=report_datetime,
+#             subject_identifier=subject_visit.subject_identifier,
+#             exception_cls=forms.ValidationError)
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):
         """Raises an exception if the instance does not refer to the
         current survey OR does nothing,"""
         try:
+            # FIXME: this needs fixing!
             if settings.LIMIT_EDIT_TO_CURRENT_SURVEY:
                 current_survey = Survey.objects.current_survey()
                 survey = cleaned_data.get('subject_visit').household_member.household_structure.survey
@@ -48,6 +49,7 @@ class SubjectModelFormMixin(CommonCleanModelFormMixin, forms.ModelForm):
         """Raises an exception if the instance does not refer to the
         current community OR does nothing,"""
         try:
+            # FIXME: this needs fixing!
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
                 configured_community = site_mappers.get_mapper(site_mappers.current_map_area).map_area
                 community = cleaned_data.get(
