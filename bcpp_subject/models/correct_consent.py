@@ -10,6 +10,7 @@ from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
 
+from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
 
@@ -318,13 +319,16 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
                    'All uppercase separated by a comma'),
     )
 
+    objects = CorrectConsentManager()
+
     history = HistoricalRecords()
 
     def __str__(self):
-        return str(self.subject_consent)
+        return str(self.subject_consent,)
 
     def natural_key(self):
         return self.subject_consent.natural_key()
+    natural_key.dependencies = ['bcpp_subject.subject_consent']
 
     def dashboard(self):
         ret = None
