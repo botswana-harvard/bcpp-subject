@@ -8,13 +8,13 @@ from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
     ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
     SampleCollectionFieldsMixin, CitizenFieldsMixin)
-from edc_consent.managers import ObjectConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
+from ..managers import SubjectConsentManager
 
 from member.models import EnrollmentChecklist, HouseholdMember
 
@@ -50,9 +50,13 @@ class SubjectConsent(
 
     is_signed = models.BooleanField(default=False, editable=False)
 
-    objects = ObjectConsentManager()
+    objects = SubjectConsentManager()
 
     history = HistoricalRecords()
+
+    def natural_key(self):
+        return (self.subject_identifier, self.version, ) + self.household_member.natural_key()
+    natural_key.dependencies = ['bcpp_subject.household_member']
 
     def __str__(self):
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)

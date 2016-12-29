@@ -9,6 +9,7 @@ from django.forms import ValidationError
 from django.forms.utils import ErrorList
 from django.utils import timezone
 
+from edc_consent.modelform_mixins import ConsentModelFormMixin
 from edc_constants.constants import YES, NO
 from edc_base.utils import formatted_age
 from edc_map.site_mappers import site_mappers
@@ -27,7 +28,7 @@ from ..exceptions import ConsentValidationError
 tz = pytz.timezone(settings.TIME_ZONE)
 
 
-class ConsentFormMixin:
+class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ConsentFormMixin, self).clean()

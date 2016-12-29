@@ -8,9 +8,9 @@ from django_crypto_fields.fields import FirstnameField, EncryptedCharField, Last
 
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.validators import datetime_not_future
-from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
 
+from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
 
@@ -224,13 +224,11 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
         verbose_name="Old Date of birth",
         null=True,
         blank=True,
-        validators=[AgeTodayValidator(16, 64)],
         help_text="Format is YYYY-MM-DD",
     )
 
     new_dob = models.DateField(
         verbose_name="New Date of birth",
-        validators=[AgeTodayValidator(16, 64)],
         null=True,
         blank=True,
         help_text="Format is YYYY-MM-DD",
@@ -321,13 +319,16 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
                    'All uppercase separated by a comma'),
     )
 
+    objects = CorrectConsentManager()
+
     history = HistoricalRecords()
 
     def __str__(self):
-        return str(self.subject_consent)
+        return str(self.subject_consent,)
 
     def natural_key(self):
         return self.subject_consent.natural_key()
+    natural_key.dependencies = ['bcpp_subject.subject_consent']
 
     def dashboard(self):
         ret = None

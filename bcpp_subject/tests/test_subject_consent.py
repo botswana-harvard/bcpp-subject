@@ -16,6 +16,9 @@ from ..exceptions import ConsentValidationError
 
 from .test_mixins import SubjectMixin
 from django.core.exceptions import MultipleObjectsReturned
+from edc_consent.site_consents import site_consents
+from datetime import timedelta
+from edc_consent.consent import Consent
 
 
 fake = Faker()
@@ -23,12 +26,31 @@ fake = Faker()
 
 class TestSubjects(SubjectMixin, TestCase):
 
+    def setUp(self):
+        site_consents.reset_registry()
+        self.consent_factory(
+            start=self.study_open_datetime,
+            end=self.study_open_datetime + timedelta(days=50),
+            version='1.0')
+
+    def consent_factory(self, **kwargs):
+        options = dict(
+            start=kwargs.get('start'),
+            end=kwargs.get('end'),
+            gender=kwargs.get('gender', ['M', 'F']),
+            updates_versions=kwargs.get('updates_versions', []),
+            version=kwargs.get('version', '1'),
+            age_min=kwargs.get('age_min', 16),
+            age_max=kwargs.get('age_max', 64),
+            age_is_adult=kwargs.get('age_is_adult', 18),
+        )
+        model = kwargs.get('model', 'bcpp_subject.subjectconsent')
+        consent = Consent(model, **options)
+        site_consents.register(consent)
+        return consent
+
     def test_datetime(self):
         self.assertIsNotNone(self.get_utcnow())
-
-#     def tearDown(self):
-#         print(connection.queries)
-#         super().tearDown()
 
     # subject consent
     def test_consent_updates_member_status(self):
@@ -126,6 +148,7 @@ class TestSubjects(SubjectMixin, TestCase):
         except MultipleObjectsReturned:
             pass
 
+    @tag('me')
     def test_visit_creates_all_appointments(self):
         household_structure = self.make_household_ready_for_enumeration()
         household_member = HouseholdMember.objects.get(household_structure=household_structure)

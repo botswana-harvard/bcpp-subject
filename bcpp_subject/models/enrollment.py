@@ -7,6 +7,7 @@ from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
+from ..managers import EnrollmentManager
 
 
 def get_uuid():
@@ -27,6 +28,8 @@ class Enrollment(EnrollmentModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUu
 
     survey = models.CharField(
         max_length=75)
+
+    objects = EnrollmentManager()
 
     history = HistoricalRecords()
 

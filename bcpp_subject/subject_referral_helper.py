@@ -399,7 +399,7 @@ class SubjectReferralHelper(object):
     @property
     def subject_consent_instance(self):
         if not self._subject_consent_instance:
-            self._subject_consent_instance = self.subject_referral.CONSENT_MODEL.consent.valid_consent_for_period(
+            self._subject_consent_instance = self.subject_referral.CONSENT_MODEL.consent.consent_for_period(
                 self.subject_identifier, self.subject_referral.report_datetime)
         return self._subject_consent_instance
 
