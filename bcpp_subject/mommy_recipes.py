@@ -2,7 +2,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 from faker.providers import BaseProvider
-from model_mommy.recipe import Recipe, seq
+from model_mommy.recipe import Recipe, seq, related
 
 from edc_base_test.faker import EdcBaseProvider
 from edc_base_test.utils import get_utcnow
@@ -20,7 +20,10 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
                      SubstanceUse, TbSymptoms, ThirdPartner, Tubercolosis, Uncircumcised,
-                     ViralLoadResult)
+                     ViralLoadResult, SexualBehaviour, AccessToCare)
+from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
+                                             CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
+                                             StiIllnesses)
 
 # from .models import Respondent, MostRecentPartner
 
@@ -81,6 +84,8 @@ ceaenrollmentchecklist = Recipe(
     date_signed=fake.last_year,
 )
 
+circumcision_benefits = Recipe(CircumcisionBenefits, name='Improved hygiene ', short_name='Improved hygiene ')
+
 circumcised = Recipe(
     Circumcised,
     circ_date=date.today(),
@@ -96,6 +101,7 @@ circumcision = Recipe(
     last_seen_circumcised=YES,
     circumcised_datetime=get_utcnow(),
     circumcised_location='Bokaa',
+    health_benefits_smc=related(circumcision_benefits),
 )
 
 cliniquestionnaire = Recipe(
@@ -106,11 +112,12 @@ cliniquestionnaire = Recipe(
     arv_evidence=YES,
 )
 
+neighbourhood_problem = Recipe(NeighbourhoodProblems, name='Water', short_name="Water")
 communityengagement = Recipe(
     CommunityEngagement,
     community_engagement='Very active',
     vote_engagement=YES,
-    problems_engagement=None,
+    problems_engagement=related(neighbourhood_problem),
     solve_engagement=YES,
 )
 
@@ -129,14 +136,17 @@ correctconsent = Recipe(
     new_gender='M',
 )
 
+religion = Recipe(Religion, name='anglican', short_name='anglican')
+ethics = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
+livewith = Recipe(LiveWith, name='Partner or spouse', short_name='Partner or spouse')
 demographics = Recipe(
     Demographics,
-    religion=None,
-    ethnic=None,
+    religion=related(religion),
+    ethnic=related(ethics),
     marital_status='Single/never married',
     num_wives=3,
     husband_wives=3,
-    live_with=None,
+    live_with=related(livewith),
 )
 
 education = Recipe(
@@ -166,11 +176,11 @@ grant = Recipe(
     grant_number=1,
     grant_type='Child support '
 )
-
+dx_heart_attack = Recipe(HeartDisease)
 heartattack = Recipe(
     HeartAttack,
     date_heart_attack=fake.last_year,
-    dx_heart_attack=None
+    dx_heart_attack=related(dx_heart_attack)
 )
 
 hicenrollment = Recipe(
@@ -317,10 +327,10 @@ labourmarketwages = Recipe(
     days_not_worked=0,
     days_inactivite=0,
 )
-
+diagnoses = Recipe(Diagnoses)
 medicaldiagnoses = Recipe(
     MedicalDiagnoses,
-    diagnoses=None,  # Many2Many
+    diagnoses=related(diagnoses),  # Many2Many
     heart_attack_record=NO,
     cancer_record=NO,
     tb_record=NO
@@ -328,7 +338,6 @@ medicaldiagnoses = Recipe(
 
 nonpregnancy = Recipe(
     NonPregnancy,
-    more_children=YES,
     last_birth=fake.last_year,
     anc_last_pregnancy=YES,
     hiv_last_pregnancy=YES,
@@ -397,7 +406,6 @@ pregnancy = Recipe(
     Pregnancy,
     anc_reg=YES,
     lnmp=fake.thirty_four_weeks_ago,
-    more_children=YES,
     last_birth=fake.thirty_four_weeks_ago,
     anc_last_pregnancy=YES,
     hiv_last_pregnancy=YES,
@@ -444,12 +452,13 @@ rbddemographics = Recipe(
 #     multiple_partners=NO,
 #     intercourse_type='vaginal'
 # )
+family_planning = Recipe(FamilyPlanning)
 
 reproductivehealth = Recipe(
     ReproductiveHealth,
     number_children=3,
     menopause=NO,
-    family_planning=None,  # Many2Many
+    family_planning=related(family_planning),  # Many2Many
     currently_pregnant=NO,
     when_pregnant=NO,
     gestational_weeks=None,
@@ -493,10 +502,10 @@ secondpartner = Recipe(
     multiple_partners=NO,
     intercourse_type='Vaginal',
 )
-
+still_illness = Recipe(StiIllnesses)
 sti = Recipe(
     Sti,
-    sti_dx=None,  # Many2Many
+    sti_dx=related(still_illness),  # Many2Many
     wasting_date=date.today(),
     yeast_infection_date=date.today(),
     pneumonia_date=date.today(),
@@ -544,8 +553,6 @@ subjectconsent = Recipe(
 
 subjectlocator = Recipe(
     SubjectLocator,
-    subject_visit=None,
-    registered_subject=None,
     report_datetime=get_utcnow,
     date_signed=date.today(),
     home_visit_permission=YES,
@@ -554,6 +561,11 @@ subjectlocator = Recipe(
     may_call_work=YES,
     may_contact_someone=YES,
     has_alt_contact=YES,
+)
+
+sexualbehaviour = Recipe(
+    SexualBehaviour,
+    report_datetime=get_utcnow,
 )
 
 # Fields on this model are derived variables.
@@ -606,16 +618,19 @@ tubercolosis = Recipe(
     dx_tb='Pulmonary tuberculosis',
 )
 
+circumcision_benefits_hiv = Recipe(CircumcisionBenefits, name='Reduced risk of HIV ', short_name='Reduced risk of HIV ')
 uncircumcised = Recipe(
     Uncircumcised,
     circumcised=YES,
-    health_benefits_smc=None,  # Many2Many
+    health_benefits_smc=related(circumcision_benefits_hiv),  # Many2Many
     reason_circ='Circumcision never offered to me',
     future_circ=YES,
     future_reasons_smc='More information about benefits',
     service_facilities=YES,
     aware_free='Radio',
 )
+
+accesstocare = Recipe(AccessToCare,)
 
 viralloadresult = Recipe(
     ViralLoadResult,
