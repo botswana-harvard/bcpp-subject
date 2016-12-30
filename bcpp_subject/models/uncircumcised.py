@@ -61,10 +61,6 @@ class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
 
     history = HistoricalRecords()
 
-    def common_clean(self):
-        if self.circumcised == YES and not self.health_benefits_smc:
-            raise CircumcisionError('if {}, what are the benefits of male circumcision?.'.format(self.circumcised))
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Uncircumcised"

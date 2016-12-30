@@ -32,9 +32,9 @@ INSTALLED_APPS = [
     'django_revision.apps.AppConfig',
     'edc_base.apps.AppConfig',
     'edc_consent.apps.AppConfig',
+    'edc_sync.apps.AppConfig',
     'edc_subset_manager.apps.AppConfig',
     'edc_registration.apps.AppConfig',
-    'edc_visit_tracking.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
     'bcpp.apps.AppConfig',
     'bcpp.apps.EdcMetadataAppConfig',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'plot.apps.AppConfig',
     'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
+    'bcpp_subject.apps.EdcVisitTrackingAppConfig',
 ]
 
 # if 'test' in sys.argv:
@@ -92,13 +93,8 @@ WSGI_APPLICATION = 'bcpp_subject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'edc',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': 'cc3721b',
-        'TEST': {'NAME': 'testbcpp_subject'}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 

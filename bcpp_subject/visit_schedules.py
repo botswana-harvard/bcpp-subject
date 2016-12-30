@@ -11,7 +11,7 @@ from bcpp.communities import is_intervention
 style = color_style()
 
 crfs_baseline = (
-    Crf(show_order=10, model='bcpp_subject.subjectlocator', required=True),
+    # Crf(show_order=10, model='bcpp_subject.subjectlocator', required=True),
     Crf(show_order=20, model='bcpp_subject.residencymobility', required=True),
     Crf(show_order=30, model='bcpp_subject.communityengagement', required=True),
     Crf(show_order=40, model='bcpp_subject.demographics', required=True),
