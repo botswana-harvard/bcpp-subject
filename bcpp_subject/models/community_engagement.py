@@ -5,6 +5,10 @@ from edc_base.model.models import HistoricalRecords
 
 from ..choices import COMMUNITY_ENGAGEMENT_CHOICE, VOTE_ENGAGEMENT_CHOICE, SOLVE_ENGAGEMENT_CHOICE
 
+from ..exceptions import CommunityEngagementError
+
+from edc_constants.constants import YES, NO, DWTA
+
 from .list_models import NeighbourhoodProblems
 from .model_mixins import CrfModelMixin, CrfModelManager
 
@@ -50,6 +54,18 @@ class CommunityEngagement (CrfModelMixin):
     objects = CrfModelManager()
 
     history = HistoricalRecords()
+
+    def common_clean(self):
+        the_problems_list = []
+        if self.community_engagement == DWTA and len.get('problems_engagement') > 1:
+            raise CommunityEngagementError(
+                'You cannot choose Don\'t want to answer and another problem at the same time. Please correct.')
+
+    @property
+    def common_clean_exceptions(self):
+        common_clean_exceptions = super().common_clean_exceptions
+        common_clean_exceptions.extend([CommunityEngagementError])
+        return common_clean_exceptions
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

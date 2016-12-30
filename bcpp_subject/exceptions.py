@@ -26,6 +26,10 @@ class CircumcisionError(Exception):
     pass
 
 
+class CommunityEngagementError(Exception):
+    pass
+
+
 class ClinicQuestionnaireError(Exception):
     pass
 

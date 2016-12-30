@@ -10,7 +10,7 @@ from member.models.enrollment_checklist import EnrollmentChecklist
 from edc_constants.constants import NO, YES
 from member.models.household_member.household_member import HouseholdMember
 from edc_appointment.models import Appointment
-
+from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 
 fake = Faker()
 
@@ -20,7 +20,9 @@ class SubjectTestMixin(MemberMixin, LoadListDataMixin):
     list_data = list_data
 
 
-class SubjectMixin(SubjectTestMixin):
+class SubjectMixin(SubjectTestMixin, AddVisitMixin):
+
+    bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
 
     def setUp(self):
         super(SubjectMixin, self).setUp()
@@ -73,6 +75,12 @@ class SubjectMixin(SubjectTestMixin):
             **options)
         return subject_consent
 
+    def add_subject_visits(self, *visit_codes, subject_identifier):
+        return self.add_visits(
+            *visit_codes,
+            model_label=self.bcpp_subject_model_label,
+            subject_identifier=subject_identifier)
+
     def make_subject_visit_for_consented_subject(self, visit_code, report_datetime=None):
         """Returns a subject visit the given visit_code.
 
@@ -90,3 +98,19 @@ class SubjectMixin(SubjectTestMixin):
             household_member=household_member,
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
+
+
+class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
+
+    def complete_required_subject_crfs(self, *visit_codes, subject_identifier):
+        """Complete all required CRFs for a visit(s) using mommy defaults."""
+        complete_required_crfs = {}
+        for visit_code in visit_codes:
+            subject_visit = self.add_subject_visits(visit_code, subject_identifier)
+            completed_crfs = super(CompleteCrfsMixin, self).complete_required_crfs(
+                visit_code=visit_code,
+                visit=subject_visit,
+                visit_attr='subject_visit',
+                subject_identifier=subject_identifier)
+            complete_required_crfs.update({visit_code: completed_crfs})
+        return complete_required_crfs
