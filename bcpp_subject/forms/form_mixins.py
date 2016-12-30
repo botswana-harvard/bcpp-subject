@@ -8,7 +8,7 @@ from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
 from ..models import SubjectVisit
 
 
-class SubjectModelFormMixin(CommonCleanModelFormMixin, RequiresConsentModelFormMixin, forms.ModelForm):
+class SubjectModelFormMixin(CommonCleanModelFormMixin, forms.ModelForm):
 
     visit_model = SubjectVisit
 
