@@ -27,7 +27,7 @@ fake = Faker()
 class TestSubjects(SubjectMixin, TestCase):
 
     def setUp(self):
-        site_consents.reset_registry()
+        site_consents.backup_registry()
         self.consent_factory(
             start=self.study_open_datetime,
             end=self.study_open_datetime + timedelta(days=50),

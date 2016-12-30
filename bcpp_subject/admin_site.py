@@ -5,5 +5,5 @@ class BcppSubjectAdminSite(AdminSite):
     site_title = 'BCPP Subject'
     site_header = 'BCPP Subject'
     index_title = 'BCPP Subject'
-    site_url = '/'
+    site_url = '/bcpp_subject/list/'
 bcpp_subject_admin = BcppSubjectAdminSite(name='bcpp_subject_admin')
