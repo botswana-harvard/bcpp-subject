@@ -1,10 +1,8 @@
 from django import forms
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
 from edc_base.modelform_mixins import CommonCleanModelFormMixin
-from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
 from ..models import SubjectVisit
 
 

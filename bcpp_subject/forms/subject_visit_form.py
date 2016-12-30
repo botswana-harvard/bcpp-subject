@@ -1,10 +1,12 @@
 from django import forms
 
+from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
+
 from ..models import SubjectVisit
 from ..models import SubjectConsent
 
 
-class SubjectVisitForm (forms.ModelForm):
+class SubjectVisitForm (forms.ModelForm, RequiresConsentModelFormMixin):
 
     def clean(self):
         cleaned_data = super(SubjectVisitForm, self).clean()
