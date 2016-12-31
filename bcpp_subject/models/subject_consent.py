@@ -21,6 +21,7 @@ from member.models import EnrollmentChecklist, HouseholdMember
 from ..exceptions import ConsentValidationError
 
 from .model_mixins import SurveyModelMixin
+from edc_consent.managers import ConsentManager
 
 
 def is_minor(dob, reference_datetime):
@@ -34,6 +35,8 @@ class SubjectConsent(
         UrlMixin, BaseUuidModel):
 
     """ A model completed by the user that captures the ICF."""
+
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
 
@@ -51,6 +54,8 @@ class SubjectConsent(
     is_signed = models.BooleanField(default=False, editable=False)
 
     objects = SubjectConsentManager()
+
+    consent = ConsentManager()
 
     history = HistoricalRecords()
 

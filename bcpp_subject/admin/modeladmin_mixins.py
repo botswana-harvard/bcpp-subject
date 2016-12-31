@@ -19,9 +19,6 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructions
     date_hierarchy = 'modified'
     empty_value_display = '-'
 
-    def redirect_url(self, request, obj, post_url_continue=None):
-        return request.GET.get('next')
-
 
 class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 

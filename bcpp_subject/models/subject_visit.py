@@ -11,12 +11,15 @@ from edc_visit_tracking.model_mixins import VisitModelMixin
 from member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
+from edc_base.model.models.url_mixin import UrlMixin
 
 
-class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, BaseUuidModel):
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, UrlMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
+
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     appointment = models.OneToOneField(Appointment, on_delete=models.PROTECT)
 
