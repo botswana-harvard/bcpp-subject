@@ -26,7 +26,7 @@ class BcppSubjectsView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView
     form_class = SearchPlotForm
     template_name = app_config.list_template_name
     paginate_by = 10
-    search_url_name = 'bcpp-subject:list_url'
+    list_url = 'bcpp-subject:list_url'
     search_model = SubjectConsent
 
     @method_decorator(login_required)
@@ -48,9 +48,5 @@ class BcppSubjectsView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        results = self.search_model.objects.all().order_by('-created')
-        context.update(
-            search_url_name=self.search_url_name,
-            navbar_selected='bcpp_subject',
-            results=self.paginate(results))
+        context.update(navbar_selected='bcpp_subject')
         return context
