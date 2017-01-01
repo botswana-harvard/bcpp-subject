@@ -1,3 +1,4 @@
+{% load tz %}
 {% load edc_base_extras %}
 <div class="panel panel-info">
 <ul class="list-group">
@@ -9,7 +10,7 @@
 <li class="list-group-item"><span class="test small text-default">Household</span>&nbsp<span class="test small text-info">{{ member.household_structure.household.household_identifier }}</span></li>
 <li class="list-group-item"><span class="test small text-default">Gender</span>&nbsp<span class="test small text-info">{{ subject_consent.get_gender_display }}</span></li>
 <li class="list-group-item"><span class="test small text-default">Born</span>&nbsp<span class="test small text-info">{{ subject_consent.dob|date:"Y-m-d" }}</span></li>
-<li class="list-group-item"><span class="test small text-default">Age</span>&nbsp<span class="test small text-info">{% age_in_years subject_consent.dob %}</span></li>
+<li class="list-group-item"><span class="test small text-default">Age</span>&nbsp<span class="test small text-info">{% age_in_years subject_consent.dob%}</span></li>
 <li class="list-group-item"><span class="test small text-default">Consented</span>&nbsp<span class="test small text-info">{{ subject_consent.consent_datetime|date:"Y-m-d" }}</span></li>
 </ul>
 </div>

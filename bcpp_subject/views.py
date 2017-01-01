@@ -57,18 +57,26 @@ class BcppSubjectsView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView
         results = []
         for obj in qs:
             obj.household_member.str_pk = str(obj.household_member.pk)
+            obj.plot_identifier = obj.household_member.household_structure.household.plot.plot_identifier
+            obj.household_identifier = obj.household_member.household_structure.household.household_identifier
+            survey = obj.household_member.household_structure.survey
+            _, obj.survey_year, obj.survey_name, obj.community_name = survey.split('.')
+            obj.community_name = ' '.join(obj.community_name.split('_'))
             results.append(obj)
         return results
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(navbar_selected='bcpp_subject')
+        context.update(
+            navbar_selected='bcpp_subject',
+            reference_datetime=get_utcnow())
         return context
 
 
 class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
 
     subject_dashboard_url_name = 'bcpp-subject:dashboard_url'
+    subject_dashboard_base_html = 'bcpp/base.html'
     add_visit_url_name = SubjectVisit().admin_url_name
     template_name = 'bcpp_subject/dashboard.html'
     visit_model = SubjectVisit
@@ -100,6 +108,7 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
         except SubjectLocator.DoesNotExist:
             subject_locator = None
         context.update(
+            navbar_selected='bcpp_subject',
             visit_url=SubjectVisit().get_absolute_url(),
             member=household_member,
             subject_consent=self.subject_consent_wrapper(subject_consent),

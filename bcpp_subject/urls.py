@@ -1,5 +1,7 @@
 from django.conf.urls import url
 
+from edc_constants.constants import UUID_PATTERN
+
 from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
 from .views import BcppSubjectsView, DashboardView
@@ -14,6 +16,6 @@ urlpatterns = [
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/(?P<subject_identifier>' + subject_identifier + ')/',
         DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/(?P<member>[0-9a-f-]+)/',
+    url(r'^dashboard/(?P<member>' + UUID_PATTERN.pattern + ')/',
         DashboardView.as_view(), name='dashboard_url'),
 ]

@@ -1,3 +1,5 @@
+{% load tz %}
+{% load edc_base_extras %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
@@ -9,34 +11,42 @@
               <i class="fa fa-user-circle-o fa-lg"></i><i class="fa fa-user-circle fa-lg"></i>
               <span class="pull-right">{% include 'edc_search/search_form.html' %}</span>
                 </div>
-                  <table class="table table-striped table-responsive small">
-        			<thead>
-        				<th></th>
-        				<th>Subject</th>
-                <th>Identifier</th>
-        				<th>Born</th>
-        				<th>Age</th>
-        				<th>Consent Date</th>
-        				<th>User Created</th>
-        				<th>Created</th>
-        				<th>Host</th>
-        			</thead>
-        			<tbody>
+                <div class="table table-responsive">
+                  <table class="table table-condensed table-hover small">
+            			<thead>
+                    <th>#</th>
+                    <th></th>
+            				<th>Subject</th>
+            				<th>Born</th>
+            				<th>Consented</th>
+                    <th>Community</th>
+                    <th>Survey</th>
+                    <th>Year</th>
+                    <th>Modified</th>
+                    <th>Host</th>
+            			</thead>
+            			<tbody>
                   {% for obj in results %}
           				<tr> 
-            				<td><a href="{% url 'bcpp-subject:dashboard_url' subject_identifier=obj.subject_identifier %}" title="subject dashboard" role="button" class="btn btn-success btn-sm"><i class="fa fa-dashboard fa-lg"></i></a></td>
-                    <td>{{ obj.subject_identifier }}</td>
-                    <td>{{ obj.first_name }} {{ obj.last_name }} {{ obj.initials }}</td>
-            				<td>{{ obj.dob|date:"Y-m-d" }}</td>  
-                    <td>  </td>  
+                    <td>{{ forloop.counter }}</td>
+                    <td style="white-space: nowrap">
+                      <a role="button" title="plot" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot_identifier %}"> <i class="fa fa-building-o fa-lg"></i></a>
+                      <a role="button" title="household" class="btn btn-sm btn-default" href="{% url 'household:list_url' household_identifier=obj.household_identifier %}"> <i class="fa fa-home fa-lg"></i></a>
+                      <a role="button" title="members" class="btn btn-sm btn-default" href="{% url 'member:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-group fa-lg"></i></a>
+            				  <a href="{% url 'bcpp-subject:dashboard_url' subject_identifier=obj.subject_identifier %}" title="subject dashboard" role="button" class="btn btn-default btn-sm"><i class="fa fa-dashboard fa-lg"></i> {{ obj.subject_identifier }}</a>
+                    </td>
+                    <td>{{ obj.first_name }} {{ obj.initials }} {{ obj.get_gender_display }} {% age_in_years obj.dob %}</td>
+            				<td>{{ obj.dob|date:"Y-m-d" }}</td>
             				<td>{{ obj.consent_datetime|date:"Y-m-d" }}</td>  
-                    <td>{{ obj.user_created }}</td>  
-                    <td>{{ obj.modified|date:"Y-m-d" }}</td>  
-                    <td>{{ obj.host_created }}</td>  
+                    <td>{{ obj.community_name|title }}</td>
+                    <td>{{ obj.survey_name|upper }}</td>
+                    <td>{{ obj.survey_year|upper }}</td>
+                    <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
+                    <td>{{ obj.hostname_created }}</td>
             			</tr>						
                   {% endfor %}
      				</tbody>
-     			</table>
+     			</table></div>
           {% include 'edc_search/paginator.html' %}
 
                 <div class="panel-body">
