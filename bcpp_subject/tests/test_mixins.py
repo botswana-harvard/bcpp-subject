@@ -11,6 +11,7 @@ from edc_constants.constants import NO, YES
 from member.models.household_member.household_member import HouseholdMember
 from edc_appointment.models import Appointment
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
+from edc_metadata.models import CrfMetadata
 
 fake = Faker()
 
@@ -114,3 +115,10 @@ class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
                 subject_identifier=subject_identifier)
             complete_required_crfs.update({visit_code: completed_crfs})
         return complete_required_crfs
+
+    def get_crfs(self, visit_code=None, subject_identifier=None):
+        """Return a queryset of crf metadata for the visit."""
+        return CrfMetadata.objects.filter(
+            subject_identifier=subject_identifier,
+            visit_code=visit_code).exclude(
+                model__in=['bcpp_subject.hivresult', 'bcpp_subject.subjectreferral']).order_by('show_order')

@@ -5,7 +5,7 @@ from edc_sync.test_mixins import SyncTestSerializerMixin
 from ..sync_models import sync_models
 # from bcpp_subject
 
-from .test_mixins import SubjectMixin, CompleteCrfsMixin
+from .test_mixins import CompleteCrfsMixin
 from edc_sync.models import OutgoingTransaction
 
 
@@ -40,7 +40,7 @@ class TestNaturalKey(SyncTestSerializerMixin, CompleteCrfsMixin, TestCase):
         """ """
 #         self.complete_crfs(      , visit, visit_attr, entry_status, subject_identifier)
         subject_visit = self.make_subject_visit_for_consented_subject(visit_code='T0')
-        verbose = True
+        verbose = False
         visits = ['T0']
         subject_visits = self.add_subject_visits(*visits, subject_identifier=subject_visit.subject_identifier)
         self.sync_test_natural_keys_by_schedule(
