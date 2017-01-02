@@ -1,11 +1,14 @@
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 
-# from django.db import connection
+from django.core.exceptions import MultipleObjectsReturned
 from django.test import TestCase, tag
 
 from edc_appointment.models import Appointment
 from edc_base.utils import age
+from edc_consent.consent import Consent
+from edc_consent.site_consents import site_consents
 from edc_constants.constants import NO, CONSENTED
 from edc_metadata.models import CrfMetadata
 
@@ -15,10 +18,6 @@ from member.models import HouseholdMember
 from ..exceptions import ConsentValidationError
 
 from .test_mixins import SubjectMixin
-from django.core.exceptions import MultipleObjectsReturned
-from edc_consent.site_consents import site_consents
-from datetime import timedelta
-from edc_consent.consent import Consent
 
 
 fake = Faker()

@@ -1,13 +1,15 @@
+from datetime import datetime, date
+
 from django.test import TestCase
 from django.utils import timezone
-from bcpp_subject.tests.test_mixins import SubjectMixin
-from datetime import datetime, date
-from bcpp_subject.forms import StiForm
+
 from edc_base.utils import get_utcnow
 
-from ..models.list_models import StiIllnesses
+from ..forms import StiForm
 
-from unittest.mock import Mock
+from .test_mixins import SubjectMixin
+
+from ..models.list_models import StiIllnesses
 
 
 class TestStiForm(SubjectMixin, TestCase):
