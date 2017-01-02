@@ -1,0 +1,12 @@
+{% load tz %}
+{% load edc_base_extras %}
+    <div class="panel-group">
+    	<div class="panel panel-info">
+          <div class="panel-heading clearfix"><i class="fa fa-tachometer" aria-hidden="true"></i> {{ subject_consent.subject_identifier }}
+          <span class="pull-right">
+            {% for obj in enrollment_objects %}
+              <a role="button" class="btn btn-sm {% if obj.id %}btn-success{% else %}btn-default{% endif %}" href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next={{ subject_dashboard_url_name }},subject_identifier&subject_identifier={{ subject_identifier }}">{%if obj.pk %}<span class="glyphicon glyphicon-pencil"></span>{% else %}<span class="glyphicon glyphicon-plus"></span>{% endif %} {{ obj.verbose_name }}</a>
+            {% endfor %}
+            <a href="{% url 'bcpp-subject:list_url' %}" role="button" class="btn btn-sm btn-primary"><i class="fa fa-reply" aria-hidden="true"></i> Close</a></span></div>
+    </div>
+  </div>
