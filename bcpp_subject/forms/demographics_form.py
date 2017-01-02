@@ -33,27 +33,33 @@ class DemographicsForm(SubjectModelFormMixin):
 
         return cleaned_data
 
+    @property
+    def subject_consent(self):
+        cleaned_data = self.cleaned_data
+        return SubjectConsent.objects.filter(
+            subject_identifier=cleaned_data.get('subject_visit').subject_identifier).last()
+
     def marital_status_married(self):
         cleaned_data = self.cleaned_data
         # validating if married
         if cleaned_data.get('marital_status') == 'Married':
             husband_wives = cleaned_data.get('husband_wives', 0)
             num_wives = cleaned_data.get('num_wives', 0)
-            subject_visit = cleaned_data.get('subject_visit')
-            subject_identifier = subject_visit.subject_identifier
-            consent = SubjectConsent.objects.filter(
-                household_member__registered_subject__subject_identifier=subject_identifier).last()
-            if num_wives > 0:
-                if consent.gender == MALE:
-                    raise forms.ValidationError('You should fill the number of wives.')
+            self.clean_marital_status_male()
             if husband_wives > 0:
-                if consent.gender == FEMALE:
+                if self.subject_consent.gender == FEMALE:
                     raise forms.ValidationError('You should fill the number of husband(s).')
             if not (husband_wives > 0 or num_wives > 0):
                 raise forms.ValidationError(
                     'If participant is married, write the number of wives for the husband [WOMEN:] OR the number '
                     'of wives he is married to [MEN:].')
         return cleaned_data
+
+    def clean_marital_status_male(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('num_wives', 0) > 0:
+            if self.subject_consent.gender == MALE:
+                raise forms.ValidationError('You should fill the number of wives.')
 
     class Meta:
         model = Demographics
