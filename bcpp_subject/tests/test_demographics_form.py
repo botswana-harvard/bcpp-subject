@@ -1,4 +1,5 @@
 from model_mommy import mommy
+from faker import Faker
 
 from django.test import TestCase
 
