@@ -33,6 +33,12 @@ class DemographicsForm(SubjectModelFormMixin):
 
         return cleaned_data
 
+    @property
+    def subject_consent(self):
+        cleaned_data = self.cleaned_data
+        return SubjectConsent.objects.filter(
+            subject_identifier=cleaned_data.get('subject_visit').subject_identifier).last()
+
     def marital_status_married(self):
         cleaned_data = self.cleaned_data
         # validating if married
@@ -54,6 +60,12 @@ class DemographicsForm(SubjectModelFormMixin):
                     'If participant is married, write the number of wives for the husband [WOMEN:] OR the number '
                     'of wives he is married to [MEN:].')
         return cleaned_data
+
+    def clean_marital_status_male(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('num_wives', 0) > 0:
+            if self.subject_consent.gender == MALE:
+                raise forms.ValidationError('You should fill the number of wives.')
 
     class Meta:
         model = Demographics
