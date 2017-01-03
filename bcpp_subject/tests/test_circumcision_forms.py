@@ -1,12 +1,12 @@
-from django.test import TestCase, tag
-from datetime import date
 import arrow
+
+from django.test import TestCase
+from model_mommy import mommy
 
 from edc_constants.constants import YES
 
 from ..forms import CircumcisedForm, UncircumcisedForm
 from .test_mixins import SubjectMixin
-from bcpp_subject.models.list_models import CircumcisionBenefits
 
 
 class TestCircumcisedForm(SubjectMixin, TestCase):
@@ -14,9 +14,7 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
         subject_visit = self.make_subject_visit_for_consented_subject('T0')
-
-        health_benefits_smc = CircumcisionBenefits.objects.create(name='Improved hygiene')
-
+        health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
         self.options = {
             'circumcised': YES,
             'circ_date': arrow.utcnow().date(),
@@ -30,10 +28,12 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
         }
 
     def test_circumcision_form_valid(self):
+        """Assert that the form is valid."""
         form = CircumcisedForm(data=self.options)
         self.assertTrue(form.is_valid())
 
     def test_circumcision_health_benefits_smc_none(self):
+        """Assert that the form is not valid if health_benefits_smc is None."""
         self.options.update(health_benefits_smc=None)
         form = CircumcisedForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -44,7 +44,7 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
         subject_visit = self.make_subject_visit_for_consented_subject('T0')
-        health_benefits_smc = CircumcisionBenefits.objects.create(name='Improved hygiene')
+        health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
 
         self.options = {
             'circumcised': YES,
@@ -59,12 +59,12 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
         }
 
     def test_uncircumcision_form_valid(self):
+        """Assert that the form is valid."""
         form = UncircumcisedForm(data=self.options)
-        print(form.errors)
-#         self.assertTrue(form.is_valid())
-#         print(form.errors.get("__all__"))
+        self.assertTrue(form.is_valid())
 
     def test_uncircumcision_health_benefits_smc_none(self):
+        """Assert that the form is not valid if health_benefits_smc is None."""
         self.options.update(health_benefits_smc=None)
         form = UncircumcisedForm(data=self.options)
         self.assertFalse(form.is_valid())
