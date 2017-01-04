@@ -17,8 +17,12 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
 
     form = SubjectConsentForm
 
-    search_fields = ('household_member__household_structure__household__plot__plot_identifier',
-                     'household_member__household_structure__household__household_identifier')
+    fields = ['household_member', 'citizen']
+
+    search_fields = (
+        'household_member__household_structure__household__plot__plot_identifier',
+        'household_member__household_structure__household__household_identifier')
+
     radio_fields = {"is_minor": admin.VERTICAL}
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

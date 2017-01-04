@@ -31,33 +31,21 @@ tz = pytz.timezone(settings.TIME_ZONE)
 class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
 
     def clean(self):
-        cleaned_data = super(ConsentFormMixin, self).clean()
+        cleaned_data = super().clean()
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
         self.validate_household_log_entry()
         self.limit_edit_to_current_survey()
         self.household_info()
-        try:
-            model = self._meta.model.proxy_for_model
-        except AttributeError:
-            model = self._meta.model
-        household_member = cleaned_data.get('household_member')
-        if household_member:
-            subject_consent = model(**cleaned_data)
-            subject_consent.matches_enrollment_checklist(
-                subject_consent, exception_cls=forms.ValidationError)
+        if cleaned_data.get('household_member'):
             try:
-                HouseholdHeadEligibility.objects.get(household_structure=household_member.household_structure)
+                HouseholdHeadEligibility.objects.get(
+                    household_structure=cleaned_data.get('household_member').household_structure)
             except HouseholdHeadEligibility.DoesNotExist:
                 raise forms.ValidationError(
                     'Please fill household head eligibility form before completing subject consent.',
                     code='invalid')
-        try:
-            instance = self._meta.model(id=self.instance.id, **cleaned_data)
-            instance.common_clean()
-        except ConsentValidationError as e:
-            raise forms.ValidationError(str(e))
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):
@@ -175,12 +163,6 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
                         'Complete \'%(model)s\' before consenting head of household',
                         params={'model': HouseholdInfo._meta.verbose_name}, code='invalid')
 
-    def clean_household_member(self):
-        household_member = self.cleaned_data.get("household_member")
-        if not household_member:
-            raise forms.ValidationError("Please select the household member.")
-        return household_member
-
     @property
     def personal_details_changed(self):
         household_member = self.cleaned_data.get("household_member")
@@ -214,33 +196,6 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
                     'Subject\'s identity was previously reported as \'%(existing_identity)s\'. '
                     'You wrote \'%(identity)s\'. Please resolve.',
                     params={'existing_identity': consent.identity, 'identity': identity},
-                    code='invalid')
-
-    def clean_dob_relative_to_consent_datetime(self):
-        """Validates that the dob is within the bounds of MIN and MAX set on the model."""
-        dob = self.cleaned_data.get('dob')
-        consent_datetime = self.cleaned_data.get('consent_datetime', self.instance.consent_datetime)
-        if not consent_datetime:
-            self._errors["consent_datetime"] = ErrorList([u"This field is required. Please fill consent date and time."])
-            raise ValidationError('Please correct the errors below.')
-
-        consent_date = timezone.localtime(consent_datetime).date()
-        MIN_AGE_OF_CONSENT = self.get_model_attr('MIN_AGE_OF_CONSENT')
-        MAX_AGE_OF_CONSENT = self.get_model_attr('MAX_AGE_OF_CONSENT')
-        identity = self.cleaned_data.get('identity')
-        consents = SubjectConsent.objects.filter(
-            household_member__registered_subject__identity=identity).order_by('-created')
-        if not consents:
-            rdelta = relativedelta(consent_date, dob)
-            if rdelta.years < MIN_AGE_OF_CONSENT:
-                raise ValidationError(
-                    'Subject\'s age is %(age)s. Subject is not eligible for consent.',
-                    params={'age': formatted_age(dob, consent_date)},
-                    code='invalid')
-            if rdelta.years > MAX_AGE_OF_CONSENT:
-                raise ValidationError(
-                    'Subject\'s age is %(age)s. Subject is not eligible for consent.',
-                    params={'age': formatted_age(dob, consent_date)},
                     code='invalid')
 
     def validate_household_log_entry(self):

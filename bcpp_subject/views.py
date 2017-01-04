@@ -19,6 +19,8 @@ from bcpp_subject.models.subject_locator import SubjectLocator
 from member.models.household_member.household_member import HouseholdMember
 from django.core.exceptions import MultipleObjectsReturned
 from edc_consent.site_consents import site_consents
+from edc_constants.constants import MALE
+from member.models.enrollment_checklist import EnrollmentChecklist
 
 app_config = django_apps.get_app_config('bcpp_subject')
 
@@ -86,10 +88,21 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-    def subject_consent_wrapper(self, obj):
-        survey = obj.household_member.household_structure.survey
+    def survey_wrapper(self, obj):
+        try:
+            survey = obj.household_member.household_structure.survey
+        except AttributeError:
+            survey = obj.household_structure.survey
         _, obj.survey_year, obj.survey_name, obj.community_name = survey.split('.')
         obj.community_name = ' '.join(obj.community_name.split('_'))
+        return obj
+
+    def pk_wrapper(self, obj):
+        obj.str_pk = str(obj.id)
+        return obj
+
+    def subject_consent_wrapper(self, obj):
+        obj = self.survey_wrapper(obj)
         obj.consent_object = site_consents.get_consent(
             report_datetime=obj.consent_datetime,
             consent_model=obj._meta.label_lower,
@@ -98,7 +111,13 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        household_member = HouseholdMember.objects.get(subject_identifier=context.get('subject_identifier'))
+        try:
+            household_member = HouseholdMember.objects.get(
+                subject_identifier=context.get('subject_identifier'))
+        except HouseholdMember.DoesNotExist:
+            household_member = HouseholdMember.objects.get(
+                pk=context.get('member'))
+        household_member = self.pk_wrapper(self.survey_wrapper(household_member))
         subject_consents = SubjectConsent.objects.filter(household_member=household_member).order_by('version')
         last_subject_consent = subject_consents.last()
         current_subject_consent = SubjectConsent.consent.consent_for_period(
@@ -117,8 +136,11 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             subject_locator = None
         context.update(
             navbar_selected='bcpp_subject',
+            MALE=MALE,
             visit_url=SubjectVisit().get_absolute_url(),
             member=household_member,
+            household_identifier=household_member.household_structure.household.household_identifier,
+            survey=household_member.household_structure.survey,
             current_subject_consent=current_subject_consent or SubjectConsent(),
             last_subject_consent=last_subject_consent,
             subject_consents=[self.subject_consent_wrapper(obj) for obj in subject_consents],
