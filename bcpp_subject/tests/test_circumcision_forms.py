@@ -6,6 +6,7 @@ from model_mommy import mommy
 from edc_constants.constants import YES
 
 from ..forms import CircumcisedForm, UncircumcisedForm
+
 from .test_mixins import SubjectMixin
 
 

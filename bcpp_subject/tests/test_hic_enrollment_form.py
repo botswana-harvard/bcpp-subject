@@ -27,7 +27,7 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
             report_datetime=get_utcnow(),
         )
         mommy.make_recipe(
-            'bcpp_lab.subjectrequisition', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
+            'bcpp_subject.subjectrequisition', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
             panel_name='Microtube',
         )
         mommy.make_recipe(

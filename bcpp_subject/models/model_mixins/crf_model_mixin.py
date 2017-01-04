@@ -10,6 +10,7 @@ from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModel
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin
 
 from ..subject_visit import SubjectVisit
+from django.db.models.deletion import PROTECT
 
 
 class CrfModelManager(VisitTrackingCrfModelManager):
@@ -31,7 +32,39 @@ class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
 
     ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
-    subject_visit = models.OneToOneField(SubjectVisit)
+    subject_visit = models.OneToOneField(SubjectVisit, on_delete=PROTECT)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Report Date",
+        validators=[
+            datetime_not_future, ],
+        default=get_utcnow,
+        help_text=('If reporting today, use today\'s date/time, otherwise use '
+                   'the date/time this information was reported.'))
+
+    objects = CrfModelManager()
+
+    history = HistoricalRecords()
+
+    def natural_key(self):
+        return self.subject_visit.natural_key()
+    natural_key.dependencies = ['bcpp_subject.subjectvisit']
+
+    class Meta(VisitTrackingCrfModelMixin.Meta):
+        consent_model = 'bcpp_subject.subjectconsent'
+        abstract = True
+
+
+class CrfModelMixinNonUniqueVisit(
+        VisitTrackingCrfModelMixin, OffstudyMixin,
+        RequiresConsentMixin, PreviousVisitModelMixin,
+        UpdatesCrfMetadataModelMixin, UrlMixin, BaseUuidModel):
+
+    """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
+
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
+
+    subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date",

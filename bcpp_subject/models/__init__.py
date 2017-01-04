@@ -47,6 +47,7 @@ from .subject_consent import SubjectConsent
 from .subject_locator import SubjectLocator
 from .subject_offstudy import SubjectOffstudy
 from .subject_referral import SubjectReferral
+from .subject_requisition import SubjectRequisition
 from .subject_visit import SubjectVisit
 from .substance_use import SubstanceUse
 from .tb_symptoms import TbSymptoms
