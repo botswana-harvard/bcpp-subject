@@ -48,7 +48,6 @@ class DateProvider(BaseProvider):
     def yesterday(self):
         return (get_utcnow() - relativedelta(days=1)).date()
 
-
 fake = Faker()
 fake.add_provider(EdcBaseProvider)
 fake.add_provider(DateProvider)
@@ -137,12 +136,12 @@ correctconsent = Recipe(
 )
 
 religion = Recipe(Religion, name='anglican', short_name='anglican')
-ethics = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
+ethnicgroups = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
 livewith = Recipe(LiveWith, name='Partner or spouse', short_name='Partner or spouse')
 demographics = Recipe(
     Demographics,
     religion=related(religion),
-    ethnic=related(ethics),
+    ethnic=related(ethnicgroups),
     marital_status='Single/never married',
     num_wives=3,
     husband_wives=3,

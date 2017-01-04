@@ -76,7 +76,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             **options)
         return subject_consent
 
-    def add_subject_visits(self, *visit_codes, subject_identifier):
+    def add_subject_visits(self, visit_codes, subject_identifier):
         return self.add_visits(
             *visit_codes,
             model_label=self.bcpp_subject_model_label,
@@ -103,7 +103,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
 
 class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
 
-    def complete_required_subject_crfs(self, *visit_codes, subject_identifier):
+    def complete_required_subject_crfs(self, visit_codes, subject_identifier):
         """Complete all required CRFs for a visit(s) using mommy defaults."""
         complete_required_crfs = {}
         for visit_code in visit_codes:

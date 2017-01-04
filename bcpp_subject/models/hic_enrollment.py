@@ -174,7 +174,7 @@ class HicEnrollment (CrfModelMixin):
         exception_cls = exception_cls or ValidationError
         SubjectLocator = django_apps.get_model('bcpp_subject', 'SubjectLocator')
         subject_locator = SubjectLocator.objects.filter(
-            registered_subject=self.subject_visit.appointment.registered_subject)
+            subject_identifier=self.subject_visit.subject_identifier)
         # At least some information to contact the person should be available
         if subject_locator.exists():
             if (subject_locator[0].subject_cell or
