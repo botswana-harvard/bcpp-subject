@@ -7,9 +7,6 @@ from ..forms import SexualBehaviourForm
 from .test_mixins import SubjectMixin
 
 from edc_constants.constants import YES, NO
-from MySQLdb.constants.FLAG import NOT_NULL
-from IPython.core.formatters import PDFFormatter
-from django.forms.forms import Form
 
 
 class TestSexualBehaviourForm(SubjectMixin, TestCase):
