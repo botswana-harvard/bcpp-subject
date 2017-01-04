@@ -1,4 +1,3 @@
-from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -11,6 +10,7 @@ from ..choices import HIV_RESULT, WHY_NO_HIV_TESTING_CHOICE
 
 from .hic_enrollment import HicEnrollment
 from .model_mixins import CrfModelMixin
+from .subject_requisition import SubjectRequisition
 
 
 class HivResult(CrfModelMixin):
@@ -71,7 +71,6 @@ class HivResult(CrfModelMixin):
 
     def microtube_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        SubjectRequisition = django_apps.get_model('bcpp_lab', 'SubjectRequisition')
         if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel_name='Microtube').exists():
             raise exception_cls('Today\'s Hiv Result cannot be saved before a Microtube Requisition.')
 

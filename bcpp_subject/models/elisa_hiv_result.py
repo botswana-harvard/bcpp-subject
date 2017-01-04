@@ -1,4 +1,3 @@
-from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -8,6 +7,7 @@ from edc_constants.choices import POS_NEG
 
 from .hic_enrollment import HicEnrollment
 from .model_mixins import CrfModelMixin
+from .subject_requisition import SubjectRequisition
 
 
 class ElisaHivResult (CrfModelMixin):
@@ -41,7 +41,6 @@ class ElisaHivResult (CrfModelMixin):
 
     def elisa_requisition_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        SubjectRequisition = django_apps.get_model('bcpp_lab', 'SubjectRequisition')
         if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='ELISA').exists():
             raise exception_cls('ELISA Result cannot be saved before an ELISA Requisition is requested.')
 

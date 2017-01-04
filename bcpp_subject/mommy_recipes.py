@@ -20,7 +20,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
                      SubstanceUse, TbSymptoms, ThirdPartner, Tubercolosis, Uncircumcised,
-                     ViralLoadResult, SexualBehaviour, AccessToCare)
+                     ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition)
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
                                              StiIllnesses)
@@ -571,6 +571,11 @@ sexualbehaviour = Recipe(
 subjectreferral = Recipe(
     SubjectReferral,
     subject_referred=YES)
+
+subjectrequisition = Recipe(
+    SubjectRequisition,
+    report_datetime=get_utcnow,
+)
 
 subjectvisit = Recipe(
     SubjectVisit,

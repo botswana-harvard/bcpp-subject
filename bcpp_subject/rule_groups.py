@@ -73,7 +73,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Microtube'])
 
     vl_for_pos = RequisitionRule(
@@ -81,7 +81,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_vl,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Viral Load'], )
 
     rbd_for_pos = RequisitionRule(
@@ -89,7 +89,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_rbd,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw'], )
 
     class Meta:
@@ -377,7 +377,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_rbd,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw'], )
 
     vl_for_pos = RequisitionRule(
@@ -385,7 +385,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_vl,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Viral Load'], )
 
     """Ensures a Microtube is not required for POS."""
@@ -394,7 +394,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Microtube'], )
 
     pima_for_art_naive = CrfRule(
@@ -424,7 +424,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=func_hiv_indeterminate_today,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['ELISA', ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
@@ -434,7 +434,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or'),),
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_model=[('bcpp_subject', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
 
     serve_sti_form = CrfRule(
