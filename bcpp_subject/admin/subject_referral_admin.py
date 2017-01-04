@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from django.contrib import admin
 
 from ..admin_site import bcpp_subject_admin

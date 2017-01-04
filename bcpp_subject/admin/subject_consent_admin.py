@@ -1,6 +1,9 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
 
+from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+
+from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin
 from edc_consent.modeladmin_mixins import ModelAdminConsentMixin
 
 from ..admin_site import bcpp_subject_admin
@@ -9,7 +12,8 @@ from ..models import SubjectConsent
 
 
 @admin.register(SubjectConsent, site=bcpp_subject_admin)
-class SubjectConsentAdmin(ModelAdminConsentMixin, admin.ModelAdmin):
+class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
+                          ModelAdminInstitutionMixin, admin.ModelAdmin):
 
     form = SubjectConsentForm
 

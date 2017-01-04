@@ -2,12 +2,11 @@ from django.contrib import admin
 
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
-from bcpp_lab.models import SubjectRequisition
 from member.models import HouseholdMember
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectVisitForm
-from ..models import SubjectVisit
+from ..models import SubjectVisit, SubjectRequisition
 
 
 @admin.register(SubjectVisit, site=bcpp_subject_admin)

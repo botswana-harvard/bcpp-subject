@@ -4,7 +4,8 @@ from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_admin_exclude.admin import AdminExcludeFieldsMixin
 from edc_base.modeladmin_mixins import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
-    ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin)
+    ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
+    ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin)
 from edc_visit_tracking.modeladmin_mixins import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
 
 from ..constants import BASELINE, ANNUAL
@@ -13,7 +14,7 @@ from ..models import SubjectVisit
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
                       ModelAdminFormAutoNumberMixin, ModelAdminRevisionMixin, ModelAdminAuditFieldsMixin,
-                      ModelAdminReadOnlyMixin, admin.ModelAdmin):
+                      ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin, admin.ModelAdmin):
 
     list_per_page = 10
     date_hierarchy = 'modified'
