@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django_revision.apps.AppConfig',
     'edc_base.apps.AppConfig',
     'edc_consent.apps.AppConfig',
+    'edc_lab.apps.AppConfig',
     'edc_sync.apps.AppConfig',
     'edc_subset_manager.apps.AppConfig',
     'edc_registration.apps.AppConfig',
@@ -46,16 +47,13 @@ INSTALLED_APPS = [
     'bcpp.apps.EdcBaseTestAppConfig',
     'bcpp.apps.EdcTimepointAppConfig',
     'bcpp.apps.EdcAppointmentAppConfig',
+    'bcpp.apps.EdcVisitTrackingAppConfig',
     'household.apps.AppConfig',
     'member.apps.AppConfig',
     'plot.apps.AppConfig',
     'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
-    'bcpp_subject.apps.EdcVisitTrackingAppConfig',
 ]
-
-# if 'test' in sys.argv:
-#     INSTALLED_APPS = INSTALLED_APPS = ['example_survey.apps.AppConfig']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

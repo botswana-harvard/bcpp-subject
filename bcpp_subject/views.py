@@ -18,6 +18,7 @@ from bcpp_subject.models.subject_offstudy import SubjectOffstudy
 from bcpp_subject.models.subject_locator import SubjectLocator
 from member.models.household_member.household_member import HouseholdMember
 from django.core.exceptions import MultipleObjectsReturned
+from edc_consent.site_consents import site_consents
 
 app_config = django_apps.get_app_config('bcpp_subject')
 
@@ -89,14 +90,21 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
         survey = obj.household_member.household_structure.survey
         _, obj.survey_year, obj.survey_name, obj.community_name = survey.split('.')
         obj.community_name = ' '.join(obj.community_name.split('_'))
+        obj.consent_object = site_consents.get_consent(
+            report_datetime=obj.consent_datetime,
+            consent_model=obj._meta.label_lower,
+            version=obj.version)
         return obj
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         household_member = HouseholdMember.objects.get(subject_identifier=context.get('subject_identifier'))
-        subject_consents = SubjectConsent.objects.filter(household_member=household_member)
-        subject_consent = SubjectConsent.consent.consent_for_period(
+        subject_consents = SubjectConsent.objects.filter(household_member=household_member).order_by('version')
+        last_subject_consent = subject_consents.last()
+        current_subject_consent = SubjectConsent.consent.consent_for_period(
             household_member.subject_identifier, report_datetime=get_utcnow())
+        if current_subject_consent:
+            current_subject_consent = self.subject_consent_wrapper(current_subject_consent)
         try:
             subject_offstudy = SubjectOffstudy.objects.get(
                 subject_identifier=household_member.subject_identifier)
@@ -111,8 +119,9 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             navbar_selected='bcpp_subject',
             visit_url=SubjectVisit().get_absolute_url(),
             member=household_member,
-            subject_consent=self.subject_consent_wrapper(subject_consent),
-            subject_consents=subject_consents,
+            current_subject_consent=current_subject_consent or SubjectConsent(),
+            last_subject_consent=last_subject_consent,
+            subject_consents=[self.subject_consent_wrapper(obj) for obj in subject_consents],
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
             enrollment_objects=self.enrollment_objects,
@@ -124,7 +133,7 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
     def enrollment_objects(self):
         """ """
         enrollment_objects = []
-        enrollments_models = ['bcpp_subject.subjectconsent']
+        enrollments_models = []
         for model in enrollments_models:
             model = django_apps.get_model(*model.split('.'))
             try:
