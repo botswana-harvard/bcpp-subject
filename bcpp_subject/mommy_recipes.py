@@ -48,7 +48,6 @@ class DateProvider(BaseProvider):
     def yesterday(self):
         return (get_utcnow() - relativedelta(days=1)).date()
 
-
 fake = Faker()
 fake.add_provider(EdcBaseProvider)
 fake.add_provider(DateProvider)

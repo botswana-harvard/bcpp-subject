@@ -4,9 +4,10 @@ from django.core.management.color import color_style
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_schedule.visit_schedule import VisitSchedule
 from edc_visit_schedule.schedule import Schedule
-from edc_visit_schedule.visit import Crf
+from edc_visit_schedule.visit import Crf, Requisition
 from edc_map.site_mappers import site_mappers
 from bcpp.communities import is_intervention
+from bcpp_lab.lab_profiles import  microtube_panel
 
 style = color_style()
 
@@ -97,7 +98,10 @@ crfs_annual = (
 
 crfs_ess = ()
 
-requisitions = ()
+requisitions = (
+    Requisition(show_order=10, model='bcpp_lab.SubjectRequisition', panel=microtube_panel),
+    #  Requisition(show_order=20, model='bcpp_lab.SubjectRequisition', panel=viral_load_panel)
+)
 
 visit_schedule = VisitSchedule(
     name='visit_schedule',
