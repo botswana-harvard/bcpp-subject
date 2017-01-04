@@ -3,9 +3,6 @@ from model_mommy import mommy
 
 from ..forms import DemographicsForm
 from .test_mixins import SubjectMixin
-from member.constants import HEAD_OF_HOUSEHOLD
-from edc_appointment.models import Appointment
-from member.models.household_member.household_member import HouseholdMember
 
 
 class TestSubjectConsentForm(SubjectMixin, TestCase):
