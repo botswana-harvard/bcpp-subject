@@ -22,7 +22,6 @@ class HicEnrollmentForm (SubjectModelFormMixin):
             instance.is_intended_residency(exception_cls=forms.ValidationError)
             instance.get_hiv_status_today(exception_cls=forms.ValidationError)
             # instance.get_dob_consent_datetime(exception_cls=forms.ValidationError) TODO confirm whether is NOT USED.
-            instance.is_household_residency(exception_cls=forms.ValidationError)
             instance.is_citizen_or_spouse(exception_cls=forms.ValidationError)
             instance.is_locator_information(exception_cls=forms.ValidationError)
         return super(HicEnrollmentForm, self).clean()

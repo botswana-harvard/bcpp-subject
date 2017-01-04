@@ -144,13 +144,6 @@ class HicEnrollment (CrfModelMixin):
         else:
             raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
 
-    def is_household_residency(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        if self.subject_visit.household_member:
-            return True
-        else:
-            raise exception_cls('This form has to be attached by to a household member. Currently it is not.')
-
     def is_citizen_or_spouse(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         try:
