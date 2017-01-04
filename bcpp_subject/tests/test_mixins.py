@@ -100,6 +100,22 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
+    def make_subject_visit_for_a_male_subject(self, visit_code, report_datetime=None):
+        """Returns a subject visit of a consented male member."""
+        household_structure = self.make_enumerated_household_with_male_member()
+        household_member = HouseholdMember.objects.get(household_structure=household_structure)
+        self.add_enrollment_checklist(household_member)
+        subject_consent = self.make_subject_consent(household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
+        appointment = Appointment.objects.get(
+            subject_identifier=household_member.subject_identifier,
+            visit_code=visit_code)
+        return mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=household_member,
+            appointment=appointment,
+            report_datetime=report_datetime or self.get_utcnow())
+
 
 class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
 
