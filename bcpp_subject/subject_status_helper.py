@@ -9,8 +9,7 @@ from edc_constants.constants import POS, NEG
 from .constants import BASELINE_CODES
 from .models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
-    HivTestingHistory, HivResultDocumentation,
-    ElisaHivResult)
+    HivTestingHistory, HivResultDocumentation, ElisaHivResult)
 from .utils import convert_to_nullboolean
 
 
@@ -87,10 +86,11 @@ class SubjectStatusHelper(object):
         self.use_baseline_visit = use_baseline_visit
         if visit_instance:
             self.subject_visit = visit_instance
+        SubjectRequisition = django_apps.get_model(*'bcpp_subject.subjectrequisition'.split('.'))
         self.models[self.BASELINE].update({
-            'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
+            'subject_requisition': SubjectRequisition})
         self.models[self.ANNUAL].update({
-            'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
+            'subject_requisition': SubjectRequisition})
 
     def __repr__(self):
         return 'SubjectStatusHelper({0.subject_visit!r})'.format(self)

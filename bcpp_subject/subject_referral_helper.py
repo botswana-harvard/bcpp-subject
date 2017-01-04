@@ -10,7 +10,8 @@ from member.models import EnrollmentChecklist
 from .choices import REFERRAL_CODES
 from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
 from .models import (
-    SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator, HivCareAdherence)
+    SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator,
+    HivCareAdherence)
 from .utils import convert_to_nullboolean
 
 from .subject_status_helper import SubjectStatusHelper
@@ -50,8 +51,9 @@ class SubjectReferralHelper(object):
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
         })
-        self.models[BASELINE].update({'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
-        self.models[ANNUAL].update({'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
+        SubjectRequisition = django_apps.get_model(*'bcpp_subject.subjectrequisition'.split('.'))
+        self.models[BASELINE].update({'subject_requisition': SubjectRequisition})
+        self.models[ANNUAL].update({'subject_requisition': SubjectRequisition})
         self.previous_subject_referrals = []
         if subject_referral:
             self.subject_referral = subject_referral
