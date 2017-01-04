@@ -28,7 +28,6 @@ class TestHivTestReviewForm(SubjectMixin, TestCase):
 
     def test_form_is_valid(self):
         form = HivTestReviewForm(data=self.options)
-        print (form.errors)
         self.assertTrue(form.is_valid())
 
     def test_date_tested_hiv(self):
