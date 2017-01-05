@@ -95,7 +95,6 @@ class HicEnrollment (CrfModelMixin):
                 raise EnrollmentError('Invalid age. Got {}'.format(age.years))
             self.permanent_resident = self.is_permanent_resident()
             self.intend_residency = self.is_intended_residency()
-#             self.household_residency = self.is_household_residency()
             self.locator_information = self.is_locator_information()
             self.citizen_or_spouse = self.is_citizen_or_spouse()
             self.hiv_status_today = self.get_hiv_status_today()
