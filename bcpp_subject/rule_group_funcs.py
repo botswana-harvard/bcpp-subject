@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE
+from edc_constants.constants import POS, NEG, IND, NO, MALE, YES
 from edc_appointment.models import Appointment
 
 from .constants import BASELINE_CODES
@@ -204,13 +204,13 @@ def func_hiv_positive_today_ahs(visit_instance, *args):
 
 def func_hic_enrolled(visit_instance, *args):
     try:
-        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='Yes')
+        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission=YES)
         return True
     except HicEnrollment.DoesNotExist:
         past_visit = func_previous_visit_instance(visit_instance)
         while past_visit:
             try:
-                HicEnrollment.objects.get(subject_visit=past_visit, hic_permission='Yes')
+                HicEnrollment.objects.get(subject_visit=past_visit, hic_permission=YES)
                 return True
             except HicEnrollment.DoesNotExist:
                 pass
@@ -327,7 +327,7 @@ def evaluate_ever_had_sex_for_female(visit_instance, *args):
     if visit_instance.appointment.registered_subject.gender.lower() == MALE:
         return False
     # if we come here then gender must be FEMALE
-    elif sexual_behaviour.ever_sex.lower() == 'yes':
+    elif sexual_behaviour.ever_sex.lower() == YES:
         return True
     return False
 
