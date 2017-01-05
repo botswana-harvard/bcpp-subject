@@ -24,9 +24,9 @@ class TestStiForm(SubjectMixin, TestCase):
             'sti_dx_other': None,
             'wasting_date': date(2016, 11, 10),
             'diarrhoea_date': date(2016, 7, 7),
-            'yeast_infection_date': date(2016, 7, 7),
+            'yeast_infection_date': date(2016, 9, 7),
             'pneumonia_date': date(2016, 12, 7),
-            'pcp_date': timezone.now(),
+            'pcp_date': date(2016, 12, 12),
             'herpes_date': datetime.today(),
             'comments': 'diagnosed',
             'subject_visit': self.subject_visit.id,
@@ -34,20 +34,53 @@ class TestStiForm(SubjectMixin, TestCase):
         }
 
     def test_valid_form(self):
-        """Test to verify whether form will submit"""
         form = StiForm(data=self.options)
         self.assertTrue(form.is_valid())
 
     def test_if_sti_dx_detected_wasting(self):
         """Testing if severe weight loss (wasting) - more than 10% of body weight"""
-        self.still_illnesses.name = 'HIV dementia'
-        self.options.update(sti_dx=[str(self.still_illnesses.id)])
+        self.still_illnesses.name = 'Severe weight loss (wasting) - more than 10% of body weight'
+        self.still_illnesses.save()
+        self.options.update(wasting_date=None)
         form = StiForm(data=self.options)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
 
-    def test_if_sti_dx_not_detected_wasting(self):
-        """Testing if severe weight loss (wasting) -  not more than 10% of body weight"""
-        self.still_illnesses.name = 'pcc'
-        self.options.update(sti_dx=[str(self.still_illnesses.id)])
+    def test_if_sti_dx_detected_diarrhoea(self):
+        """Testing to see if diarrhoea was detected during diagnosis"""
+        self.still_illnesses.name = 'Unexplained diarrhoea for one month'
+        self.still_illnesses.save()
+        self.options.update(diarrhoea_date=None)
         form = StiForm(data=self.options)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_yeast_infection(self):
+        """Testing to see if yeast was detected during diagnosis"""
+        self.still_illnesses.name = 'Yeast infection of mouth or oesophagus'
+        self.still_illnesses.save()
+        self.options.update(yeast_infection_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_pneumonia_infection(self):
+        """Testing to see if severe pneumonia or meningitis or sepsis during diagnosis"""
+        self.still_illnesses.name = 'Severe pneumonia or meningitis or sepsis'
+        self.still_illnesses.save()
+        self.options.update(pneumonia_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_pcp_infection(self):
+        """Testing to see if PCP during diagnosis"""
+        self.still_illnesses.name = 'PCP (Pneumocystis pneumonia)'
+        self.still_illnesses.save()
+        self.options.update(pcp_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_herpes_infection(self):
+        """Testing to see if Herpes infection for more than one month detected during diagnosis"""
+        self.still_illnesses.name = 'Herpes infection for more than one month'
+        self.still_illnesses.save()
+        self.options.update(herpes_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
