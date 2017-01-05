@@ -1,7 +1,6 @@
 from model_mommy import mommy
 
 from django.test import TestCase
-from edc_base.utils import get_utcnow
 
 from edc_constants.constants import YES, NO
 
@@ -18,10 +17,10 @@ class TestEducationForm(SubjectMixin, TestCase):
         self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
         mommy.make_recipe(
             'bcpp_subject.subjectlocator', subject_identifier=self.subject_visit.subject_identifier,
-            report_datetime=get_utcnow(),
+            report_datetime=self.get_utcnow(),
         )
         self.options = {
-            'report_datetime': get_utcnow(),
+            'report_datetime': self.get_utcnow(),
             'subject_visit': self.subject_visit.id,
             'education': 'Senior Secondary',
             'working': YES,

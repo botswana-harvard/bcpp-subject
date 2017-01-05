@@ -99,12 +99,10 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
             questions asked"""
         self.options.update(ever_sex=NO)
         form = SexualBehaviourForm(data=self.options)
-        print (form.errors)
         self.assertFalse(form.is_valid())
 
         self.options.update(ever_sex=NO, lifetime_sex_partners=0,
                             last_year_partners=0, more_sex=None,
                             first_sex=None, condom=None, alcohol_sex=None)
         form = SexualBehaviourForm(data=self.options)
-        print (form.errors)
         self.assertTrue(form.is_valid())
