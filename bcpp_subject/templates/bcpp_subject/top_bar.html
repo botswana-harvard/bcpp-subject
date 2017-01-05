@@ -5,9 +5,16 @@
           <div class="panel-heading clearfix"><i class="fa fa-user-circle-o fa-lg"></i> {{ last_subject_consent.subject_identifier|default:"New Subject" }}
           <span class="pull-right">
             {% for obj in subject_consents %}
-              <a role="button" class="btn btn-sm {% if obj.id %}btn-default{% else %}btn-warning{% endif %}" href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next={{ subject_dashboard_url_name }},subject_identifier&subject_identifier={{ subject_identifier }}">{%if obj.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ obj.verbose_name }} v{{ obj.version }}</a>
+              <a role="button" class="btn btn-sm {% if obj.id %}btn-default{% else %}btn-warning{% endif %}" 
+                 href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next={{ subject_dashboard_url_name }},subject_identifier&subject_identifier={{ subject_identifier }}">
+                   {%if obj.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ obj.verbose_name }} v{{ obj.version }}</a>
             {% endfor %}
-            <a role="button" class="btn btn-sm {% if current_subject_consent.id %}btn-default{% else %}btn-warning{% endif %}" href="{% if current_subject_consent.get_absolute_url %}{{ current_subject_consent.get_absolute_url }}{% else %}{% url current_subject_consent.admin_url_name %}{% endif %}?next={{ subject_dashboard_url_name }},subject_identifier&subject_identifier={{ subject_identifier }}&first_name={{ member.first_name }}&gender={{ member.gender }}&initials={{ member.initials }}&household_member={{ member.id }}">{%if current_subject_consent.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ current_subject_consent.verbose_name }} {% if current_subject_consent.id %}v{{ current_subject_consent.version }}{% endif %}</a>
+            <!-- begin current consent -->
+            <a role="button" class="btn btn-sm {% if current_subject_consent.id %}btn-default{% else %}btn-warning{% endif %}" 
+               href="{% if current_subject_consent.get_absolute_url %}{{ current_subject_consent.get_absolute_url }}{% else %}{% url current_subject_consent.admin_url_name %}{% endif %}?next=bcpp-subject:dashboard_url,subject_identifier&subject_identifier={{ subject_identifier }}&first_name={{ member.first_name }}&gender={{ member.gender }}&initials={{ member.initials }}&household_member={{ member.id }}">
+                 {%if current_subject_consent.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} 
+                   {{ current_subject_consent.verbose_name }} v{{ current_subject_consent.version }}</a>
+            <!-- end current consent -->
             {% for obj in enrollment_objects %}
               <a role="button" class="btn btn-sm {% if obj.id %}btn-success{% else %}btn-default{% endif %}" href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next={{ subject_dashboard_url_name }},subject_identifier&subject_identifier={{ subject_identifier }}">{%if obj.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ obj.verbose_name }}</a>
             {% endfor %}

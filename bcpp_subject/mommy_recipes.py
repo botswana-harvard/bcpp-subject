@@ -23,7 +23,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition)
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
-                                             StiIllnesses)
+                                             StiIllnesses, PartnerResidency)
 
 # from .models import Respondent, MostRecentPartner
 
@@ -47,6 +47,7 @@ class DateProvider(BaseProvider):
 
     def yesterday(self):
         return (get_utcnow() - relativedelta(days=1)).date()
+
 
 fake = Faker()
 fake.add_provider(EdcBaseProvider)
@@ -138,6 +139,7 @@ correctconsent = Recipe(
 religion = Recipe(Religion, name='anglican', short_name='anglican')
 ethnicgroups = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
 livewith = Recipe(LiveWith, name='Partner or spouse', short_name='Partner or spouse')
+partnerresidency = Recipe(PartnerResidency, name='In this community', short_name='In this community')
 demographics = Recipe(
     Demographics,
     religion=related(religion),
