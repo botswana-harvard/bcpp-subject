@@ -1,9 +1,8 @@
 from django.test import TestCase
 
-from .test_mixins import SubjectMixin
 from edc_constants.constants import YES, NO
 
-
+from .test_mixins import SubjectMixin
 from ..forms import PimaForm
 
 
@@ -26,7 +25,7 @@ class TestPimaForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_pima_today(self):
-        """Assert if pima_day eq YES, then no need to provide other reasons. otherwise throw validation"""
+        """Assert if pima_day eq YES, then no need to provide other reasons."""
         self.options.update(pima_today=YES, pima_today_other=None)
         form = PimaForm(data=self.options)
         self.assertTrue(form.is_valid())
@@ -38,7 +37,6 @@ class TestPimaForm(SubjectMixin, TestCase):
         self.options.update(pima_today=NO, pima_today_other="Failed Blood Collection", pima_id=None,
                             cd4_value=None)
         form = PimaForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_pima_id_not_required(self):
