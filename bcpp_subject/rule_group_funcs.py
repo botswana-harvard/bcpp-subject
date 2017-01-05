@@ -1,25 +1,26 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE, YES
+from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_appointment.models import Appointment
+from edc_registration.models import RegisteredSubject
 
 from .constants import BASELINE_CODES
 
 from .models import (
     SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory, HivResult, SexualBehaviour)
 from .subject_status_helper import SubjectStatusHelper
+from bcpp_subject.constants import DECLINED
 
 
 def func_previous_visit_instance(visit_instance, *args):
     """ Returns the next earlier subject_visit of the participant.
         e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
         If no previous visit, then the current visit is returned."""
-    registered_subject = visit_instance.appointment.registered_subject
-    timepoints = range(0, visit_instance.appointment.visit_definition.time_point)
+    timepoints = range(0, visit_instance.appointment.timepoint)
     if len(timepoints) > 0:
         timepoints.reverse()
     for point in timepoints:
         try:
-            previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
-                                                           visit_definition__time_point=point)
+            previous_appointment = Appointment.objects.get(
+                subject_identifier=visit_instance.subject_identifier, timepoint=point)
             return SubjectVisit.objects.get(appointment=previous_appointment)
         except Appointment.DoesNotExist:
             pass
@@ -31,7 +32,7 @@ def func_previous_visit_instance(visit_instance, *args):
 
 
 def func_is_baseline(visit_instance, *args):
-    if visit_instance and visit_instance.appointment.visit_definition.code in BASELINE_CODES:
+    if visit_instance and visit_instance.visit_code in BASELINE_CODES:
         return True
     return False
 
@@ -41,13 +42,13 @@ def func_declined_at_bhs(visit_instance, *args):
     past_visit = func_previous_visit_instance(visit_instance)
     subject_status_helper = SubjectStatusHelper(past_visit, use_baseline_visit=True)
     if subject_status_helper.hiv_result:
-        if subject_status_helper.hiv_result == 'Declined':
+        if subject_status_helper.hiv_result == DECLINED:
             return True
     return False
 
 
 def func_is_annual(visit_instance, *args):
-    if visit_instance.appointment.visit_definition.code not in BASELINE_CODES:
+    if visit_instance.code not in BASELINE_CODES:
         return True
     return False
 
@@ -303,7 +304,8 @@ def func_no_verbal_hiv_result(visit_instance, *args):
 
 def is_gender_female(visit_instance, *args):
     """Returns True if gender from RegisteredSubject is Female."""
-    return visit_instance.appointment.registered_subject.gender.lower() == 'f'
+    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender.lower() == FEMALE
 
 
 def circumsised_in_past(visit_instance, *args):
@@ -318,13 +320,15 @@ def func_should_not_show_circumsition(visit_instance, *args):
 
 def is_gender_male(visit_instance, *args):
     """Returns True if gender from RegisteredSubject is Male."""
-    return visit_instance.appointment.registered_subject.gender.lower() == MALE
+    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender.lower() == MALE
 
 
 def evaluate_ever_had_sex_for_female(visit_instance, *args):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
-    if visit_instance.appointment.registered_subject.gender.lower() == MALE:
+    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
+    if registered_subject.gender.lower() == MALE:
         return False
     # if we come here then gender must be FEMALE
     elif sexual_behaviour.ever_sex.lower() == YES:
