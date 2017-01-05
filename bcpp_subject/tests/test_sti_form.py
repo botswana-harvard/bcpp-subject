@@ -1,9 +1,4 @@
-from datetime import datetime, date
-
 from django.test import TestCase
-from django.utils import timezone
-
-from edc_base.utils import get_utcnow
 
 from ..forms import StiForm
 
@@ -22,32 +17,65 @@ class TestStiForm(SubjectMixin, TestCase):
         self.options = {
             'sti_dx': [str(self.still_illnesses.id)],
             'sti_dx_other': None,
-            'wasting_date': date(2016, 11, 10),
-            'diarrhoea_date': date(2016, 7, 7),
-            'yeast_infection_date': date(2016, 7, 7),
-            'pneumonia_date': date(2016, 12, 7),
-            'pcp_date': timezone.now(),
-            'herpes_date': datetime.today(),
+            'wasting_date': self.get_utcnow().date(),
+            'diarrhoea_date': self.get_utcnow().date(),
+            'yeast_infection_date': self.get_utcnow().date(),
+            'pneumonia_date': self.get_utcnow().date(),
+            'pcp_date': self.get_utcnow().date(),
+            'herpes_date': self.get_utcnow().date(),
             'comments': 'diagnosed',
             'subject_visit': self.subject_visit.id,
-            'report_datetime': get_utcnow(),
+            'report_datetime': self.get_utcnow(),
         }
 
     def test_valid_form(self):
-        """Test to verify whether form will submit"""
         form = StiForm(data=self.options)
         self.assertTrue(form.is_valid())
 
     def test_if_sti_dx_detected_wasting(self):
-        """Testing if severe weight loss (wasting) - more than 10% of body weight"""
-        self.still_illnesses.name = 'HIV dementia'
-        self.options.update(sti_dx=[str(self.still_illnesses.id)])
+        """Asserts that severe weight loss (wasting) - more than 10% of body weight"""
+        self.still_illnesses.name = 'Severe weight loss (wasting) - more than 10% of body weight'
+        self.still_illnesses.save()
+        self.options.update(wasting_date=None)
         form = StiForm(data=self.options)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
 
-    def test_if_sti_dx_not_detected_wasting(self):
-        """Testing if severe weight loss (wasting) -  not more than 10% of body weight"""
-        self.still_illnesses.name = 'pcc'
-        self.options.update(sti_dx=[str(self.still_illnesses.id)])
+    def test_if_sti_dx_detected_diarrhoea(self):
+        """Asserts that diarrhoea was detected during diagnosis"""
+        self.still_illnesses.name = 'Unexplained diarrhoea for one month'
+        self.still_illnesses.save()
+        self.options.update(diarrhoea_date=None)
         form = StiForm(data=self.options)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_yeast_infection(self):
+        """Asserts that yeast was detected during diagnosis"""
+        self.still_illnesses.name = 'Yeast infection of mouth or oesophagus'
+        self.still_illnesses.save()
+        self.options.update(yeast_infection_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_pneumonia_infection(self):
+        """Asserts that severe pneumonia or meningitis or sepsis during diagnosis"""
+        self.still_illnesses.name = 'Severe pneumonia or meningitis or sepsis'
+        self.still_illnesses.save()
+        self.options.update(pneumonia_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_pcp_infection(self):
+        """Assert that PCP during diagnosis"""
+        self.still_illnesses.name = 'PCP (Pneumocystis pneumonia)'
+        self.still_illnesses.save()
+        self.options.update(pcp_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_if_sti_dx_detected_herpes_infection(self):
+        """Asserts that Herpes infection for more than one month detected during diagnosis"""
+        self.still_illnesses.name = 'Herpes infection for more than one month'
+        self.still_illnesses.save()
+        self.options.update(herpes_date=None)
+        form = StiForm(data=self.options)
+        self.assertFalse(form.is_valid())

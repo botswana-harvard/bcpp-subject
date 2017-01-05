@@ -1,7 +1,5 @@
 from django.test import TestCase
 
-from edc_base.utils import get_utcnow
-
 from ..forms import SexualBehaviourForm
 
 from .test_mixins import SubjectMixin
@@ -18,7 +16,7 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
 
         self.options = {
            'subject_visit': self.subject_visit.id,
-           'report_datetime': get_utcnow(),
+           'report_datetime': self.get_utcnow(),
            'ever_sex': YES,
            'lifetime_sex_partners':  3,
            'more_sex': YES,
@@ -31,8 +29,8 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_had_sex_and_lifetime_sex_partners(self):
-        """If participant has ever had sex, CANNOT have none lifetime partners
-            , otherwise throw validation error"""
+        """ Assert participant has never had sex, cannot have none lifetime partners
+            ,otherwise raise validation error. """
         self.options.update(ever_sex=YES, lifetime_sex_partners=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -42,9 +40,9 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_more_sex_last_year_sex_partners(self):
-        """If participant has ever had sex with somebody living outside of the '
-            'community, CANNOT have 0 last year partners, otherwise
-                throw validation error"""
+        """ Assert participant has never had sex with somebody living outside of the '
+            'community, cannot have 0 last year partners, else
+                raise validation error."""
         self.options.update(last_year_partners=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -54,9 +52,9 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_has_last_year_partners_none_more_sex(self):
-        """If participant has had sex with anyone in the past 12months,specify if
+        """ Assert participant has had sex with anyone in the past 12months,specify if
             participant had sex with anyone outside community in the past
-            12months otherwise throw validation error"""
+            12months otherwise throw validation error."""
         self.options.update(more_sex=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -66,9 +64,9 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_had_sex_none_condom(self):
-        """If participant has had sex at some point in their life, specify if
-            participant used a condom the last time he/she had sex,otherwise
-                throw validation error """
+        """ Assert participant has had sex at some point in their life, specify if
+            participant used a Condom the last time he/she had sex,otherwise
+                throw validation error."""
         self.options.update(condom=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -78,9 +76,9 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_had_sex_none_alcohol_sex(self):
-        """If participant has had sex at some point in their life, specify if
+        """ Assert participant has had sex at some point in their life, specify if
             participant drank alcohol before sex last time, otherwise throw
-                validation error"""
+                validation error."""
         self.options.update(alcohol_sex=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -90,14 +88,15 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_compare_last_year_sex_partners_with_lifetime_sex_partners(self):
-        """If Number of partners in the past 12months exceed number of life
-        time partners,throw validation error """
-
+        """ Assert Number of partners in the past 12months exceed number of life
+        time partners,throw validation error. """
         self.options.update(lifetime_sex_partners=4, last_year_partners=9)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_validate_dependent_fields(self):
+        """Assert participant never had sex,no sex related follow-up
+            questions asked"""
         self.options.update(ever_sex=NO)
         form = SexualBehaviourForm(data=self.options)
         print (form.errors)
