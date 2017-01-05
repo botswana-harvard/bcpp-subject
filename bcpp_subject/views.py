@@ -124,6 +124,9 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             household_member.subject_identifier, report_datetime=get_utcnow())
         if current_subject_consent:
             current_subject_consent = self.subject_consent_wrapper(current_subject_consent)
+        else:
+            current_subject_consent = site_consents.get_consent(
+                report_datetime=get_utcnow())
         try:
             subject_offstudy = SubjectOffstudy.objects.get(
                 subject_identifier=household_member.subject_identifier)
@@ -141,7 +144,7 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             member=household_member,
             household_identifier=household_member.household_structure.household.household_identifier,
             survey=household_member.household_structure.survey,
-            current_subject_consent=current_subject_consent or SubjectConsent(),
+            current_subject_consent=current_subject_consent,
             last_subject_consent=last_subject_consent,
             subject_consents=[self.subject_consent_wrapper(obj) for obj in subject_consents],
             subject_offstudy=subject_offstudy,
