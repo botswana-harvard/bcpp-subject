@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+from django.urls.base import reverse
 
 from edc_admin_exclude.admin import AdminExcludeFieldsMixin
 from edc_base.modeladmin_mixins import (
@@ -30,6 +31,11 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
         'Please complete the questions below. Required questions are in bold. '
         'When all required questions are complete click SAVE. Based on your responses, additional questions may be '
         'required or some answers may need to be corrected.')
+
+    def view_on_site(self, obj):
+        member = obj.subject_visit.household_member
+        return reverse(
+            'bcpp-subject:dashboard_url', kwargs=dict(member=member.pk))
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):

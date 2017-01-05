@@ -3,6 +3,7 @@ from django import forms
 from edc_constants.constants import YES
 
 from ..models import Pregnancy, ReproductiveHealth
+
 from .form_mixins import SubjectModelFormMixin
 
 
@@ -13,7 +14,7 @@ class PregnancyForm (SubjectModelFormMixin):
         if pregnancy_status.currently_pregnant == YES and not cleaned_data.get('anc_reg'):
             raise forms.ValidationError('If participant currently pregnant, have they registered for antenatal care?')
         # if currently pregnant when was the last lnmp
-        if cleaned_data.get('current_pregnant') == YES and not cleaned_data.get('lnmp'):
+        if pregnancy_status.currently_pregnant == YES and not cleaned_data.get('lnmp'):
             raise forms.ValidationError('If participant currently pregnant, when was the last known menstrual period?')
         return cleaned_data
 
