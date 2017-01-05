@@ -26,7 +26,7 @@ class TestPimaForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_pima_today(self):
-        """Assert if Pima was done today, then no need to provide other reasons. otherwise throw validation"""
+        """Assert if pima_day eq YES, then no need to provide other reasons. otherwise throw validation"""
         self.options.update(pima_today=YES, pima_today_other=None)
         form = PimaForm(data=self.options)
         self.assertTrue(form.is_valid())
@@ -42,7 +42,7 @@ class TestPimaForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_pima_id_not_required(self):
-        """ Assert Pima Id is not required if no pima today """
+        """ Assert if pima_today eq NO then pimaa_id not required. """
         self.options.update(pima_today=NO, pima_id=None, cd4_value=None)
         form = PimaForm(data=self.options)
         self.assertTrue(form.is_valid())
@@ -52,7 +52,7 @@ class TestPimaForm(SubjectMixin, TestCase):
         self.assertFalse(form.is_valid())
 
     def test_pima_id_required(self):
-        """ Assert if pima today then pima id is required """
+        """ Assert if pima_today eq YES then pima id is required """
         self.options.update(pima_today=YES, pima_id="100232")
         form = PimaForm(data=self.options)
         self.assertTrue(form.is_valid())
