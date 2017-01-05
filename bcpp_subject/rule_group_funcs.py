@@ -1,8 +1,10 @@
 from edc_constants.constants import POS, NEG, IND, NO
+from edc_appointment.models import Appointment
 
 from .constants import BASELINE_CODES
+
 from .models import (
-    SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory, HivResult, Appointment, SexualBehaviour)
+    SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory, HivResult, SexualBehaviour)
 from .subject_status_helper import SubjectStatusHelper
 
 
