@@ -32,70 +32,61 @@ class TestEducationForm(SubjectMixin, TestCase):
         }
 
     def test_form_is_valid(self):
-        """assert hiv_tested form fields are valid"""
         education_form = EducationForm(data=self.options)
         self.assertTrue(education_form.is_valid())
 
     def test_permission_to_contact_at_work(self):
-        """assert subject locator consent to be contacted at work validation"""
+        """Assert participant consented to be contacted at work is working."""
         subject_locator = SubjectLocator.objects.get(
             subject_identifier=self.subject_visit.subject_identifier)
         subject_locator.may_call_work = YES
         subject_locator.save_base(update_fields=['may_call_work'])
+
         self.options.update(working=NO)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
-    def test_retired_without_benefits_invalid(self):
-        """assert retired without benefits is invalid"""
+    def test_retired_without_benefits(self):
         self.options.update(reason_unemployed='retired', monthly_income=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
-    def test_student_without_benefits_invalid(self):
-        """assert student without benefits provided is invalid"""
+    def test_student_without_benefits(self):
         self.options.update(reason_unemployed='student', monthly_income=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_working_with_unemployed_reasons(self):
-        """assert working with unemployed reasons provided is invalid"""
         self.options.update(reason_unemployed='waiting')
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_working_with_no_job_type(self):
-        """assert working with no job_type provided is invalid"""
         self.options.update(job_type=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_working_with_no_job_description(self):
-        """assert working with no job_description is invalid"""
         self.options.update(job_description=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_working_with_no_monthly_income(self):
-        """assert working with no monthly_income provided is invalid"""
         self.options.update(monthly_income=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_not_working_with_job_type(self):
-        """assert not working but job_type provided is invalid"""
         self.options.update(working=NO, job_type=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_not_working_with_job_description(self):
-        """assert not working but job_description  provided is invalid"""
         self.options.update(working=NO, job_description=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
 
     def test_not_working_with_no_reasons_unemployed(self):
-        """assert not working but no reasons_unemployed provided"""
         self.options.update(working=NO, reason_unemployed=None)
         education_form = EducationForm(data=self.options)
         self.assertFalse(education_form.is_valid())
