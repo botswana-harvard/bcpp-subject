@@ -1,9 +1,15 @@
-from edc_rule_groups import site_rule_groups
 from edc_rule_groups.crf_rule import CrfRule
 from edc_rule_groups.decorators import register
 from edc_rule_groups.logic import Logic
 from edc_rule_groups.requisition_rule import RequisitionRule
 from edc_rule_groups.rule_group import RuleGroup
+from edc_rule_groups.predicate import P, PF
+
+from edc_metadata.constants import NOT_REQUIRED, REQUIRED
+from edc_constants.constants import NO, YES, POS, NEG
+
+
+from .labs import microtube_panel, rdb_panel, viral_load_panel
 
 from .rule_group_funcs import (
     evaluate_ever_had_sex_for_female,
@@ -26,76 +32,77 @@ from .models import (
     ResourceUtilization, HivTestingHistory,
     SexualBehaviour, HivCareAdherence, Circumcision,
     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit,
-    RegisteredSubject)
+    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
+
+from .constants import VENOUS, REFUSE
 
 
 @register()
-class RegisteredSubjectRuleGroup(RuleGroup):
+class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(
         logic=Logic(
             predicate=func_should_not_show_circumsition,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['circumcision', 'circumcised', 'uncircumcised'])
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['circumcision', 'circumcised', 'uncircumcised'])
 
     gender_menopause = CrfRule(
         logic=Logic(
             predicate=is_gender_male,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     known_pos_in_y1 = CrfRule(
         logic=Logic(
             predicate=func_known_pos_in_prev_year,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
     pima_art_naive_enrollment_req_ahs = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['pima'])
 
     hiv_linkage_to_care = CrfRule(
         logic=Logic(
             predicate=func_hiv_neg_bhs,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivlinkagetocare'])
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['hivlinkagetocare'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
             predicate=func_show_microtube,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[microtube_panel])
 
     vl_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_vl,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Viral Load'], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[viral_load_panel], )
 
     rbd_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_rbd,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw'], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[rdb_panel], )
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = None
-        source_model = RegisteredSubject
+        #  source_fk = None
+        source_model = 'bcpp_subject.subjectvisit'
 
 
 @register()
@@ -103,21 +110,22 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = CrfRule(
         logic=Logic(
-            predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'Refuse', 'or')),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['outpatientcare'])
+            # TODO find correct for more one predicates
+            predicate=PF('out_patient', lambda x: True if (x == NO or x == REFUSE) else False),
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['td_maternal.outpatientcare'])
 
     hospitalized = CrfRule(
         logic=Logic(
-            predicate=('hospitalized', 'equals', 0),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hospitaladmission'])
+            predicate=P('hospitalized', 'eq', 0),
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['bcpp_subject.hospitaladmission'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = ResourceUtilization
 
 
@@ -126,66 +134,66 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     has_record = CrfRule(
         logic=Logic(
-            predicate=('has_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivtestreview'])
+            predicate=P('has_record', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivtestreview'])
 
     has_tested = CrfRule(
         logic=Logic(
-            predicate=('has_tested', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivtested'])
+            predicate=P('has_tested', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivtested'])
 
     hiv_untested = CrfRule(
         logic=Logic(
             predicate=func_hiv_untested,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivuntested'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivuntested'])
 
     other_record = CrfRule(
         logic=Logic(
-            predicate=('other_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresultdocumentation'])
+            predicate=P('other_record', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models='bcpp_subject.hivresultdocumentation')
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresult'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models='bcpp_subject.hivresult')
 
     verbal_hiv_result_hiv_care_baseline = CrfRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'POS'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
+            predicate=P('verbal_hiv_result', 'eq', POS),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = CrfRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'NEG'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['stigma', 'stigmaopinion'])
+            predicate=P('verbal_hiv_result', 'eq', NEG),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['stigma', 'stigmaopinion'])
 
     other_response = CrfRule(
         logic=Logic(
             predicate=func_no_verbal_hiv_result,
-            consequence='not_required',
-            alternative='none'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+            consequence=NOT_REQUIRED,
+            alternative='do_nothing'),
+        target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     def method_result(self):
         return True
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
 
 
@@ -195,27 +203,27 @@ class ReviewPositiveRuleGroup(RuleGroup):
     recorded_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
 
     recorded_hivresult = CrfRule(
         logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'NEG'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['stigma', 'stigmaopinion'])
+            predicate=P('recorded_hiv_result', 'eq', NEG),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['stigma', 'stigmaopinion'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresult'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.hivresult'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 
 
@@ -224,35 +232,35 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     medical_care = CrfRule(
         logic=Logic(
-            predicate=('medical_care', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivmedicalcare'])
+            predicate=P('medical_care', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivmedicalcare'])
 
     pima_for_art_naive = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['pima'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresult'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivresult'])
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
             predicate=func_art_naive_at_annual_or_defaulter,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivlinkagetocare'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hivlinkagetocare'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
 
 
@@ -261,35 +269,35 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=('last_year_partners', 'gte', 1),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+            predicate=P('last_year_partners', 'gte', 1),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=('last_year_partners', 'gte', 2),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthssecondpartner'])
+            predicate=P('last_year_partners', 'gte', 2),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['monthssecondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=('last_year_partners', 'gte', 3),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['monthsthirdpartner'])
+            predicate=P('last_year_partners', 'gte', 3),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.monthsthirdpartner'])
 
     ever_sex = CrfRule(
         logic=Logic(
             predicate=evaluate_ever_had_sex_for_female,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = SexualBehaviour
 
 
@@ -298,21 +306,21 @@ class CircumcisionRuleGroup(RuleGroup):
 
     circumcised = CrfRule(
         logic=Logic(
-            predicate=('circumcised', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['circumcised'])
+            predicate=P('circumcised', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.circumcised'])
 
     uncircumcised = CrfRule(
         logic=Logic(
-            predicate=('circumcised', 'equals', 'No'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['uncircumcised'])
+            predicate=P('circumcised', 'eq', NO),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.uncircumcised'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
 
 
@@ -321,21 +329,23 @@ class ReproductiveRuleGroup(RuleGroup):
 
     currently_pregnant = CrfRule(
         logic=Logic(
-            predicate=(('currently_pregnant', 'equals', 'Yes'), ('menopause', 'equals', 'No', 'and')),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pregnancy'])
+            # TODO: add in PF 'menopause'
+            predicate=PF('currently_pregnant', lambda x, y: True if(x == YES and y == NO) else False),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.pregnancy'])
 
     non_pregnant = CrfRule(
         logic=Logic(
-            predicate=(('currently_pregnant', 'equals', 'No'), ('menopause', 'equals', 'No', 'and')),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['nonpregnancy'])
+            # predicate=PF(('currently_pregnant', 'eq', 'No'), ('menopause', 'eq', 'No', 'and')), TODO: Convert to func
+            predicate=PF('currently_pregnant', lambda x: True if(x == YES) else False),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        # source_fk = (SubjectVisit, 'subject_visit')
         source_model = ReproductiveHealth
 
 
@@ -345,28 +355,28 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     has a record. see redmine 314."""
     heart_attack_record = CrfRule(
         logic=Logic(
-            predicate=('heart_attack_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['heartattack'])
+            predicate=P('heart_attack_record', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['heartattack'])
 
     cancer_record = CrfRule(
         logic=Logic(
-            predicate=('cancer_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['cancer'])
+            predicate=P('cancer_record', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['cancer'])
 
     tb_record_tubercolosis = CrfRule(
         logic=Logic(
-            predicate=('tb_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['tubercolosis'])
+            predicate=P('tb_record', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['tubercolosis'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
 
 
@@ -375,41 +385,41 @@ class BaseRequisitionRuleGroup(RuleGroup):
     rbd_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_rbd,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw'], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[rdb_panel], )
 
     vl_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_vl,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Viral Load'], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[viral_load_panel], )
 
     """Ensures a Microtube is not required for POS."""
     microtube_for_neg = RequisitionRule(
         logic=Logic(
             predicate=func_show_microtube,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[microtube_panel], )
 
     pima_for_art_naive = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['pima'])
 
     hic = CrfRule(
         logic=Logic(
             predicate=func_show_hic_enrollment,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['hicenrollment'])
 
     class Meta:
         abstract = True
@@ -422,34 +432,35 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     elisa_for_ind = RequisitionRule(
         logic=Logic(
             predicate=func_hiv_indeterminate_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['ELISA', ], )
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=['ELISA', ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
     volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
         logic=Logic(
-            predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or'),),
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_subject', 'subjectrequisition')],
-        target_requisition_panels=['Venous (HIV)'], )
+            # predicate=PF(('insufficient_vol', 'eq', YES), ('blood_draw_type', 'eq', 'venous', 'or'),), TODO: Convert to func
+            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False),  # TEMPORARILY
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=['Venous (HIV)'], )
 
     serve_sti_form = CrfRule(
         logic=Logic(
             predicate=func_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['sti'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.sti'])
 
     elisa_result = CrfRule(
         logic=Logic(
             predicate=func_hiv_indeterminate_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['elisahivresult'])
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['bcpp_subject.elisahivresult'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -462,7 +473,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
 
 
@@ -471,7 +482,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 
 
@@ -480,7 +491,7 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResultDocumentation
 
 
@@ -489,5 +500,5 @@ class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
+        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = ElisaHivResult
