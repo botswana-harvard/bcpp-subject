@@ -90,9 +90,9 @@ class HicEnrollment (CrfModelMixin):
     def common_clean(self):
         if self.hic_permission == YES:
             first_consent = SubjectConsent.consent.first_consent(self.subject_identifier)
-            age = age(first_consent.dob, first_consent.consent_datetime)
-            if not 16 <= age.years <= 64:
-                raise EnrollmentError('Invalid age. Got {}'.format(age.years))
+            consent_age = age(first_consent.dob, first_consent.consent_datetime)
+            if not 16 <= consent_age.years <= 64:
+                raise EnrollmentError('Invalid age. Got {}'.format(consent_age.years))
             self.permanent_resident = self.is_permanent_resident()
             self.intend_residency = self.is_intended_residency()
             self.locator_information = self.is_locator_information()

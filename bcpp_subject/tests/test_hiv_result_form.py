@@ -29,12 +29,6 @@ class TestHivResultForm(SubjectMixin, TestCase):
             'bcpp_subject.residencymobility', subject_visit=self.subject_visit, report_datetime=self.get_utcnow(),
             permanent_resident=YES,
             intend_residency=NO)
-#         mommy.make_recipe(
-#             'bcpp_subject.hivresult', subject_visit=self.subject_visit, report_datetime=date.today(), hiv_result=NEG
-#         )
-#         mommy.make_recipe(
-#             'bcpp_subject.hicenrollment', subject_visit=self.subject_visit, report_datetime=self.get_utcnow()
-#         )
 
         self.options = {
             'report_datetime': self.get_utcnow(),
