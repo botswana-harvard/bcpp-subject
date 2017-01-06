@@ -1,5 +1,6 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_registration.models import RegisteredSubject
+from edc_rule_groups.exceptions import RuleFunctionError
 
 from .constants import DECLINED, T0
 from .models import (
@@ -7,19 +8,21 @@ from .models import (
 from .subject_status_helper import SubjectStatusHelper
 
 
+def is_female(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == FEMALE
+
+
+def is_male(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == MALE
+
+
 def func_is_baseline(visit_instance, *args):
     if visit_instance and visit_instance.visit_code != T0:
         return True
-    return False
-
-
-def func_declined_at_bhs(visit_instance, *args):
-    """Returns True if the participant is  has refused to test at t0 or t1"""
-    subject_status_helper = SubjectStatusHelper(
-        visit_instance.previous_visit, use_baseline_visit=True)
-    if subject_status_helper.hiv_result:
-        if subject_status_helper.hiv_result == DECLINED:
-            return True
     return False
 
 
@@ -274,29 +277,16 @@ def func_no_verbal_hiv_result(visit_instance, *args):
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
-def is_female(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(
-        subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == FEMALE
-
-
-def is_male(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == MALE
-
-
 def func_circumcision_not_required(visit_instance, *args):
     return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 
-def evaluate_ever_had_sex_for_female(visit_instance, *args):
+def func_ever_had_sex_for_female(visit_instance, *args):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
+    if is_male(visit_instance):
+        raise RuleFunctionError('Invalid use of rule. Rule only applies to females.')
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
-    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    if registered_subject.gender.lower() == MALE:
-        return False
-    # if we come here then gender must be FEMALE
-    elif sexual_behaviour.ever_sex.lower() == YES:
+    if sexual_behaviour.ever_sex == YES:
         return True
     return False
 
@@ -340,6 +330,7 @@ def func_rbd(visit_instance, *args):
 
 def func_vl(visit_instance, *args):
     """Returns True  or False to indicate participant needs to be offered a viral load."""
+
     if func_is_baseline(visit_instance):
         return func_hiv_positive_today(visit_instance)
     # Hiv+ve at enrollment, art naive at enrollment
@@ -348,8 +339,13 @@ def func_vl(visit_instance, *args):
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance):
         return True
-    elif func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance):
-        return True
+    elif func_hiv_positive_today(visit_instance):
+        helper = SubjectStatusHelper(visit_instance.previous_visit, use_baseline_visit=True)
+        try:
+            if helper.hiv_result == DECLINED:
+                return True
+        except AttributeError:
+            pass
     return False
 
 
