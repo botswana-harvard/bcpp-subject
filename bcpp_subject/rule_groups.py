@@ -269,7 +269,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
         logic=Logic(
             predicate=PF(
                 'last_year_partners',
-                lambda x: False if not x else True if x >= 1 else False),
+                func=lambda x: False if not x else True if x >= 1 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
@@ -278,7 +278,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
         logic=Logic(
             predicate=PF(
                 'last_year_partners',
-                lambda x: False if not x else True if x >= 2 else False),
+                func=lambda x: False if not x else True if x >= 2 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['secondpartner'])
@@ -287,7 +287,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
         logic=Logic(
             predicate=PF(
                 'last_year_partners',
-                lambda x: False if not x else True if x >= 3 else False),
+                func=lambda x: False if not x else True if x >= 3 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['thirdpartner'])
@@ -333,16 +333,20 @@ class ReproductiveRuleGroup(RuleGroup):
 
     currently_pregnant = CrfRule(
         logic=Logic(
-            # TODO: add in PF 'menopause'
-            predicate=PF('currently_pregnant', lambda x, y: True if(x == YES and y == NO) else False),
+            # TODO: verify this is correct
+            predicate=PF('currently_pregnant', 'menopause',
+                         func=lambda x, y: True if x == YES or y == YES else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.pregnancy'])
 
     non_pregnant = CrfRule(
         logic=Logic(
-            # predicate=PF(('currently_pregnant', 'eq', 'No'), ('menopause', 'eq', 'No', 'and')), TODO: Convert to func
-            predicate=PF('currently_pregnant', lambda x: True if(x == YES) else False),
+            # TODO: verify this is correct
+            # predicate=PF(('currently_pregnant', 'eq', 'No'),
+            #    ('menopause', 'eq', 'No', 'and')), TODO: Convert to func
+            predicate=PF('currently_pregnant', 'menopause',
+                         func=lambda x, y: True if x == NO and y == NO else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.nonpregnancy'])
@@ -446,7 +450,9 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     venous_for_vol = RequisitionRule(
         logic=Logic(
             # predicate=PF(('insufficient_vol', 'eq', YES), ('blood_draw_type', 'eq', 'venous', 'or'),), TODO: Convert to func
-            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False),  # FIXME: TEMPORARILY
+            predicate=PF(
+                'insufficient_vol',
+                func=lambda x: True if(x == YES) else False),  # FIXME: TEMPORARILY
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
