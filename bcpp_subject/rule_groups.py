@@ -267,21 +267,27 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=P('last_year_partners', 'gte', 1),
+            predicate=PF(
+                'last_year_partners',
+                lambda x: False if not x else True if x >= 1 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=P('last_year_partners', 'gte', 2),
+            predicate=PF(
+                'last_year_partners',
+                lambda x: False if not x else True if x >= 2 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=P('last_year_partners', 'gte', 3),
+            predicate=PF(
+                'last_year_partners',
+                lambda x: False if not x else True if x >= 3 else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['thirdpartner'])

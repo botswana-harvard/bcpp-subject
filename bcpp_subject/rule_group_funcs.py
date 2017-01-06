@@ -1,6 +1,5 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_registration.models import RegisteredSubject
-from edc_rule_groups.exceptions import RuleFunctionError
 
 from .constants import DECLINED, T0
 from .models import (
@@ -167,10 +166,10 @@ def func_pos_tested_by_bhp(visit_instance, *args):
 
 
 def func_hiv_positive_today_ahs(visit_instance, *args):
-    """Returns True if  """
     if func_is_baseline(visit_instance):
         return func_hiv_positive_today(visit_instance)
     else:
+        # FIXME: why also has to ne on ART??
         if func_hiv_positive_today(visit_instance) and SubjectStatusHelper(visit_instance).on_art:
             return True
     return False
@@ -284,7 +283,7 @@ def func_circumcision_not_required(visit_instance, *args):
 def func_ever_had_sex_for_female(visit_instance, *args):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
     if is_male(visit_instance):
-        raise RuleFunctionError('Invalid use of rule. Rule only applies to females.')
+        return False
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     if sexual_behaviour.ever_sex == YES:
         return True
@@ -309,7 +308,6 @@ def art_naive_at_enrollment(visit_instance, *args):
 
 
 def sero_converter(visit_instance):
-    """ previously NEG and currently POS """
     ever_negative = False
     previous_visit = visit_instance.previous_visit
     while previous_visit:
@@ -336,7 +334,7 @@ def func_vl(visit_instance, *args):
     # Hiv+ve at enrollment, art naive at enrollment
     elif art_naive_at_enrollment(visit_instance):
         return True
-    # Hiv -ve at enrollment, now changed to Hiv +ve
+    # Hiv -ve at enrollment and seroconverted
     elif sero_converter(visit_instance):
         return True
     elif func_hiv_positive_today(visit_instance):
