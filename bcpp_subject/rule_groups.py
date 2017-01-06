@@ -22,7 +22,7 @@ from .rule_group_funcs import (
     func_no_verbal_hiv_result,
     func_rbd,
     func_require_pima,
-    func_should_not_show_circumsition,
+    func_circumcision_not_required,
     func_show_hic_enrollment,
     func_show_microtube,
     func_todays_hiv_result_required,
@@ -40,7 +40,7 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(
         logic=Logic(
-            predicate=func_should_not_show_circumsition,
+            predicate=func_circumcision_not_required,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['circumcision', 'circumcised', 'uncircumcised'])
