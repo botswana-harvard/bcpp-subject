@@ -12,7 +12,7 @@ from edc_constants.constants import NO, YES, POS, NEG
 from .labs import microtube_panel, rdb_panel, viral_load_panel
 
 from .rule_group_funcs import (
-    evaluate_ever_had_sex_for_female,
+    func_ever_had_sex_for_female,
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
     func_hiv_neg_bhs,
@@ -288,7 +288,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     ever_sex = CrfRule(
         logic=Logic(
-            predicate=evaluate_ever_had_sex_for_female,
+            predicate=func_ever_had_sex_for_female,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])

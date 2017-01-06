@@ -1,10 +1,23 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_registration.models import RegisteredSubject
+from edc_rule_groups.exceptions import RuleFunctionError
 
 from .constants import DECLINED, T0
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult, SexualBehaviour)
 from .subject_status_helper import SubjectStatusHelper
+
+
+def is_female(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == FEMALE
+
+
+def is_male(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == MALE
 
 
 def func_is_baseline(visit_instance, *args):
@@ -274,29 +287,16 @@ def func_no_verbal_hiv_result(visit_instance, *args):
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
-def is_female(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(
-        subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == FEMALE
-
-
-def is_male(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == MALE
-
-
 def func_circumcision_not_required(visit_instance, *args):
     return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 
-def evaluate_ever_had_sex_for_female(visit_instance, *args):
+def func_ever_had_sex_for_female(visit_instance, *args):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
+    if is_male(visit_instance):
+        raise RuleFunctionError('Invalid use of rule. Rule only applies to females.')
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
-    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    if registered_subject.gender.lower() == MALE:
-        return False
-    # if we come here then gender must be FEMALE
-    elif sexual_behaviour.ever_sex.lower() == YES:
+    if sexual_behaviour.ever_sex == YES:
         return True
     return False
 
