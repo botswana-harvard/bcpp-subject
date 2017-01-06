@@ -27,7 +27,7 @@ from .rule_group_funcs import (
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_gender_male)
+    is_male)
 from .models import (
     ResourceUtilization, HivTestingHistory,
     SexualBehaviour, HivCareAdherence, Circumcision,
@@ -47,7 +47,7 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     gender_menopause = CrfRule(
         logic=Logic(
-            predicate=is_gender_male,
+            predicate=is_male,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
