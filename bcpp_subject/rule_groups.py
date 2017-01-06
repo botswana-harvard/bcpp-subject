@@ -122,7 +122,7 @@ class ResourceUtilizationRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = ResourceUtilization
+        source_model = 'bcpp_subject.resourceUtilization'
 
 
 @register()
@@ -190,7 +190,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivTestingHistory
+        source_model = 'bcpp_subject.hivtestinghistory'
 
 
 @register()
@@ -220,7 +220,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivTestReview
+        source_model = 'bcpp_subject.hivtestreview'
 
 
 @register()
@@ -257,7 +257,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivCareAdherence
+        source_model = 'bcpp_subject.hivcareadherence'
 
 
 @register()
@@ -301,12 +301,12 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_model = SexualBehaviour
+        source_model = 'bcpp_subject.sexualbehaviour'
 
 
 @register()
 class CircumcisionRuleGroup(RuleGroup):
-
+ 
     circumcised = CrfRule(
         logic=Logic(
             predicate=P('circumcised', 'eq', YES),
@@ -323,7 +323,7 @@ class CircumcisionRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_model = Circumcision
+        source_model = 'bcpp_subject.circumcision'
 
 
 @register()
@@ -354,7 +354,7 @@ class ReproductiveRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         # source_fk = (SubjectVisit, 'subject_visit')
-        source_model = ReproductiveHealth
+        source_model = 'bcpp_subject.reproductiveHealth'
 
 
 @register()
@@ -385,9 +385,9 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = MedicalDiagnoses
-
-
+        source_model = 'bcpp_subject.medicalDiagnoses'
+ 
+ 
 class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures an RBD requisition if HIV result is POS."""
     rbd_for_pos = RequisitionRule(
@@ -474,7 +474,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivResult
+        source_model = 'bcpp_subject.hivresult'
 
 
 @register()
@@ -483,7 +483,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivTestingHistory
+        source_model = 'bcpp_subject.hivtestinghistory'
 
 
 @register()
@@ -492,22 +492,22 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivTestReview
+        source_model = 'bcpp_subject.hivtestreview'
 
 
 @register()
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
-
+ 
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivResultDocumentation
+        source_model = 'bcpp_subject.hivresultdocumentation'
 
 
-@register()
-class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = ElisaHivResult
+# @register()
+# class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
+#  
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         #  source_fk = (SubjectVisit, 'subject_visit')
+#         source_model = ''
