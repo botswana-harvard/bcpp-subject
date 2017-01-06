@@ -334,8 +334,9 @@ class ReproductiveRuleGroup(RuleGroup):
     currently_pregnant = CrfRule(
         logic=Logic(
             # TODO: verify this is correct
-            predicate=PF('currently_pregnant', 'menopause',
-                         func=lambda x, y: True if x == YES or y == YES else False),
+            predicate=PF(
+                'currently_pregnant', 'menopause',
+                func=lambda x, y: True if x == YES or y == YES else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.pregnancy'])
@@ -345,8 +346,9 @@ class ReproductiveRuleGroup(RuleGroup):
             # TODO: verify this is correct
             # predicate=PF(('currently_pregnant', 'eq', 'No'),
             #    ('menopause', 'eq', 'No', 'and')), TODO: Convert to func
-            predicate=PF('currently_pregnant', 'menopause',
-                         func=lambda x, y: True if x == NO and y == NO else False),
+            predicate=PF(
+                'currently_pregnant', 'menopause',
+                func=lambda x, y: True if x == NO and y == NO else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.nonpregnancy'])
