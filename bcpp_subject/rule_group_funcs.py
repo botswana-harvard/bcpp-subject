@@ -89,7 +89,7 @@ def func_known_pos(visit_instance, *args):
     return known_pos
 
 
-def func_circumcision(visit_instance, *args):
+def func_is_circumcision(visit_instance, *args):
     try:
         Circumcised.objects.get(subject_visit=visit_instance.previous_visit)
     except Circumcised.DoesNotExist:
@@ -285,13 +285,8 @@ def is_male(visit_instance, *args):
     return registered_subject.gender == MALE
 
 
-def circumsised_in_past(visit_instance, *args):
-    return Circumcised.objects.filter(subject_visit=visit_instance.previous_visit).exists()
-
-
-def func_should_not_show_circumsition(visit_instance, *args):
-    show_cicumsition = is_female(visit_instance) or circumsised_in_past(visit_instance)
-    return show_cicumsition
+def func_circumcision_not_required(visit_instance, *args):
+    return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 
 def evaluate_ever_had_sex_for_female(visit_instance, *args):
