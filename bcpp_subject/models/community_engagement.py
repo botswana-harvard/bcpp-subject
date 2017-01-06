@@ -63,7 +63,7 @@ class CommunityEngagement (CrfModelMixin):
 
     @property
     def common_clean_exceptions(self):
-        common_clean_exceptions = super().common_clean_exceptions
+        common_clean_exceptions = super().common_clean_exceptions()
         common_clean_exceptions.extend([CommunityEngagementError])
         return common_clean_exceptions
 
