@@ -28,19 +28,16 @@ class TestElisaHivResultForm(SubjectMixin, TestCase):
 
     def test_form_is_valid(self):
         elisa_hiv_result_form = ElisaHivResultForm(data=self.options)
-        print(">>>>>>", elisa_hiv_result_form.errors)
         self.assertTrue(elisa_hiv_result_form.is_valid())
 
     def test_no_date_time(self):
         """Assert test with negative results was carried out without date provided"""
         self.options.update(hiv_result_datetime=None)
         elisa_hiv_result_form = ElisaHivResultForm(data=self.options)
-        print(">>>>>>", elisa_hiv_result_form.errors)
         self.assertFalse(elisa_hiv_result_form.is_valid())
 
     def test_no_date_time_for_pos(self):
         """Assert test with positive results was carried out without date provided"""
         self.options.update(hiv_result=POS, hiv_result_datetime=None)
         elisa_hiv_result_form = ElisaHivResultForm(data=self.options)
-        print(">>>>>>", elisa_hiv_result_form.errors)
         self.assertFalse(elisa_hiv_result_form.is_valid())
