@@ -15,19 +15,7 @@ def func_previous_visit_instance(visit_instance, *args):
     """ Returns the next earlier subject_visit of the participant.
         e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
         If no previous visit, then the current visit is returned."""
-    timepoints = [float(x) for x in range(0, int(visit_instance.appointment.timepoint))]  # e.g 0.0, 1.0, 2.0
-    if len(timepoints) > 0:
-        timepoints.reverse()
-    for point in timepoints:
-        try:
-            return SubjectVisit.objects.get(
-                subject_identifier=visit_instance.subject_identifier,
-                appointment__timepoint=point)
-        except SubjectVisit.DoesNotExist:
-            pass
-        except AttributeError:
-            pass
-    return None
+    return visit_instance.previous_visit
 
 
 def func_is_baseline(visit_instance, *args):
@@ -360,7 +348,7 @@ def art_naive_at_enrollment(visit_instance, *args):
 def sero_converter(visit_instance):
     """ previously NEG and currently POS """
     ever_negative = False
-    past_visit = func_previous_visit_instance(visit_instance)
+    past_visit = visit_instance.previous_visit
     while past_visit:
         ever_negative = func_hiv_negative_today(past_visit)
         if ever_negative:
