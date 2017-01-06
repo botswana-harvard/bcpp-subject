@@ -34,8 +34,6 @@ from .models import (
     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
     HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
 
-from .constants import VENOUS, REFUSE
-
 
 @register()
 class SubjectVisitRuleGroup(RuleGroup):
@@ -442,7 +440,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     venous_for_vol = RequisitionRule(
         logic=Logic(
             # predicate=PF(('insufficient_vol', 'eq', YES), ('blood_draw_type', 'eq', 'venous', 'or'),), TODO: Convert to func
-            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False), # TEMPORARILY
+            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False),  # FIXME: TEMPORARILY
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
