@@ -16,6 +16,7 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
         self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
 
         self.options = {
+            'subject_visit': self.subject_visit.id,
             'first_positive': (self.get_utcnow() - relativedelta(years=1)).date(),
             'medical_care': YES,
             'no_medical_care': None,
