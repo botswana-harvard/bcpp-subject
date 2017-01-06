@@ -31,7 +31,6 @@ class TestCommunityEngagementForm(SubjectMixin, TestCase):
 
     def test_valid_form(self):
         form = CommunityEngagementForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_community_engagement_reponse_to_problems_engagement_is_DWTA(self):
