@@ -13,6 +13,8 @@ from .models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
     HivTestingHistory, HivResultDocumentation, ElisaHivResult)
 from .utils import convert_to_nullboolean
+from bcpp_subject.constants import T0
+from bcpp_subject.patterns import subject_identifier
 
 
 class SubjectStatusHelper(object):
@@ -103,7 +105,7 @@ class SubjectStatusHelper(object):
     @property
     def timepoint_key(self):
         """Returns a dictionary key of either baseline or annual base in the visit code."""
-        if self.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
+        if self.subject_visit.visit_code in BASELINE_CODES:
             return self.BASELINE
         return self.ANNUAL
 
@@ -124,22 +126,19 @@ class SubjectStatusHelper(object):
         self._subject_visit = visit_instance
         if self.use_baseline_visit:
             try:
-                registered_subject = visit_instance.appointment.registered_subject
-                baseline_appointment = Appointment.objects.filter(
-                    registered_subject=registered_subject, visit_definition__code__in=BASELINE_CODES)[0]
                 self._subject_visit = SubjectVisit.objects.get(
-                    household_member__registered_subject=visit_instance.appointment.registered_subject,
-                    appointment=baseline_appointment)
+                    subject_identifier=visit_instance.subject_identifier,
+                    visit_code=T0)
             except (SubjectVisit.DoesNotExist, IndexError):
                 self._subject_visit = None
         else:
             # prepare a queryset of visits previous to visit_instance
             self.previous_subject_visits = SubjectVisit.objects.filter(
-                household_member__internal_identifier=visit_instance.household_member.internal_identifier,
+                subject_identifier=visit_instance.subject_identifier,
                 report_datetime__lt=visit_instance.report_datetime).order_by('report_datetime')
 
     def visit_code(self):
-        return self.subject_visit.appointment.visit_definition.code
+        return self.subject_visit.visit_code
 
     def previous_value(self, value_if_pos=None, value_if_not_pos=None, attr_if_pos=None):
         """Returns the value of an attribute from a previous instance if the hiv_result
@@ -183,6 +182,7 @@ class SubjectStatusHelper(object):
     def calculated_hiv_result(self):
         """Returns the hiv status considering today\'s result, elisa hiv result,
         the last documented result and a verbal result."""
+        print("self.todays_hiv_result", self.todays_hiv_result)
         return (
             (self.elisa_hiv_result or self.todays_hiv_result) or
             (self.last_hiv_result if self.last_hiv_result == POS else None) or
@@ -442,6 +442,7 @@ class SubjectStatusHelper(object):
         if not self._todays_hiv_result:
             try:
                 self._todays_hiv_result = self.hiv_result_instance.hiv_result
+                print("self._todays_hiv_result = self.hiv_result_instance.hiv_result", self._todays_hiv_result)
             except AttributeError:
                 self._todays_hiv_result = None
         return self._todays_hiv_result
@@ -536,6 +537,7 @@ class SubjectStatusHelper(object):
                         subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG', 'IND', 'Declined'])
             except self.models[self.timepoint_key].get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
+        print("self.hiv_result_instance>>>>>>>>>>>>>>>>>>>>>>>", self._hiv_result_instance)
         return self._hiv_result_instance
 
     @property
