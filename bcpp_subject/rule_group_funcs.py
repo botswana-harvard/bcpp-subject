@@ -274,10 +274,15 @@ def func_no_verbal_hiv_result(visit_instance, *args):
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
-def is_gender_female(visit_instance, *args):
-    """Returns True if gender from RegisteredSubject is Female."""
+def is_female(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == FEMALE
+
+
+def is_male(visit_instance, *args):
     registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender.lower() == FEMALE
+    return registered_subject.gender == MALE
 
 
 def circumsised_in_past(visit_instance, *args):
@@ -285,14 +290,8 @@ def circumsised_in_past(visit_instance, *args):
 
 
 def func_should_not_show_circumsition(visit_instance, *args):
-    show_cicumsition = is_gender_female(visit_instance) or circumsised_in_past(visit_instance)
+    show_cicumsition = is_female(visit_instance) or circumsised_in_past(visit_instance)
     return show_cicumsition
-
-
-def is_gender_male(visit_instance, *args):
-    """Returns True if gender from RegisteredSubject is Male."""
-    registered_subject = RegisteredSubject.objects.get(subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender.lower() == MALE
 
 
 def evaluate_ever_had_sex_for_female(visit_instance, *args):
