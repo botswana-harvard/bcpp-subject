@@ -5,7 +5,7 @@ from ..forms import DemographicsForm
 from .test_mixins import SubjectMixin
 
 
-class TestSubjectConsentForm(SubjectMixin, TestCase):
+class TestDemographicsForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
