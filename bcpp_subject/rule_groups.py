@@ -6,7 +6,7 @@ from edc_rule_groups.rule_group import RuleGroup
 from edc_rule_groups.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
@@ -16,7 +16,6 @@ from .models import (
     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
     HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
 from .rule_group_funcs import (
-    func_ever_had_sex_for_female,
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
     func_hiv_neg_bhs,
@@ -293,14 +292,15 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     ever_sex = CrfRule(
         logic=Logic(
-            predicate=func_ever_had_sex_for_female,
+            predicate=PF(
+                'ever_sex', 'gender',
+                func=lambda x, y: True if x == YES and y == FEMALE else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = SexualBehaviour
 
 

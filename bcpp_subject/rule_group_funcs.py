@@ -280,16 +280,6 @@ def func_circumcision_not_required(visit_instance, *args):
     return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 
-def func_ever_had_sex_for_female(visit_instance, *args):
-    """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
-    if is_male(visit_instance):
-        return False
-    sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
-    if sexual_behaviour.ever_sex == YES:
-        return True
-    return False
-
-
 def first_enrolled(visit_instance, *args):
     """ Returns true if visit_instance is the visit of first enrollment. """
     # visit_instance is the visit of first enrollment if no other visit exists prior to it.
