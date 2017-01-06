@@ -323,7 +323,6 @@ class CircumcisionRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
 
 
