@@ -35,7 +35,7 @@ class TestCommunityEngagementForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_community_engagement_reponse_to_problems_engagement_is_DWTA(self):
-        """Asserts that response to community engagement is don't want to answer"""
+        """Asserts that response to community engagement is 'don't want to answer'"""
         prob = NeighbourhoodProblems.objects.create(name='Don\'t want to answer', short_name='DWTA')
         self.options.update(problems_engagement=[str(prob.id)])
         form = CommunityEngagementForm(data=self.options)
