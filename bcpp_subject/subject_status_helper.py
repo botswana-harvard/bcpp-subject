@@ -182,7 +182,6 @@ class SubjectStatusHelper(object):
     def calculated_hiv_result(self):
         """Returns the hiv status considering today\'s result, elisa hiv result,
         the last documented result and a verbal result."""
-        print("self.todays_hiv_result", self.todays_hiv_result)
         return (
             (self.elisa_hiv_result or self.todays_hiv_result) or
             (self.last_hiv_result if self.last_hiv_result == POS else None) or
@@ -442,7 +441,6 @@ class SubjectStatusHelper(object):
         if not self._todays_hiv_result:
             try:
                 self._todays_hiv_result = self.hiv_result_instance.hiv_result
-                print("self._todays_hiv_result = self.hiv_result_instance.hiv_result", self._todays_hiv_result)
             except AttributeError:
                 self._todays_hiv_result = None
         return self._todays_hiv_result
@@ -537,7 +535,6 @@ class SubjectStatusHelper(object):
                         subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG', 'IND', 'Declined'])
             except self.models[self.timepoint_key].get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
-        print("self.hiv_result_instance>>>>>>>>>>>>>>>>>>>>>>>", self._hiv_result_instance)
         return self._hiv_result_instance
 
     @property
