@@ -104,7 +104,7 @@ requisitions = (
     Requisition(show_order=20, model='bcpp_subject.subjectrequisition', panel=viral_load_panel, required=False, additional=False),
     Requisition(show_order=30, model='bcpp_subject.subjectrequisition', panel=microtube_panel, required=False, additional=False),
     Requisition(show_order=40, model='bcpp_subject.subjectrequisition', panel=venous_panel, required=False, additional=False),
-    Requisition(show_order=50, model='bcpp_subject.subjectrequisition', panel=elisa_panel, required=False, additional=False),
+    Requisition(show_order=50, model='bcpp_subject.subjectrequisition', panel=elisa_panel, required=False, additional=False)
 )
 
 visit_schedule = VisitSchedule(

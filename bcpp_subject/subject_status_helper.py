@@ -116,7 +116,6 @@ class SubjectStatusHelper(object):
     def subject_visit(self, visit_instance):
         """Sets the visit_instance to the given visit_instance
         or the baseline visit instance if using_baseline=True."""
-#         Appointment = django_apps.get_model('bcpp_subject', 'Appointment')
         SubjectVisit = django_apps.get_model('bcpp_subject', 'SubjectVisit')
         if self._subject_visit:
             # reset every attribute

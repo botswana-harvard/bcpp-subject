@@ -27,14 +27,12 @@ from .rule_group_funcs import (
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_gender_male)
+    is_male)
 from .models import (
     ResourceUtilization, HivTestingHistory,
     SexualBehaviour, HivCareAdherence, Circumcision,
     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
     HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
-
-from .constants import VENOUS, REFUSE
 
 
 @register()
@@ -49,7 +47,7 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     gender_menopause = CrfRule(
         logic=Logic(
-            predicate=is_gender_male,
+            predicate=is_male,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
@@ -110,11 +108,11 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = CrfRule(
         logic=Logic(
-            # TODO find correct for more one predicates
-            predicate=PF('out_patient', lambda x: True if (x == NO or x == REFUSE) else False),
+            # TODO: add back this PF('out_patient', lambda x: True if (x == NO or x == REFUSE) else False)
+            predicate=P('out_patient', 'eq', NO),
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
-        target_models=['td_maternal.outpatientcare'])
+        target_models=['bcpp_subject.outpatientcare'])
 
     hospitalized = CrfRule(
         logic=Logic(
@@ -158,14 +156,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=P('other_record', 'eq', YES),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models='bcpp_subject.hivresultdocumentation')
+        target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models='bcpp_subject.hivresult')
+        target_models=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = CrfRule(
         logic=Logic(
@@ -219,7 +217,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
             predicate=func_show_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['bcpp_subject.hivresult'])
+        target_models=['hivresult'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -272,21 +270,21 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=P('last_year_partners', 'gte', 1),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
             predicate=P('last_year_partners', 'gte', 2),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['monthssecondpartner'])
+        target_models=['secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
             predicate=P('last_year_partners', 'gte', 3),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['bcpp_subject.monthsthirdpartner'])
+        target_models=['thirdpartner'])
 
     ever_sex = CrfRule(
         logic=Logic(
@@ -309,7 +307,7 @@ class CircumcisionRuleGroup(RuleGroup):
             predicate=P('circumcised', 'eq', YES),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['bcpp_subject.circumcised'])
+        target_models=['circumcised'])
 
     uncircumcised = CrfRule(
         logic=Logic(
@@ -442,7 +440,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     venous_for_vol = RequisitionRule(
         logic=Logic(
             # predicate=PF(('insufficient_vol', 'eq', YES), ('blood_draw_type', 'eq', 'venous', 'or'),), TODO: Convert to func
-            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False),  # TEMPORARILY
+            predicate=PF('insufficient_vol', lambda x: True if(x == YES) else False),  # FIXME: TEMPORARILY
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',

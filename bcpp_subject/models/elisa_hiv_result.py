@@ -41,7 +41,7 @@ class ElisaHivResult (CrfModelMixin):
 
     def elisa_requisition_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='ELISA').exists():
+        if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel_name='ELISA').exists():
             raise exception_cls('ELISA Result cannot be saved before an ELISA Requisition is requested.')
 
     class Meta(CrfModelMixin.Meta):
