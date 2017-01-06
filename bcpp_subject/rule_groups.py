@@ -8,9 +8,13 @@ from edc_rule_groups.predicate import P, PF
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_constants.constants import NO, YES, POS, NEG
 
-
-from .labs import microtube_panel, rdb_panel, viral_load_panel
-
+from .constants import VENOUS
+from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
+from .models import (
+    ResourceUtilization, HivTestingHistory,
+    SexualBehaviour, HivCareAdherence, Circumcision,
+    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
+    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
 from .rule_group_funcs import (
     func_ever_had_sex_for_female,
     func_art_naive_at_annual_or_defaulter,
@@ -28,11 +32,6 @@ from .rule_group_funcs import (
     func_todays_hiv_result_required,
     func_vl,
     is_male)
-from .models import (
-    ResourceUtilization, HivTestingHistory,
-    SexualBehaviour, HivCareAdherence, Circumcision,
-    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
 
 
 @register()
@@ -445,20 +444,19 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
-        target_panels=['ELISA', ], )
+        target_panels=[elisa_panel, ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
     volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
         logic=Logic(
-            # predicate=PF(('insufficient_vol', 'eq', YES), ('blood_draw_type', 'eq', 'venous', 'or'),), TODO: Convert to func
             predicate=PF(
-                'insufficient_vol',
-                func=lambda x: True if(x == YES) else False),  # FIXME: TEMPORARILY
+                'insufficient_vol', 'blood_draw_type',
+                func=lambda x, y: True if x == YES or y == VENOUS else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
-        target_panels=['Venous (HIV)'], )
+        target_panels=[venous_panel], )
 
     serve_sti_form = CrfRule(
         logic=Logic(
