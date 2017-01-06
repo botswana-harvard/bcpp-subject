@@ -3,7 +3,7 @@ from edc_registration.models import RegisteredSubject
 
 from .constants import DECLINED, T0
 from .models import (
-    Circumcised, HicEnrollment, HivTestingHistory, HivResult, SexualBehaviour)
+    Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
 
 
@@ -42,8 +42,6 @@ def func_art_naive(visit_instance, *args):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    print("subject_status_helper.hiv_result == POS:", subject_status_helper.hiv_result == POS)
-    print("not subject_status_helper.on_art", not subject_status_helper.on_art)
     art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
     return art_naive
 
@@ -84,7 +82,6 @@ def func_require_pima(visit_instance, *args):
         return True
     elif art_naive_at_enrollment(visit_instance):
         return True
-    print(visit_instance, "visit_instance <> visit_instance")
     return False
 
 
