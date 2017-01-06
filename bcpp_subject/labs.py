@@ -35,6 +35,15 @@ lab_profile.add_panel(viral_load_panel)
 microtube_panel = RequisitionPanel('Microtube', wb)  # link this to the visit_schedule
 lab_profile.add_panel(microtube_panel)
 
+# TODO, add processing profile details
+elisa_panel = RequisitionPanel('ELISA', wb)  # link this to the visit_schedule
+lab_profile.add_panel(elisa_panel)
+
+# TODO, add processing profile details
+venous_panel = RequisitionPanel('Venous (HIV)', wb)  # link this to the visit_schedule
+lab_profile.add_panel(venous_panel)
+
+
 rdb_panel = RequisitionPanel('Research Blood Draw', wb)  # link this to the visit_schedule
 lab_profile.add_panel(rdb_panel)
 
