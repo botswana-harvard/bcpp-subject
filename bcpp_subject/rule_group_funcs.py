@@ -1,5 +1,6 @@
+import numpy as np
+
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
-from edc_appointment.models import Appointment
 from edc_registration.models import RegisteredSubject
 
 from .constants import BASELINE_CODES
@@ -14,16 +15,14 @@ def func_previous_visit_instance(visit_instance, *args):
     """ Returns the next earlier subject_visit of the participant.
         e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
         If no previous visit, then the current visit is returned."""
-    timepoints = range(0, visit_instance.appointment.timepoint)
+    timepoints = [float(x) for x in range(0, int(visit_instance.appointment.timepoint))]  # e.g 0.0, 1.0, 2.0
     if len(timepoints) > 0:
         timepoints.reverse()
     for point in timepoints:
         try:
-            previous_appointment = Appointment.objects.get(
-                subject_identifier=visit_instance.subject_identifier, timepoint=point)
-            return SubjectVisit.objects.get(appointment=previous_appointment)
-        except Appointment.DoesNotExist:
-            pass
+            return SubjectVisit.objects.get(
+                subject_identifier=visit_instance.subject_identifier,
+                appointment__timepoint=point)
         except SubjectVisit.DoesNotExist:
             pass
         except AttributeError:
@@ -103,11 +102,13 @@ def func_require_pima(visit_instance, *args):
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
         return True
-    # Hiv+ve at enrollment, art naive at enrollment
-    elif art_naive_at_enrollment(visit_instance):
-        return True
-    elif func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance):
-        return True
+#     # Hiv+ve at enrollment, art naive at enrollment
+#     elif art_naive_at_enrollment(visit_instance):
+#         print("art_naive_at_enrollment(visit_instance)")
+#         return True
+#     elif func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance):
+#         print("func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance)")
+#         return True
     return False
 
 
