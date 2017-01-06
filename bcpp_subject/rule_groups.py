@@ -385,9 +385,9 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.medicalDiagnoses'
- 
- 
+        source_model = 'bcpp_subject.medicaldiagnoses'
+
+
 class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures an RBD requisition if HIV result is POS."""
     rbd_for_pos = RequisitionRule(
@@ -497,7 +497,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
 @register()
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
- 
+
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
@@ -506,7 +506,7 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
 # @register()
 # class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
-#  
+#
 #     class Meta:
 #         app_label = 'bcpp_subject'
 #         #  source_fk = (SubjectVisit, 'subject_visit')
