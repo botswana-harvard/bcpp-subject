@@ -510,3 +510,55 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, 'VIRAL LOAD').count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', KEYED, 'Research Blood Draw').count(), 1)
+
+    def test_hiv_pos_nd_not_on_art_at_bhs(self):
+        """HIV Positive not on ART at T0, Should offer POC CD4, RBD and VL.
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        # Known POS in T0
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male,
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
+
+        self.hivtest_review(POS)
+        # add HivCarAdherence,
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=None,
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
+        # add HivCarAdherence,
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=None,
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, 'VIRAL LOAD').count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, 'Research Blood Draw').count(), 1)
