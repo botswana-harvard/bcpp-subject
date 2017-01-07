@@ -177,13 +177,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['stigma', 'stigmaopinion'])
 
-    other_response = CrfRule(
-        logic=Logic(
-            predicate=func_no_verbal_hiv_result,
-            consequence=NOT_REQUIRED,
-            alternative='do_nothing'),
-        target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
-
     def method_result(self):
         return True
 
@@ -306,7 +299,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
 @register()
 class CircumcisionRuleGroup(RuleGroup):
- 
+
     circumcised = CrfRule(
         logic=Logic(
             predicate=P('circumcised', 'eq', YES),
