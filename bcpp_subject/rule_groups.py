@@ -122,7 +122,7 @@ class ResourceUtilizationRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.resourceUtilization'
+        source_model = ResourceUtilization
 
 
 @register()
@@ -177,13 +177,20 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['stigma', 'stigmaopinion'])
 
+    other_response = CrfRule(
+        logic=Logic(
+            predicate=func_no_verbal_hiv_result,
+            consequence=NOT_REQUIRED,
+            alternative='do_nothing'),
+        target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+
     def method_result(self):
         return True
 
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivtestinghistory'
+        source_model = HivTestingHistory
 
 
 @register()
@@ -213,7 +220,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivtestreview'
+        source_model = HivTestReview
 
 
 @register()
@@ -250,7 +257,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivcareadherence'
+        source_model = HivCareAdherence
 
 
 @register()
@@ -294,7 +301,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_model = 'bcpp_subject.sexualbehaviour'
+        source_model = SexualBehaviour
 
 
 @register()
@@ -316,7 +323,7 @@ class CircumcisionRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_model = 'bcpp_subject.circumcision'
+        source_model = Circumcision
 
 
 @register()
@@ -347,7 +354,7 @@ class ReproductiveRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         # source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.reproductiveHealth'
+        source_model = ReproductiveHealth
 
 
 @register()
@@ -378,7 +385,7 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.medicaldiagnoses'
+        source_model = MedicalDiagnoses
 
 
 class BaseRequisitionRuleGroup(RuleGroup):
@@ -467,7 +474,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivresult'
+        source_model = HivResult
 
 
 @register()
@@ -476,7 +483,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivtestinghistory'
+        source_model = HivTestingHistory
 
 
 @register()
@@ -485,7 +492,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivtestreview'
+        source_model = HivTestReview
 
 
 @register()
@@ -494,13 +501,13 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = 'bcpp_subject.hivresultdocumentation'
+        source_model = HivResultDocumentation
 
 
-# @register()
-# class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
-#
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         #  source_fk = (SubjectVisit, 'subject_visit')
-#         source_model = ''
+@register()
+class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        #  source_fk = (SubjectVisit, 'subject_visit')
+        source_model = ElisaHivResult

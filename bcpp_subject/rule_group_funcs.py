@@ -5,6 +5,7 @@ from .constants import DECLINED, T0
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
+from bcpp_subject.models.circumcision import Circumcision
 
 
 def is_female(visit_instance, *args):
@@ -94,6 +95,7 @@ def func_known_pos(visit_instance, *args):
 
 
 def func_is_circumcision(visit_instance, *args):
+    """Return True if circumcised."""
     try:
         Circumcised.objects.get(subject_visit=visit_instance.previous_visit)
     except Circumcised.DoesNotExist:

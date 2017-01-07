@@ -12,6 +12,7 @@ from member.models.household_member.household_member import HouseholdMember
 from edc_appointment.models import Appointment
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 from edc_metadata.models import CrfMetadata
+import datetime
 
 fake = Faker()
 
@@ -99,6 +100,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
             household_member=household_member,
+            subject_identifier=household_member.subject_identifier,
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
@@ -115,26 +117,25 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
             household_member=household_member,
+            subject_identifier=household_member.subject_identifier,
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
     def make_subject_visit_ahs_subject(self, visit_code, report_datetime=None):
         """Returns a subject visit of a consented male member."""
-        bhs_subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        bhs_subject_visit = self.make_subject_visit_for_a_male_subject('T0')
         bhs_household_member = bhs_subject_visit.household_member
         # Create an ahs member
-        self.make_ahs_household_member(bhs_household_member)
-        self.add_enrollment_checklist(bhs_household_member)
-        subject_consent = self.make_subject_consent(household_member=bhs_household_member)
-        household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
+        household_member = super().make_ahs_household_member(bhs_household_member)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
-            visit_code='T1')
+            visit_code=visit_code)
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
             household_member=household_member,
+            subject_identifier=household_member.subject_identifier,
             appointment=appointment,
-            report_datetime=report_datetime or self.get_utcnow())
+            report_datetime=report_datetime or self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
 
 
 class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
