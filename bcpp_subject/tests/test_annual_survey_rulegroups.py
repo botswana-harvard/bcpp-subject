@@ -27,6 +27,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             subject_identifier=self.subject_identifier)
 
     def test_no_circumsition_in_y2(self):
+        """Assert that circumcision forms are not required at ahs if filled at bhs."""
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', REQUIRED, 'T0').count(), 1)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, 'T0').count(), 1)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, 'T0').count(), 1)

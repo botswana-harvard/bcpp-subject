@@ -95,35 +95,12 @@ def func_known_pos(visit_instance, *args):
 
 
 def func_is_circumcision(visit_instance, *args):
+    """Return True if circumcised."""
     try:
         Circumcised.objects.get(subject_visit=visit_instance.previous_visit)
     except Circumcised.DoesNotExist:
         return False
     return True
-
-
-def func_baseline_circumcision(visit_instance, *args):
-    """Return True is circumcied iss required."""
-    if func_is_baseline(visit_instance):
-        try:
-            circumcision = Circumcision.objects.get(subject_visit=visit_instance)
-            if circumcision.circumcised == YES:
-                return True
-        except Circumcision.DoesNotExist:
-            return False
-    return False
-
-
-def func_circumcision(visit_instance, *args):
-    previous_visit = visit_instance.previous_visit
-    if previous_visit:
-        if func_baseline_circumcision(previous_visit):
-            return False
-        else:
-            return True
-    else:
-        return func_baseline_circumcision(visit_instance)
-    return False
 
 
 def func_show_hic_enrollment(visit_instance, *args):
