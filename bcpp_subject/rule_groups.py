@@ -23,6 +23,7 @@ from .rule_group_funcs import (
     func_hiv_untested,
     func_known_pos_in_prev_year,
     func_no_verbal_hiv_result,
+    func_circumcision,
     func_rbd,
     func_require_pima,
     func_circumcision_not_required,
@@ -309,7 +310,7 @@ class CircumcisionRuleGroup(RuleGroup):
 
     circumcised = CrfRule(
         logic=Logic(
-            predicate=P('circumcised', 'eq', YES),
+            predicate=func_circumcision,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['circumcised'])

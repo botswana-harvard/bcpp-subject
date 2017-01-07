@@ -6,54 +6,56 @@ from edc_constants.constants import NO, YES
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
 
-from member.models.household_member import HouseholdMember
-
 from .test_mixins import SubjectMixin
+from edc_appointment.models import Appointment
+import datetime
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit_male_T1 = self.make_subject_visit_ahs_subject()
-        bhs_member = HouseholdMember.objects.get(
-            household_structure__household=self.subject_visit_male_T1.household_member.household_structure.household)
-        print(bhs_member, 'bhs_member')
+        self.visit_code = 'T1'
+        self.bhs_subject_visit = self.make_subject_visit_for_a_male_subject('T0')
+        self.subject_identifier = self.bhs_subject_visit.subject_identifier
+
+    def crf_metadata_obj(self, model, entry_status, visit_code):
+        return CrfMetadata.objects.filter(
+            entry_status=entry_status,
+            model=model,
+            visit_code=visit_code,
+            subject_identifier=self.subject_identifier)
 
     def test_no_circumsition_in_y2(self):
-
-        circumsition_options = {}
-        circumsition_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcision',
-            appointment=self.subject_visit_male_T1.appointment)
-
-        circumcised_options = {}
-        circumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcised',
-            appointment=self.subject_visit_male_T1.appointment)
-
-        uncircumcised_options = {}
-        uncircumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='uncircumcised',
-            appointment=self.subject_visit_male_T1.appointment)
-
-#         Circumcision.objects.create(
-#             subject_visit=self.subject_visit_male_T0,
-#             circumcised=YES
-#         )
-# 
-#         Circumcised.objects.create(
-#             subject_visit=self.subject_visit_male_T0,
-#             where_circ='Lobatse',
-#             why_circ='not_sure'
-#         )
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', REQUIRED, 'T0').count(), 1)
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, 'T0').count(), 1)
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, 'T0').count(), 1)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=self.bhs_subject_visit,
+            circumcised=YES
+        )
+        mommy.make_recipe(
+            'bcpp_subject.circumcised',
+            subject_visit=self.bhs_subject_visit,
+            where_circ='Lobatse',
+            why_circ='not_sure'
+        )
+        bhs_household_member = self.bhs_subject_visit.household_member
+        # Create an ahs member
+        household_member = super().make_ahs_household_member(bhs_household_member)
+        appointment = Appointment.objects.get(
+            subject_identifier=household_member.subject_identifier,
+            visit_code=self.visit_code)
+        mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=household_member,
+            subject_identifier=household_member.subject_identifier,
+            appointment=appointment,
+            report_datetime=self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', NOT_REQUIRED, self.visit_code).count(), 1)
+#         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, self.visit_code).count(), 1)
+#         self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, self.visit_code).count(), 1)
 
 #     def test_pos_in_y1_no_hiv_forms(self):
 #         self.subject_visit_male_T0 = self.baseline_subject_visit
