@@ -57,6 +57,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 #         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, self.visit_code).count(), 1)
 #         self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, self.visit_code).count(), 1)
 
+
 #     def test_pos_in_y1_no_hiv_forms(self):
 #         self.subject_visit_male_T0 = self.baseline_subject_visit
 # 

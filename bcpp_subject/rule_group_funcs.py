@@ -3,7 +3,7 @@ from edc_registration.models import RegisteredSubject
 
 from .constants import DECLINED, T0
 from .models import (
-    Circumcised, HicEnrollment, HivTestingHistory, HivResult, SexualBehaviour)
+    Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
 from bcpp_subject.models.circumcision import Circumcision
 
@@ -21,7 +21,7 @@ def is_male(visit_instance, *args):
 
 
 def func_is_baseline(visit_instance, *args):
-    if visit_instance and visit_instance.visit_code != T0:
+    if visit_instance and visit_instance.visit_code == T0:
         return True
     return False
 
@@ -80,6 +80,8 @@ def func_require_pima(visit_instance, *args):
     if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
         return True
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
+        return True
+    elif art_naive_at_enrollment(visit_instance):
         return True
     return False
 

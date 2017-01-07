@@ -48,14 +48,16 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         household_structure = self.make_household_ready_for_enumeration(make_hoh=make_hoh)
         # add an additional member if not provided
         if not household_member:
-            household_member = self.add_household_member(household_structure, relation='cousin')
+            household_member = self.add_household_member(
+                household_structure, relation='cousin', **options)
         # add enrollment checklist, if it does not exist
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
             self.assertEqual(household_member.member_status, ELIGIBLE_FOR_CONSENT)
         except EnrollmentChecklist.DoesNotExist:
             self.assertEqual(household_member.member_status, ELIGIBLE_FOR_SCREENING)
-            enrollment_checklist = self.add_enrollment_checklist(household_member)
+            enrollment_checklist = self.add_enrollment_checklist(
+                household_member, **options)
             household_member = HouseholdMember.objects.get(pk=household_member.pk)
             self.assertEqual(household_member.member_status, ELIGIBLE_FOR_CONSENT)
         # update options for subject consent from enrollment checklist

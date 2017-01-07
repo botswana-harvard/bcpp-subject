@@ -18,4 +18,6 @@ urlpatterns = [
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/(?P<member>' + UUID_PATTERN.pattern + ')/',
         DashboardView.as_view(), name='dashboard_url'),
+    url(r'^dashboard/(?P<household_member>' + UUID_PATTERN.pattern + ')/',
+        DashboardView.as_view(), name='dashboard_url'),
 ]

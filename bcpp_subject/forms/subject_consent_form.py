@@ -1,29 +1,20 @@
 import pytz
 from copy import deepcopy
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from django import forms
 from django.conf import settings
 from django.forms import ValidationError
-from django.forms.utils import ErrorList
-from django.utils import timezone
 
 from edc_consent.modelform_mixins import ConsentModelFormMixin
-from edc_constants.constants import YES, NO
-from edc_base.utils import formatted_age
-from edc_map.site_mappers import site_mappers
 from edc_constants.constants import NOT_APPLICABLE
-
+from edc_constants.constants import YES, NO
+from edc_map.site_mappers import site_mappers
 
 from member.constants import HEAD_OF_HOUSEHOLD
-from member.models import HouseholdInfo
-from household.models import HouseholdLogEntry
-from member.models import HouseholdHeadEligibility
+from member.models import HouseholdInfo, HouseholdHeadEligibility
 
 from ..constants import BASELINE_SURVEY
 from ..models import SubjectConsent
-from ..exceptions import ConsentValidationError
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
@@ -35,17 +26,18 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
-        self.validate_household_log_entry()
         self.limit_edit_to_current_survey()
         self.household_info()
-        if cleaned_data.get('household_member'):
-            try:
-                HouseholdHeadEligibility.objects.get(
-                    household_structure=cleaned_data.get('household_member').household_structure)
-            except HouseholdHeadEligibility.DoesNotExist:
-                raise forms.ValidationError(
-                    'Please fill household head eligibility form before completing subject consent.',
-                    code='invalid')
+        # TODO: does this need to be filled in ??
+#         if cleaned_data.get('household_member'):
+#             try:
+#                 HouseholdHeadEligibility.objects.get(
+#                     household_member__in=cleaned_data.get(
+#                         'household_member').household_structure.householdmember_set.all())
+#             except HouseholdHeadEligibility.DoesNotExist:
+#                 raise forms.ValidationError(
+#                     'Please fill household head eligibility form before completing subject consent.',
+#                     code='invalid')
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):
@@ -196,31 +188,6 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
                     'Subject\'s identity was previously reported as \'%(existing_identity)s\'. '
                     'You wrote \'%(identity)s\'. Please resolve.',
                     params={'existing_identity': consent.identity, 'identity': identity},
-                    code='invalid')
-
-    def validate_household_log_entry(self):
-        household_member = self.cleaned_data.get("household_member")
-        household_structure = household_member.household_structure
-        try:
-            SubjectConsent.objects.get(household_member=household_member)
-        except SubjectConsent.DoesNotExist:
-            try:
-                log_entry = HouseholdLogEntry.objects.filter(
-                    household_log__household_structure=household_structure).order_by('created').last()
-                if not log_entry.report_datetime == datetime.today().date():
-                    raise ValidationError(
-                        'Please fill household log entry before completing subject consent.',
-                        params={},
-                        code='invalid')
-            except HouseholdLogEntry.DoesNotExist:
-                raise ValidationError(
-                    'Please fill household log entry before completing subject consent.',
-                    params={},
-                    code='invalid')
-            except AttributeError:
-                raise ValidationError(
-                    'Please fill household log entry before completing subject consent.',
-                    params={},
                     code='invalid')
 
 
