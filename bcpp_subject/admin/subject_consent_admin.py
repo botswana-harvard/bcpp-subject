@@ -1,9 +1,10 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
-
+from django.urls.base import reverse
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
-from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin
+from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, audit_fieldset_tuple, audit_fields,\
+    ModelAdminNextUrlRedirectMixin
 from edc_consent.modeladmin_mixins import ModelAdminConsentMixin
 
 from ..admin_site import bcpp_subject_admin
@@ -13,17 +14,71 @@ from ..models import SubjectConsent
 
 @admin.register(SubjectConsent, site=bcpp_subject_admin)
 class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
-                          ModelAdminInstitutionMixin, admin.ModelAdmin):
+                          ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectMixin, admin.ModelAdmin):
 
     form = SubjectConsentForm
 
-    fields = ['household_member', 'citizen']
+    fieldsets = (
+        (None, {
+            'fields': [
+                'household_member',
+                'subject_identifier',
+                'first_name',
+                'last_name',
+                'initials',
+                'language',
+                'is_literate',
+                'witness_name',
+                'consent_datetime',
+                'study_site',
+                'gender',
+                'dob',
+                'guardian_name',
+                'is_dob_estimated',
+                'citizen',
+                'legal_marriage',
+                'marriage_certificate',
+                'marriage_certificate_no',
+                'identity',
+                'identity_type',
+                'confirm_identity',
+                'is_incarcerated',
+                'may_store_samples',
+                'comment',
+                'consent_reviewed',
+                'study_questions',
+                'assessment_score',
+                'consent_copy']}),
+        audit_fieldset_tuple)
 
     search_fields = (
         'household_member__household_structure__household__plot__plot_identifier',
         'household_member__household_structure__household__household_identifier')
 
-    radio_fields = {"is_minor": admin.VERTICAL}
+    radio_fields = {
+        "assessment_score": admin.VERTICAL,
+        "consent_copy": admin.VERTICAL,
+        "consent_reviewed": admin.VERTICAL,
+        "gender": admin.VERTICAL,
+        "identity_type": admin.VERTICAL,
+        "is_dob_estimated": admin.VERTICAL,
+        "is_incarcerated": admin.VERTICAL,
+        "is_literate": admin.VERTICAL,
+        "is_minor": admin.VERTICAL,
+        "language": admin.VERTICAL,
+        "may_store_samples": admin.VERTICAL,
+        "study_questions": admin.VERTICAL,
+        'citizen': admin.VERTICAL,
+        'legal_marriage': admin.VERTICAL,
+        'marriage_certificate': admin.VERTICAL,
+    }
+
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj=obj) + audit_fields
+
+    def view_on_site(self, obj):
+        return reverse(
+            'bcpp-subject:dashboard_url', kwargs=dict(household_member=obj.household_member.id))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
