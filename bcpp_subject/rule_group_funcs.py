@@ -5,7 +5,6 @@ from .constants import DECLINED, T0
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
-from bcpp_subject.models.circumcision import Circumcision
 
 
 def is_female(visit_instance, *args):

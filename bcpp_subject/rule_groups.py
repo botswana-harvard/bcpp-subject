@@ -10,11 +10,7 @@ from edc_constants.constants import NO, YES, POS, NEG, FEMALE
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
-from .models import (
-    ResourceUtilization, HivTestingHistory,
-    SexualBehaviour, HivCareAdherence, Circumcision,
-    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
+from .models import ResourceUtilization, SubjectVisit
 from .rule_group_funcs import (
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
@@ -22,7 +18,6 @@ from .rule_group_funcs import (
     func_hiv_positive_today,
     func_hiv_untested,
     func_known_pos_in_prev_year,
-    func_no_verbal_hiv_result,
     func_rbd,
     func_require_pima,
     func_circumcision_not_required,
