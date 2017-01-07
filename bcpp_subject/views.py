@@ -77,8 +77,8 @@ class BcppSubjectsView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView
 
 class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
 
-    subject_dashboard_url_name = 'bcpp-subject:dashboard_url'
-    subject_dashboard_base_html = 'bcpp/base.html'
+    dashboard_url = 'bcpp-subject:dashboard_url'
+    base_html = 'bcpp/base.html'
     add_visit_url_name = SubjectVisit().admin_url_name
     template_name = 'bcpp_subject/dashboard.html'
     visit_model = SubjectVisit
@@ -112,7 +112,8 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         try:
             household_member = HouseholdMember.objects.get(
-                subject_identifier=context.get('subject_identifier'))
+                subject_identifier=context.get('subject_identifier'),
+                household_structure__survey=context.get('survey'))
         except HouseholdMember.DoesNotExist:
             household_member = HouseholdMember.objects.get(
                 pk=context.get('member'))
