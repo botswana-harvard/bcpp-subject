@@ -447,3 +447,66 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, TestCase):
         circumcition.save()
 
         assert_circumsition(KEYED, NOT_REQUIRED, NOT_REQUIRED)
+
+    def test_Known_hiv_pos_y1_require_no_testing(self):
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            report_datetime=self.get_utcnow(),
+            subject_visit=self.subject_visit_male,
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO)
+
+        self.hivtest_review(POS)
+
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivresult', NOT_REQUIRED).count(), 1)
+
+    def hiv_pos_nd_art_naive_at_bhs(self):
+        """Enrollees at t0 who are HIV-positive and ART naive at BHS.
+           Pima, RBD and VL required. Then Key RBD for later use in Annual survey.
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        # Known POS in T0
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestreview',
+            report_datetime=self.get_utcnow(),
+            subject_visit=self.bhs_subject_visit_male,
+            hiv_test_date=self.get_utcnow() - timedelta(days=50),
+            recorded_hiv_result=POS)
+
+        self.assertEqual(self.requisition_metadata_obj(
+            'bcpp_subject.subjectrequisition', REQUIRED, 'Research Blood Draw').count(), 1)
+
+        mommy.make_recipe(
+            'bcpp_subject.subjectrequisition', subject_visit=self.subject_visit_male, report_datetime=self.get_utcnow(),
+            panel_name='Research Blood Draw',
+        )
+        # add HivCarAdherence,
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=None,
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, 'VIRAL LOAD').count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', KEYED, 'Research Blood Draw').count(), 1)
