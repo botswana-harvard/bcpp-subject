@@ -1,26 +1,25 @@
+import re
+
 from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Q
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from django.views.generic import TemplateView
 
+from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_consent.site_consents import site_consents
+from edc_constants.constants import MALE, UUID_PATTERN
 from edc_dashboard.view_mixins import DashboardMixin
 from edc_search.forms import SearchForm
 from edc_search.view_mixins import SearchViewMixin
 
-from .models import SubjectConsent
-from bcpp_subject.models.subject_visit import SubjectVisit
-from edc_base.utils import get_utcnow
-from bcpp_subject.models.subject_offstudy import SubjectOffstudy
-from bcpp_subject.models.subject_locator import SubjectLocator
-from member.models.household_member.household_member import HouseholdMember
-from django.core.exceptions import MultipleObjectsReturned
-from edc_consent.site_consents import site_consents
-from edc_constants.constants import MALE
-from member.models.enrollment_checklist import EnrollmentChecklist
+from member.models import HouseholdMember
+
+from .models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
 
 app_config = django_apps.get_app_config('bcpp_subject')
 
@@ -118,8 +117,6 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             household_member = HouseholdMember.objects.get(
                 pk=context.get('member'))
         household_member = self.pk_wrapper(self.survey_wrapper(household_member))
-        subject_consents = SubjectConsent.objects.filter(household_member=household_member).order_by('version')
-        last_subject_consent = subject_consents.last()
         current_subject_consent = SubjectConsent.consent.consent_for_period(
             household_member.subject_identifier, report_datetime=get_utcnow())
         if current_subject_consent:
@@ -127,6 +124,14 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
         else:
             current_subject_consent = site_consents.get_consent(
                 report_datetime=get_utcnow())
+        subject_consents = SubjectConsent.objects.filter(
+            household_member=household_member).order_by('version')
+        subject_consents = [
+            self.subject_consent_wrapper(obj) for obj in subject_consents
+            if obj != current_subject_consent]
+        subject_identifier = household_member.subject_identifier
+        if re.match(UUID_PATTERN, subject_identifier):
+            subject_identifier = None
         try:
             subject_offstudy = SubjectOffstudy.objects.get(
                 subject_identifier=household_member.subject_identifier)
@@ -142,11 +147,11 @@ class DashboardView(DashboardMixin, EdcBaseViewMixin, TemplateView):
             MALE=MALE,
             visit_url=SubjectVisit().get_absolute_url(),
             member=household_member,
+            subject_identifier=subject_identifier,
             household_identifier=household_member.household_structure.household.household_identifier,
             survey=household_member.household_structure.survey,
             current_subject_consent=current_subject_consent,
-            last_subject_consent=last_subject_consent,
-            subject_consents=[self.subject_consent_wrapper(obj) for obj in subject_consents],
+            subject_consents=subject_consents,
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
             enrollment_objects=self.enrollment_objects,

@@ -1,44 +1,44 @@
-from model_mommy import mommy
-
-from django.test import TestCase
-
-from edc_constants.constants import NO, YES
-from edc_metadata.constants import REQUIRED, NOT_REQUIRED
-from edc_metadata.models import CrfMetadata
-
-from member.models.household_member import HouseholdMember
-
-from .test_mixins import SubjectMixin
-
-
-class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
-
-    def setUp(self):
-        super().setUp()
-        self.subject_visit_male_T1 = self.make_subject_visit_ahs_subject()
-        bhs_member = HouseholdMember.objects.get(
-            household_structure__household=self.subject_visit_male_T1.household_member.household_structure.household)
-        print(bhs_member, 'bhs_member')
-
-    def test_no_circumsition_in_y2(self):
-
-        circumsition_options = {}
-        circumsition_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcision',
-            appointment=self.subject_visit_male_T1.appointment)
-
-        circumcised_options = {}
-        circumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcised',
-            appointment=self.subject_visit_male_T1.appointment)
-
-        uncircumcised_options = {}
-        uncircumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='uncircumcised',
-            appointment=self.subject_visit_male_T1.appointment)
+# from model_mommy import mommy
+# 
+# from django.test import TestCase
+# 
+# from edc_constants.constants import NO, YES
+# from edc_metadata.constants import REQUIRED, NOT_REQUIRED
+# from edc_metadata.models import CrfMetadata
+# 
+# from member.models.household_member import HouseholdMember
+# 
+# from .test_mixins import SubjectMixin
+# 
+# 
+# class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
+# 
+#     def setUp(self):
+#         super().setUp()
+#         self.subject_visit_male_T1 = self.make_subject_visit_ahs_subject()
+#         bhs_member = HouseholdMember.objects.get(
+#             household_structure__household=self.subject_visit_male_T1.household_member.household_structure.household)
+#         print(bhs_member, 'bhs_member')
+# 
+#     def test_no_circumsition_in_y2(self):
+# 
+#         circumsition_options = {}
+#         circumsition_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcision',
+#             appointment=self.subject_visit_male_T1.appointment)
+# 
+#         circumcised_options = {}
+#         circumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcised',
+#             appointment=self.subject_visit_male_T1.appointment)
+# 
+#         uncircumcised_options = {}
+#         uncircumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='uncircumcised',
+#             appointment=self.subject_visit_male_T1.appointment)
 
 #         Circumcision.objects.create(
 #             subject_visit=self.subject_visit_male_T0,

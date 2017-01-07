@@ -5,7 +5,7 @@
 {% if subject_offstudy %}
     <li class="list-group-item list-group-item-danger"><i class="fa fa-ban" aria-hidden="true"></i> <span class="test small text-default">Offstudy as of</span>&nbsp<span class="test small text-default">{{ subject_offstudy.offstudy_datetime|date:"Y-m-d"}}</span></li>
 {% endif %}
-<li class="list-group-item list-group-item-info"><span class="test text-default"><i class="{% if member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg"></i> {{ last_subject_consent.first_name|default:member.first_name }}&nbsp;{{ last_subject_consent.initials|default:member.initials }}&nbsp;{% if last_subject_consent %}{% age_in_years last_subject_consent.dob %}{% else %}{% age_in_years member.enrollmentchecklist.dob %}{% endif %}</li>
+<li class="list-group-item list-group-item-info"><span class="test text-default"><i class="{% if member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg"></i> {{ member.first_name }}&nbsp;{{ member.initials }}&nbsp;{{ member.age_in_years }}</li>
 <li class="list-group-item"><span class="test small text-default">Survey</span>&nbsp<span class="test small text-info">{{ member.survey_year|upper }}.{{ member.survey_name|upper }}</span></li>
 <li class="list-group-item"><span class="test small text-default">Household</span>&nbsp<span class="test small text-info">{{ member.household_structure.household.household_identifier }}</span></li>
 <li class="list-group-item"><span class="test small text-default">Born</span>&nbsp<span class="test small text-info">{{ member.enrollmentchecklist.dob|date:"Y-m-d" }}</span></li>
