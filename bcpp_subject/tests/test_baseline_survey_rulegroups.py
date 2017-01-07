@@ -419,11 +419,10 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, 'Research Blood Draw').count(), 1)
 
     def test_normal_circumsition_in_y1(self):
-
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         def assert_circumsition(circumsition_entry_status, uncircumcised_entry_status, circumcised_entry_status):
-            self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumsition', circumsition_entry_status).count(), 1)
+            self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', circumsition_entry_status).count(), 1)
             self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', uncircumcised_entry_status).count(), 1)
             self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', circumcised_entry_status).count(), 1)
         assert_circumsition(REQUIRED, REQUIRED, REQUIRED)
@@ -441,7 +440,7 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         circumcition.circumcised = NO
         circumcition.save()
-
+        # uncircumcised is required,
         assert_circumsition(KEYED, REQUIRED, NOT_REQUIRED)
 
         circumcition.circumcised = NOT_SURE

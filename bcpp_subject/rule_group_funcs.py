@@ -281,6 +281,7 @@ def func_no_verbal_hiv_result(visit_instance, *args):
 
 
 def func_circumcision_not_required(visit_instance, *args):
+
     return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 
