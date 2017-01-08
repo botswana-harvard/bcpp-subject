@@ -1,5 +1,7 @@
 from django import forms
 
+from edc_constants.constants import DWTA
+
 from ..models import CommunityEngagement
 
 from .form_mixins import SubjectModelFormMixin
@@ -7,12 +9,15 @@ from .form_mixins import SubjectModelFormMixin
 
 class CommunityEngagementForm (SubjectModelFormMixin):
     def clean(self):
-        cleaned_data = super(CommunityEngagementForm, self).clean()
-        the_problems_list = []
-        for problems in cleaned_data.get('problems_engagement'):
-            the_problems_list.append(problems.name)
-        if 'Don\'t want to answer' in the_problems_list:
-            raise forms.ValidationError({'You cannot choose Don\'t want to answer and another problem at the same time. Please correct.'})
+        cleaned_data = super().clean()
+        answers = []
+        for item in cleaned_data.get('problems_engagement'):
+            answers.append(item.name)
+        if len(answers) > 1 and DWTA in answers:
+            raise forms.ValidationError({
+                'problems_engagement': (
+                    'You cannot choose \'Don\'t want to answer\' and another '
+                    'problem at the same time. Please correct.')})
         return cleaned_data
 
     class Meta:
