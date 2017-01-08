@@ -10,7 +10,7 @@ from .form_mixins import SubjectModelFormMixin
 class DemographicsForm(SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(DemographicsForm, self).clean()
+        cleaned_data = super().clean()
         # validating ethnic group
         if cleaned_data.get('ethnic') and cleaned_data.get('religion'):
             ethnic_count = cleaned_data.get('ethnic').count()
@@ -33,12 +33,6 @@ class DemographicsForm(SubjectModelFormMixin):
 
         return cleaned_data
 
-    @property
-    def subject_consent(self):
-        cleaned_data = self.cleaned_data
-        return SubjectConsent.objects.filter(
-            subject_identifier=cleaned_data.get('subject_visit').subject_identifier).last()
-
     def marital_status_married(self):
         cleaned_data = self.cleaned_data
         # validating if married
@@ -51,10 +45,12 @@ class DemographicsForm(SubjectModelFormMixin):
                 household_member__subject_identifier=subject_identifier).last()
             if num_wives <= 0:
                 if consent.gender == MALE:
-                    raise forms.ValidationError('The number of wives should be greater than 0.')
+                    raise forms.ValidationError(
+                        {'num_wives': 'The number of wives should be greater than 0.'})
             if husband_wives <= 0:
                 if consent.gender == FEMALE:
-                    raise forms.ValidationError('The number of husbands should be greater than 0.')
+                    raise forms.ValidationError(
+                        {'num_wives': 'The number of husbands should be greater than 0.'})
         return cleaned_data
 
     class Meta:
