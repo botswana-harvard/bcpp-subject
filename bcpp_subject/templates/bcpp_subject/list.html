@@ -19,31 +19,30 @@
             				<th>Subject</th>
             				<th>Born</th>
             				<th>Consented</th>
-                    <th>Community</th>
                     <th>Survey</th>
-                    <th>Year</th>
+                    <th>Community</th>
                     <th>Modified</th>
                     <th>Host</th>
             			</thead>
             			<tbody>
                   {% for obj in results %}
-          				<tr> 
-                    <td>{{ forloop.counter }}</td>
-                    <td style="white-space: nowrap">
-                      <a role="button" title="plot" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot_identifier %}"> <i class="fa fa-building-o fa-lg"></i></a>
-                      <a role="button" title="household" class="btn btn-sm btn-default" href="{% url 'household:list_url' household_identifier=obj.household_identifier %}"> <i class="fa fa-home fa-lg"></i></a>
-                      <a role="button" title="members" class="btn btn-sm btn-default" href="{% url 'member:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-group fa-lg"></i></a>
-            				  <a href="{% url 'bcpp-subject:dashboard_url' subject_identifier=obj.subject_identifier %}" title="subject dashboard" role="button" class="btn btn-default btn-sm"><i class="fa fa-dashboard fa-lg"></i> {{ obj.subject_identifier }}</a>
-                    </td>
-                    <td>{{ obj.first_name }} {{ obj.initials }} {{ obj.get_gender_display }} {% age_in_years obj.dob %}</td>
-            				<td>{{ obj.dob|date:"Y-m-d" }}</td>
-            				<td>{{ obj.consent_datetime|date:"Y-m-d" }}</td>  
-                    <td>{{ obj.community_name|title }}</td>
-                    <td>{{ obj.survey_name|upper }}</td>
-                    <td>{{ obj.survey_year|upper }}</td>
-                    <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
-                    <td>{{ obj.hostname_created }}</td>
-            			</tr>						
+            				<tr> 
+                      <td>{{ forloop.counter }}</td>
+                      <td style="white-space: nowrap">
+                        <a role="button" title="plot" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot_identifier %}"> <i class="fa fa-building-o fa-lg"></i></a>
+                        <a role="button" title="household" class="btn btn-sm btn-default" href="{% url 'household:list_url' household_identifier=obj.household_identifier %}"> <i class="fa fa-home fa-lg"></i></a>
+                        <a role="button" title="members" class="btn btn-sm btn-default" href="{% url 'member:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-group fa-lg"></i></a>
+              				  <a title="dashboard" role="button" class="btn btn-default btn-sm" href="{% url 'bcpp-subject:dashboard_url' subject_identifier=obj.subject_identifier survey=obj.survey.field_value %}">
+                          <i class="fa fa-user-circle-o fa-lg"></i> {{ obj.subject_identifier }}</a>
+                      </td>
+                      <td>{{ obj.first_name }} {{ obj.initials }} {{ obj.get_gender_display }} {% age_in_years obj.dob %}</td>
+              				<td>{{ obj.dob|date:"Y-m-d" }}</td>
+              				<td>{{ obj.consent_datetime|date:"Y-m-d" }}</td>  
+                      <td>{{ obj.survey.schedule_name|upper }}.{{ obj.survey.name|upper }}</td>
+                      <td>{{ obj.community_name|title }}</td>
+                      <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
+                      <td>{{ obj.hostname_created }}</td>
+              			</tr>						
                   {% endfor %}
      				</tbody>
      			</table></div>

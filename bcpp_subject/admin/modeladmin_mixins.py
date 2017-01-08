@@ -33,9 +33,11 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
         'required or some answers may need to be corrected.')
 
     def view_on_site(self, obj):
-        member = obj.subject_visit.household_member
+        household_member = obj.subject_visit.household_member
         return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(member=member.pk))
+            'bcpp-subject:dashboard_url', kwargs=dict(
+                subject_identifier=household_member.subject_identifier,
+                survey=household_member.household_structure.survey_object.field_value))
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):

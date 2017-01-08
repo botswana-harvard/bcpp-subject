@@ -7,6 +7,9 @@ from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
+
+from survey.model_mixins import SurveyModelMixin
+
 from ..managers import EnrollmentManager
 
 
@@ -14,7 +17,7 @@ def get_uuid():
     return str(uuid4())
 
 
-class Enrollment(EnrollmentModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -25,9 +28,6 @@ class Enrollment(EnrollmentModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUu
         max_length=50)
 
     report_datetime = models.DateTimeField(default=timezone.now, editable=False)
-
-    survey = models.CharField(
-        max_length=75)
 
     objects = EnrollmentManager()
 
