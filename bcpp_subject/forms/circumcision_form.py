@@ -2,7 +2,6 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from ..constants import ANNUAL
-from ..exceptions import CircumcisionError
 from ..models import Circumcision, Uncircumcised, Circumcised
 
 from .form_mixins import SubjectModelFormMixin
@@ -25,9 +24,11 @@ class CircumcisionForm (SubjectModelFormMixin):
 class CircumcisedForm (SubjectModelFormMixin):
 
     def clean(self):
-        if self.cleaned_data.get('circumcised') == YES and not self.cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError({'health_benefits_smc': _('Please select all that apply.')})
-        return super().clean()
+        cleaned_data = super().clean()
+        if cleaned_data.get('circumcised') == YES and not cleaned_data.get('health_benefits_smc'):
+            raise forms.ValidationError({
+                'health_benefits_smc': _('Please select all that apply.')})
+        return cleaned_data
 
     class Meta:
         model = Circumcised
@@ -37,9 +38,11 @@ class CircumcisedForm (SubjectModelFormMixin):
 class UncircumcisedForm (SubjectModelFormMixin):
 
     def clean(self):
-        if self.cleaned_data.get('circumcised') == YES and not self.cleaned_data.get('health_benefits_smc'):
-            raise forms.ValidationError({'health_benefits_smc': _('Please select all that apply.')})
-        return super().clean()
+        cleaned_data = super().clean()
+        if cleaned_data.get('circumcised') == YES and not cleaned_data.get('health_benefits_smc'):
+            raise forms.ValidationError({
+                'health_benefits_smc': _('Please select all that apply.')})
+        return cleaned_data
 
     class Meta:
         model = Uncircumcised
