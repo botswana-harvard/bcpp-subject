@@ -30,6 +30,7 @@ class TestStiForm(SubjectMixin, TestCase):
 
     def test_valid_form(self):
         form = StiForm(data=self.options)
+        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_if_sti_dx_detected_wasting(self):
