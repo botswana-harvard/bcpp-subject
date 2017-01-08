@@ -1,18 +1,16 @@
 from dateutil.relativedelta import relativedelta
 
-from django.apps import apps as django_apps
 from django.db import models
-from django.core.exceptions import ValidationError
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
+from edc_base.utils import age
 from edc_constants.choices import YES_NO
-from edc_constants.constants import YES, NO, NEG
+from edc_constants.constants import YES
 
+from ..exceptions import EnrollmentError
 from .model_mixins import CrfModelMixin
 from .subject_consent import SubjectConsent
-from edc_base.utils import age
-from bcpp_subject.exceptions import EnrollmentError
 
 
 class HicEnrollment (CrfModelMixin):
@@ -93,102 +91,7 @@ class HicEnrollment (CrfModelMixin):
             consent_age = age(first_consent.dob, first_consent.consent_datetime)
             if not 16 <= consent_age.years <= 64:
                 raise EnrollmentError('Invalid age. Got {}'.format(consent_age.years))
-            self.permanent_resident = self.is_permanent_resident()
-            self.intend_residency = self.is_intended_residency()
-            self.locator_information = self.is_locator_information()
-            self.citizen_or_spouse = self.is_citizen_or_spouse()
-            self.hiv_status_today = self.get_hiv_status_today()
         super().common_clean()
-
-    def is_permanent_resident(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        ResidencyMobility = django_apps.get_model('bcpp_subject', 'ResidencyMobility')
-        residency_mobility = ResidencyMobility.objects.filter(subject_visit=self.subject_visit)
-        if residency_mobility.exists():
-            if residency_mobility[0].permanent_resident == YES:
-                return True
-            else:
-                raise exception_cls('Please review \'residency_mobility\' in ResidencyMobility '
-                                    'form before proceeding with this one.')
-        else:
-            raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
-
-    def is_intended_residency(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        ResidencyMobility = django_apps.get_model('bcpp_subject', 'ResidencyMobility')
-        residency_mobility = ResidencyMobility.objects.filter(subject_visit=self.subject_visit)
-        if residency_mobility.exists():
-            if residency_mobility[0].intend_residency == NO:
-                return True
-            else:
-                raise exception_cls('Please review \'intend_residency\' in ResidencyMobility '
-                                    'form before proceeding with this one.')
-        else:
-            raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
-
-    def get_hiv_status_today(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        HivResult = django_apps.get_model('bcpp_subject', 'HivResult')
-        ElisaHivResult = django_apps.get_model('bcpp_subject', 'ElisaHivResult')
-        hiv_result = HivResult.objects.filter(subject_visit=self.subject_visit)
-        elisa_result = ElisaHivResult.objects.filter(subject_visit=self.subject_visit)
-        if hiv_result.exists():
-            if (hiv_result[0].hiv_result == NEG or (
-                    elisa_result.exists() and elisa_result[0].hiv_result == NEG)):
-                return NEG
-            else:
-                raise exception_cls(
-                    'Please review \'hiv_result\' in Today\'s Hiv Result form '
-                    'or in Elisa Hiv Result before proceeding with this one.')
-        else:
-            raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
-
-    def is_citizen_or_spouse(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        try:
-            subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
-            if ((subject_consent.citizen == YES) or (
-                    subject_consent.legal_marriage == YES and
-                    subject_consent.marriage_certificate == YES)):
-                return True
-            else:
-                raise exception_cls('Please review \'citizen\', \'legal_marriage\' and '
-                                    '\'marriage_certificate\' in SubjectConsent for {}. Got {}, {}, {}'.format(
-                                        subject_consent,
-                                        subject_consent.citizen,
-                                        subject_consent.legal_marriage,
-                                        subject_consent.marriage_certificate
-                                    ))
-        except SubjectConsent.DoesNotExist:
-            raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
-
-    def is_locator_information(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        SubjectLocator = django_apps.get_model('bcpp_subject', 'SubjectLocator')
-        subject_locator = SubjectLocator.objects.filter(
-            subject_identifier=self.subject_visit.subject_identifier)
-        # At least some information to contact the person should be available
-        if subject_locator.exists():
-            if (subject_locator[0].subject_cell or
-                    subject_locator[0].subject_cell_alt or
-                    subject_locator[0].subject_phone or
-                    subject_locator[0].mail_address or
-                    subject_locator[0].physical_address or
-                    subject_locator[0].subject_cell or
-                    subject_locator[0].subject_cell_alt or
-                    subject_locator[0].subject_phone or
-                    subject_locator[0].subject_phone_alt or
-                    subject_locator[0].subject_work_place or
-                    subject_locator[0].subject_work_phone or
-                    subject_locator[0].contact_physical_address or
-                    subject_locator[0].contact_cell or
-                    subject_locator[0].contact_phone):
-                return True
-            else:
-                raise exception_cls('Please review SubjectLocator to ensure there is some '
-                                    'way to contact the participant form before proceeding with this one.')
-        else:
-            raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
 
     def may_contact(self):
         if self.hic_permission == YES:

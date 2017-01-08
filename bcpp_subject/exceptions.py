@@ -32,4 +32,3 @@ class CommunityEngagementError(Exception):
 
 class ClinicQuestionnaireError(Exception):
     pass
-

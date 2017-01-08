@@ -31,14 +31,24 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
             panel_name='Microtube',
         )
         mommy.make_recipe(
+            'bcpp_subject.subjectrequisition', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
+            panel_name='ELISA'
+        )
+        mommy.make_recipe(
             'bcpp_subject.hivresult', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
             hiv_result=NEG
         )
+        mommy.make_recipe(
+            'bcpp_subject.elisahivresult', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
+            hiv_result=NEG)
         mommy.make_recipe(
             'bcpp_subject.residencymobility', subject_visit=self.subject_visit, report_datetime=get_utcnow(),
             permanent_resident=YES,
             intend_residency=NO)
         self.options = {
+            'created': get_utcnow(),
+            'modified': get_utcnow(),
+            'hostname_created': 'testuser',
             'hic_permission': YES,
             'hiv_status_today': NEG,
             'consent_datetime': get_utcnow(),
@@ -63,7 +73,7 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         form = HicEnrollmentForm(data=self.options)
         self.assertTrue(form.is_valid())
 
-    def test_is_intended_residency(self):
+    def test_if_subject_will_relocate(self):
         """ IF residency mobility record exists then hic enrollment expects intend_residency to be NO. """
         residencymobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
         residencymobility.intend_residency = YES
@@ -109,6 +119,5 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         hiv_result = HivResult.objects.get(subject_visit=self.subject_visit)
         hiv_result.hiv_result = POS
         hiv_result.save()
-
         form = HicEnrollmentForm(data=self.options)
         self.assertFalse(form.is_valid())
