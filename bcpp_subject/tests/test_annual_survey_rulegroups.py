@@ -1,4 +1,5 @@
 import datetime
+from datetime import timedelta
 
 from model_mommy import mommy
 
@@ -12,7 +13,6 @@ from .test_mixins import SubjectMixin
 from edc_appointment.models import Appointment
 
 from bcpp_subject.constants import T0, T1, T2
-from datetime import timedelta
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
@@ -84,11 +84,23 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         )
         return hiv_result
 
+    def ahs_subject_visit(self):
+        """Return an ahs subject visit."""
+        # Create an ahs member
+        household_member = super().make_ahs_household_member(self.bhs_subject_visit_male.household_member)
+        appointment = Appointment.objects.get(
+            subject_identifier=household_member.subject_identifier,
+            visit_code=self.visit_code)
+
+        return mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=household_member,
+            subject_identifier=household_member.subject_identifier,
+            appointment=appointment,
+            report_datetime=self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
+
     def test_no_circumsition_in_y2(self):
         """Assert that circumcision forms are not required at ahs if filled at bhs."""
-#         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', REQUIRED, 'T0').count(), 1)
-#         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, 'T0').count(), 1)
-#         self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, 'T0').count(), 1)
         mommy.make_recipe(
             'bcpp_subject.circumcision',
             subject_visit=self.bhs_subject_visit_male,
@@ -102,41 +114,20 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             where_circ='Lobatse',
             why_circ='not_sure'
         )
-        bhs_household_member = self.bhs_subject_visit_male.household_member
-        # Create an ahs member
-        household_member = super().make_ahs_household_member(bhs_household_member)
-        appointment = Appointment.objects.get(
-            subject_identifier=household_member.subject_identifier,
-            visit_code=self.visit_code)
 
-        mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=household_member,
-            subject_identifier=household_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
+        # Create a year 2 subject visit.
+        self.ahs_subject_visit()
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcision', NOT_REQUIRED, self.visit_code).count(), 1)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.circumcised', NOT_REQUIRED, self.visit_code).count(), 1)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.uncircumcised', NOT_REQUIRED, self.visit_code).count(), 1)
 
     def test_pos_in_y1_no_hiv_forms(self):
-
-        self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
-
+        """Assert that is a participant is positive in year 1 hiv forms are not required the following year."""
         self._hiv_result = self.hiv_result(POS, self.bhs_subject_visit_male)
 
-        household_member = super().make_ahs_household_member(self.bhs_subject_visit_male.household_member)
-        appointment = Appointment.objects.get(
-            subject_identifier=household_member.subject_identifier,
-            visit_code=self.visit_code)
-
-        mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=household_member,
-            subject_identifier=household_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
+        # Create a year 2 subject visit.
+        self.ahs_subject_visit()
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivtestreview', NOT_REQUIRED, T1).count(), 1)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivtested', NOT_REQUIRED, T1).count(), 1)

@@ -600,7 +600,7 @@ class SubjectStatusHelper(object):
             try:
                 self._vl_requisition_instance = self.models[self.timepoint_key].get(
                     'subject_requisition').objects.get(
-                        subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
+                        subject_visit=self.subject_visit, panel_name='Viral Load', is_drawn='Yes')
             except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._vl_requisition_instance
@@ -624,7 +624,7 @@ class SubjectStatusHelper(object):
             try:
                 self._rbd_requisition_instance = self.models[self.timepoint_key].get(
                     'subject_requisition').objects.get(
-                        subject_visit=self.subject_visit, panel__name='Research Blood Draw', is_drawn='Yes')
+                        subject_visit=self.subject_visit, panel_name='Research Blood Draw', is_drawn='Yes')
             except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._rbd_requisition_instance
