@@ -1,6 +1,7 @@
 from faker import Faker
 from model_mommy import mommy
 
+from datetime import datetime
 from edc_base_test.mixins import LoadListDataMixin
 
 from member.list_data import list_data
@@ -12,7 +13,7 @@ from member.models.household_member.household_member import HouseholdMember
 from edc_appointment.models import Appointment
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 from edc_metadata.models import CrfMetadata
-import datetime
+from bcpp_subject.constants import T0
 
 fake = Faker()
 
@@ -121,12 +122,12 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
-    def make_subject_visit_ahs_subject(self, visit_code, report_datetime=None):
+    def make_subject_visit_ahs_subject(self, visit_code, survey, report_datetime=None):
         """Returns a subject visit of a consented male member."""
-        bhs_subject_visit = self.make_subject_visit_for_a_male_subject('T0')
+        bhs_subject_visit = self.make_subject_visit_for_a_male_subject(T0)
         bhs_household_member = bhs_subject_visit.household_member
         # Create an ahs member
-        household_member = super().make_ahs_household_member(bhs_household_member)
+        household_member = super().make_ahs_household_member(bhs_household_member, survey)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
             visit_code=visit_code)
