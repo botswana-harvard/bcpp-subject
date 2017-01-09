@@ -146,8 +146,7 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
     def household_info(self):
         household_member = self.cleaned_data.get('household_member')
         if household_member:
-            if (household_member.relation == HEAD_OF_HOUSEHOLD and
-                    household_member.household_structure.survey.survey_slug == BASELINE_SURVEY):
+            if household_member.relation == HEAD_OF_HOUSEHOLD:
                 try:
                     HouseholdInfo.objects.get(household_member=household_member)
                 except HouseholdInfo.DoesNotExist:
