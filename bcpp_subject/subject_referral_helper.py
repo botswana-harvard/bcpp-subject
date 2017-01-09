@@ -264,9 +264,9 @@ class SubjectReferralHelper(object):
 
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
-        survey_slug = self.subject_visit.household_member.household_structure.survey.survey_slug
+        survey = self.subject_visit.household_member.household_structure.survey_object
         code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
-        if (not self.intervention and survey_slug != 'bcpp-year-1'):
+        if (not self.intervention and survey.name != 'bhs'):
             referral_code = code
         return referral_code
 
