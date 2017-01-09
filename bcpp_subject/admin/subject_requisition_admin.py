@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from ..admin_site import bcpp_subject_admin
 from ..models import SubjectRequisition
+from ..forms import SubjectRequisitionForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
@@ -9,4 +10,4 @@ from .modeladmin_mixins import CrfModelAdminMixin
 @admin.register(SubjectRequisition, site=bcpp_subject_admin)
 class SubjectRequisitionAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
-    pass
+    form = SubjectRequisitionForm

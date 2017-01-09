@@ -8,14 +8,16 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectVisitForm
 from ..models import SubjectVisit, SubjectRequisition
 
+from .modeladmin_mixins import ModelAdminMixin
+from django.urls.base import reverse
+
 
 @admin.register(SubjectVisit, site=bcpp_subject_admin)
-class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
+class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectVisitForm
-    visit_model_instance_field = 'subject_visit'
+
     requisition_model = SubjectRequisition
-    dashboard_type = 'subject'
 
     list_display = (
         'appointment',
@@ -47,6 +49,13 @@ class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
         "report_datetime",
         "comments"
     )
+
+    def view_on_site(self, obj):
+        return reverse(
+            'bcpp-subject:dashboard_url', kwargs=dict(
+                subject_identifier=obj.subject_identifier,
+                appointment=str(obj.appointment.id),
+                survey=obj.household_member.household_structure.survey_object.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

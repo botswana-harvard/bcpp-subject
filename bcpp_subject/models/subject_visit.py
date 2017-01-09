@@ -2,6 +2,7 @@ from django.db import models
 
 from edc_appointment.models import Appointment
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
+from edc_base.model.models.url_mixin import UrlMixin
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_metadata.model_mixins import CreatesMetadataModelMixin
 from edc_visit_tracking.constants import SCHEDULED
@@ -11,7 +12,6 @@ from edc_visit_tracking.model_mixins import VisitModelMixin
 from member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
-from edc_base.model.models.url_mixin import UrlMixin
 
 
 class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, UrlMixin, BaseUuidModel):
