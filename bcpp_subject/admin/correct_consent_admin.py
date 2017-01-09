@@ -3,6 +3,7 @@ from django.contrib import admin
 from ..admin_site import bcpp_subject_admin
 from ..forms import CorrectConsentForm
 from ..models import CorrectConsent, SubjectConsent
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(CorrectConsent, site=bcpp_subject_admin)
@@ -10,28 +11,30 @@ class CorrectConsentAdmin(admin.ModelAdmin):
 
     form = CorrectConsentForm
 
-    fields = (
-        'subject_consent',
-        'report_datetime',
-        'old_last_name',
-        'new_last_name',
-        'old_first_name',
-        'new_first_name',
-        'old_initials',
-        'new_initials',
-        'old_dob',
-        'new_dob',
-        'old_gender',
-        'new_gender',
-        'old_guardian_name',
-        'new_guardian_name',
-        'old_may_store_samples',
-        'new_may_store_samples',
-        'old_is_literate',
-        'new_is_literate',
-        'new_witness_name',
-        'old_witness_name',
-    )
+    fieldsets = (
+        (None, {
+            'fields': [
+                'subject_consent',
+                'report_datetime',
+                'old_last_name',
+                'new_last_name',
+                'old_first_name',
+                'new_first_name',
+                'old_initials',
+                'new_initials',
+                'old_dob',
+                'new_dob',
+                'old_gender',
+                'new_gender',
+                'old_guardian_name',
+                'new_guardian_name',
+                'old_may_store_samples',
+                'new_may_store_samples',
+                'old_is_literate',
+                'new_is_literate',
+                'new_witness_name',
+                'old_witness_name',
+            ]}), audit_fieldset_tuple)
 
     list_display = ('subject_consent', 'report_datetime')
 

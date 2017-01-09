@@ -1,4 +1,5 @@
-from .main import (SubstanceUseAdmin, StiAdmin, TubercolosisAdmin, CancerAdmin, HeartAttackAdmin, HivMedicalCareAdmin)
+from .main import (
+    SubstanceUseAdmin, StiAdmin, TubercolosisAdmin, CancerAdmin, HeartAttackAdmin, HivMedicalCareAdmin)
 
 from .access_to_care_admin import AccessToCareAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin

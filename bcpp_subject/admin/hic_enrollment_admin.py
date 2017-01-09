@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..filters import HicEnrollmentFilter
 from ..forms import HicEnrollmentForm
@@ -12,17 +14,21 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HicEnrollmentForm
-    fields = (
-        "subject_visit",
-        "dob",
-        "hic_permission",
-        "permanent_resident",
-        "intend_residency",
-        "hiv_status_today",
-        "household_residency",
-        "citizen_or_spouse",
-        "locator_information",
-        "consent_datetime")
+    fieldsets = (
+        (None, {
+            'fields': [
+                "subject_visit",
+                "dob",
+                "hic_permission",
+                "permanent_resident",
+                "intend_residency",
+                "hiv_status_today",
+                "household_residency",
+                "citizen_or_spouse",
+                "locator_information",
+                "consent_datetime"
+            ]}), audit_fieldset_tuple)
+
     radio_fields = {
         'hic_permission': admin.VERTICAL,
     }

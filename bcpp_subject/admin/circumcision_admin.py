@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_field_label.admin_mixin import ModifyFormLabelMixin
 
 from ..admin_site import bcpp_subject_admin
@@ -24,23 +25,30 @@ class CircumcisionAdmin(ModifyFormLabelMixin, CrfModelAdminMixin, admin.ModelAdm
     }
 
     form = CircumcisionForm
-    fields = (
-        "subject_visit",
-        'circumcised',
-        'last_seen_circumcised',
-        'circumcised_location',
-        'circumcised_location_other',)
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                "subject_visit",
+                'circumcised',
+                'last_seen_circumcised',
+                'circumcised_location',
+                'circumcised_location_other',
+            ]}), audit_fieldset_tuple)
+
     radio_fields = {
         'circumcised': admin.VERTICAL,
         'last_seen_circumcised': admin.VERTICAL,
         'circumcised_location': admin.VERTICAL}
-    instructions = [("Note to Interviewer: This section is to be completed "
-                     "by male participants. SKIP for female participants. "),
-                    _("Read to Participant: Some men are circumcised. "
-                      "Male circumcision is [enter site specific word] when "
-                      "the foreskin of the man's penis has been cut off. "
-                      "I would like to ask you a few questions regarding "
-                      "male circumcision.")]
+
+    instructions = [
+        ("Note to Interviewer: This section is to be completed "
+         "by male participants. SKIP for female participants. "),
+        _("Read to Participant: Some men are circumcised. "
+          "Male circumcision is [enter site specific word] when "
+          "the foreskin of the man's penis has been cut off. "
+          "I would like to ask you a few questions regarding "
+          "male circumcision.")]
 
 
 @admin.register(Circumcised, site=bcpp_subject_admin)
