@@ -1,0 +1,15 @@
+{% extends 'edc_dashboard/appointments.html' %}
+
+{% block visit_button_add %}
+	<a role="button" class="btn btn-sm btn-warning" href="{{ visit_url }}?next={{ obj.visit_next_url }}&appointment={{ obj.str_pk }}&household_member={{ household_member.id }}">
+		Start visit</a>
+		{{dashboard_url}}
+{% endblock visit_button_add %}
+
+
+{% block visit_button_change %}
+	<a role="button" class="btn btn-sm btn-default" href="{% url dashboard_url appointment=obj.str_pk subject_identifier=subject_identifier survey=survey.field_value %}?{{ obj.next_url }}">
+		<i class="fa fa-list-alt fa-sm" aria-hidden="true"></i> Forms
+	</a>
+{% endblock visit_button_change %}
+	

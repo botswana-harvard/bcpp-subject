@@ -11,18 +11,18 @@
             {% for obj in consents %}
               {% if obj.id != consent.id %}
               <a role="button" class="btn btn-sm {% if obj.id %}btn-default{% else %}btn-warning{% endif %}" 
-                 href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next=bcpp-subject:dashboard_url,subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&household_member={{ household_member.id }}">
+                 href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next={{ dashboard_url }},subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&household_member={{ household_member.id }}">
                    {%if obj.id %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ obj.verbose_name }} v{{ obj.version }}</a>
               {% endif %}
             {% endfor %}
             <!-- begin current consent -->
             <a role="button" class="btn btn-sm {% if consent.id %}btn-default{% else %}btn-warning{% endif %}" 
-               href="{% if consent.get_absolute_url %}{{ consent.get_absolute_url }}{% else %}{% url consent.admin_url_name %}{% endif %}?next=bcpp-subject:dashboard_url,subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&first_name={{ household_member.first_name }}&gender={{ household_member.gender }}&initials={{ household_member.initials }}&household_member={{ household_member.id }}">
+               href="{% if consent.get_absolute_url %}{{ consent.get_absolute_url }}{% else %}{% url consent.admin_url_name %}{% endif %}?next={{ dashboard_url }},subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&first_name={{ household_member.first_name }}&gender={{ household_member.gender }}&initials={{ household_member.initials }}&household_member={{ household_member.id }}">
                  {%if consent.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} 
                    {{ consent.verbose_name }} v{{ consent.version }}</a>
             <!-- end current consent -->
             {% for obj in enrollment_objects %}
-              <a role="button" class="btn btn-sm {% if obj.id %}btn-success{% else %}btn-default{% endif %}" href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next=next=bcpp-subject:dashboard_url,subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&household_member={{ household_member.id }}">
+              <a role="button" class="btn btn-sm {% if obj.id %}btn-success{% else %}btn-default{% endif %}" href="{% if obj.get_absolute_url %}{{ obj.get_absolute_url }}{% else %}{% url obj.admin_url_name %}{% endif %}?next=next={{ dashboard_url }},subject_identifier,survey&subject_identifier={{ subject_identifier }}&survey={{ survey.field_value }}&household_member={{ household_member.id }}">
                 {%if obj.pk %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} {{ obj.verbose_name }}</a>
             {% endfor %}
 

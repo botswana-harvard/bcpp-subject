@@ -1,5 +1,3 @@
-import re
-
 from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
@@ -8,7 +6,7 @@ from django.views.generic import TemplateView
 
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_constants.constants import MALE, UUID_PATTERN
+from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import DashboardMixin
 
 from member.models import HouseholdMember
@@ -21,8 +19,10 @@ class BcppDashboardNextUrlMixin(DashboardMixin):
 
     @property
     def next_url_parameters(self):
+        """Add these additional parameters to the next url."""
         parameters = super().next_url_parameters
         parameters['appointment'].append('survey')
+        parameters['crfs'].append('survey')
         parameters['visit'].extend(['household_member', 'survey'])
         return parameters
 
@@ -43,6 +43,7 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         self.household_member = None
 
     def get(self, request, *args, **kwargs):
+        """Add survey and household member to the instance."""
         self.survey = site_surveys.get_survey_from_field_value(kwargs.get('survey'))
         kwargs['survey'] = self.survey
         options = dict(
@@ -67,6 +68,7 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         return context
 
     def household_member_wrapper(self, obj):
+        """Add survey object and dob to to household_member(s)."""
         obj.dob = obj.enrollmentchecklist.dob
         obj = self.pk_wrapper(obj)  # TODO: needed?
         obj.survey = obj.household_structure.survey_object
