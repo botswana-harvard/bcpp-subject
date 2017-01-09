@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+
 from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import EducationForm
@@ -21,7 +22,8 @@ class EducationAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAd
         'job_type',
         'reason_unemployed',
         'job_description',
-        'monthly_income']
+        'monthly_income',
+    ]
 
     custom_exclude = {
         ANNUAL: [

@@ -31,4 +31,4 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=obj.subject_identifier,
-                survey=obj.survey))
+                survey=obj.survey_object.field_value))

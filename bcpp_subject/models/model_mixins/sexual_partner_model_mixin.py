@@ -142,18 +142,20 @@ class SexualPartnerMixin (models.Model):
         help_text="")
 
     def skip_logic_questions(self, first_partner_choices):
+        # FIXME: yuk
+        first_partner_choices = first_partner_choices or []
         first_partner_live = [
             'In this community', 'Farm within this community', 'Cattle post within this community']
         skip = False
         not_skip = False
         in_out_comm = []
-        for _partner in first_partner_choices:
-            if _partner.name in first_partner_live:
+        for partner in first_partner_choices:
+            if partner.name in first_partner_live:
                 skip = True
-            if 'In this community' == _partner.name:
-                in_out_comm.append(_partner.name)
-            if 'Outside community' == _partner.name:
-                in_out_comm.append(_partner.name)
+            if 'In this community' == partner.name:
+                in_out_comm.append(partner.name)
+            if 'Outside community' == partner.name:
+                in_out_comm.append(partner.name)
             if len(in_out_comm) == 2:
                 return not_skip
         return skip and not not_skip

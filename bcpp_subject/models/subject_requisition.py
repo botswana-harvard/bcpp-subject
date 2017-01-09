@@ -12,8 +12,11 @@ from bcpp_subject.models.subject_visit import SubjectVisit
 
 
 class SubjectRequisition(
-        RequisitionModelMixin, VisitTrackingCrfModelMixin, OffstudyMixin, RequiresConsentMixin, PreviousVisitModelMixin,
+        RequisitionModelMixin, VisitTrackingCrfModelMixin, OffstudyMixin,
+        RequiresConsentMixin, PreviousVisitModelMixin,
         UpdatesRequisitionMetadataModelMixin, UrlMixin, BaseUuidModel):
+
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     subject_visit = models.ForeignKey(SubjectVisit)
 

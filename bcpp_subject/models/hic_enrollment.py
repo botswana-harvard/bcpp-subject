@@ -85,14 +85,6 @@ class HicEnrollment (CrfModelMixin):
             self.dob, self.consent_datetime = first_consent.dob, first_consent.consent_datetime
         super(HicEnrollment, self).save(*args, **kwargs)
 
-    def common_clean(self):
-        if self.hic_permission == YES:
-            first_consent = SubjectConsent.consent.first_consent(self.subject_identifier)
-            consent_age = age(first_consent.dob, first_consent.consent_datetime)
-            if not 16 <= consent_age.years <= 64:
-                raise EnrollmentError('Invalid age. Got {}'.format(consent_age.years))
-        super().common_clean()
-
     def may_contact(self):
         if self.hic_permission == YES:
             return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'

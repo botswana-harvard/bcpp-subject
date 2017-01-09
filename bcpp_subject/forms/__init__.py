@@ -39,6 +39,7 @@ from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
 from .subject_consent_form import SubjectConsentForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_referral_form import SubjectReferralForm
+from .subject_requisition_form import SubjectRequisitionForm
 from .subject_visit_form import SubjectVisitForm
 from .tb_symptoms_form import TbSymptomsForm
 from .viral_load_result_form import ViralLoadResultForm

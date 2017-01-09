@@ -53,9 +53,8 @@ class ListView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView):
             obj.household_member.str_pk = str(obj.household_member.pk)
             obj.plot_identifier = obj.household_member.household_structure.household.plot.plot_identifier
             obj.household_identifier = obj.household_member.household_structure.household.household_identifier
-            survey = obj.household_member.household_structure.survey
-            _, obj.survey_year, obj.survey_name, obj.community_name = survey.split('.')
-            obj.community_name = ' '.join(obj.community_name.split('_'))
+            obj.survey = obj.household_member.household_structure.survey_object
+            obj.community_name = obj.survey.map_area_display
             results.append(obj)
         return results
 

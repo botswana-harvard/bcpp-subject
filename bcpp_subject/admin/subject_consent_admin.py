@@ -78,7 +78,9 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
 
     def view_on_site(self, obj):
         return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(household_member=obj.household_member.id))
+            'bcpp-subject:dashboard_url', kwargs=dict(
+                subject_identifier=obj.subject_identifier,
+                survey=obj.household_member.household_structure.survey_object.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
