@@ -11,6 +11,7 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CommunityEngagementForm
+
     fields = (
         "subject_visit",
         'community_engagement',
@@ -18,8 +19,10 @@ class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'problems_engagement',
         'problems_engagement_other',
         'solve_engagement',)
+
     radio_fields = {
         "community_engagement": admin.VERTICAL,
         "vote_engagement": admin.VERTICAL,
         "solve_engagement": admin.VERTICAL, }
+
     filter_horizontal = ('problems_engagement',)

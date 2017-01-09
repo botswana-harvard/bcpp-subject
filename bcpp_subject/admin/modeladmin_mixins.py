@@ -24,9 +24,6 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructions
 
 class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 
-    visit_model = 'bcpp_subject.subjectvisit'
-    visit_attr = 'subject_visit'
-
     instructions = (
         'Please complete the questions below. Required questions are in bold. '
         'When all required questions are complete click SAVE. Based on your responses, additional questions may be '
@@ -41,7 +38,5 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):
-
-    visit_model = SubjectVisit
-    visit_attr = 'subject_visit'
+ 
     visit_codes = {BASELINE: ['T0'], ANNUAL: ['T1', 'T2', 'T3']}
