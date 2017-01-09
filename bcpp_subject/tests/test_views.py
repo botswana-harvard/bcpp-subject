@@ -7,6 +7,7 @@ from ..views import DashboardView
 from ..views.dashboard_view import BcppDashboardExtraFieldMixin
 
 from .test_mixins import SubjectMixin
+from bcpp_subject.models.subject_consent import SubjectConsent
 
 
 @tag('me2')
@@ -28,6 +29,7 @@ class TestDashboard(SubjectMixin, TestCase):
 
         class Dummy(BcppDashboardExtraFieldMixin, TemplateView):
             template_name = 'bcpp_subject/dashboard.html'
+            consent_model = SubjectConsent
 
         survey_object = self.household_member.household_structure.survey_object
         kwargs = {
@@ -41,6 +43,7 @@ class TestDashboard(SubjectMixin, TestCase):
 
         class Dummy(BcppDashboardExtraFieldMixin, TemplateView):
             template_name = 'bcpp_subject/dashboard.html'
+            consent_model = SubjectConsent
 
         survey_object = self.household_member.household_structure.survey_object
         kwargs = {
@@ -55,6 +58,7 @@ class TestDashboard(SubjectMixin, TestCase):
 
         class Dummy(BcppDashboardExtraFieldMixin, TemplateView):
             template_name = 'bcpp_subject/dashboard.html'
+            consent_model = SubjectConsent
 
         survey_object = self.household_member.household_structure.survey_object
         kwargs = {
@@ -73,6 +77,7 @@ class TestDashboard(SubjectMixin, TestCase):
     def test_survey2(self):
         class Dummy(DashboardView, TemplateView):
             template_name = 'bcpp_subject/dashboard.html'
+            consent_model = SubjectConsent
 
         survey_object = self.household_member.household_structure.survey_object
         kwargs = {
