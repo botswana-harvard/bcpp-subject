@@ -57,10 +57,6 @@ class HivResult(CrfModelMixin):
 
     history = HistoricalRecords()
 
-    def save(self, *args, **kwargs):
-        self.hic_enrollment_checks()
-        super(HivResult, self).save(*args, **kwargs)
-
     class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Today\'s HIV Result"
