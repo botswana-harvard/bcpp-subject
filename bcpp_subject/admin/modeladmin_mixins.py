@@ -10,6 +10,7 @@ from edc_base.modeladmin_mixins import (
 from edc_visit_tracking.modeladmin_mixins import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
 
 from ..constants import BASELINE, ANNUAL
+from bcpp_subject.models.subject_visit import SubjectVisit
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
@@ -37,5 +38,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):
+
+    visit_model = SubjectVisit
+    visit_attr = 'subject_visit'
 
     visit_codes = {BASELINE: ['T0'], ANNUAL: ['T1', 'T2', 'T3']}
