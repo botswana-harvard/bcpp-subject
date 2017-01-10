@@ -52,7 +52,7 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         try:
             obj = HouseholdMember.objects.get(**options)
         except HouseholdMember.DoesNotExist:
-            self.household_member = None
+            self.household_member = None  # HouseholdMember.objects.get(subject_identifier_as_pk=kwargs.get('subject_identifier'))
         else:
             self.household_member = self.household_member_wrapper(obj)
             kwargs['household_member'] = self.household_member

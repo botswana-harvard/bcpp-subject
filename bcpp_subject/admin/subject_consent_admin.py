@@ -73,6 +73,18 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
         'marriage_certificate': admin.VERTICAL,
     }
 
+    def redirect_url(self, request, obj, post_url_continue=None):
+        kwargs = request.GET.dict()
+        redirect_url = super(ModelAdminNextUrlRedirectMixin, self).redirect_url(
+            request, obj, post_url_continue)
+        if kwargs.get(self.querystring_name):
+            url_name = kwargs.get(self.querystring_name).split(',')[0]
+            attrs = kwargs.get(self.querystring_name).split(',')[1:]
+            kwargs = {k: kwargs.get(k) for k in attrs if kwargs.get(k)}
+            kwargs.update(subject_identifier=obj.subject_identifier)
+            redirect_url = reverse(url_name, kwargs=kwargs)
+        return redirect_url
+
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj=obj) + audit_fields
 

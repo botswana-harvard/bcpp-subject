@@ -27,7 +27,7 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
         self.limit_edit_to_current_survey()
-        self.household_info()
+#         self.household_info()
         # TODO: does this need to be filled in ??
 #         if cleaned_data.get('household_member'):
 #             try:
@@ -146,9 +146,9 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
     def household_info(self):
         household_member = self.cleaned_data.get('household_member')
         if household_member:
-            if household_member.relation == HEAD_OF_HOUSEHOLD:
+            if (household_member.relation == HEAD_OF_HOUSEHOLD):
                 try:
-                    HouseholdInfo.objects.get(household_member=household_member)
+                    HouseholdInfo.objects.get(household_structure=household_member.household_structure)
                 except HouseholdInfo.DoesNotExist:
                     raise forms.ValidationError(
                         'Complete \'%(model)s\' before consenting head of household',
