@@ -27,7 +27,7 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
         self.limit_edit_to_current_survey()
-#         self.household_info()
+        self.household_info()
         # TODO: does this need to be filled in ??
 #         if cleaned_data.get('household_member'):
 #             try:
