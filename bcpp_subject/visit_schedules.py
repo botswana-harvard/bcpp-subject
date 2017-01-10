@@ -64,7 +64,7 @@ crfs_annual = (
     Crf(show_order=50, model='bcpp_subject.hivtestreview', required=True),
     Crf(show_order=60, model='bcpp_subject.hivresultdocumentation', required=True),
     Crf(show_order=70, model='bcpp_subject.hivtested', required=True),
-    Crf(show_order=80, model='bcpp_subject.hivuntested', NOT_required=True),
+    Crf(show_order=80, model='bcpp_subject.hivuntested', required=True),
     Crf(show_order=90, model='bcpp_subject.sexualbehaviour', required=True),
     Crf(show_order=100, model='bcpp_subject.recentpartner', required=True),
     Crf(show_order=110, model='bcpp_subject.secondpartner', required=True),

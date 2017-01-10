@@ -8,7 +8,7 @@ from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
 from member.models.household_member import HouseholdMember
 
-from ..constants import NOT_SURE, T0, VIRAL_LOAD, RESEACH_BLOOD_DRAW
+from ..constants import NOT_SURE, T0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 from .rule_group_mixins import RuleGroupMixin
 
 
@@ -344,7 +344,7 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
             self.crf_metadata_obj('bcpp_subject.elisahivresult', KEYED, T0, self.subject_identifier).count(), 1)
         self.assertEqual(self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
-            self.requisition_metadata_obj(REQUIRED, T0, RESEACH_BLOOD_DRAW, self.subject_identifier).count(), 1)
+            self.requisition_metadata_obj(REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
     def test_normal_circumsition_in_y1(self):
         self.subject_identifier = self.subject_visit_male.subject_identifier
@@ -404,9 +404,9 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(self.requisition_metadata_obj(
-            'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEACH_BLOOD_DRAW, self.subject_identifier).count(), 1)
+            'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
-        self.make_requisition(self.subject_visit_male, RESEACH_BLOOD_DRAW, self.get_utcnow())
+        self.make_requisition(self.subject_visit_male, RESEARCH_BLOOD_DRAW, self.get_utcnow())
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
@@ -414,7 +414,7 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
         self.assertEqual(self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
-            self.requisition_metadata_obj(KEYED, T0, RESEACH_BLOOD_DRAW, self.subject_identifier).count(), 1)
+            self.requisition_metadata_obj(KEYED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
     def test_hiv_pos_nd_not_on_art_at_bhs(self):
         """HIV Positive not on ART at T0, Should offer POC CD4, RBD and VL.
@@ -432,4 +432,15 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.assertEqual(
             self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
-            self.requisition_metadata_obj(REQUIRED, T0, RESEACH_BLOOD_DRAW, self.subject_identifier).count(), 1)
+            self.requisition_metadata_obj(REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
+
+    def test_pos_on_art_notrequire_linkage_to_care(self):
+        """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
+
+        self._hiv_result = self.hiv_result(POS, self.bhs_subject_visit_male)
+
+        # add HivCarAdherence,
+        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, NO, NO, YES, YES)
+
+        # on art so no need for CD
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
