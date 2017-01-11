@@ -6,6 +6,7 @@ from django.apps import apps as django_apps
 from edc_map.site_mappers import site_mappers
 from edc_constants.constants import POS, NEG, MALE, IND, FEMALE
 from member.models import EnrollmentChecklist
+from survey.site_surveys import site_surveys
 
 from .choices import REFERRAL_CODES
 from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
@@ -86,7 +87,7 @@ class SubjectReferralHelper(object):
     @property
     def timepoint_key(self):
         """Returns a dictionary key of either baseline or annual base in the visit code."""
-        if self.subject_referral.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
+        if self.subject_referral.subject_visit.appointment.visit_code in BASELINE_CODES:
             return BASELINE
         return ANNUAL
 
@@ -116,9 +117,7 @@ class SubjectReferralHelper(object):
 
     @property
     def gender(self):
-        registered_subject = RegisteredSubject.objects.get(
-            subject_identifier=self.subject_visit.subject_identifier)
-        return registered_subject.gender
+        return self.subject_referral.subject_visit.household_member.gender
 
     @property
     def household_member(self):
@@ -126,7 +125,7 @@ class SubjectReferralHelper(object):
 
     @property
     def subject_identifier(self):
-        return self.subject_referral.subject_visit.subject_identifier
+        return self.subject_referral.subject_visit.appointment.subject_identifier
 
     @property
     def subject_visit(self):
@@ -285,9 +284,9 @@ class SubjectReferralHelper(object):
 
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
-        survey = self.subject_visit.household_member.household_structure.survey_object
+        survey_slug = self.subject_visit.household_member.household_structure.survey
         code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
-        if (not self.intervention and survey.name != 'bhs'):
+        if (not self.intervention and survey_slug != site_surveys.current_surveys[0]):
             referral_code = code
         return referral_code
 

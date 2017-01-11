@@ -53,18 +53,20 @@ class BasePartnerForm (SubjectModelFormMixin):
             raise forms.ValidationError(
                 'if last time of sex is in days, then days cannot exceed 31')
         if (cleaned_data.get('third_last_sex', None) == 'Months' and
-                cleaned_data.get('third_last_sex_calc') > 12):
-            raise forms.ValidationError(
-                'if last time of sex is in months, then months in a year cannot exceed 12')
+                cleaned_data.get('third_last_sex_calc')):
+                if (cleaned_data.get('third_last_sex_calc') > 12):
+                    raise forms.ValidationError(
+                        'if last time of sex is in months, then months in a year cannot exceed 12')
         # validating number of months and days
-        if (cleaned_data.get('first_first_sex', None) == 'Days' and
-                cleaned_data.get('first_first_sex_calc') > 31):
-            raise forms.ValidationError(
-                'if first time of sex is in days, then days cannot exceed 31')
-        if (cleaned_data.get('first_first_sex', None) == 'Months' and
-                cleaned_data.get('first_first_sex_calc') > 12):
-            raise forms.ValidationError(
-                'if first time of sex is in months, then months in a year cannot exceed 12')
+        if cleaned_data.get('first_first_sex_calc'):
+            if (cleaned_data.get('first_first_sex', None) == 'Days'):
+                if cleaned_data.get('first_first_sex_calc') > 31:
+                    raise forms.ValidationError(
+                        'if first time of sex is in days, then days cannot exceed 31')
+            if (cleaned_data.get('first_first_sex', None) == 'Months'):
+                if (cleaned_data.get('first_first_sex_calc') > 12):
+                    raise forms.ValidationError(
+                        'if first time of sex is in months, then months in a year cannot exceed 12')
         if self.instance.skip_logic_questions(self.cleaned_data.get('first_partner_live')):
             if not cleaned_data.get('sex_partner_community', None) == NOT_APPLICABLE:
                 raise forms.ValidationError(
