@@ -133,12 +133,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             arv_evidence=NO)
 
     def make_hiv_care_adherence(
-            self, subject_visit, ever_recommended_arv, medical_care, ever_taken_arv, on_arv, arv_evidence, report_datetime):
+            self, subject_visit, ever_recommended_arv, medical_care, ever_taken_arv, on_arv, arv_evidence, report_datetime=None):
+        report_datetime = report_datetime or self.get_utcnow()
         hiv_care_adherence = mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
             first_positive=None,
             subject_visit=subject_visit,
-            report_datetime=self.get_utcnow(),
+            report_datetime=report_datetime,
             medical_care=medical_care,
             ever_recommended_arv=ever_recommended_arv,
             ever_taken_arv=ever_taken_arv,
@@ -370,11 +371,11 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         self.make_hic_enrolment(self.bhs_subject_visit_male, YES, self.bhs_subject_visit_male.report_datetime)
 
-        self.ahs_y2_subject_visit()
+        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hicenrollment', NOT_REQUIRED, T1).count(), 1)
 
-        self.ahs_y2_subject_visit()
+        self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hicenrollment', NOT_REQUIRED, T2).count(), 1)
 
@@ -415,7 +416,23 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         """Previously enrollees at t0 who are HIV-positive but were not on ART, (i.e arv_naive) at the time of enrollment.
            Still arv_naive at AHS. Pima and VL required. RBD keyed in T0, so not required.
         """
-        self.hiv_pos_nd_art_naive_at_bhs()
+        # Known POS in T0
+        self.make_hivtesting_history(self.bhs_subject_visit_male, YES, YES, POS, NO, self.bhs_subject_visit_male.report_datetime)
+
+        self.hivtest_review(self.bhs_subject_visit_male, POS, self.bhs_subject_visit_male.report_datetime)
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
+
+        self.make_requisition(self.bhs_subject_visit_male, RESEARCH_BLOOD_DRAW, self.bhs_subject_visit_male.report_datetime)
+
+        # add HivCarAdherence,
+        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, NO, NO, NO, NO, self.bhs_subject_visit_male.report_datetime)
+
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T0, VIRAL_LOAD).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', KEYED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
         ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
 
@@ -431,41 +448,31 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
            But now on ART at T1. Pima and VL required at T1(rule: art naive at enrollment).
            RBD keyed in T0, so not required. POC VL not required at T1.
         """
-        self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
-
         # Known POS in T0
-        self.make_hivtesting_history(self.bhs_subject_visit_male, YES, YES, POS, NO)
+        self.make_hivtesting_history(self.bhs_subject_visit_male, YES, YES, POS, NO, self.bhs_subject_visit_male.report_datetime)
 
-        self.hivtest_review(self.bhs_subject_visit_male, POS)
+        self.hivtest_review(self.bhs_subject_visit_male, POS, self.bhs_subject_visit_male.report_datetime)
 
-        self.make_hiv_care_adherence(self.bhs_subject_visit_male, YES, YES, YES, YES, YES)
+        self.make_hiv_care_adherence(self.bhs_subject_visit_male, YES, YES, YES, YES, YES, self.bhs_subject_visit_male.report_datetime)
 
         self.assertEqual(
             self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        self.make_requisition(self.bhs_subject_visit, RESEARCH_BLOOD_DRAW)
+        self.make_requisition(self.bhs_subject_visit_male, RESEARCH_BLOOD_DRAW, self.bhs_subject_visit_male.report_datetime)
+
+        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, YES, NO, NO, NO)
-
-        mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.get_utcnow(),
-            panel_name=RESEARCH_BLOOD_DRAW,
-        )
-
-        self.ahs_subject_visit_male_y2 = None # self.annual_subject_visit_y2
-
-        # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, YES, NO, NO, NO)
+        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, YES, NO, NO, NO, ahs_subject_visit_male_y2.report_datetime)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T1).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T1, VIRAL_LOAD).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', NOT_REQUIRED, T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        self.ahs_subject_visit_male_y3 = None
+        ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y3, YES, YES, YES, YES, YES)
+        self.make_hiv_care_adherence(ahs_subject_visit_male_y3, YES, YES, YES, YES, YES, ahs_subject_visit_male_y3.report_datetime)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T2).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T2, VIRAL_LOAD).count(), 1)
@@ -476,7 +483,6 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
            Misses T1. But now on ART at T2. Pima and VL required at T2(rule: art naive at enrollment).
            RBD keyed in T0, so not required. POC VL not required at T2.
         """
-        self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
 
         # Known POS in T0
         mommy.make_recipe(
@@ -486,11 +492,12 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             when_hiv_test='1 to 5 months ago',
             has_record=YES,
             verbal_hiv_result=POS,
-            other_record=NO
+            other_record=NO,
+            report_datetime=self.bhs_subject_visit_male.report_datetime
         )
         mommy.make_recipe(
             'bcpp_subject.hivtestreview',
-            report_datetime=self.get_utcnow(),
+            report_datetime=self.bhs_subject_visit_male.report_datetime,
             subject_visit=self.bhs_subject_visit_male,
             hiv_test_date=self.get_utcnow() - timedelta(days=50),
             recorded_hiv_result=POS)
@@ -500,7 +507,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.hivcareadherence',
             first_positive=None,
             subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
+            report_datetime=self.bhs_subject_visit_male.report_datetime,
             medical_care=YES,
             ever_recommended_arv=NO,
             ever_taken_arv=NO,
@@ -509,17 +516,18 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         )
 
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.get_utcnow(),
+            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.bhs_subject_visit_male.report_datetime,
             panel_name=RESEARCH_BLOOD_DRAW,
         )
 
-        self.ahs_subject_visit_male_y3 = None  # self.annual_subject_visit_y3
+        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
 
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
             first_positive=None,
-            subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
+            subject_visit=ahs_subject_visit_male_y3,
+            report_datetime=ahs_subject_visit_male_y3.report_datetime,
             medical_care=YES,
             ever_recommended_arv=YES,
             ever_taken_arv=YES,
@@ -542,9 +550,10 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             when_hiv_test='1 to 5 months ago',
             has_record=YES,
             verbal_hiv_result=POS,
-            other_record=NO
-        )
-        self.hivtest_review(self.bhs_subject_visit_male, POS)
+            other_record=NO,
+            report_datetime=self.bhs_subject_visit_male.report_datetime)
+
+        self.hivtest_review(self.bhs_subject_visit_male, POS, self.bhs_subject_visit_male.report_datetime)
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0).count(), 1)
 
         # ART naive at the time of enrollment, in this case T0.
@@ -552,7 +561,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.hivcareadherence',
             first_positive=None,
             subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
+            report_datetime=self.bhs_subject_visit_male.report_datetime,
             medical_care=NO,
             ever_recommended_arv=NO,
             ever_taken_arv=NO,
@@ -563,21 +572,21 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', NOT_REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.get_utcnow(),
+            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.bhs_subject_visit_male.report_datetime,
             panel_name=RESEARCH_BLOOD_DRAW,
         )
         self.assertEqual(self.requisition_metadata_obj(
             'bcpp_subject.subjectrequisition', KEYED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
         # Move on to the first annual visit.
-        self.subject_visit_male = None  # self.annual_subject_visit_y2
+        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T1).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T1, VIRAL_LOAD).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', NOT_REQUIRED, T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
         # Move on to the second annual visit.
-        self.ahs_subject_visit_male_y3 = None  #  self.annual_subject_visit_y3
+        self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T2).count(), 1)
         self.assertEqual(self.requisition_metadata_obj('bcpp_subject.subjectrequisition', REQUIRED, T2, VIRAL_LOAD).count(), 1)
