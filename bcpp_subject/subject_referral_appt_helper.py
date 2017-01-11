@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR
 
 from django.core.exceptions import ValidationError
 
 from edc_map.site_mappers import site_mappers
+from survey.site_surveys import site_surveys
+from collections import namedtuple
 
 from .choices import REFERRAL_CODES
 from .utils import next_clinic_date
@@ -39,11 +41,16 @@ class SubjectReferralApptHelper(object):
         self.community_name = community_code or site_mappers.current_mapper.map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
+        ClinicDaysTuple = namedtuple('ClinicDaysTuple', 'days start_date')
+
         try:
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
-            self.clinic_days = site_mappers.get_mapper(
-                site_mappers.current_community).current_clinic_days.get(self.referral_clinic_type)
+            # TODO: use facility from edc_appointment
+            #self.clinic_days = site_mappers.get_mapper(
+            #    site_mappers.community).current_clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = ClinicDaysTuple((MO, TU, WE, TH, FR), None)
+            pass
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)
@@ -132,6 +139,7 @@ class SubjectReferralApptHelper(object):
     def scheduled_appt_datetime(self):
         """Returns a datetime as long as the date is within 1 month
         of today otherwise leaves the date as None."""
+    # TODO: use facility from edc_appointment
         scheduled_appt_datetime = None
         if self.original_scheduled_appt_date:
             scheduled_appt_datetime = datetime(self.original_scheduled_appt_date.year,
@@ -150,6 +158,7 @@ class SubjectReferralApptHelper(object):
     @property
     def base_datetime(self):
         """Returns the base date as a datetime."""
+    # TODO: use facility from edc_appointment
         return datetime(self._base_date.year, self._base_date.month, self._base_date.day, 7, 30, 0)
 
     @property
