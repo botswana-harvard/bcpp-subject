@@ -305,7 +305,7 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.subject_visit.household_member.subject_identifier
-        # self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
+        self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
         if subject_referral_helper.required_crfs:
             raise ValidationError(('Some data is missing for the referral. '
