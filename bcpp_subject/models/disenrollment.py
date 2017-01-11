@@ -12,6 +12,18 @@ class Disenrollment(DisenrollmentModelMixin, RequiresConsentMixin, BaseUuidModel
     objects = DisenrollmentManager()
 
     class Meta(DisenrollmentModelMixin.Meta):
-        visit_schedule_name = 'visit_schedule'
+        visit_schedule_name = 'visit_schedule_annual'
+        consent_model = 'bcpp_subject.subjectconsent'
+        app_label = 'bcpp_subject'
+
+
+class DisenrollmentEss(DisenrollmentModelMixin, RequiresConsentMixin, BaseUuidModel):
+
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
+
+    objects = DisenrollmentManager()
+
+    class Meta(DisenrollmentModelMixin.Meta):
+        visit_schedule_name = 'visit_schedule_ess'
         consent_model = 'bcpp_subject.subjectconsent'
         app_label = 'bcpp_subject'

@@ -17,7 +17,7 @@ def get_uuid():
     return str(uuid4())
 
 
-class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -40,5 +40,5 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin
     class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'
         consent_model = 'bcpp_subject.subjectconsent'
-        visit_schedule_name = 'visit_schedule_annual.annual_schedule'
+        visit_schedule_name = 'visit_schedule_ess.ess_schedule'
         verbose_name = 'Enrollment'
