@@ -1,0 +1,32 @@
+{% load tz %}
+{% load edc_base_extras %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+    <td style="white-space: nowrap">
+
+      <a role="button" title="plot" class="btn btn-sm btn-default"
+        href="{% url plot_listboard_url_name plot_identifier=result.plot_identifier %}">
+            <i class="fa fa-building-o fa-lg"></i>
+      </a>
+
+      <a role="button" title="household" class="btn btn-sm btn-default"
+        href="{% url household_listboard_url_name household_identifier=result.household_identifier %}">
+            <i class="fa fa-home fa-lg"></i>
+      </a>
+
+   {% with members=result.members %}
+     {% include 'enumeration/members_button.html' %}
+   {% endwith %}
+      
+      <a title="dashboard" role="button" class="btn btn-default btn-sm"
+        href="{% url dashboard_url_name subject_identifier=result.subject_consent.subject_identifier survey=result.survey.field_value %}">
+        <i class="fa fa-user-circle-o fa-lg"></i>
+        {% if result.subject_consent.gender == MALE %}
+            <i class="fa fa-male fa-lg"></i>
+        {% else %}
+            <i class="fa fa-female fa-lg"></i>
+        {% endif %}
+        {{ result.subject_consent.subject_identifier }}
+        </a>
+    </td>

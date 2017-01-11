@@ -1,0 +1,18 @@
+{% load tz %}
+{% load edc_base_extras %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+<!--  begin columns  -->
+
+<td>
+    {{ result.subject_consent.first_name }} {{ result.subject_consent.initials }}</td>
+<td>{% age_in_years result.subject_consent.dob %}yrs {{ result.subject_consent.dob|date:"Y-m-d" }}</td>
+<td>{{ result.subject_consent.consent_datetime|date:"Y-m-d" }}</td>  
+<td>{{ result.survey.schedule_name|upper }}.{{ result.survey.name|upper }}</td>
+<td>{{ result.community_name|title }}</td>
+<td>{{ result.subject_consent.modified|date:"Y-m-d H:i" }}</td>
+<td>{{ result.subject_consent.hostname_created }}</td>
+
+<!--  end columns  -->

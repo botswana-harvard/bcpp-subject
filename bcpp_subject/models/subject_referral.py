@@ -307,11 +307,11 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
         self.subject_identifier = self.subject_visit.household_member.subject_identifier
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
-        if subject_referral_helper.missing_data:
+        if subject_referral_helper.required_crfs:
             raise ValidationError(('Some data is missing for the referral. '
                                    'Complete \'{0}\' first and try again.').format(
-                                  subject_referral_helper.missing_data._meta.verbose_name))
-        for field, value in subject_referral_helper.subject_referral_dict.iteritems():
+                                  subject_referral_helper.required_crfs._meta.verbose_name))
+        for field, value in subject_referral_helper.subject_referral_dict.items():
             setattr(self, field, value)
         self.referral_code = subject_referral_helper.referral_code
         self.referral_appt_date = subject_referral_helper.referral_appt_datetime

@@ -4,8 +4,9 @@ from collections import namedtuple
 from django.apps import apps as django_apps
 
 from edc_map.site_mappers import site_mappers
-from edc_constants.constants import POS, NEG
+from edc_constants.constants import POS, NEG, MALE, IND, FEMALE
 from member.models import EnrollmentChecklist
+from survey.site_surveys import site_surveys
 
 from .choices import REFERRAL_CODES
 from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
@@ -16,6 +17,10 @@ from .utils import convert_to_nullboolean
 
 from .subject_status_helper import SubjectStatusHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
+from edc_metadata.models import CrfMetadata
+from edc_metadata.constants import REQUIRED, KEYED
+from edc_registration.models import RegisteredSubject
+from bcpp_subject.constants import DECLINED
 
 
 class SubjectReferralHelper(object):
@@ -65,9 +70,24 @@ class SubjectReferralHelper(object):
         return '({0.subject_referral!r})'.format(self)
 
     @property
+    def required_crfs(self):
+        """ Returns crf that is required to be keyed before subject referral."""
+        crfs = ['bcpp_subject.subjectlocator', 'bcpp_subject.hivresult', 'bcpp_subject.elisahivresult',
+                'bcpp_subject.hivresultdocumentation', 'bcpp_subject.hivtestreview', 'bcpp_subject.pima',
+                'bcpp_subject.hivtestinghistory']
+        for crf in crfs:
+            try:
+                CrfMetadata.objects.get(
+                    model=crf, subject_identifier=self.subject_identifier, entry_status=REQUIRED,
+                    visit_code=self.visit_code())
+                return django_apps.get_app_config(crf.split('.')[0]).get_model(crf.split('.')[1])
+            except CrfMetadata.DoesNotExist:
+                pass
+
+    @property
     def timepoint_key(self):
         """Returns a dictionary key of either baseline or annual base in the visit code."""
-        if self.subject_referral.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
+        if self.subject_referral.subject_visit.appointment.visit_code in BASELINE_CODES:
             return BASELINE
         return ANNUAL
 
@@ -97,7 +117,7 @@ class SubjectReferralHelper(object):
 
     @property
     def gender(self):
-        return self.subject_referral.subject_visit.appointment.registered_subject.gender
+        return self.subject_referral.subject_visit.household_member.gender
 
     @property
     def household_member(self):
@@ -105,14 +125,14 @@ class SubjectReferralHelper(object):
 
     @property
     def subject_identifier(self):
-        return self.subject_referral.subject_visit.appointment.registered_subject.subject_identifier
+        return self.subject_referral.subject_visit.appointment.subject_identifier
 
     @property
     def subject_visit(self):
         return self.subject_referral.subject_visit
 
     def visit_code(self):
-        return self.subject_referral.subject_visit.appointment.visit_definition.code
+        return self.subject_referral.subject_visit.appointment.visit_code
 
     @property
     def survey(self):
@@ -215,7 +235,7 @@ class SubjectReferralHelper(object):
             self.refferal_code_pos_on_art()
 
     def refferal_code_list_with_hiv_result(self):
-        if self.hiv_result == 'IND':
+        if self.hiv_result == IND:
             # do not set referral_code_list to IND
             pass
         elif self.hiv_result == NEG:
@@ -231,11 +251,11 @@ class SubjectReferralHelper(object):
         if not self._referral_code_list:
             is_declined = None
             try:
-                is_declined = True if self.hiv_result == "Declined" else False
+                is_declined = True if self.hiv_result == DECLINED else False
             except AttributeError:
                 pass
             if not self.hiv_result or is_declined:
-                if self.gender == 'M':
+                if self.gender == MALE:
                     self.male_refferal_code()
                 elif self.pregnant:
                     self._referral_code_list.append('UNK?-PR')
@@ -264,9 +284,9 @@ class SubjectReferralHelper(object):
 
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
-        survey = self.subject_visit.household_member.household_structure.survey_object
+        survey_slug = self.subject_visit.household_member.household_structure.survey
         code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
-        if (not self.intervention and survey.name != 'bhs'):
+        if (not self.intervention and survey_slug != site_surveys.current_surveys[0]):
             referral_code = code
         return referral_code
 
@@ -364,7 +384,7 @@ class SubjectReferralHelper(object):
     @property
     def pregnant(self):
         """Returns None if male otherwise True if pregnant or False if not."""
-        if self.gender == 'F':
+        if self.gender == FEMALE:
             if not self._pregnant:
                 try:
                     reproductive_health = self.models[self.timepoint_key].get('reproductive_health').objects.get(

@@ -1,9 +1,33 @@
 from django.db import models
 
 from edc_base.model.models import HistoricalRecords
-from edc_constants.choices import YES_NO
+from edc_constants.constants import YES
 
 from .model_mixins import CrfModelMixin
+from ..models.model_mixins.crf_model_mixin import CrfModelManager
+from edc_constants.choices import YES_NO
+
+
+class TbSymtomsManager(CrfModelManager):
+
+    def get_symptoms(self, subject_visit):
+        symptoms = []
+        try:
+            obj = self.get(subject_visit=subject_visit)
+            if obj.cough == YES:
+                symptoms.append('cough')
+            if obj.lymph_nodes == YES:
+                symptoms.append('lymph_nodes')
+            if obj.night_sweat == YES:
+                symptoms.append('night_sweat')
+            if obj.cough_blood == YES:
+                symptoms.append('cough_blood')
+            if obj.weight_loss == YES:
+                symptoms.append('weight_loss')
+            symptoms.sort()
+        except self.model.DoesNotExist:
+            pass
+        return ', '.join(symptoms)
 
 
 class TbSymptoms (CrfModelMixin):
@@ -49,6 +73,8 @@ class TbSymptoms (CrfModelMixin):
         choices=YES_NO,
         help_text="",
     )
+
+    objects = TbSymtomsManager()
 
     history = HistoricalRecords()
 
