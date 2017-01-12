@@ -9,7 +9,7 @@ from survey.site_surveys import site_surveys
 from edc_constants.constants import NO, YES, POS, NEG
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 
-from bcpp_subject.constants import T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD
+from bcpp_subject.constants import T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD, ELISA
 from bcpp_subject.subject_status_helper import SubjectStatusHelper
 
 from ..models import Appointment
@@ -335,57 +335,45 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
         self.assertEqual(
             1, self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_visit_male.subject_identifier))
 
- 
-#     def tests_hiv_result8(self):
-#         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
-#         self.startup()
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups.autodiscover()
-#         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
-#         self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='hivresult', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='pima', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Venous (HIV)', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='ELISA', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups._registry = {}
- 
-#     def tests_hiv_result9(self):
-#         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
-#         self.startup()
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups.autodiscover()
-#         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG',
-#                                  has_record='No', other_record='No')
-#         self.assertTrue(ScheduledEntryMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment,
-#             entry__model_name='hivresult', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(ScheduledEntryMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment, entry__model_name='pima',
-#             entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment,
-#             lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw',
-#             entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load',
-#             entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment,
-#             lab_entry__requisition_panel__name='Venous (HIV)', entry_status=NOT_REQUIRED).count() == 1)
-#         self.assertTrue(RequisitionMetaData.objects.filter(
-#             appointment=self.subject_visit_male.appointment,
-#             lab_entry__requisition_panel__name='ELISA', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups._registry = {}
-# 
-# 
+    def tests_hiv_result9(self):
+        """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        # self.startup()
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                REQUIRED, T0, MICROTUBE, self.subject_visit_male.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                NOT_REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_visit_male.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                NOT_REQUIRED, T0, VIRAL_LOAD, self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresult', REQUIRED, T0, self.subject_visit_male.subject_identifier), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                REQUIRED, T0, MICROTUBE, self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                NOT_REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                NOT_REQUIRED, T0, 'Venous (HIV)', self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                NOT_REQUIRED, T0, ELISA, self.subject_visit_male.subject_identifier).count(), 1)
+
 #     def tests_hiv_result10(self):
 #         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
 # 
