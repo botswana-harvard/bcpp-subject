@@ -6,7 +6,6 @@ from django.apps import apps as django_apps
 
 from edc_constants.constants import POS, NEG
 
-
 from .constants import BASELINE_CODES
 from .models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
@@ -604,6 +603,18 @@ class SubjectStatusHelper(object):
         return self._vl_requisition_instance
 
     @property
+    def rbd_requisition_instance(self):
+        """Returns a model instance of the SubjectRequisition for panel VL or None."""
+        if not self._vl_requisition_instance:
+            try:
+                self._vl_requisition_instance = self.models[self.timepoint_key].get(
+                    'subject_requisition').objects.get(
+                        subject_visit=self.subject_visit, panel_name='Research Blood Draw', is_drawn='Yes')
+            except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
+                pass
+        return self._vl_requisition_instance
+
+    @property
     def rbd_sample_drawn(self):
         """Returns True if the VL was drawn."""
         if not self._rbd_sample_drawn:
@@ -611,18 +622,6 @@ class SubjectStatusHelper(object):
                 attr_if_pos=('rbd_sample_drawn', ),
                 value_if_not_pos=None)
             if not rbd_sample_drawn:
-                rbd_sample_drawn = True if self.vl_requisition_instance else False
+                rbd_sample_drawn = True if self.rbd_requisition_instance else False
             self._rbd_sample_drawn = rbd_sample_drawn
         return self._rbd_sample_drawn
-
-    @property
-    def rbd_requisition_instance(self):
-        """Returns a model instance of the SubjectRequisition for panel RBD or None."""
-        if not self._rbd_requisition_instance:
-            try:
-                self._rbd_requisition_instance = self.models[self.timepoint_key].get(
-                    'subject_requisition').objects.get(
-                        subject_visit=self.subject_visit, panel_name='Research Blood Draw', is_drawn='Yes')
-            except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
-                pass
-        return self._rbd_requisition_instance
