@@ -22,6 +22,7 @@ from survey.model_mixins import SurveyModelMixin
 
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
+from bcpp.surveys import ESS_SURVEY
 
 
 def is_minor(dob, reference_datetime):
@@ -68,6 +69,9 @@ class SubjectConsent(
 
     def save(self, *args, **kwargs):
         self.survey_schedule = self.household_member.survey_schedule_object.field_value
+        if not self.survey:
+            # TODO: #FIXME: THIS IS TEMPORARY!!
+            self.survey = ESS_SURVEY
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)

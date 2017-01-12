@@ -45,11 +45,11 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
 
     def get(self, request, *args, **kwargs):
         """Add survey and household member to the instance."""
-        self.survey = site_surveys.get_survey_from_field_value(kwargs.get('survey'))
         self.survey_schedule = site_surveys.get_survey_schedule_from_field_value(
             kwargs.get('survey_schedule'))
+        self.survey = self.survey_schedule.get_survey(kwargs.get('survey'))
         kwargs['survey'] = self.survey
-        kwargs['survey_schedule'] = self.survey
+        kwargs['survey_schedule'] = self.survey_schedule
         options = dict(
             subject_identifier=self.subject_identifier or kwargs.get('subject_identifier'),
             household_structure__survey_schedule=self.survey_schedule.field_value)
@@ -57,8 +57,10 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
             obj = HouseholdMember.objects.get(**options)
         except HouseholdMember.DoesNotExist:
             self.household_member = None  # HouseholdMember.objects.get(subject_identifier_as_pk=kwargs.get('subject_identifier'))
+            self.household_identifier = None
         else:
             self.household_member = self.household_member_wrapper(obj)
+            self.household_identifier = self.household_member.household_structure.household.household_identifier
             kwargs['household_member'] = self.household_member
         return super().get(request, *args, **kwargs)
 
@@ -68,7 +70,7 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
             survey=self.survey,
             survey_schedule=self.survey_schedule,
             household_member=self.household_member,
-            household_identifier=self.household_member.household_structure.household.household_identifier,
+            household_identifier=self.household_identifier,
         )
         return context
 

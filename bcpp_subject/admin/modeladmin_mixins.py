@@ -35,8 +35,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=household_member.subject_identifier,
-                survey=obj.subject_visit.survey_object.name,
-                survey_schedule=obj.subject_visit.survey_object.survey_schedule.field_value))
+                survey=obj.subject_visit.survey,
+                survey_schedule=obj.subject_visit.survey_schedule_object.field_value))
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):
