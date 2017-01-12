@@ -36,7 +36,7 @@ class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMi
     objects = EnrollmentManager()
 
     history = HistoricalRecords()
-edc_appointment
+
     def save(self, *args, **kwargs):
         self.facility_name = 'home'
         if self.survey != ESS_SURVEY:
