@@ -94,7 +94,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=obj.subject_identifier,
                 survey=obj.survey,
-                survey_schedule=obj.survey_object.survey_schedule.field_value))
+                survey_schedule=obj.survey_schedule_object.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

@@ -56,7 +56,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
                 subject_identifier=obj.subject_identifier,
                 appointment=str(obj.appointment.id),
                 survey=obj.survey,
-                survey_schedule=obj.survey_object.survey_schedule.field_value))
+                survey_schedule=obj.survey_schedule_object.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

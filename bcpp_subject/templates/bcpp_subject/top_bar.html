@@ -6,7 +6,7 @@
 {% load edc_base_extras %}
     <div class="panel-group">
     	<div class="panel panel-info">
-          <div class="panel-heading clearfix"><i class="fa fa-user-circle-o fa-lg"></i> {{ subject_identifier|default:"New Subject" }} &rsaquo; {{ survey.schedule_name }} &rsaquo; {{ survey.name|upper }}
+          <div class="panel-heading clearfix"><i class="fa fa-user-circle-o fa-lg"></i> {{ subject_identifier|default:"New Subject" }} &rsaquo; {{ survey_schedule.name }} &rsaquo; {{ survey.name|upper }}
           <span class="pull-right">
             {% for obj in consents %}
               {% if obj.id != consent.id %}
