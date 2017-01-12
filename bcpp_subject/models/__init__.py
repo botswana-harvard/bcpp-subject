@@ -62,3 +62,5 @@ from .hiv_linkage_to_care import HivLinkageToCare
 from .list_models import (
     CircumcisionBenefits, EthnicGroups, Diagnoses, HeartDisease, FamilyPlanning, MedicalCareAccess,
     LiveWith, PartnerResidency, NeighbourhoodProblems, Religion, ResidentMostLikely)
+from .hypertension_cardiovascular import (
+    HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement)
