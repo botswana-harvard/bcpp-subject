@@ -85,6 +85,8 @@ class HypertensionCardiovascular(BaseUuidModel):
         choices=YES_NO,
         max_length=5)
 
+    history = HistoricalRecords
+
     class Meta:
         app_label = 'bcpp_subject'
 
