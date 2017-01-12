@@ -36,6 +36,10 @@ class HypertensionCardiovascular(BaseUuidModel):
         choices=MEDICATIONS_TAKEN,
         max_length=100)
 
+    if_other_given_medication_given = models.CharField(
+        verbose_name='If other please specify',
+        max_length=100)
+
     health_care_facility = models.CharField(
         verbose_name='If yes: Health facility providing care',
         choices=HEALTH_CARE_FACILITY,
@@ -89,6 +93,8 @@ class HypertensionCardiovascular(BaseUuidModel):
 
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Hypertension and Cardiovascular Risk'
+        verbose_name_plural = 'Hypertension and Cardiovascular Risk'
 
 
 class BPMeasurement(models.Model):

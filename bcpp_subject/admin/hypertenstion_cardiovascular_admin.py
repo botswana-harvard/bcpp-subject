@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from ..admin_site import bcpp_subject_admin
+from ..forms import HypertensionCardiovascularForm
 from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
 
 
@@ -17,11 +18,11 @@ class WaistCircumferenceMeasurement(admin.StackedInline):
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
 class HypertensionCardiovascularAdmin(admin.ModelAdmin):
 
+    form = HypertensionCardiovascularForm
+
     radio_fields = {
         "may_take_blood_pressure": admin.VERTICAL,
         "hypertension_diagnosis": admin.VERTICAL,
-        "medications_taken": admin.VERTICAL,
-        "is_medication_still_given": admin.VERTICAL,
         "health_care_facility": admin.VERTICAL,
         "salt_intake_counselling": admin.VERTICAL,
         "tobacco_smoking": admin.VERTICAL,
