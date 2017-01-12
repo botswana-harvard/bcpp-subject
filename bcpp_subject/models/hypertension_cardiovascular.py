@@ -93,7 +93,9 @@ class HypertensionCardiovascular(BaseUuidModel):
 
 class BPMeasurement(models.Model):
 
-    bp_measurement = models.OneToOneField(HypertensionCardiovascular, on_delete=models.CASCADE)
+    bp_measurement = models.OneToOneField(
+        HypertensionCardiovascular,
+        on_delete=models.CASCADE)
 
     time_zero = models.CharField(
         verbose_name='BP at time 0:',
@@ -121,7 +123,9 @@ class BPMeasurement(models.Model):
 
 class WaistCircumferenceMeasurement(models.Model):
 
-    waist_circumference_measurement = models.OneToOneField(HypertensionCardiovascular, on_delete=models.CASCADE)
+    waist_circumference_measurement = models.OneToOneField(
+        HypertensionCardiovascular,
+        on_delete=models.CASCADE)
 
     waist_reading_one = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 1)',
