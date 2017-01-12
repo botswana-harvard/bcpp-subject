@@ -1,7 +1,17 @@
 from django.contrib import admin
 
 from ..admin_site import bcpp_subject_admin
-from ..models import HypertensionCardiovascular
+from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
+
+
+class BPMeasurementAdmin(admin.StackedInline):
+
+    model = BPMeasurement
+
+
+class WaistCircumferenceMeasurement(admin.StackedInline):
+
+    model = WaistCircumferenceMeasurement
 
 
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
@@ -21,3 +31,5 @@ class HypertensionCardiovascularAdmin(admin.ModelAdmin):
         "alcohol_counselling": admin.VERTICAL,
         "blood_test_for_cholesterol": admin.VERTICAL,
         "blood_test_for_diabetes": admin.VERTICAL}
+
+    inlines = (BPMeasurementAdmin, WaistCircumferenceMeasurement)
