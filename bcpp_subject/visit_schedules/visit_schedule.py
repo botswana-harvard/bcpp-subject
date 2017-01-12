@@ -4,6 +4,7 @@ from django.core.management.color import color_style
 
 from edc_map.site_mappers import site_mappers
 from edc_visit_schedule.visit_schedule import VisitSchedule
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from .annual_schedule import annual_schedule
 from .ess_schedule import ess_schedule
@@ -30,7 +31,6 @@ visit_schedule_annual = VisitSchedule(
     offstudy_model='bcpp_subject.subjectoffstudy',
 )
 
-
 visit_schedule_ess = VisitSchedule(
     name='visit_schedule_ess',
     verbose_name='BCPP Visit Schedule ESS',
@@ -43,3 +43,6 @@ visit_schedule_ess = VisitSchedule(
 
 visit_schedule_annual.add_schedule(annual_schedule)
 visit_schedule_ess.add_schedule(ess_schedule)
+
+site_visit_schedules.register(visit_schedule_annual)
+site_visit_schedules.register(visit_schedule_ess)

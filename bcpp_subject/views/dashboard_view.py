@@ -46,7 +46,7 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         kwargs['survey'] = self.survey
         options = dict(
             subject_identifier=self.subject_identifier or kwargs.get('subject_identifier'),
-            household_structure__survey=self.survey.field_value)
+            household_structure__survey=self.survey.parent_field_value)
         try:
             obj = HouseholdMember.objects.get(**options)
         except HouseholdMember.DoesNotExist:

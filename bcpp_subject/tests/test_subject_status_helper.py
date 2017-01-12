@@ -7,14 +7,12 @@ from django.test import TestCase
 from survey.site_surveys import site_surveys
 
 from edc_constants.constants import NO, YES, POS, NEG
-from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
-from edc_metadata.models import CrfMetadata, RequisitionMetadata
-from edc_appointment.models import Appointment
-
-from member.models.household_member import HouseholdMember
+from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 
 from bcpp_subject.constants import T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD
 from bcpp_subject.subject_status_helper import SubjectStatusHelper
+
+from ..models import Appointment
 
 from .rule_group_mixins import RuleGroupMixin
 

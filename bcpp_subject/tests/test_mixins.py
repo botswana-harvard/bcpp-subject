@@ -10,10 +10,13 @@ from member.constants import ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_F
 from member.models.enrollment_checklist import EnrollmentChecklist
 from edc_constants.constants import NO, YES
 from member.models.household_member.household_member import HouseholdMember
-from edc_appointment.models import Appointment
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 from edc_metadata.models import CrfMetadata
-from bcpp_subject.constants import T0
+
+from bcpp.surveys import AHS_SURVEY
+
+from ..models import Appointment
+from ..constants import T0
 
 fake = Faker()
 
@@ -31,7 +34,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         super(SubjectMixin, self).setUp()
         self.study_site = '40'
 
-    def make_subject_consent(self, household_member=None, **options):
+    def make_subject_consent(self, household_member=None, survey=None, **options):
         """Returns a subject consent in an enumerated household.
 
         * Creates a HoH household member if one does not already already exist.
@@ -42,6 +45,8 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         """
         # set up plot, household, household_structure
         # add HoH if he/she does not already exist
+        survey = survey or AHS_SURVEY
+        survey_schedule = household_member.survey_schedule_object.field_value
         try:
             make_hoh = False if household_member.relation == HEAD_OF_HOUSEHOLD else True
         except AttributeError:
@@ -77,6 +82,8 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         subject_consent = mommy.make_recipe(
             'bcpp_subject.subjectconsent',
             household_member=household_member,
+            survey=survey,
+            survey_schedule=survey_schedule,
             **options)
         return subject_consent
 
@@ -86,17 +93,21 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             model_label=self.bcpp_subject_model_label,
             subject_identifier=subject_identifier)
 
-    def make_subject_visit_for_consented_subject(self, visit_code, report_datetime=None):
+    def make_subject_visit_for_consented_subject(
+            self, visit_code, report_datetime=None, survey=None):
         """Returns a subject visit the given visit_code.
 
         Creates all needed relations."""
         household_structure = self.make_household_ready_for_enumeration()
         household_member = HouseholdMember.objects.get(household_structure=household_structure)
         self.add_enrollment_checklist(household_member)
-        subject_consent = self.make_subject_consent(household_member=household_member)
+        subject_consent = self.make_subject_consent(
+            household_member=household_member, survey=survey)
         household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
+            survey=subject_consent.survey_object.name,
+            survey_schedule=subject_consent.survey_object.survey_schedule.field_value,
             visit_code=visit_code)
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
@@ -122,12 +133,13 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
-    def make_subject_visit_ahs_subject(self, visit_code, survey, report_datetime=None):
+    def make_subject_visit_ahs_subject(self, visit_code, survey=None, report_datetime=None):
         """Returns a subject visit of a consented male member."""
         bhs_subject_visit = self.make_subject_visit_for_a_male_subject(T0)
         bhs_household_member = bhs_subject_visit.household_member
         # Create an ahs member
-        household_member = super().make_ahs_household_member(bhs_household_member, survey)
+        household_member = self.make_ahs_household_member(
+            bhs_household_member, survey=survey)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
             visit_code=visit_code)

@@ -20,9 +20,9 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     readonly_fields = ("subject_identifier", 'report_datetime', 'survey')
 
-    list_display = ("subject_identifier", 'report_datetime', 'survey')
+    list_display = ("subject_identifier", 'report_datetime', 'survey', 'survey_schedule')
 
-    list_filter = ('report_datetime', 'survey')
+    list_filter = ('report_datetime', 'survey', 'survey_schedule')
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
@@ -31,4 +31,5 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=obj.subject_identifier,
-                survey=obj.survey_object.field_value))
+                survey=obj.survey_object.field_value,
+                survey_schedule=obj.survey_object.survey_schedule.field_value))

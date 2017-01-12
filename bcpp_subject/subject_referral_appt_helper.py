@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR
+from collections import namedtuple
 
 from django.core.exceptions import ValidationError
 
 from edc_map.site_mappers import site_mappers
-from survey.site_surveys import site_surveys
-from collections import namedtuple
 
 from .choices import REFERRAL_CODES
 from .utils import next_clinic_date

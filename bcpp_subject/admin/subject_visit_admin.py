@@ -55,7 +55,8 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=obj.subject_identifier,
                 appointment=str(obj.appointment.id),
-                survey=obj.household_member.household_structure.survey_object.field_value))
+                survey=obj.survey,
+                survey_schedule=obj.survey_object.survey_schedule.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

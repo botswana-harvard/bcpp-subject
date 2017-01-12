@@ -6,6 +6,8 @@ from .subject_consent import SubjectConsent
 from bcpp_subject.models.enrollment import Enrollment
 from django.db.utils import IntegrityError
 from bcpp_subject.exceptions import EnrollmentError
+from bcpp_subject.models.enrollment_ess import EnrollmentEss
+from bcpp.surveys import ESS_SURVEY, AHS_SURVEY
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
@@ -18,17 +20,25 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
         instance.household_member.refused = False
         instance.household_member.subject_identifier = instance.subject_identifier
         instance.household_member.save()
+
         # auto-complete an enrollment for to create appointments
-        # TODO: the survey should probably dictate what you are enrolling to, AHS, ESS
+        if instance.survey == ESS_SURVEY:
+            EnrollmentModelClass = EnrollmentEss
+        elif instance.survey == AHS_SURVEY:
+            EnrollmentModelClass = Enrollment
+        else:
+            raise EnrollmentError(
+                'Unable to determine the Enrollment Model. Got survey = {}.'.format(instance.survey))
         try:
-            enrollment = Enrollment.objects.get(subject_identifier=instance.subject_identifier)
+            enrollment = EnrollmentModelClass.objects.get(subject_identifier=instance.subject_identifier)
             enrollment.save()
-        except Enrollment.DoesNotExist:
+        except EnrollmentModelClass.DoesNotExist:
             try:
-                Enrollment.objects.create(
+                EnrollmentModelClass.objects.create(
                     subject_identifier=instance.subject_identifier,
                     report_datetime=instance.report_datetime,
-                    survey=instance.household_member.household_structure.survey,
+                    survey=instance.survey_object.name,
+                    survey_schedule=instance.survey_object.survey_schedule.field_value,
                     is_eligible=True)
             except IntegrityError as e:
                 raise EnrollmentError(str(e))

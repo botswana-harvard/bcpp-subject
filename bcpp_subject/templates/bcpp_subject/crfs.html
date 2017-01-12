@@ -3,7 +3,7 @@
 {% load tz %}
 
 {% block schedule_button %}
-	<a href="{% url dashboard_url subject_identifier=subject_identifier survey=survey.field_value %} role="button" class="btn btn-sm btn-default">
+	<a href="{% url dashboard_url subject_identifier=subject_identifier survey=survey.field_value survey_schedule=result.survey_schedule.field_value %} role="button" class="btn btn-sm btn-default">
 		<i class="fa fa-reply fa-sm" aria-hidden="true"></i> <i class="fa fa-calendar fa-sm"></i> Schedule
 	</a>
 {% endblock schedule_button %}

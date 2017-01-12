@@ -1,6 +1,5 @@
 from django.db import models
 
-from edc_appointment.models import Appointment
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_consent.model_mixins import RequiresConsentMixin
@@ -10,11 +9,15 @@ from edc_visit_tracking.managers import VisitModelManager
 from edc_visit_tracking.model_mixins import VisitModelMixin
 
 from member.models import HouseholdMember
+from survey.model_mixins import SurveyModelMixin
 
 from ..choices import VISIT_UNSCHEDULED_REASON
 
+from .appointment import Appointment
 
-class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, UrlMixin, BaseUuidModel):
+
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
+                   SurveyModelMixin, UrlMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
@@ -38,9 +41,11 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
+        self.survey = self.appointment.survey_object.name
+        self.survey_schedule = self.appointment.survey_object.survey_schedule.field_value
         self.info_source = 'subject'
         self.reason = SCHEDULED
-        super(SubjectVisit, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta(VisitModelMixin.Meta):
         app_label = "bcpp_subject"

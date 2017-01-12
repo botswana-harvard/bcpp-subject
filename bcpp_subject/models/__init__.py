@@ -1,4 +1,5 @@
 from .access_to_care import AccessToCare
+from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist

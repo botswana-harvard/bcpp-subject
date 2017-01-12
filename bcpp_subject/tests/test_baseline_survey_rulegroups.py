@@ -9,6 +9,7 @@ from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 from member.models.household_member import HouseholdMember
 
 from ..constants import NOT_SURE, T0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
+
 from .rule_group_mixins import RuleGroupMixin
 
 

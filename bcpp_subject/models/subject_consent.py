@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.db import models
 
+from edc_base.exceptions import AgeValueError
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.utils import age
@@ -17,12 +18,10 @@ from edc_map.site_mappers import site_mappers
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
 from member.models import EnrollmentChecklist, HouseholdMember
+from survey.model_mixins import SurveyModelMixin
 
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
-
-from .model_mixins import SurveyModelMixin
-from edc_base.exceptions import AgeValueError
 
 
 def is_minor(dob, reference_datetime):
@@ -68,6 +67,7 @@ class SubjectConsent(
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def save(self, *args, **kwargs):
+        self.survey_schedule = self.household_member.survey_schedule_object.field_value
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
