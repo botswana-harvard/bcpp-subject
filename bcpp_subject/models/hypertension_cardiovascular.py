@@ -3,7 +3,7 @@ from django.db import models
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import YES_NO
 
-from bcpp_subject.choices import MEDICATIONS_TAKEN, HEALTH_CARE_FACILITY, TOBACCO_SMOKING
+from bcpp_subject.choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 
 
 class HypertensionCardiovascular(BaseUuidModel):
@@ -23,8 +23,7 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.CharField(
-        verbose_name='Have you ever taken any of these medications? Tick all that apply: ',
-        max_length=20)
+        max_length=100)
 
     if_other = models.CharField(
         verbose_name='If other please specify',
@@ -33,7 +32,6 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=100)
 
     is_medication_still_given = models.CharField(
-        verbose_name='If yes: Are you still being given this medication (respond for each one ticked): ',
         max_length=100)
 
     if_other_given_medication_given = models.CharField(
@@ -127,6 +125,8 @@ class BPMeasurement(models.Model):
 
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Blood Pressure Measurements'
+        verbose_name_plural = 'Blood Pressure Measurements'
 
 
 class WaistCircumferenceMeasurement(models.Model):
@@ -153,3 +153,5 @@ class WaistCircumferenceMeasurement(models.Model):
 
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Waist and Hip Measurements'
+        verbose_name_plural = 'Waist and Hip Measurements'

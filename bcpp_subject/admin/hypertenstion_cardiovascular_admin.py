@@ -1,8 +1,11 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import HypertensionCardiovascularForm
 from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
+from .modeladmin_mixins import ModelAdminMixin
 
 
 class BPMeasurementAdmin(admin.StackedInline):
@@ -39,7 +42,7 @@ class WaistCircumferenceMeasurement(admin.StackedInline):
 
 
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
-class HypertensionCardiovascularAdmin(admin.ModelAdmin):
+class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = HypertensionCardiovascularForm
 
@@ -75,16 +78,10 @@ class HypertensionCardiovascularAdmin(admin.ModelAdmin):
                 'blood_test_for_cholesterol',
                 'blood_test_for_diabetes')
         }),
-        ('Audit', {
-            'classes': ('collapse',),
-            'fields': (
-                'created',
-                'modified',
-                'user_created',
-                'user_modified',
-                'hostname_created',
-                'hostname_modified'),
-        }),
+        audit_fieldset_tuple,
     )
 
     inlines = (BPMeasurementAdmin, WaistCircumferenceMeasurement)
+
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj) + audit_fields
