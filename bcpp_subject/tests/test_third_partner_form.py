@@ -17,7 +17,6 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
             'bcpp_subject.sexualbehaviour',
             subject_visit=self.subject_visit,
             report_datetime=self.get_utcnow(),
-            lifetime_sex_partners=1
         )
         self.options = {
             'rel_type': 'Casual',
@@ -66,7 +65,6 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
 
     def test_valid_form(self):
         form = ThirdPartnerForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_if_participant_has_one_lifetime_sex_partner(self):

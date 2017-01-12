@@ -5,7 +5,6 @@ from datetime import datetime
 from django.apps import apps as django_apps
 
 from edc_constants.constants import POS, NEG
-from edc_appointment.models import Appointment
 
 
 from .constants import BASELINE_CODES
@@ -14,7 +13,6 @@ from .models import (
     HivTestingHistory, HivResultDocumentation, ElisaHivResult)
 from .utils import convert_to_nullboolean
 from bcpp_subject.constants import T0
-from bcpp_subject.patterns import subject_identifier
 
 
 class SubjectStatusHelper(object):

@@ -8,18 +8,20 @@ from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
-from bcpp.surveys import AHS_SURVEY, BHS_SURVEY
-from survey.model_mixins import SurveyModelMixin
+from bcpp.surveys import ESS_SURVEY
 
 from ..managers import EnrollmentManager
-from bcpp_subject.exceptions import EnrollmentError
+
+from survey.model_mixins import SurveyModelMixin
+
+from ..exceptions import EnrollmentError
 
 
 def get_uuid():
     return str(uuid4())
 
 
-class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -37,9 +39,9 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin
 
     def save(self, *args, **kwargs):
         self.facility_name = 'home'
-        if self.survey not in [AHS_SURVEY, BHS_SURVEY]:
+        if self.survey != ESS_SURVEY:
             raise EnrollmentError(
-                '{} enrolls to BHS, AHS only. Got {}'.format(self.__class__.__name__, self.survey))
+                '{} enrolls to ESS only. Got {}'.format(self.__class__.__name__, self.survey))
         super().save(*args, **kwargs)
 
     @property
@@ -51,5 +53,5 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMixin
     class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'
         consent_model = 'bcpp_subject.subjectconsent'
-        visit_schedule_name = 'visit_schedule_annual.annual_schedule'
+        visit_schedule_name = 'visit_schedule_ess.ess_schedule'
         verbose_name = 'Enrollment'

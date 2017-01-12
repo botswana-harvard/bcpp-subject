@@ -1,4 +1,5 @@
 from .access_to_care import AccessToCare
+from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
@@ -7,10 +8,11 @@ from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement
 from .demographics import Demographics
-from .disenrollment import Disenrollment
+from .disenrollment import Disenrollment, DisenrollmentEss
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
 from .enrollment import Enrollment
+from .enrollment_ess import EnrollmentEss
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment

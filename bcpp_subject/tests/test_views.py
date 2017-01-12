@@ -3,11 +3,11 @@ from django.test import TestCase, tag
 from django.views.generic.base import TemplateView
 from django.test.client import RequestFactory
 
+from ..models import SubjectConsent
 from ..views import DashboardView
 from ..views.dashboard_view import BcppDashboardExtraFieldMixin
 
 from .test_mixins import SubjectMixin
-from bcpp_subject.models.subject_consent import SubjectConsent
 
 
 @tag('me2')
@@ -19,6 +19,7 @@ class TestDashboard(SubjectMixin, TestCase):
             'T0', report_datetime=self.get_utcnow())
         self.appointment = self.visit.appointment
         self.subject_identifier = self.appointment.subject_identifier
+        self.subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
         self.household_member = self.visit.household_member
         self.appointments = self.visit.appointment.__class__.objects.filter(
             subject_identifier=self.subject_identifier)
@@ -31,7 +32,7 @@ class TestDashboard(SubjectMixin, TestCase):
             template_name = 'bcpp_subject/dashboard.html'
             consent_model = SubjectConsent
 
-        survey_object = self.household_member.household_structure.survey_object
+        survey_object = self.subject_consent.survey_object
         kwargs = {
             'subject_identifier': self.subject_identifier,
             'survey': survey_object.field_value}
@@ -45,7 +46,7 @@ class TestDashboard(SubjectMixin, TestCase):
             template_name = 'bcpp_subject/dashboard.html'
             consent_model = SubjectConsent
 
-        survey_object = self.household_member.household_structure.survey_object
+        survey_object = self.subject_consent.survey_object
         kwargs = {
             'subject_identifier': self.subject_identifier,
             'survey': survey_object.field_value,
@@ -60,7 +61,7 @@ class TestDashboard(SubjectMixin, TestCase):
             template_name = 'bcpp_subject/dashboard.html'
             consent_model = SubjectConsent
 
-        survey_object = self.household_member.household_structure.survey_object
+        survey_object = self.subject_consent.survey_object
         kwargs = {
             'subject_identifier': self.subject_identifier,
             'survey': survey_object.field_value,
@@ -79,7 +80,7 @@ class TestDashboard(SubjectMixin, TestCase):
             template_name = 'bcpp_subject/dashboard.html'
             consent_model = SubjectConsent
 
-        survey_object = self.household_member.household_structure.survey_object
+        survey_object = self.subject_consent.survey_object
         kwargs = {
             'subject_identifier': self.subject_identifier,
             'survey_name': survey_object.field_value}

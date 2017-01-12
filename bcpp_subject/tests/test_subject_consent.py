@@ -5,7 +5,6 @@ from faker import Faker
 from django.core.exceptions import MultipleObjectsReturned
 from django.test import TestCase, tag
 
-from edc_appointment.models import Appointment
 from edc_base.utils import age
 from edc_consent.consent import Consent
 from edc_consent.site_consents import site_consents
@@ -16,6 +15,7 @@ from member.constants import ELIGIBLE_FOR_CONSENT, ELIGIBLE_FOR_SCREENING
 from member.models import HouseholdMember
 
 from ..exceptions import ConsentValidationError
+from ..models import Appointment
 
 from .test_mixins import SubjectMixin
 
