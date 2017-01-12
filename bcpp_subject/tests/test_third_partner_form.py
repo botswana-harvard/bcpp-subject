@@ -16,7 +16,7 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
         mommy.make_recipe(
             'bcpp_subject.sexualbehaviour',
             subject_visit=self.subject_visit,
-            report_datetime=self.get_utcnow(),
+            report_datetime=self.get_utcnow(),lifetime_sex_partners=1,
         )
         self.options = {
             'rel_type': 'Casual',
@@ -32,7 +32,7 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
             'goods_exchange': YES,
             'first_condom_freq': 'All of the time',
             'past_year_sex_freq': 'Less than once a month',
-            'first_partner_hiv': NEG,
+            'first_partner_hiv': POS,
             'first_sex_current': YES,
             'sex_partner_community': 'Ranaka',
             'partner_residency': 'Outside community',
@@ -69,15 +69,23 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
 
     def test_if_participant_has_one_lifetime_sex_partner(self):
         """Asserts to see if participant has one sex partner"""
-        self.options.update(lifetime_sex_partners=1, concurrent=YES)
+        self.options.update(lifetime_sex_partners=1, concurrent=NO)
+        form = ThirdPartnerForm(data=self.options)
+        self.assertTrue(form.is_valid())
+
+        self.options.update(concurrent=None)
         form = ThirdPartnerForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_if_partner_is_hiv_negative(self):
         """Asserts that partners HIV status is negative"""
+        self.options.update(first_partner_hiv=POS, first_haart=YES)
+        form = ThirdPartnerForm(data=self.options)
+        self.assertTrue(form.is_valid())
+
         self.options.update(first_partner_hiv='negative', first_haart='Yes')
         form = ThirdPartnerForm(data=self.options)
-
+        print(form.errors)
         self.assertFalse(form.is_valid())
 
     def test_if_partner_hiv_status_not_known(self):
