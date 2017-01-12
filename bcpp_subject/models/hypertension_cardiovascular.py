@@ -23,21 +23,23 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.CharField(
-        verbose_name='Have you ever taken any of these medications? Tick all that apply:',
-        choices=MEDICATIONS_TAKEN,
+        verbose_name='Have you ever taken any of these medications? Tick all that apply: ',
         max_length=20)
 
     if_other = models.CharField(
         verbose_name='If other please specify',
+        null=True,
+        blank=True,
         max_length=100)
 
     is_medication_still_given = models.CharField(
-        verbose_name='If yes: Are you still being given this medication (respond for each one ticked):',
-        choices=MEDICATIONS_TAKEN,
+        verbose_name='If yes: Are you still being given this medication (respond for each one ticked): ',
         max_length=100)
 
     if_other_given_medication_given = models.CharField(
         verbose_name='If other please specify',
+        null=True,
+        blank=True,
         max_length=100)
 
     health_care_facility = models.CharField(
