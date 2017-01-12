@@ -41,7 +41,8 @@ _crfs_ahs = (
     Crf(show_order=350, model='bcpp_subject.elisahivresult', required=False, additional=True),
     Crf(show_order=360, model='bcpp_subject.pima', required=False, additional=True),
     Crf(show_order=370, model='bcpp_subject.subjectreferral', required=True),
-    Crf(show_order=380, model='bcpp_subject.hicenrollment', required=False, additional=True),
+    Crf(show_order=380, model='bcpp_subject.hypertensioncardiovascular', required=True),
+    Crf(show_order=390, model='bcpp_subject.hicenrollment', required=False, additional=True),
 )
 
 
