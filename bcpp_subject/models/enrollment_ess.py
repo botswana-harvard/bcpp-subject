@@ -36,7 +36,7 @@ class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMi
     objects = EnrollmentManager()
 
     history = HistoricalRecords()
-
+edc_appointment
     def save(self, *args, **kwargs):
         self.facility_name = 'home'
         if self.survey != ESS_SURVEY:
@@ -48,7 +48,7 @@ class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMi
     def extra_create_appointment_options(self):
         return dict(
             survey=self.survey_object.name,
-            survey_schedule=self.survey_schedule_object.field_value)
+            survey_schedule=self.survey_schedule_object.field_name)
 
     class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'
