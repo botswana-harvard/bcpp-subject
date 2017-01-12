@@ -2,6 +2,7 @@ from .main import (
     SubstanceUseAdmin, StiAdmin, TubercolosisAdmin, CancerAdmin, HeartAttackAdmin, HivMedicalCareAdmin)
 
 from .access_to_care_admin import AccessToCareAdmin
+from .appointment_admin import AppointmentAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
