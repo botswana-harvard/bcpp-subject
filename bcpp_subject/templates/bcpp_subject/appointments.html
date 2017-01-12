@@ -10,7 +10,7 @@
 
 	<a role="button" title="change visit" class="btn btn-sm btn-default" href="{{ obj.visit.get_absolute_url}}?next={{ obj.visit_next_url }}&appointment={{ obj.str_pk }}&household_member={{ household_member.id }}">
 		<i class="fa fa-pencil fa-sm" aria-hidden="true"></i> Visit</a> {{ obj.visit.report_datetime|date:"Y-m-d" }}
-	<a role="button" title="show forms" class="btn btn-sm btn-default" href="{% url dashboard_url appointment=obj.str_pk subject_identifier=subject_identifier survey=survey.field_value %}?{{ obj.next_url }}">
+	<a role="button" title="show forms" class="btn btn-sm btn-default" href="{% url dashboard_url appointment=obj.str_pk subject_identifier=subject_identifier survey=survey.field_value survey_schedule=result.survey_schedule.field_value %}?{{ obj.next_url }}">
 		<i class="fa fa-list-alt fa-sm" aria-hidden="true"></i> Forms
 	</a>
 {% endblock visit_button_change %}

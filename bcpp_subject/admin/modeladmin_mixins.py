@@ -26,7 +26,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 
     instructions = (
         'Please complete the questions below. Required questions are in bold. '
-        'When all required questions are complete click SAVE. Based on your responses, additional questions may be '
+        'When all required questions are complete click SAVE. '
+        'Based on your responses, additional questions may be '
         'required or some answers may need to be corrected.')
 
     def view_on_site(self, obj):
@@ -34,7 +35,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=household_member.subject_identifier,
-                survey=household_member.household_structure.survey_object.field_value))
+                survey=obj.subject_visit.survey,
+                survey_schedule=obj.subject_visit.survey_schedule_object.field_value))
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):

@@ -14,7 +14,8 @@ from ..models import SubjectConsent
 
 @admin.register(SubjectConsent, site=bcpp_subject_admin)
 class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
-                          ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectMixin, admin.ModelAdmin):
+                          ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectMixin,
+                          admin.ModelAdmin):
 
     form = SubjectConsentForm
 
@@ -92,7 +93,8 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=obj.subject_identifier,
-                survey=obj.household_member.household_structure.survey_object.field_value))
+                survey=obj.survey,
+                survey_schedule=obj.survey_schedule_object.field_value))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

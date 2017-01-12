@@ -1,5 +1,7 @@
 from django.apps import apps as django_apps
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.utils import get_utcnow
@@ -38,21 +40,27 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.survey = None
+        self.survey_schedule = None
         self.household_member = None
 
     def get(self, request, *args, **kwargs):
         """Add survey and household member to the instance."""
-        self.survey = site_surveys.get_survey_from_field_value(kwargs.get('survey'))
+        self.survey_schedule = site_surveys.get_survey_schedule_from_field_value(
+            kwargs.get('survey_schedule'))
+        self.survey = self.survey_schedule.get_survey(kwargs.get('survey'))
         kwargs['survey'] = self.survey
+        kwargs['survey_schedule'] = self.survey_schedule
         options = dict(
             subject_identifier=self.subject_identifier or kwargs.get('subject_identifier'),
-            household_structure__survey=self.survey.field_value)
+            household_structure__survey_schedule=self.survey_schedule.field_value)
         try:
             obj = HouseholdMember.objects.get(**options)
         except HouseholdMember.DoesNotExist:
             self.household_member = None  # HouseholdMember.objects.get(subject_identifier_as_pk=kwargs.get('subject_identifier'))
+            self.household_identifier = None
         else:
             self.household_member = self.household_member_wrapper(obj)
+            self.household_identifier = self.household_member.household_structure.household.household_identifier
             kwargs['household_member'] = self.household_member
         return super().get(request, *args, **kwargs)
 
@@ -60,8 +68,9 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         context = super().get_context_data(**kwargs)
         context.update(
             survey=self.survey,
+            survey_schedule=self.survey_schedule,
             household_member=self.household_member,
-            household_identifier=self.household_member.household_structure.household.household_identifier,
+            household_identifier=self.household_identifier,
         )
         return context
 
@@ -69,20 +78,17 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         """Add survey object and dob to to household_member(s)."""
         obj.dob = obj.enrollmentchecklist.dob
         obj = self.pk_wrapper(obj)  # TODO: needed?
-        obj.survey = obj.household_structure.survey_object
+        obj.survey_schedule = obj.household_structure.survey_schedule_object.field_value
         return obj
 
     def consent_wrapper(self, obj):
         """Add survey object to consent(s)."""
         obj = super().consent_wrapper(obj)
-        obj.survey = obj.household_member.household_structure.survey_object
         return obj
 
     def appointment_wrapper(self, obj, **options):
         """Add survey object to appointment(s)."""
-        options.update(survey=self.survey.field_value)
         obj = super().appointment_wrapper(obj, **options)
-        obj.survey = self.survey
         return obj
 
 
@@ -96,6 +102,10 @@ class DashboardView(
     template_name = 'bcpp_subject/dashboard.html'
     visit_model = SubjectVisit
     consent_model = SubjectConsent
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

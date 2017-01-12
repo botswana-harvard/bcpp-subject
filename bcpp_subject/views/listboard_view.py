@@ -1,5 +1,7 @@
 from django.apps import apps as django_apps
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.utils.decorators import method_decorator
 
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -21,8 +23,8 @@ class SubjectConsentModelWrapper(ModelWrapper):
 
     model_name = 'bcpp_subject.subjectconsent'
     extra_querystring_attrs = {}
-    next_url_attrs = {'bcpp_subject.subjectconsent': ['subject_identifier', 'survey']}
-    url_instance_attrs = ['subject_identifier', 'survey']
+    next_url_attrs = {'bcpp_subject.subjectconsent': ['subject_identifier', 'survey_schedule', 'survey']}
+    url_instance_attrs = ['subject_identifier', 'survey_schedule', 'survey']
 
     @property
     def household_member(self):
@@ -39,10 +41,6 @@ class SubjectConsentModelWrapper(ModelWrapper):
     @property
     def household_identifier(self):
         return self._original_object.household_member.household_structure.household.household_identifier
-
-    @property
-    def survey(self):
-        return self._original_object.household_member.household_structure.survey_object
 
     @property
     def community_name(self):
@@ -62,6 +60,10 @@ class ListBoardView(EdcBaseViewMixin, ListboardMixin, FilteredListViewMixin, Sea
     filtered_model_wrapper_class = SubjectConsentModelWrapper
     filtered_queryset_ordering = '-modified'
     url_lookup_parameters = ['id', 'subject_identifier']
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def search_options_for_date(self, search_term, **kwargs):
         """Adds report_datetime to search by date."""

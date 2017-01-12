@@ -8,9 +8,13 @@ from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
-from survey.model_mixins import SurveyModelMixin
+from bcpp.surveys import ESS_SURVEY
 
 from ..managers import EnrollmentManager
+
+from survey.model_mixins import SurveyModelMixin
+
+from ..exceptions import EnrollmentError
 
 
 def get_uuid():
@@ -35,7 +39,16 @@ class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMi
 
     def save(self, *args, **kwargs):
         self.facility_name = 'home'
+        if self.survey != ESS_SURVEY:
+            raise EnrollmentError(
+                '{} enrolls to ESS only. Got {}'.format(self.__class__.__name__, self.survey))
         super().save(*args, **kwargs)
+
+    @property
+    def extra_create_appointment_options(self):
+        return dict(
+            survey=self.survey_object.name,
+            survey_schedule=self.survey_schedule_object.field_value)
 
     class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'

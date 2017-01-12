@@ -9,6 +9,7 @@ from .demographics_form import DemographicsForm
 from .diagnoses_form import HeartAttackForm, CancerForm, TubercolosisForm, StiForm
 from .education_form import EducationForm
 from .elisa_hiv_result_form import ElisaHivResultForm
+from .hypertension_cardiovascular_form import HypertensionCardiovascularForm
 from .hic_enrollment_form import HicEnrollmentForm
 from .hiv_care_adherence_form import HivCareAdherenceForm
 from .hiv_health_care_costs_form import HivHealthCareCostsForm

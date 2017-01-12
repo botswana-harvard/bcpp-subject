@@ -321,7 +321,7 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
         super(SubjectReferral, self).save(*args, **kwargs)
 
     def survey(self):
-        return self.subject_visit.household_member.household_structure.survey
+        return self.subject_visit.survey_object.field_value
     survey.allow_tags = True
 
     def dashboard(self):
