@@ -1,3 +1,5 @@
+import sys
+
 from django.db.models.signals import post_save
 
 from django.dispatch import receiver
@@ -8,6 +10,10 @@ from django.db.utils import IntegrityError
 from bcpp_subject.exceptions import EnrollmentError
 from bcpp_subject.models.enrollment_ess import EnrollmentEss
 from bcpp.surveys import ESS_SURVEY, AHS_SURVEY
+from django.core.management.color import color_style
+from survey.site_surveys import site_surveys
+
+style = color_style() 
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
@@ -24,11 +30,17 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
         # auto-complete an enrollment for to create appointments
         if instance.survey == ESS_SURVEY:
             EnrollmentModelClass = EnrollmentEss
+            survey = instance.survey_schedule_object.get_survey(ESS_SURVEY)
         elif instance.survey == AHS_SURVEY:
             EnrollmentModelClass = Enrollment
+            survey = instance.survey_schedule_object.get_survey(AHS_SURVEY)
+#         else:
+#             raise EnrollmentError(
+#                 'Unable to determine the Enrollment Model. Got survey = {}.'.format(instance.survey))
         else:
-            raise EnrollmentError(
-                'Unable to determine the Enrollment Model. Got survey = {}.'.format(instance.survey))
+            EnrollmentModelClass = EnrollmentEss
+            sys.stdout.write(style.ERROR('\nERROR! Survey unknown when saving consent. ******\n\n'))
+            survey = instance.survey_schedule_object.get_survey(ESS_SURVEY)
         try:
             enrollment = EnrollmentModelClass.objects.get(subject_identifier=instance.subject_identifier)
             enrollment.save()
@@ -37,8 +49,8 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
                 EnrollmentModelClass.objects.create(
                     subject_identifier=instance.subject_identifier,
                     report_datetime=instance.report_datetime,
-                    survey=instance.survey_object.name,
-                    survey_schedule=instance.survey_object.survey_schedule.field_value,
+                    survey=survey.name,
+                    survey_schedule=instance.survey_schedule_object.field_value,
                     is_eligible=True)
             except IntegrityError as e:
                 raise EnrollmentError(str(e))

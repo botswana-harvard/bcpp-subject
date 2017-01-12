@@ -48,7 +48,7 @@ class EnrollmentEss(EnrollmentModelMixin, SurveyModelMixin, CreateAppointmentsMi
     def extra_create_appointment_options(self):
         return dict(
             survey=self.survey_object.name,
-            survey_schedule=self.survey_schedule_object.field_name)
+            survey_schedule=self.survey_schedule_object.field_value)
 
     class Meta(EnrollmentModelMixin.Meta):
         app_label = 'bcpp_subject'

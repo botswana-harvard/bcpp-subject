@@ -20,7 +20,8 @@ urlpatterns = [
         '(?P<survey>' + survey + ')/'
         '(?P<page>\d+)/',
         ListBoardView.as_view(), name='listboard_url'),
-    url(r'^listboard/(?P<subject_identifier>' + subject_identifier + ')/'
+    url(r'^listboard/'
+        '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'

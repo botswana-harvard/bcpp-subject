@@ -6,6 +6,8 @@ from survey.model_mixins import SurveyModelMixin
 
 class Appointment(AppointmentModelMixin, SurveyModelMixin, UrlMixin, BaseUuidModel):
 
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
+
     objects = AppointmentManager()
 
     history = HistoricalRecords()

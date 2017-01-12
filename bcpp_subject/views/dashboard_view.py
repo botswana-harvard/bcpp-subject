@@ -76,7 +76,6 @@ class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
         """Add survey object and dob to to household_member(s)."""
         obj.dob = obj.enrollmentchecklist.dob
         obj = self.pk_wrapper(obj)  # TODO: needed?
-        obj.survey = obj.household_structure.survey_schedule_object.survey_name
         obj.survey_schedule = obj.household_structure.survey_schedule_object.field_value
         return obj
 
