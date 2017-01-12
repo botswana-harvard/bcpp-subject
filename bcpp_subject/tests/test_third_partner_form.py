@@ -13,7 +13,9 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
         self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
 
         mommy.make_recipe(
-            'bcpp_subject.sexualbehaviour', subject_visit=self.subject_visit, report_datetime=self.get_utcnow(),
+            'bcpp_subject.sexualbehaviour',
+            subject_visit=self.subject_visit,
+            report_datetime=self.get_utcnow(),
         )
         self.options = {
             'rel_type': 'Casual',
@@ -58,5 +60,4 @@ class TestThirdPartnerForm(SubjectMixin, TestCase):
 
     def test_valid_form(self):
         form = ThirdPartnerForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
