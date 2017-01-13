@@ -40,13 +40,9 @@ class HospitalAdmissionForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super(HospitalAdmissionForm, self).clean()
-        # if zero, don't answer next questions
-        self.validate_cleaned_data('facility_hospitalized', cleaned_data)
-        self.validate_cleaned_data('nights_hospitalized', cleaned_data)
-        self.validate_cleaned_data('healthcare_expense', cleaned_data)
 
         # if zero nights and not NONE
-        self.admission_nights_value_eq_zero()
+        self.validate_admission_nights_value_eq_zero()
         # expenses > 0
         if cleaned_data.get('healthcare_expense') > 0 and not cleaned_data.get('hospitalization_costs'):
             raise forms.ValidationError(
