@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, YES
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 from .list_models import MedicationGiven, MedicationTaken
@@ -16,7 +16,8 @@ class HypertensionCardiovascular(BaseUuidModel):
         blood pressure and measure your waist and hips. Are you willing to have your blood \
         pressure and body measurements taken today?',
         choices=YES_NO,
-        max_length=5)
+        max_length=5,
+        default='Yes')
 
     hypertension_diagnosis = models.CharField(
         verbose_name='Have you ever been diagnosed with hypertension?',
