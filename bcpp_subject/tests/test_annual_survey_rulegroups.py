@@ -10,9 +10,10 @@ from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from survey.site_surveys import site_surveys
 
-from .test_mixins import SubjectMixin
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 from ..models import Appointment
+
+from .test_mixins import SubjectMixin
 
 from bcpp_subject.constants import DECLINED
 
