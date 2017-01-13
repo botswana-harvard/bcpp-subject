@@ -57,6 +57,18 @@ class MedicalCareAccess (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Medical Care Access"
 
 
+class MedicationTaken (ListModelMixin, BaseUuidModel):
+
+    class Meta:
+        app_label = "bcpp_subject"
+
+
+class MedicationGiven(ListModelMixin, BaseUuidModel):
+
+    class Meta:
+        app_label = "bcpp_subject"
+
+
 class NeighbourhoodProblems (ListModelMixin, BaseUuidModel):
 
     class Meta:
