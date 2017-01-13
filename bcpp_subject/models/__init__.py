@@ -8,11 +8,10 @@ from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement
 from .demographics import Demographics
-from .disenrollment import Disenrollment, DisenrollmentEss
+from .disenrollment import DisenrollmentBhs, DisenrollmentAhs, DisenrollmentEss
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
-from .enrollment import Enrollment
-from .enrollment_ess import EnrollmentEss
+from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
@@ -62,3 +61,5 @@ from .hiv_linkage_to_care import HivLinkageToCare
 from .list_models import (
     CircumcisionBenefits, EthnicGroups, Diagnoses, HeartDisease, FamilyPlanning, MedicalCareAccess,
     LiveWith, PartnerResidency, NeighbourhoodProblems, Religion, ResidentMostLikely)
+from .hypertension_cardiovascular import (
+    HypertensionCardiovascular, WaistCircumferenceMeasurement, BPMeasurement)

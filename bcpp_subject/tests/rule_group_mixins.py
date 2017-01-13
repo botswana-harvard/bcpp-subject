@@ -5,7 +5,7 @@ from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from ..constants import MICROTUBE
 
 from .test_mixins import SubjectMixin
-from edc_constants.constants import NO
+from edc_constants.constants import NO, YES
 
 
 class RuleGroupMixin(SubjectMixin):
@@ -57,6 +57,7 @@ class RuleGroupMixin(SubjectMixin):
         subject_requisition = mommy.make_recipe(
             'bcpp_subject.subjectrequisition', subject_visit=subject_visit, report_datetime=report_datetime,
             panel_name=panel,
+            is_drawn=YES
         )
         return subject_requisition
 

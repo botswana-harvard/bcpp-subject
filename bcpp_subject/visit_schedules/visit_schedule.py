@@ -6,7 +6,8 @@ from edc_map.site_mappers import site_mappers
 from edc_visit_schedule.visit_schedule import VisitSchedule
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
-from .annual_schedule import annual_schedule
+from .bhs_schedule import bhs_schedule
+from .ahs_schedule import ahs_schedule
 from .ess_schedule import ess_schedule
 
 style = color_style()
@@ -21,19 +22,29 @@ except AttributeError as e:
             site_mappers.current_map_area, str(e))))
 
 
-visit_schedule_annual = VisitSchedule(
-    name='visit_schedule_annual',
+visit_schedule_bhs = VisitSchedule(
+    name='visit_schedule_bhs',
+    verbose_name='BCPP Visit Schedule Baseline',
+    app_label='bcpp_subject',
+    default_enrollment_model='bcpp_subject.enrollmentbhs',
+    default_disenrollment_model='bcpp_subject.disenrollmentbhs',
+    visit_model='bcpp_subject.subjectvisit',
+    offstudy_model='bcpp_subject.subjectoffstudy',
+)
+
+visit_schedule_ahs = VisitSchedule(
+    name='visit_schedule_ahs',
     verbose_name='BCPP Visit Schedule Annual',
     app_label='bcpp_subject',
-    default_enrollment_model='bcpp_subject.enrollment',
-    default_disenrollment_model='bcpp_subject.disenrollment',
+    default_enrollment_model='bcpp_subject.enrollmentahs',
+    default_disenrollment_model='bcpp_subject.disenrollmentahs',
     visit_model='bcpp_subject.subjectvisit',
     offstudy_model='bcpp_subject.subjectoffstudy',
 )
 
 visit_schedule_ess = VisitSchedule(
     name='visit_schedule_ess',
-    verbose_name='BCPP Visit Schedule ESS',
+    verbose_name='BCPP Visit Schedule End of Study',
     app_label='bcpp_subject',
     default_enrollment_model='bcpp_subject.enrollmentess',
     default_disenrollment_model='bcpp_subject.disenrollmentess',
@@ -41,8 +52,10 @@ visit_schedule_ess = VisitSchedule(
     offstudy_model='bcpp_subject.subjectoffstudy',
 )
 
-visit_schedule_annual.add_schedule(annual_schedule)
+visit_schedule_bhs.add_schedule(bhs_schedule)
+visit_schedule_ahs.add_schedule(ahs_schedule)
 visit_schedule_ess.add_schedule(ess_schedule)
 
-site_visit_schedules.register(visit_schedule_annual)
+site_visit_schedules.register(visit_schedule_bhs)
+site_visit_schedules.register(visit_schedule_ahs)
 site_visit_schedules.register(visit_schedule_ess)

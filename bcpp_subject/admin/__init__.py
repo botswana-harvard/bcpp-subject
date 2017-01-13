@@ -10,7 +10,7 @@ from .correct_consent_admin import CorrectConsentAdmin
 from .demographics_admin import DemographicsAdmin
 from .education_admin import EducationAdmin
 from .elisa_hiv_result_admin import ElisaHivResult
-from .enrollment_admin import EnrollmentAdmin
+from .enrollment_admin import EnrollmentBhsAdmin, EnrollmentAhsAdmin, EnrollmentEssAdmin
 from .grant_admin import GrantAdmin, GrantInlineAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
 from .hiv_care_adherence_admin import HivCareAdherenceAdmin
@@ -48,3 +48,5 @@ from .subject_requisition_admin import SubjectRequisitionAdmin
 from .subject_visit_admin import SubjectVisitAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
+from .hypertenstion_cardiovascular_admin import (
+    HypertensionCardiovascularAdmin, WaistCircumferenceMeasurement, BPMeasurementAdmin)
