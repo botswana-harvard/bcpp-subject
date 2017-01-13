@@ -119,12 +119,12 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         household_structure = self.make_household_ready_for_enumeration()
         household_member = HouseholdMember.objects.get(household_structure=household_structure)
         self.add_enrollment_checklist(household_member)
-        subject_consent = self.make_subject_consent(
-            household_member=household_member, survey=survey)
+        subject_consent = self.add_subject_consent(
+            household_member=household_member)
         household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
-            survey=subject_consent.survey_object.name,
+            survey=subject_consent.survey,
             survey_schedule=subject_consent.survey_object.survey_schedule.field_value,
             visit_code=visit_code)
         return mommy.make_recipe(
@@ -139,7 +139,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
         household_structure = self.make_enumerated_household_with_male_member()
         household_member = HouseholdMember.objects.get(household_structure=household_structure)
         self.add_enrollment_checklist(household_member)
-        subject_consent = self.make_subject_consent(household_member=household_member)
+        subject_consent = self.add_subject_consent(household_member=household_member)
         household_member = HouseholdMember.objects.get(pk=subject_consent.household_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
