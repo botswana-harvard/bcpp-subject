@@ -23,7 +23,6 @@ class HypertensionCardiovascular(BaseUuidModel):
         verbose_name='Have you ever been diagnosed with hypertension?',
         choices=YES_NO,
         null=True,
-        default='Yes',
         max_length=5)
 
     medications_taken = models.ManyToManyField(
@@ -48,68 +47,59 @@ class HypertensionCardiovascular(BaseUuidModel):
         verbose_name='If yes: Health facility providing care',
         choices=HEALTH_CARE_FACILITY,
         null=True,
-        max_length=50,
-        default='clinic')
+        max_length=50)
 
     salt_intake_counselling = models.CharField(
         verbose_name='Have you ever been counselled about salt intake by a health care worker in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     tobacco_smoking = models.CharField(
         verbose_name='Have you ever smoked tobacco products?',
         choices=TOBACCO_SMOKING,
         null=True,
-        max_length=10,
-        default='never')
+        max_length=10)
 
     tobacco_counselling = models.CharField(
         verbose_name='If yes to any prior smoking of tobacco products, have you been counselled about smoking \
         cessation / not taking up smoking by a healthcare worker in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default=YES)
+        max_length=5)
 
     weight_counselling = models.CharField(
         verbose_name='Have you ever been counselled about what weight you should aim for by a health care worker \
         in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     physical_activity_counselling = models.CharField(
         verbose_name='Have you ever been counselled about the amount of physical activity (or exercise) to \
         maintain by a healthcare worker in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     alcohol_counselling = models.CharField(
         verbose_name='Have you ever been counselled about correct alcohol intake by a healthcare worker in \
         the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     blood_test_for_cholesterol = models.CharField(
         verbose_name='Have you ever had a blood test for high cholesterol in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     blood_test_for_diabetes = models.CharField(
         verbose_name='Have you ever had blood test for sugar diabetes in the past 3 years?',
         choices=YES_NO,
         null=True,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     history = HistoricalRecords()
 
