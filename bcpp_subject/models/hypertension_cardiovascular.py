@@ -20,7 +20,6 @@ class HypertensionCardiovascular(BaseUuidModel):
         default='Yes')
 
     hypertension_diagnosis = models.CharField(
-        verbose_name='Have you ever been diagnosed with hypertension?',
         choices=YES_NO,
         null=True,
         max_length=5)
@@ -32,6 +31,7 @@ class HypertensionCardiovascular(BaseUuidModel):
     if_other = models.CharField(
         verbose_name='If other please specify',
         null=True,
+        blank=True,
         max_length=100)
 
     medication_still_given = models.ManyToManyField(
@@ -41,62 +41,51 @@ class HypertensionCardiovascular(BaseUuidModel):
     if_other_given_medication_given = models.CharField(
         verbose_name='If other please specify',
         null=True,
-        max_length=100)
+        blank=True,
+        max_length=100,
+        default=None)
 
     health_care_facility = models.CharField(
-        verbose_name='If yes: Health facility providing care',
         choices=HEALTH_CARE_FACILITY,
         null=True,
         max_length=50)
 
     salt_intake_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about salt intake by a health care worker in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     tobacco_smoking = models.CharField(
-        verbose_name='Have you ever smoked tobacco products?',
         choices=TOBACCO_SMOKING,
         null=True,
         max_length=10)
 
     tobacco_counselling = models.CharField(
-        verbose_name='If yes to any prior smoking of tobacco products, have you been counselled about smoking \
-        cessation / not taking up smoking by a healthcare worker in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     weight_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about what weight you should aim for by a health care worker \
-        in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     physical_activity_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about the amount of physical activity (or exercise) to \
-        maintain by a healthcare worker in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     alcohol_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about correct alcohol intake by a healthcare worker in \
-        the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     blood_test_for_cholesterol = models.CharField(
-        verbose_name='Have you ever had a blood test for high cholesterol in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
 
     blood_test_for_diabetes = models.CharField(
-        verbose_name='Have you ever had blood test for sugar diabetes in the past 3 years?',
         choices=YES_NO,
         null=True,
         max_length=5)
@@ -114,27 +103,38 @@ class BPMeasurement(models.Model):
     bp_measurement = models.OneToOneField(
         HypertensionCardiovascular,
         on_delete=models.CASCADE,
-        null=True,)
+        null=True,
+        blank=True)
 
     time_zero = models.CharField(
         verbose_name='BP at time 0:',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     right_arm_one = models.CharField(
         verbose_name='Right Arm BP 1:',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     left_arm_one = models.CharField(
         verbose_name='Left Arm BP 1:',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     right_arm_two = models.CharField(
         verbose_name='Right Arm BP 2:',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     left_arm_two = models.CharField(
         verbose_name='Left Arm BP 2:',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -147,23 +147,32 @@ class WaistCircumferenceMeasurement(models.Model):
     waist_circumference_measurement = models.OneToOneField(
         HypertensionCardiovascular,
         on_delete=models.CASCADE,
-        null=True)
+        null=True,
+        blank=True)
 
     waist_reading_one = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 1)',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     waist_reading_two = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 2)',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     hip_reading_one = models.CharField(
         verbose_name='Hip circumference Measurement today (Reading 1)',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     hip_reading_two = models.CharField(
         verbose_name='Hip circumference Measurement today (Reading 2)',
-        max_length=15)
+        max_length=15,
+        null=True,
+        blank=True)
 
     class Meta:
         app_label = 'bcpp_subject'
