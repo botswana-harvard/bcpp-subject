@@ -47,17 +47,17 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
     form = HypertensionCardiovascularForm
 
     radio_fields = {
-        "may_take_blood_pressure": admin.VERTICAL,
-        "hypertension_diagnosis": admin.VERTICAL,
-        "health_care_facility": admin.VERTICAL,
-        "salt_intake_counselling": admin.VERTICAL,
-        "tobacco_smoking": admin.VERTICAL,
-        "tobacco_counselling": admin.VERTICAL,
-        "weight_counselling": admin.VERTICAL,
-        "physical_activity_counselling": admin.VERTICAL,
-        "alcohol_counselling": admin.VERTICAL,
-        "blood_test_for_cholesterol": admin.VERTICAL,
-        "blood_test_for_diabetes": admin.VERTICAL}
+        'may_take_blood_pressure': admin.VERTICAL,
+        'hypertension_diagnosis': admin.VERTICAL,
+        'health_care_facility': admin.VERTICAL,
+        'salt_intake_counselling': admin.VERTICAL,
+        'tobacco_smoking': admin.VERTICAL,
+        'tobacco_counselling': admin.VERTICAL,
+        'weight_counselling': admin.VERTICAL,
+        'physical_activity_counselling': admin.VERTICAL,
+        'alcohol_counselling': admin.VERTICAL,
+        'blood_test_for_cholesterol': admin.VERTICAL,
+        'blood_test_for_diabetes': admin.VERTICAL}
 
     fieldsets = (
         (None, {
