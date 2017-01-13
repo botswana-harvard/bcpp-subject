@@ -3,7 +3,7 @@ from django.db import models
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import YES_NO
 
-from bcpp_subject.choices import MEDICATIONS_TAKEN, HEALTH_CARE_FACILITY, TOBACCO_SMOKING
+from bcpp_subject.choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 
 
 class HypertensionCardiovascular(BaseUuidModel):
@@ -23,17 +23,21 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.CharField(
-        verbose_name='Have you ever taken any of these medications? Tick all that apply:',
-        choices=MEDICATIONS_TAKEN,
-        max_length=20)
+        max_length=100)
 
     if_other = models.CharField(
         verbose_name='If other please specify',
+        null=True,
+        blank=True,
         max_length=100)
 
     is_medication_still_given = models.CharField(
-        verbose_name='If yes: Are you still being given this medication (respond for each one ticked):',
-        choices=MEDICATIONS_TAKEN,
+        max_length=100)
+
+    if_other_given_medication_given = models.CharField(
+        verbose_name='If other please specify',
+        null=True,
+        blank=True,
         max_length=100)
 
     health_care_facility = models.CharField(
@@ -85,13 +89,19 @@ class HypertensionCardiovascular(BaseUuidModel):
         choices=YES_NO,
         max_length=5)
 
+    history = HistoricalRecords
+
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Hypertension and Cardiovascular Risk'
+        verbose_name_plural = 'Hypertension and Cardiovascular Risk'
 
 
 class BPMeasurement(models.Model):
 
-    bp_measurement = models.OneToOneField(HypertensionCardiovascular, on_delete=models.CASCADE)
+    bp_measurement = models.OneToOneField(
+        HypertensionCardiovascular,
+        on_delete=models.CASCADE)
 
     time_zero = models.CharField(
         verbose_name='BP at time 0:',
@@ -115,11 +125,15 @@ class BPMeasurement(models.Model):
 
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Blood Pressure Measurements'
+        verbose_name_plural = 'Blood Pressure Measurements'
 
 
 class WaistCircumferenceMeasurement(models.Model):
 
-    waist_circumference_measurement = models.OneToOneField(HypertensionCardiovascular, on_delete=models.CASCADE)
+    waist_circumference_measurement = models.OneToOneField(
+        HypertensionCardiovascular,
+        on_delete=models.CASCADE)
 
     waist_reading_one = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 1)',
@@ -139,3 +153,5 @@ class WaistCircumferenceMeasurement(models.Model):
 
     class Meta:
         app_label = 'bcpp_subject'
+        verbose_name = 'Waist and Hip Measurements'
+        verbose_name_plural = 'Waist and Hip Measurements'
