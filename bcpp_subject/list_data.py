@@ -131,3 +131,14 @@ list_data = {
         ("Refrigerator", "Refrigerator"),
         ("Don't want to answer", "Don't want to answer"), ],
 }
+
+from django.apps import apps as django_apps
+
+for list_obj in list_data.keys():
+    try:
+        model = django_apps.get_app_config(list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
+        for ob in list_data.get(list_obj):
+            a, b = ob
+            model.objects.create(name=a)
+    except:
+        pass

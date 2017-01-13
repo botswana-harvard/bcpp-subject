@@ -10,8 +10,8 @@ from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
 from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Circumcision,
                      ClinicQuestionnaire, CommunityEngagement, CorrectConsent, Demographics,
-                     Education, ElisaHivResult, Enrollment, Grant, HeartAttack, HicEnrollment,
-                     HivCareAdherence, HivHealthCareCosts,
+                     Education, ElisaHivResult,
+                     Grant, HeartAttack, HicEnrollment, HivCareAdherence, HivHealthCareCosts,
                      HivLinkageToCare, HivMedicalCare, HivResultDocumentation, HivResult,
                      HivTestReview, HivTested, HivTestingHistory, HivUntested, HospitalAdmission,
                      HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
@@ -164,12 +164,6 @@ elisahivresult = Recipe(
     ElisaHivResult,
     hiv_result=POS,
     hiv_result_datetime=get_utcnow(),
-)
-
-# Need to explicitly set subject_identifier and visit_code
-enrollment = Recipe(
-    Enrollment,
-    community='Bokaa',
 )
 
 grant = Recipe(

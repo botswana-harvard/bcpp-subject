@@ -1148,3 +1148,36 @@ REASON_RECOMMENDED = (
     ("cancer", "Cancer"),
     ("dnt_knw", "Do not know"),
 )
+
+MEDICATIONS_TAKEN = (
+    ("bisoprolol", "Bisoprolol"),
+    ("carvedilol", "Carvedilol"),
+    ("propranolol", "Propranolol"),
+    ("atenolol", "Atenolol"),
+    ("enalapril", "Enalapril"),
+    ("captopril", "Captopril"),
+    ("co_micardis", "Co-Micardis"),
+    ("spirinolactone", "Spirinolactone "),
+    ("hydrochlrothiazide", "Hydrochlrothiazide "),
+    ("nifedipine", "Nifedipine"),
+    ("amlodipine", "Amlodipine"),
+    ("furosemide", "Furosemide"),
+    ("doxazosin", "Doxazosin"),
+    ("hydralazine", "Hydralazine"),
+    ("other", "Other"),
+)
+
+HEALTH_CARE_FACILITY = (
+    ("clinic", "Clinic"),
+    ("primary_hospital", "Primary Hospital"),
+    ("district_hospital", "District Hospital"),
+    ("tertiary_hospital", "Tertiary Hospital"),
+    ("private_doctor", "Private Doctor/Hospital"),
+)
+
+TOBACCO_SMOKING = (
+    ("never", "Never"),
+    ("ever", "Ever"),
+    ("prior", "Prior"),
+    ("current", "Current"),
+)

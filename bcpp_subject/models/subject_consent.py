@@ -22,7 +22,6 @@ from survey.model_mixins import SurveyModelMixin
 
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
-from bcpp.surveys import ESS_SURVEY
 
 
 def is_minor(dob, reference_datetime):
@@ -68,13 +67,26 @@ class SubjectConsent(
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def save(self, *args, **kwargs):
-        self.survey_schedule = self.household_member.survey_schedule_object.field_value
-        if not self.survey:
-            # TODO: #FIXME: THIS IS TEMPORARY!!
-            self.survey = ESS_SURVEY
+        if not self.id:
+            self.survey_schedule = self.household_member.survey_schedule_object.field_value
+            self.survey = self.get_survey_name()
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
+
+    def get_survey_name(self):
+        """Returns either the first or second of two surveys in
+        the survey_schedule.
+
+        This is protocol specific and assumes there are just two
+        possibilities per survey_schedule."""
+        survey_schedule = self.household_member.survey_schedule_object
+        last = SubjectConsent.objects.filter(
+            identity=self.identity).order_by('consent_datetime').last()
+        if not last:
+            return survey_schedule.surveys[0].field_value
+        else:
+            return survey_schedule.surveys[-1].field_value
 
     def common_clean(self):
         # confirm member is eligible
@@ -117,8 +129,9 @@ class SubjectConsent(
                             EnrollmentChecklist._meta.verbose_name), 'dob')
             # match DoB
             if enrollment_checklist.dob != self.dob:
-                raise ConsentValidationError('Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'dob')
+                raise ConsentValidationError('Does not match \'{}\'. Expected {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
         # match gender
         if enrollment_checklist.gender != self.gender:
             raise ConsentValidationError(

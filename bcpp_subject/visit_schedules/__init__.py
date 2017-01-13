@@ -1,1 +1,3 @@
-from .visit_schedule import visit_schedule_annual, visit_schedule_ess, annual_schedule, ess_schedule
+from .visit_schedule import (
+    visit_schedule_ahs, visit_schedule_ess, bhs_schedule,
+    ahs_schedule, ess_schedule)
