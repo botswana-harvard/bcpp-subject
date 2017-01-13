@@ -62,12 +62,11 @@ class TestConsentSurvey(SubjectMixin, TestCase):
             make_hoh=False)
         first_household_member = self.add_household_member(
             household_structure=first_household_structure)
-
         self.add_subject_consent(first_household_member)
+
         household_structure = self.make_household_ready_for_next(
             household_structure=first_household_structure, make_hoh=False)
         household_member = self.add_household_member(household_structure)
-
         obj = self.add_subject_consent(household_member)
         self.assertEqual(
             obj.survey_schedule_object.field_value,
