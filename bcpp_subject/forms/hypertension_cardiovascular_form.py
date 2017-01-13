@@ -87,7 +87,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         required=False,
         widget=forms.RadioSelect())
 
-    is_medication_still_given = forms.MultipleChoiceField(
+    medication_still_given = forms.MultipleChoiceField(
         choices=MEDICATIONS_TAKEN,
         label='If yes: Are you still being given this \
         medication (respond for each one ticked)',
@@ -108,15 +108,15 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
             field_data = self.get_field_data_as_list()
             for _field_data in field_data:
                 if _field_data:
-                    return False
-            return True
+                    return True
+            return False
 
     def validate_may_take_blood_pressure(self):
 
         if self.cleaned_data['may_take_blood_pressure'] == 'No':
             if self.check_if_questions_are_answered() == True:
                 raise forms.ValidationError(
-                    'Since the user is not prepared to have weight/bp measured \
+                    'Since the user is not prepared to have weight/bp measured\
                     , nothing else should be filled')
 
     class Meta:
