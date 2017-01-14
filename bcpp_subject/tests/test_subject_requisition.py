@@ -40,7 +40,6 @@ class TestSubjectRequisitionForm(SubjectMixin, TestCase):
     def test_reason_not_drawn_provided(self):
         self.options.update(reason_not_drawn='refused')
         subject_requisition_form = SubjectRequisitionForm(data=self.options)
-        print(subject_requisition_form.errors)
         self.assertFalse(subject_requisition_form.is_valid())
 
     def test_estimated_volume_RBD_less(self):
