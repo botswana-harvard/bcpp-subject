@@ -37,6 +37,12 @@ class TestSubjectRequisitionForm(SubjectMixin, TestCase):
         self.assertTrue(subject_requisition_form.is_valid())
         self.assertTrue(subject_requisition_form.save())
 
+    def test_reason_not_drawn_provided(self):
+        self.options.update(reason_not_drawn='refused')
+        subject_requisition_form = SubjectRequisitionForm(data=self.options)
+        print(subject_requisition_form.errors)
+        self.assertFalse(subject_requisition_form.is_valid())
+
     def test_estimated_volume_RBD_less(self):
         """Assert rbd estimated volume is below limit"""
         self.options.update(panel_name=RESEARCH_BLOOD_DRAW)
@@ -85,7 +91,7 @@ class TestSubjectRequisitionForm(SubjectMixin, TestCase):
         """Assert ELISA panel form can save"""
         self.options.update(panel_name=ELISA)
         subject_requisition_form = SubjectRequisitionForm(data=self.options)
-        print(subject_requisition_form.errors)
+
         self.assertTrue(subject_requisition_form.is_valid())
         self.assertTrue(subject_requisition_form.save())
 

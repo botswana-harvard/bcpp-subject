@@ -1,9 +1,10 @@
 from django import forms
 
+from ..constants import RESEARCH_BLOOD_DRAW, VIRAL_LOAD, MICROTUBE
 from ..models import SubjectRequisition
 
+from edc_constants.constants import YES
 from .form_mixins import SubjectModelFormMixin
-from ..constants import RESEARCH_BLOOD_DRAW, VIRAL_LOAD, MICROTUBE
 
 
 class SubjectRequisitionForm(SubjectModelFormMixin):
@@ -23,6 +24,8 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
             elif panel == MICROTUBE:
                 if (estimated_volume < 3.0 or estimated_volume > 5.0):
                     raise forms.ValidationError("The estimated volume should between 3.0 and 5.0 ml.")
+        if cleaned_data.get('is_drawn') == YES and cleaned_data.get('reason_not_drawn'):
+            raise forms.ValidationError("Cannot provide reasons not drawn for a drawn panel")
         return cleaned_data
 
     class Meta:
