@@ -25,6 +25,7 @@ class TestHivTestingHistoryForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         hiv_testing_history_form = HivTestingHistoryForm(data=self.options)
         self.assertTrue(hiv_testing_history_form.is_valid())
+        self.assertTrue(hiv_testing_history_form.save())
 
     def test_validate_prior_hiv_test(self):
         self.options.update(has_tested=NO)

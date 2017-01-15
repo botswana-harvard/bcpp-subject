@@ -20,15 +20,16 @@ class TestHivTestReviewForm(SubjectMixin, TestCase):
         yesterday = date.today() - timedelta(1)
 
         self.options = {
-           'subject_visit': self.subject_visit.id,
-           'report_datetime': get_utcnow(),
-           'hiv_test_date': yesterday,
-           'recorded_hiv_result': NEG,
-         }
+            'subject_visit': self.subject_visit.id,
+            'report_datetime': get_utcnow(),
+            'hiv_test_date': yesterday,
+            'recorded_hiv_result': NEG,
+        }
 
     def test_form_is_valid(self):
         form = HivTestReviewForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_date_tested_hiv(self):
         """The HIV test date cannot be equal to today\'s date or tomorow's date,

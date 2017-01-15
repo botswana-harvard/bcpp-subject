@@ -26,6 +26,7 @@ class TestHivTestedForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         hiv_tested_form = HivTestedForm(data=self.options)
         self.assertTrue(hiv_tested_form.is_valid())
+        self.assertTrue(hiv_tested_form.save())
 
     def test_num_hiv_valid(self):
         """Assert number of hiv tests was not provided."""

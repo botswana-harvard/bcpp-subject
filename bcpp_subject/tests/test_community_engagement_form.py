@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from edc_constants.constants import YES
+from edc_constants.constants import YES, DWTA
 
 from ..forms import CommunityEngagementForm
 
@@ -32,10 +32,11 @@ class TestCommunityEngagementForm(SubjectMixin, TestCase):
     def test_valid_form(self):
         form = CommunityEngagementForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_community_engagement_reponse_to_problems_engagement_is_DWTA(self):
         """Asserts that response to community engagement is 'don't want to answer'"""
-        prob = NeighbourhoodProblems.objects.create(name='Don\'t want to answer', short_name='DWTA')
-        self.options.update(problems_engagement=[str(prob.id)])
+        prob = NeighbourhoodProblems.objects.create(name=DWTA, short_name='DWTA')
+        self.options.update(problems_engagement=[str(prob.id), str(self.neighboourhood_problems.id)])
         form = CommunityEngagementForm(data=self.options)
         self.assertFalse(form.is_valid())
