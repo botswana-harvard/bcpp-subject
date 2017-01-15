@@ -4,6 +4,8 @@ from django.apps import AppConfig as DjangoApponfig
 class AppConfig(DjangoApponfig):
     name = 'bcpp_subject'
     listboard_template_name = 'bcpp_subject/listboard.html'
+    dashboard_template_name = 'bcpp_subject/dashboard.html'
+    base_template_name = 'edc_base/base.html'
     listboard_url_name = 'bcpp-subject:listboard_url'
     dashboard_url_name = 'bcpp-subject:dashboard_url'
     url_namespace = 'bcpp-subject'
