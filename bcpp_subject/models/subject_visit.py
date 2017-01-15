@@ -1,7 +1,6 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_base.model.models.url_mixin import UrlMixin
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_metadata.model_mixins import CreatesMetadataModelMixin
 from edc_visit_tracking.constants import SCHEDULED
@@ -17,7 +16,7 @@ from .appointment import Appointment
 
 
 class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
-                   SurveyModelMixin, UrlMixin, BaseUuidModel):
+                   SurveyModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""

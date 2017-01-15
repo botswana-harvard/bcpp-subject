@@ -20,7 +20,7 @@
    {% endwith %}
       
       <a title="dashboard" role="button" class="btn btn-default btn-sm"
-        href="{% url dashboard_url_name subject_identifier=result.subject_consent.subject_identifier survey=result.survey.field_value survey_schedule=result.survey_schedule.field_value %}">
+        href="{% url dashboard_url_name subject_identifier=result.subject_consent.subject_identifier survey=result.subject_consent.survey_object.field_value survey_schedule=result.subject_consent.survey_schedule_object.field_value household_identifier=result.household_identifier %}">
         <i class="fa fa-user-circle-o fa-lg"></i>
         {% if result.subject_consent.gender == MALE %}
             <i class="fa fa-male fa-lg"></i>

@@ -43,6 +43,7 @@ class TestHivResultForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         hiv_result_form = HivResultForm(data=self.options)
         self.assertTrue(hiv_result_form.is_valid())
+        self.assertTrue(hiv_result_form.save())
 
     def test_hiv_test_declined(self):
         """Assert hiv test was declined but no reason was provided."""

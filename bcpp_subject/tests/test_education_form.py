@@ -33,6 +33,7 @@ class TestEducationForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         education_form = EducationForm(data=self.options)
         self.assertTrue(education_form.is_valid())
+        self.assertTrue(education_form.save())
 
     def test_permission_to_contact_at_work(self):
         """Assert participant consented to be contacted at work is working."""

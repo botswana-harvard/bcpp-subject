@@ -31,6 +31,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
     def test_demographics_form_valid(self):
         form = DemographicsForm(data=self.data)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_marriage_gender_female_valid(self):
         """ Assert that is a participant is married and with number of wife less than zero validation error thrown"""

@@ -3,7 +3,6 @@ from django.utils import timezone
 
 from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_base.model.models.url_mixin import UrlMixin
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
 from bcpp.surveys import ESS_SURVEY, BHS_SURVEY, AHS_SURVEY
@@ -52,7 +51,7 @@ class BcppEnrollmentMixin(models.Model):
 
 
 class EnrollmentBhs(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
-                    CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+                    CreateAppointmentsMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -66,7 +65,7 @@ class EnrollmentBhs(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
 
 
 class EnrollmentAhs(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
-                    CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+                    CreateAppointmentsMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
@@ -80,7 +79,7 @@ class EnrollmentAhs(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
 
 
 class EnrollmentEss(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
-                    CreateAppointmentsMixin, UrlMixin, BaseUuidModel):
+                    CreateAppointmentsMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the SubjectConsent."""
 
