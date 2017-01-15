@@ -41,17 +41,83 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         self.data['hypertension_diagnosis'] = 'Yes'
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
-        self.data['hypertension_diagnosis'] = 'No'
-        form = HypertensionCardiovascularForm(data=self.data)
-        self.assertFalse(form.is_valid())
 
     def test_bp_not_measured_fields_filled_health_care_facility(self):
         """Test to verify validation works when participant doesn't \
         want to get weight/BP measured, but health_care_facility \
         question is answered"""
-        self.data['health_care_facility'] = 'Clinic'
+        self.data['health_care_facility'] = 'clinic'
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
-        self.data['health_care_facility'] = 'Primary Hospital'
+
+    def test_bp_not_measured_fields_filled_if_other_medications_taken(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but if_other_medications_taken \
+        question is answered"""
+        self.data['if_other_medications_taken'] = 'Some medication'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_salt_intake_counselling(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but salt_intake_counselling \
+        question is answered"""
+        self.data['salt_intake_counselling'] = 'No'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_salt_tobacco_smoking(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but salt_tobacco_smoking \
+        question is answered"""
+        self.data['tobacco_smoking'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_salt_tobacco_counselling(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but tobacco_counselling \
+        question is answered"""
+        self.data['tobacco_counselling'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_weight_counselling(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but weight_counselling \
+        question is answered"""
+        self.data['weight_counselling'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_physical_activity_counselling(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but physical_activity_counselling \
+        question is answered"""
+        self.data['physical_activity_counselling'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_alcohol_counselling(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but alcohol_counselling \
+        question is answered"""
+        self.data['alcohol_counselling'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_blood_test_for_cholesterol(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but blood_test_for_cholesterol \
+        question is answered"""
+        self.data['blood_test_for_cholesterol'] = 'Yes'
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_bp_not_measured_fields_filled_blood_test_for_diabetes(self):
+        """Test to verify validation works when participant doesn't \
+        want to get weight/BP measured, but blood_test_for_cholesterol \
+        question is answered"""
+        self.data['blood_test_for_diabetes'] = 'No'
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
