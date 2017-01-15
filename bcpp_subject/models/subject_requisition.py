@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.models import UrlMixin, BaseUuidModel
+from edc_base.model.models import BaseUuidModel
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_lab.model_mixins import RequisitionModelMixin
 from edc_metadata.model_mixins import UpdatesRequisitionMetadataModelMixin
@@ -14,7 +14,7 @@ from bcpp_subject.models.subject_visit import SubjectVisit
 class SubjectRequisition(
         RequisitionModelMixin, VisitTrackingCrfModelMixin, OffstudyMixin,
         RequiresConsentMixin, PreviousVisitModelMixin,
-        UpdatesRequisitionMetadataModelMixin, UrlMixin, BaseUuidModel):
+        UpdatesRequisitionMetadataModelMixin, BaseUuidModel):
 
     ADMIN_SITE_NAME = 'bcpp_subject_admin'
 

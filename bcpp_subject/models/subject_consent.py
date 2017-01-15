@@ -2,7 +2,6 @@ from django.apps import apps as django_apps
 from django.db import models
 
 from edc_base.exceptions import AgeValueError
-from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.utils import age
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
@@ -32,7 +31,7 @@ class SubjectConsent(
         ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin, ReviewFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
-        UrlMixin, BaseUuidModel):
+        BaseUuidModel):
 
     """ A model completed by the user that captures the ICF."""
 

@@ -37,6 +37,7 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
         form = CircumcisedForm(data=self.options)
         print(form.errors)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_circumcision_health_benefits_smc_none(self):
         """Assert that the form is not valid if health_benefits_smc is None."""
