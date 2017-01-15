@@ -1,13 +1,14 @@
 from django.db import models
 
-from edc_base.model.models import BaseUuidModel, HistoricalRecords
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO, YES
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 from .list_models import MedicationGiven, MedicationTaken
+from .model_mixins import CrfModelMixin
 
 
-class HypertensionCardiovascular(BaseUuidModel):
+class HypertensionCardiovascular(CrfModelMixin):
 
     """Model used for getting hypertension and cardiovascular info"""
 
@@ -25,25 +26,22 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.ManyToManyField(
-        MedicationTaken,
-        null=True)
+        MedicationTaken)
 
-    if_other = models.CharField(
+    if_other_medications_taken = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
         max_length=100)
 
     medication_still_given = models.ManyToManyField(
-        MedicationGiven,
-        null=True)
+        MedicationGiven)
 
-    if_other_given_medication_given = models.CharField(
+    if_other_medication_still_given = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
-        max_length=100,
-        default=None)
+        max_length=100)
 
     health_care_facility = models.CharField(
         choices=HEALTH_CARE_FACILITY,
