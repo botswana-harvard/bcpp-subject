@@ -24,6 +24,7 @@ class TestHivUntestedForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         hiv_untested_form = HivUntestedForm(data=self.options)
         self.assertTrue(hiv_untested_form.is_valid())
+        self.assertTrue(hiv_untested_form.save())
 
     def test_no_hiv_pills_none_arvs_hiv(self):
         """Assert information about ARV was provided without having heard of ARV's."""
