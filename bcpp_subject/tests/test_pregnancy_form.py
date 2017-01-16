@@ -15,8 +15,12 @@ class TestPregnancyForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject(
-            'T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
 
         mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit
                           =self.subject_visit, report_datetime=self.get_utcnow
@@ -32,6 +36,7 @@ class TestPregnancyForm(SubjectMixin, TestCase):
     def test_form_is_valid(self):
         form = PregnancyForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save)
 
     def test_none_lnmp_when_pregnant(self):
         self.options.update(current_pregnant=YES, lnmp=None)
