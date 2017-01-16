@@ -5,12 +5,11 @@ from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 from ..admin_site import bcpp_subject_admin
 from ..forms import HypertensionCardiovascularForm
 from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
+
 from .modeladmin_mixins import ModelAdminMixin
 
 
-class BPMeasurementAdmin(admin.StackedInline):
-
-    model = BPMeasurement
+class BPMeasurementAdminInlineAdmin(admin.StackedInline):
 
     fieldsets = (
         (None, {
@@ -21,12 +20,16 @@ class BPMeasurementAdmin(admin.StackedInline):
                 'right_arm_two',
                 'left_arm_two')
         }),
+        audit_fieldset_tuple,
     )
 
+    model = BPMeasurement
 
-class WaistCircumferenceMeasurement(admin.StackedInline):
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj) + audit_fields
 
-    model = WaistCircumferenceMeasurement
+
+class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
 
     fieldsets = (
         (None, {
@@ -36,11 +39,19 @@ class WaistCircumferenceMeasurement(admin.StackedInline):
                 'hip_reading_one',
                 'hip_reading_two')
         }),
+        audit_fieldset_tuple,
     )
+
+    model = WaistCircumferenceMeasurement
+
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj) + audit_fields
 
 
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
 class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    filter_horizontal = ('medications_taken', 'medication_still_given')
 
     form = HypertensionCardiovascularForm
 
@@ -79,7 +90,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple,
     )
 
-    inlines = (BPMeasurementAdmin, WaistCircumferenceMeasurement)
+    inlines = (BPMeasurementAdminInlineAdmin, WaistCircumferenceMeasurementInlineAdmin)
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
