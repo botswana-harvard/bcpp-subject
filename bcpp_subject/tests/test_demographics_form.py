@@ -9,7 +9,12 @@ class TestDemographicsForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
 
         self.religion = mommy.make_recipe('bcpp_subject.religion')
         self.ethics = mommy.make_recipe('bcpp_subject.ethnicgroups')
@@ -24,7 +29,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'live_with': [self.livewith.id],
             'religion': [self.religion.id],
             'religion_other': u'',
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_female.id,
             'ethnic': [self.ethics.id]
         }
 
@@ -69,8 +74,13 @@ class TestDemographicsForm(SubjectMixin, TestCase):
 
     def test_unmarried_has_no_wives(self):
         """Assert that a unmarried participant can not have wives."""
-        subject_visit = self.make_subject_visit_for_a_male_subject('T0')
-        self.data.update(marital_status='Single/never married', num_wives=3, subject_visit=subject_visit.id)
+        self.consent_data = {
+            'identity': '31721516',
+            'confirm_identity': '31721516',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+        self.data.update(marital_status='Single/never married', num_wives=3, subject_visit=self.bhs_subject_visit_male.id)
         form = DemographicsForm(data=self.data)
         self.assertFalse(form .is_valid())
 
@@ -82,8 +92,13 @@ class TestDemographicsForm(SubjectMixin, TestCase):
 
     def test_marital_status_wives(self):
         """Assert that if married and the participant is male the number of wife has to be greater than 1."""
-        subject_visit = self.make_subject_visit_for_a_male_subject('T0')
-        self.data.update(marital_status='Married', num_wives=0, husband_wives=0, subject_visit=subject_visit.id)
+        self.consent_data = {
+            'identity': '31721517',
+            'confirm_identity': '31721517',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+        self.data.update(marital_status='Married', num_wives=0, husband_wives=0, subject_visit=self.bhs_subject_visit_male.id)
         form = DemographicsForm(data=self.data)
         self.assertFalse(form .is_valid())
 
