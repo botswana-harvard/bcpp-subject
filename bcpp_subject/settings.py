@@ -22,7 +22,6 @@ ALLOWED_HOSTS = ['10.113.201.173', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    #'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -175,4 +174,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'bcpp_subject', 'media')
 CURRENT_MAP_AREA = 'test_community'
 DEVICE_ID = '99'
 
-DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
