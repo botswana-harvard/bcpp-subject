@@ -11,7 +11,7 @@ from member.constants import ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_F
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models.household_member.household_member import HouseholdMember
-from member.tests.test_mixins import MemberMixin
+from member.tests.mixins import MemberMixin
 
 from ..constants import T0
 from ..models import Appointment
