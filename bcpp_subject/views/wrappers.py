@@ -20,8 +20,8 @@ class ModelWrapperMixin(ModelWrapper):
 
     def add_extra_attributes_after(self):
         super().add_extra_attributes_after()
-        self.survey_object = self.wrapped_object.survey_object
-        self.survey_schedule_object = self.wrapped_object.survey_schedule_object
+        self.survey_object = self.wrapped_object.survey_object.field_value
+        self.survey_schedule_object = self.wrapped_object.survey_schedule_object.field_value
 
     @property
     def members(self):

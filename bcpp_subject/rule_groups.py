@@ -28,7 +28,7 @@ from .rule_group_funcs import (
     is_male)
 
 
-@register()
+# @register()
 class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(

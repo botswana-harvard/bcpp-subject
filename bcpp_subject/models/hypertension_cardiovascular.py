@@ -1,9 +1,10 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_constants.choices import YES_NO, YES
+from edc_base.model.models import HistoricalRecords, BaseModel
+from edc_constants.choices import YES_NO
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
+
 from .list_models import MedicationGiven, MedicationTaken
 from .model_mixins import CrfModelMixin
 
@@ -95,7 +96,7 @@ class HypertensionCardiovascular(CrfModelMixin):
         verbose_name_plural = 'Hypertension and Cardiovascular Risk'
 
 
-class BPMeasurement(models.Model):
+class BPMeasurement(BaseModel):
 
     bp_measurement = models.OneToOneField(
         HypertensionCardiovascular,
@@ -139,7 +140,7 @@ class BPMeasurement(models.Model):
         verbose_name_plural = 'Blood Pressure Measurements'
 
 
-class WaistCircumferenceMeasurement(models.Model):
+class WaistCircumferenceMeasurement(BaseModel):
 
     waist_circumference_measurement = models.OneToOneField(
         HypertensionCardiovascular,
