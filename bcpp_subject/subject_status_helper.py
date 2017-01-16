@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.apps import apps as django_apps
 
-from edc_constants.constants import POS, NEG
+from edc_constants.constants import POS, NEG, YES
 
 from .constants import BASELINE_CODES
 from .models import (
@@ -370,7 +370,7 @@ class SubjectStatusHelper(object):
     def on_art(self):
         if self._on_art is None:
             try:
-                if self.hiv_care_adherence_instance.on_arv == 'Yes':
+                if self.hiv_care_adherence_instance.on_arv == YES:
                     self._on_art = True
                 elif self.defaulter:
                     self._on_art = True

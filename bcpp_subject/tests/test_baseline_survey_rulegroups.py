@@ -17,8 +17,18 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit_male = self.make_subject_visit_for_a_male_subject('T0')
-        self.subject_visit_female = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data_female = {
+            'identity': '31722515',
+            'confirm_identity': '31722515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.consent_data_male = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data_male)
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data_female)
         self.household_member = HouseholdMember.objects.filter(
             subject_identifier=self.subject_visit_male.subject_identifier)
         self.subject_identifier = self.subject_visit_male.subject_identifier

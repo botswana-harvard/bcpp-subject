@@ -89,7 +89,10 @@ class SubjectConsent(
 
     def common_clean(self):
         # confirm member is eligible
-        if not self.household_member.eligible_subject:
+        if not (self.household_member.age_in_years >= 16 and
+                self.household_member.age_in_years <= 64 and
+                self.household_member.study_resident == YES and
+                self.household_member.inability_to_participate == NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
         HicEnrollment = django_apps.get_model(*'bcpp_subject.hicenrollment'.split('.'))
@@ -103,7 +106,7 @@ class SubjectConsent(
         # match with enrollment checklist.
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member=self.household_member, is_eligible=True)
+                household_member__subject_identifier=self.household_member.subject_identifier, is_eligible=True)
         except EnrollmentChecklist.DoesNotExist:
             raise ConsentValidationError(
                 'Member has not completed the \'{}\'. Please correct before continuing'.format(

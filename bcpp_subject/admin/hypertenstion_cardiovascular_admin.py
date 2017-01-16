@@ -15,7 +15,6 @@ class BPMeasurementAdmin(admin.StackedInline):
     fieldsets = (
         (None, {
             'fields': (
-                'bp_measurement',
                 'time_zero',
                 'right_arm_one',
                 'left_arm_one',
@@ -32,7 +31,6 @@ class WaistCircumferenceMeasurement(admin.StackedInline):
     fieldsets = (
         (None, {
             'fields': (
-                'waist_circumference_measurement',
                 'waist_reading_one',
                 'waist_reading_two',
                 'hip_reading_one',
@@ -65,9 +63,9 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'may_take_blood_pressure',
                 'hypertension_diagnosis',
                 'medications_taken',
-                'if_other',
-                'is_medication_still_given',
-                'if_other_given_medication_given',
+                'if_other_medications_taken',
+                'medication_still_given',
+                'if_other_medication_still_given',
                 'health_care_facility',
                 'salt_intake_counselling',
                 'tobacco_smoking',

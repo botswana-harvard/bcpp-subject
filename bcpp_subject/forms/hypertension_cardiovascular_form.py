@@ -5,7 +5,6 @@ from edc_constants.choices import YES_NO
 
 from ..choices import MEDICATIONS_TAKEN, HEALTH_CARE_FACILITY
 from ..models import HypertensionCardiovascular
-
 from .form_mixins import SubjectModelFormMixin
 
 
@@ -95,21 +94,33 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         widget=forms.CheckboxSelectMultiple())
 
     def clean(self):
+        cleaned_data = super().clean()
         self.validate_may_take_blood_pressure()
+        return cleaned_data
 
     def get_field_data_as_list(self):
+        fields_to_exclude = [
+            'may_take_blood_pressure',
+            'bpmeasurement',
+            'waistcircumferencemeasurement',
+            'consent_version',
+            'subject_visit',
+            'report_datetime']
         field_list = []
-        for field in HypertensionCardiovascular._meta.fields:
-            if field.name not in ['may_take_blood_pressure'] + DEFAULT_BASE_FIELDS:
-                field_list.append(self.cleaned_data[field])
-            return field_list
+        for field in HypertensionCardiovascular._meta.get_fields():
+            if field.name not in DEFAULT_BASE_FIELDS + fields_to_exclude:
+                field_list.append(field.name)
+        return field_list
 
     def check_if_questions_are_answered(self):
-            field_data = self.get_field_data_as_list()
-            for _field_data in field_data:
-                if _field_data:
+        field_data = self.get_field_data_as_list()
+        for _field_data in field_data:
+            try:
+                if self.cleaned_data[_field_data]:
                     return True
-            return False
+            except KeyError:
+                pass
+        return False
 
     def validate_may_take_blood_pressure(self):
 
