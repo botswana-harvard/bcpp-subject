@@ -7,11 +7,9 @@ from member.models.household_member import HouseholdMember
 from member.clone import Clone
 from bcpp_subject.models.appointment import Appointment
 from bcpp_subject.models.subject_consent import SubjectConsent
-from bcpp_subject.exceptions import ConsentValidationError
-from member.models.enrollment_checklist import EnrollmentChecklist
 from edc_constants.constants import NOT_APPLICABLE, YES
-from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from ..constants import T1, T2
 
 
 @tag('erik')
@@ -146,8 +144,8 @@ class TestSurvey(SubjectMixin, TestCase):
     def test_add_followup_subjectconsent_subject_identifier_same(self):
         household_structure = self.make_household_ready_for_enumeration()
         old_member = self.add_household_member(household_structure=household_structure)
-        self.add_enrollment_checklist(old_member)
-        self.add_subject_consent(old_member)
+        old_member = self.add_enrollment_checklist(old_member)
+        old_member = self.add_subject_consent(old_member)
 
         old_member = HouseholdMember.objects.filter(
             household_structure=household_structure).first()
@@ -169,8 +167,8 @@ class TestSurvey(SubjectMixin, TestCase):
     def test_add_a_followup_subject_consent(self):
         household_structure = self.make_household_ready_for_enumeration()
         old_member = self.add_household_member(household_structure=household_structure)
-        self.add_enrollment_checklist(old_member)
-        self.add_subject_consent(old_member)
+        old_member = self.add_enrollment_checklist(old_member)
+        old_member = self.add_subject_consent(old_member)
 
         old_member = HouseholdMember.objects.filter(
             household_structure=household_structure).first()
@@ -186,8 +184,8 @@ class TestSurvey(SubjectMixin, TestCase):
     def test_household_member_clone(self):
         household_structure = self.make_household_ready_for_enumeration()
         old_member = self.add_household_member(household_structure=household_structure)
-        self.add_enrollment_checklist(old_member)
-        self.add_subject_consent(old_member)
+        old_member = self.add_enrollment_checklist(old_member)
+        old_member = self.add_subject_consent(old_member)
 
         old_member = HouseholdMember.objects.filter(
             household_structure=household_structure).first()
@@ -204,21 +202,29 @@ class TestSurvey(SubjectMixin, TestCase):
         new_member.eligible_member = True
         new_member.study_resident = old_member.study_resident
         new_member.save_base()
-#
-#         new_obj = HouseholdMember.objects.get(pk=new_member.pk)
-#         eligibility = self.add_enrollment_checklist(new_obj)
 
-#
-#         print(self.survey_schedule.next, "self.survey_schedule.next self.survey_schedule.next")
-#
-#         self.add_subject_consent(new_member)
-        appt = Appointment.objects.all()
-        print(appt)
-#         print(SubjectConsent.objects.filter(subject_identifier=old_member.subject_identifier))
-#         print(SubjectConsent.objects.filter(subject_identifier=new_member.subject_identifier))
+    def test_add_visitfollowup(self):
+        household_structure = self.make_household_ready_for_enumeration()
+        old_member = self.add_household_member(household_structure=household_structure)
+        self.add_enrollment_checklist(old_member)
+        self.add_subject_consent(old_member)
 
-#         self.assertEqual(old_member.internal_identifier, new_obj.internal_identifier)
-#         self.assertEqual(new_obj.subject_identifier, new_obj.subject_identifier)
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        t1_visit = self.add_subject_visit_followup(old_member, T1, report_datetime)
+        self.assertEqual(t1_visit.visit_code, T1)
+
+    def test_add_visitfollowup_T2(self):
+        household_structure = self.make_household_ready_for_enumeration()
+        old_member = self.add_household_member(household_structure=household_structure)
+        self.add_enrollment_checklist(old_member)
+        self.add_subject_consent(old_member)
+
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        t1_visit = self.add_subject_visit_followup(old_member, T1, report_datetime)
+        self.assertEqual(t1_visit.visit_code, T1)
+        report_datetime = self.get_utcnow() + relativedelta(years=2)
+        t2_visit = self.add_subject_visit_followup(t1_visit.household_member, T2, report_datetime)
+        self.assertEqual(t2_visit.visit_code, T2)
 
     def test_subject_consent_ahs(self):
 
