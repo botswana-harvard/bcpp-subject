@@ -10,8 +10,13 @@ class TestPimaForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
-
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        #self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.options = {
             'pima_today': YES,
             'pima_today_other': 'Failed Blood Collection',
@@ -23,6 +28,7 @@ class TestPimaForm(SubjectMixin, TestCase):
         }
         form = PimaForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save)
 
     def test_pima_today(self):
         """Assert if pima_day eq YES, then no need to provide other reasons."""

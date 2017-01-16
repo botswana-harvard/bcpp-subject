@@ -12,15 +12,20 @@ class TestHivTestedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+
         self.options = {
             'report_datetime': self.get_utcnow(),
+            'subject_visit': self.bhs_subject_visit_male.id,
             'num_hiv_tests': 1,
             'where_hiv_test': 'Tebelopele VCT center',
             'why_hiv_test': 'I was worried I might have HIV and wanted to know my status',
             'hiv_pills': YES,
             'arvs_hiv_test': YES,
-            'subject_visit': self.subject_visit.id,
         }
 
     def test_form_is_valid(self):
