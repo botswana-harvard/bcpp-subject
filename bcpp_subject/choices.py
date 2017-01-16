@@ -1155,7 +1155,7 @@ HEALTH_CARE_FACILITY = (
     ("district_hospital", "District Hospital"),
     ("tertiary_hospital", "Tertiary Hospital"),
     ("private_doctor", "Private Doctor/Hospital"),
-    ("not_applicable", "Not Applicable"),
+    (NOT_APPLICABLE, "Not applicable"),
 )
 
 TOBACCO_SMOKING = (
@@ -1163,5 +1163,5 @@ TOBACCO_SMOKING = (
     ("ever", "Ever"),
     ("prior", "Prior"),
     ("current", "Current"),
-    ("not_applicable", "Not Applicable")
+    (NOT_APPLICABLE, "Not applicable")
 )

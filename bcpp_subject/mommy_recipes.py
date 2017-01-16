@@ -331,6 +331,18 @@ medicaldiagnoses = Recipe(
     tb_record=NO
 )
 
+medication_given = Recipe(
+    MedicationGiven,
+    name='Atenolol',
+    short_name='atenolol'
+)
+
+medication_taken = Recipe(
+    MedicationTaken,
+    name='Atenolol',
+    short_name='atenolol'
+)
+
 nonpregnancy = Recipe(
     NonPregnancy,
     last_birth=fake.last_year,
