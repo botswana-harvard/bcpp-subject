@@ -1,0 +1,49 @@
+
+<div class="panel-group" id="accordion">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#enrollment">Special Forms</a>
+          </h6>
+      </div>
+      <div id="enrollment" class="panel-collapse collapse in">
+         {% block enrollment %}{% endblock enrollment %}
+      </div>           
+    </div>
+
+
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+	      <h6 class="panel-title"><i class="fa fa-user-circle-o fa-lg fa-fw"></i>
+	          <a data-toggle="collapse" data-parent="#accordion" href="#demographics">Demographics</a>
+	      </h6>
+	  </div>
+	  <div id="demographics" class="panel-collapse collapse in">
+	      {% block demographics %}{% endblock demographics %}           
+	  </div>           
+	</div>
+	
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+	      <h6 class="panel-title"><i class="fa fa-history fa-lg fa-fw"></i> 
+	          <a data-toggle="collapse" data-parent="#accordion" href="#consent_history">Consent History</a>
+	      </h6>
+	  </div>
+	  <div id="consent_history" class="panel-collapse collapse in">
+	     {% block consent_history %}{% endblock consent_history %}
+	  </div>           
+	</div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-home fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#household">{{ household_identifier }}</a>
+          </h6>
+      </div>
+      <div id="household" class="panel-collapse collapse">
+         {% block household %}{% endblock household %}
+      </div>           
+    </div>
+
+</div>

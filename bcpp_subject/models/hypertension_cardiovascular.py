@@ -16,8 +16,7 @@ class HypertensionCardiovascular(BaseUuidModel):
         blood pressure and measure your waist and hips. Are you willing to have your blood \
         pressure and body measurements taken today?',
         choices=YES_NO,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     hypertension_diagnosis = models.CharField(
         choices=YES_NO,
@@ -25,8 +24,7 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.ManyToManyField(
-        MedicationTaken,
-        null=True)
+        MedicationTaken)
 
     if_other = models.CharField(
         verbose_name='If other please specify',
@@ -35,15 +33,13 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=100)
 
     medication_still_given = models.ManyToManyField(
-        MedicationGiven,
-        null=True)
+        MedicationGiven)
 
     if_other_given_medication_given = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
-        max_length=100,
-        default=None)
+        max_length=100)
 
     health_care_facility = models.CharField(
         choices=HEALTH_CARE_FACILITY,

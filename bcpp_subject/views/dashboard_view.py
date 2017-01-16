@@ -12,12 +12,12 @@ from edc_dashboard.url_mixins.next_url_mixin import NextUrlMixin
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
 from member.views import HouseholdMemberViewMixin
+from survey.view_mixins import SurveyViewMixin
 
 from ..models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
 
 from .mixins import SubjectAppConfigViewMixin
-from survey.view_mixins import SurveyViewMixin
-from bcpp_subject.views.wrappers import DashboardSubjectConsentModelWrapper
+from .wrappers import DashboardSubjectConsentModelWrapper, AppointmentModelWrapper
 
 
 class BcppDashboardNextUrlMixin(NextUrlMixin):
@@ -38,7 +38,8 @@ class BcppDashboardNextUrlMixin(NextUrlMixin):
 
 
 class DashboardView(
-        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, SurveyViewMixin, SubjectAppConfigViewMixin,
+        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, SurveyViewMixin,
+        SubjectAppConfigViewMixin,
         HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
         BcppDashboardNextUrlMixin, TemplateView):
 
@@ -48,7 +49,7 @@ class DashboardView(
     consent_model = SubjectConsent
 
     consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
-    appointment_model_wrapper_class = None
+    appointment_model_wrapper_class = AppointmentModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -72,7 +73,7 @@ class DashboardView(
             visit_url=SubjectVisit().get_absolute_url(),
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
-            enrollment_objects=self.enrollment_objects,
+            # enrollment_objects=self.enrollment_objects,
             reference_datetime=get_utcnow(),
         )
         return context
@@ -80,6 +81,7 @@ class DashboardView(
     @property
     def enrollment_objects(self):
         """ """
+        # TODO: what are these for? HIC Enrollment?? consents?? what?
         enrollment_objects = []
         enrollments_models = []
         for model in enrollments_models:

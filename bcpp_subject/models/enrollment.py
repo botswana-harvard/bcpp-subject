@@ -6,6 +6,7 @@ from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
 from bcpp.surveys import ESS_SURVEY, BHS_SURVEY, AHS_SURVEY
+from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S
 
@@ -24,6 +25,8 @@ class BcppEnrollmentMixin(models.Model):
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50)
+
+    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
 
     report_datetime = models.DateTimeField(default=timezone.now, editable=False)
 
@@ -44,7 +47,8 @@ class BcppEnrollmentMixin(models.Model):
     def extra_create_appointment_options(self):
         return dict(
             survey=self.survey_object.field_value,
-            survey_schedule=self.survey_schedule_object.field_value)
+            survey_schedule=self.survey_schedule_object.field_value,
+            household_member=self.household_member)
 
     class Meta:
         abstract = True

@@ -1,0 +1,67 @@
+{% extends 'bcpp_subject/dashboard/sidebar/base_sidebar.html' %}
+
+{% load tz %}
+{% load edc_base_extras %}
+
+
+{% block demographics %}   
+
+	<div class="list-group">
+	{% if subject_offstudy %}
+	    <a class="list-group-item list-group-item-danger">
+	       <i class="fa fa-ban fa-fw" aria-hidden="true"></i>
+	           Offstudy {{ subject_offstudy.offstudy_datetime|date:"Y-m-d"}}
+	    </a>
+	{% endif %}
+    <a class="list-group-item">
+        {% if not anonymous %}
+            <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
+        {% else %}{{ household_member.first_name }}&nbsp;{{ household_member.initials }}{% endif%}
+    </a>
+	<a class="list-group-item"><i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i> {{ household_member.wrapped_object.get_gender_display }}</a>
+	<a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
+        {% if not anonymous %}
+            {{ household_member.dob|date:"Y-m-d" }}
+        {% endif%}
+	{{ household_member.age_in_years }}yrs</a>
+    <a class="list-group-item"><i class="fa fa-address-card-o fa-fw"></i>
+	    {% if anonymous %}
+	        <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
+	    {% else %}{{ identity|default:'?? identity' }}{% endif%}
+    </a>
+	</div>
+
+{% endblock demographics %}
+
+
+
+{% block consent_history %}
+
+	<div class="list-group">
+	  {% if not consents %}
+	    <a class="list-group-item" href="#">Never consented</a>
+	  {% endif %}
+	  {% for obj in consents %}
+	       <a class="list-group-item" href="#">
+	            {{ obj.consent_datetime|date:"Y-m-d" }} Version {{ obj.version }}
+	       </a>
+	  {% endfor %}
+	</div>
+
+{% endblock consent_history %}
+
+
+
+{% block household %}
+
+    <div class="list-group">
+    {% for household_member in household_members %}
+        <a class="list-group-item">
+            <i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i>
+                {{ household_member.first_name }} {{ household_member.initials }} {{ household_member.age_in_years }}
+        </a>
+    {% endfor %}
+    </div>
+
+{% endblock household %}
+

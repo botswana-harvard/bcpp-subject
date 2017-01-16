@@ -50,6 +50,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
                 try:
                     EnrollmentModelClass.objects.create(
                         subject_identifier=instance.subject_identifier,
+                        household_member=instance.household_member,
                         report_datetime=instance.report_datetime,
                         survey=instance.survey_object.field_value,
                         survey_schedule=instance.survey_schedule_object.field_value,

@@ -5,13 +5,13 @@ from edc_search.view_mixins import SearchViewMixin
 
 from ..models import SubjectConsent
 
-from .wrappers import SubjectConsentModelWrapper
+from .wrappers import ListBoardSubjectConsentModelWrapper
 
 
 class BcppSubjectFilteredListViewMixin(FilteredListViewMixin):
 
     filter_model = SubjectConsent
-    filtered_model_wrapper_class = SubjectConsentModelWrapper
+    filtered_model_wrapper_class = ListBoardSubjectConsentModelWrapper
     filtered_queryset_ordering = '-modified'
     url_lookup_parameters = ['id', 'subject_identifier']
 
@@ -19,7 +19,7 @@ class BcppSubjectFilteredListViewMixin(FilteredListViewMixin):
 class BcppSubjectSearchViewMixin(SearchViewMixin):
 
     search_model = SubjectConsent
-    search_model_wrapper_class = SubjectConsentModelWrapper
+    search_model_wrapper_class = ListBoardSubjectConsentModelWrapper
     search_queryset_ordering = '-modified'
 
     def search_options_for_date(self, search_term, **kwargs):

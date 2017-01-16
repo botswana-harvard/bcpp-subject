@@ -1,6 +1,7 @@
-{% load tz %}
-{% load edc_base_extras %}
-<div class="panel panel-info">
+{% extends 'bcpp_subject/dashboard/sidebar.html' %}
+
+{% block demographics %}   
+
 <ul class="list-group">
 {% if subject_offstudy %}
     <li class="list-group-item list-group-item-danger"><i class="fa fa-ban" aria-hidden="true"></i> <span class="test small text-default">Offstudy as of</span>&nbsp<span class="test small text-default">{{ subject_offstudy.offstudy_datetime|date:"Y-m-d"}}</span></li>
@@ -11,23 +12,4 @@
 <li class="list-group-item"><span class="test small text-default">Born</span>&nbsp<span class="test small text-info">{{ household_member.wrapped_object.dob|date:"Y-m-d" }}</span></li>
 </ul>
 
-<ul class="list-group">
-  <li class="list-group-item list-group-item-info"><span class="test small text-default">Consent History</span></li>
-  {% if not consents %}
-	<li class="list-group-item"><span class="test small text-muted">None</span></li>
-  {% endif %}
-  {% for obj in consents %}
-	   <li class="list-group-item"><span class="test small text-default">v{{ obj.version }} on {{ obj.consent_datetime|date:"Y-m-d" }}</span></li>
-  {% endfor %}
-</ul>
-
-<ul class="list-group">
-  <li class="list-group-item list-group-item-info"><span class="test small text-default">Survey History</span></li>
-  {% if not surveys %}
-	   <li class="list-group-item"><span class="test small text-muted">None</span></li>
-  {% endif %}
-  {% for obj in surveys %}
-	   <li class="list-group-item"><span class="test small text-default">v{{ obj.version }} on {{ obj.consent_datetime|date:"Y-m-d" }}</span></li>
-  {% endfor %}
-</ul>
-</div>
+{% endblock demographics %}
