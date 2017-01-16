@@ -4,6 +4,37 @@
 {% load edc_base_extras %}
 
 
+{% block special_forms %}
+<div class="table-responsive small text-default">
+    <table class="table table-condensed">
+        <thead></thead>
+        <tbody>
+
+        <tr>
+        <td class="{% if consent %}success{% else %}warning{% endif %}">
+
+        {% if consent %}
+           <a role="button" class="btn btn-sm btn-success" 
+              href="{{ consent.get_absolute_url }}?next={{ subject_dashboard_url_name }},household_identifier,subject_identifier,survey_schedule&household_identifier={{household_identifier}}&subject_identifier={{subject_identifier}}&survey_schedule={{survey_schedule_object.field_value}}&household_member={{ household_member.id }}">
+                <i class="fa fa-pencil fa-sm"></i> 
+                  </a>
+        {% else %}
+           <a role="button" class="btn btn-sm btn-warning" 
+              href="{{ consent_object.get_absolute_url }}?next={{ subject_dashboard_url_name }},household_identifier,subject_identifier,survey_schedule&household_identifier={{household_identifier}}&subject_identifier={{subject_identifier}}&survey_schedule={{survey_schedule_object.field_value}}&household_member={{ household_member.id }}">
+                <i class="fa fa-plus fa-sm"></i>
+           </a>
+        {% endif %}
+        
+
+        <td class="{% if consent %}success{% else %}warning{% endif %}"><h6>{{ consent_object.verbose_name|title }} v{{ consent_object.version }}</h6></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+                  
+{% endblock special_forms %}
+
 {% block demographics %}   
 
 	<div class="list-group">
@@ -14,7 +45,7 @@
 	    </a>
 	{% endif %}
     <a class="list-group-item">
-        {% if not anonymous %}
+        {% if anonymous %}
             <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
         {% else %}{{ household_member.first_name }}&nbsp;{{ household_member.initials }}{% endif%}
     </a>

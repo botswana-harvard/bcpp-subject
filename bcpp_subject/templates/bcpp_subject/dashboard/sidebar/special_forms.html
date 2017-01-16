@@ -1,0 +1,26 @@
+{% extends 'bcpp_subject/dashboard/sidebar.html' %}
+
+{% block special_forms %}
+
+<div class="table-responsive small text-default">
+    <table class="table table-condensed">
+        <thead></thead>
+        <tbody>
+
+        <tr>
+        <td class="{% if log %}success{% else %}warning{% endif %}">
+
+           <a role="button" class="btn btn-sm {% if consent.id %}btn-default{% else %}btn-warning{% endif %}" 
+              href="{{ consent_object.get_absolute_url }}?next={{ subject_dashboard_url_name }},household_identifier,subject_identifier,survey_schedule&household_identifier={{household_identifier}}&subject_identifier={{subject_identifier}}&survey_schedule={{survey_schedule_object.field_value}}&household_member={{ household_member.id }}">
+                {%if consent.id %}<i class="fa fa-pencil fa-sm"></i>{% else %}<i class="fa fa-plus fa-sm"></i>{% endif %} 
+                  </a>
+        
+        <td class="{% if obj.add %}warning{% else %}success{% endif %}"><h6>{{ consent_object.verbose_name|title }} v{{ consent_object.version }}</h6></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+                  
+{% endblock special_forms %}
