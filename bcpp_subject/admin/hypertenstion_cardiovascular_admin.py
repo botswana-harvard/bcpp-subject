@@ -11,6 +11,18 @@ from .modeladmin_mixins import ModelAdminMixin
 
 class BPMeasurementAdminInlineAdmin(admin.StackedInline):
 
+    fieldsets = (
+        (None, {
+            'fields': (
+                'time_zero',
+                'right_arm_one',
+                'left_arm_one',
+                'right_arm_two',
+                'left_arm_two')
+        }),
+        audit_fieldset_tuple,
+    )
+
     model = BPMeasurement
 
     def get_readonly_fields(self, request, obj=None):
@@ -18,6 +30,17 @@ class BPMeasurementAdminInlineAdmin(admin.StackedInline):
 
 
 class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'waist_reading_one',
+                'waist_reading_two',
+                'hip_reading_one',
+                'hip_reading_two')
+        }),
+        audit_fieldset_tuple,
+    )
 
     model = WaistCircumferenceMeasurement
 
@@ -28,9 +51,9 @@ class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
 class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    form = HypertensionCardiovascularForm
-
     filter_horizontal = ('medications_taken', 'medication_still_given')
+
+    form = HypertensionCardiovascularForm
 
     radio_fields = {
         'may_take_blood_pressure': admin.VERTICAL,
