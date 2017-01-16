@@ -14,7 +14,12 @@ from bcpp_subject.models.list_models import Diagnoses
 class TestCommunityEngagementForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.diagnoses = Diagnoses.objects.create(name='STI (Sexually Transmitted Infection)', short_name='STI (Sexually Transmitted Infection')
         self.neighboourhood_problems = NeighbourhoodProblems.objects.create(
             name='theft in the neighbourhood', short_name='theft')
@@ -25,7 +30,7 @@ class TestCommunityEngagementForm(SubjectMixin, TestCase):
             'problems_engagement': [str(self.neighboourhood_problems.id)],
             'problems_engagement_other': None,
             'solve_engagement': YES,
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_male.id,
             'report_datetime': self.get_utcnow(),
         }
 
