@@ -40,7 +40,7 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        self.survey = self.appointment.survey_object.name
+        self.survey = self.appointment.survey_object.field_value
         self.survey_schedule = self.appointment.survey_object.survey_schedule.field_value
         self.info_source = 'subject'
         self.reason = SCHEDULED

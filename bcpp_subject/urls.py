@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^dashboard/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
-        '(?P<appointment>[0-9a-f-]+)/'
+        '(?P<appointment>' + UUID_PATTERN.pattern + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'
         '(?P<survey>' + survey + ')/',
         DashboardView.as_view(), name='dashboard_url'),
