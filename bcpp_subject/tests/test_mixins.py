@@ -5,7 +5,7 @@ from model_mommy import mommy
 from edc_base_test.exceptions import TestMixinError
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 from edc_base_test.mixins import LoadListDataMixin
-from edc_constants.constants import NO, YES
+from edc_constants.constants import NO, YES, NOT_APPLICABLE
 from edc_metadata.models import CrfMetadata
 from member.constants import ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_FOR_SCREENING
 from member.list_data import list_data
@@ -164,6 +164,33 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
             subject_identifier=household_member.subject_identifier,
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow() + datetime.timedelta(3 * 365 / 12))
+
+    def add_subject_visit_followup(self, previous_member, visit_code, report_datetime):
+
+        next_household_structure = self.get_next_household_structure_ready(
+            previous_member.household_structure, make_hoh=None)
+
+        new_member = previous_member.clone(
+            household_structure=next_household_structure,
+            report_datetime=next_household_structure.enumerated_datetime)
+        new_member.save()
+
+        new_member.inability_to_participate = NOT_APPLICABLE
+        new_member.study_resident = YES
+        new_member.save()
+
+        new_member = HouseholdMember.objects.get(pk=new_member.pk)
+        self.consent_data.update(report_datetime=report_datetime)
+        new_member = self.add_subject_consent(new_member, **self.consent_data)
+        appointment = Appointment.objects.get(
+            subject_identifier=new_member.subject_identifier,
+            visit_code=visit_code)
+        return mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=new_member,
+            subject_identifier=new_member.subject_identifier,
+            appointment=appointment,
+            report_datetime=report_datetime)
 
 
 class CompleteCrfsMixin(CompleteCrfsMixin, SubjectMixin):
