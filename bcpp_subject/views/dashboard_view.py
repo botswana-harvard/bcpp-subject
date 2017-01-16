@@ -8,7 +8,6 @@ from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import SubjectDashboardViewMixin, DashboardViewMixin
-from edc_dashboard.url_mixins.next_url_mixin import NextUrlMixin
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
 from member.views import HouseholdMemberViewMixin
@@ -17,34 +16,17 @@ from survey.view_mixins import SurveyViewMixin
 from ..models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
 
 from .mixins import SubjectAppConfigViewMixin
-from .wrappers import DashboardSubjectConsentModelWrapper, AppointmentModelWrapper
-
-
-class BcppDashboardNextUrlMixin(NextUrlMixin):
-
-    @property
-    def next_url_parameters(self):
-        """Add these additional parameters to the next url."""
-        parameters = super().next_url_parameters
-        parameters['appointment'].append('survey')
-        parameters['crfs'].append('survey')
-        parameters['visit'].extend(['household_member', 'survey'])
-        return parameters
-
-    def appointment_wrapper(self, obj, **options):
-        """Add survey object to appointment(s)."""
-        obj = super().appointment_wrapper(obj, **options)
-        return obj
+from .wrappers import DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, VisitModelWrapper
 
 
 class DashboardView(
         EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, SurveyViewMixin,
         SubjectAppConfigViewMixin,
         HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
-        BcppDashboardNextUrlMixin, TemplateView):
+        TemplateView):
 
     add_visit_url_name = SubjectVisit().admin_url_name
-    # template_name = 'bcpp_subject/dashboard.html'
+
     visit_model = SubjectVisit
     consent_model = SubjectConsent
 
@@ -70,10 +52,8 @@ class DashboardView(
         context.update(
             navbar_selected='bcpp_subject',
             MALE=MALE,
-            visit_url=SubjectVisit().get_absolute_url(),
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
-            # enrollment_objects=self.enrollment_objects,
             reference_datetime=get_utcnow(),
         )
         return context
