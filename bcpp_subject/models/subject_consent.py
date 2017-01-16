@@ -2,7 +2,6 @@ from django.apps import apps as django_apps
 from django.db import models
 
 from edc_base.exceptions import AgeValueError
-from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.utils import age
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
@@ -32,7 +31,7 @@ class SubjectConsent(
         ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin, ReviewFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
-        UrlMixin, BaseUuidModel):
+        BaseUuidModel):
 
     """ A model completed by the user that captures the ICF."""
 
@@ -90,7 +89,10 @@ class SubjectConsent(
 
     def common_clean(self):
         # confirm member is eligible
-        if not self.household_member.eligible_subject:
+        if not (self.household_member.age_in_years >= 16 and
+                self.household_member.age_in_years <= 64 and
+                self.household_member.study_resident == YES and
+                self.household_member.inability_to_participate == NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
         HicEnrollment = django_apps.get_model(*'bcpp_subject.hicenrollment'.split('.'))
@@ -104,7 +106,7 @@ class SubjectConsent(
         # match with enrollment checklist.
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member=self.household_member, is_eligible=True)
+                household_member__subject_identifier=self.household_member.subject_identifier, is_eligible=True)
         except EnrollmentChecklist.DoesNotExist:
             raise ConsentValidationError(
                 'Member has not completed the \'{}\'. Please correct before continuing'.format(

@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.models import UrlMixin, HistoricalRecords, BaseUuidModel
+from edc_base.model.models import HistoricalRecords, BaseUuidModel
 from edc_base.model.validators.date import datetime_not_future
 from edc_base.utils import get_utcnow
 from edc_consent.model_mixins import RequiresConsentMixin
@@ -26,7 +26,7 @@ class CrfModelManager(VisitTrackingCrfModelManager):
 
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     RequiresConsentMixin, PreviousVisitModelMixin,
-                    UpdatesCrfMetadataModelMixin, UrlMixin, BaseUuidModel):
+                    UpdatesCrfMetadataModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
@@ -58,7 +58,7 @@ class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
 class CrfModelMixinNonUniqueVisit(
         VisitTrackingCrfModelMixin, OffstudyMixin,
         RequiresConsentMixin, PreviousVisitModelMixin,
-        UpdatesCrfMetadataModelMixin, UrlMixin, BaseUuidModel):
+        UpdatesCrfMetadataModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 

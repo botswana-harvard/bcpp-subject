@@ -2,7 +2,9 @@ from django.conf.urls import url
 
 from edc_constants.constants import UUID_PATTERN
 
-from survey.patterns import survey, survey_schedule, survey_name
+from household.patterns import household_identifier
+from survey.patterns import survey_schedule, survey
+from enumeration.views import DashboardView as EnumerationDashboardView
 
 from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
@@ -13,11 +15,12 @@ urlpatterns = [
     url(r'^listboard/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'
+        '(?P<survey>' + survey + ')/'
         '(?P<page>\d+)/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
-        '(?P<survey>' + survey_name + ')/'
+        '(?P<survey>' + survey + ')/'
         '(?P<page>\d+)/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
@@ -26,7 +29,7 @@ urlpatterns = [
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
-        '(?P<survey>' + survey_name + ')/',
+        '(?P<survey>' + survey + ')/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<subject_identifier>' + subject_identifier + ')/',
@@ -35,47 +38,35 @@ urlpatterns = [
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/',
         ListBoardView.as_view(), name='listboard_url'),
+
     url(r'^dashboard/'
+        '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<appointment>[0-9a-f-]+)/'
-        '(?P<survey>' + survey_name + ')/',
-        DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/'
-        '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'
-        '(?P<page>\d+)/',
+        '(?P<survey>' + survey + ')/',
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/'
-        '(?P<subject_identifier>' + subject_identifier + ')/'
-        '(?P<survey>' + survey_name + ')/'
-        '(?P<page>\d+)/',
-        DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/'
+        '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'
         '(?P<survey>' + survey + ')/',
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/'
-        '(?P<subject_identifier>' + subject_identifier + ')/'
+        '(?P<household_identifier>' + household_identifier + ')/'
+        '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'
-        '(?P<survey>' + survey_name + ')/',
+        '(?P<survey>' + survey + ')/',
         DashboardView.as_view(), name='dashboard_url'),
+
     url(r'^dashboard/'
+        '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/'
-        '(?P<subject_identifier>' + subject_identifier + ')/'
-        '(?P<survey>' + survey_name + ')/',
-        DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/'
+        '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
-        DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/'
-        '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/'
-        '(?P<survey>' + survey_name + ')/',
-        DashboardView.as_view(), name='dashboard_url'),
-    url(r'^dashboard/(?P<subject_identifier>' + subject_identifier + ')/',
         DashboardView.as_view(), name='dashboard_url'),
 ]

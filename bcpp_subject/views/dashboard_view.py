@@ -7,101 +7,31 @@ from django.views.generic import TemplateView
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import DashboardMixin
+from edc_dashboard.view_mixins import SubjectDashboardViewMixin, DashboardViewMixin
 
-from member.models import HouseholdMember
-from survey.site_surveys import site_surveys
+from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
+from member.views import HouseholdMemberViewMixin
+from survey.view_mixins import SurveyViewMixin
 
 from ..models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
 
-
-class BcppDashboardNextUrlMixin(DashboardMixin):
-
-    @property
-    def next_url_parameters(self):
-        """Add these additional parameters to the next url."""
-        parameters = super().next_url_parameters
-        parameters['appointment'].append('survey')
-        parameters['crfs'].append('survey')
-        parameters['visit'].extend(['household_member', 'survey'])
-        return parameters
-
-
-class BcppDashboardExtraFieldMixin(BcppDashboardNextUrlMixin):
-
-    """Adds extra fields to the instance and context.
-
-    * survey object, `survey` to the context as an attr to the view instance
-      from `survey` URL parameter. URL expects survey.field_name.
-
-    * household_member from `household_member` URL parameter
-    ."""
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.survey = None
-        self.survey_schedule = None
-        self.household_member = None
-
-    def get(self, request, *args, **kwargs):
-        """Add survey and household member to the instance."""
-        self.survey_schedule = site_surveys.get_survey_schedule_from_field_value(
-            kwargs.get('survey_schedule'))
-        self.survey = self.survey_schedule.get_survey(kwargs.get('survey'))
-        kwargs['survey'] = self.survey
-        kwargs['survey_schedule'] = self.survey_schedule
-        options = dict(
-            subject_identifier=self.subject_identifier or kwargs.get('subject_identifier'),
-            household_structure__survey_schedule=self.survey_schedule.field_value)
-        try:
-            obj = HouseholdMember.objects.get(**options)
-        except HouseholdMember.DoesNotExist:
-            self.household_member = None  # HouseholdMember.objects.get(subject_identifier_as_pk=kwargs.get('subject_identifier'))
-            self.household_identifier = None
-        else:
-            self.household_member = self.household_member_wrapper(obj)
-            self.household_identifier = self.household_member.household_structure.household.household_identifier
-            kwargs['household_member'] = self.household_member
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            survey=self.survey,
-            survey_schedule=self.survey_schedule,
-            household_member=self.household_member,
-            household_identifier=self.household_identifier,
-        )
-        return context
-
-    def household_member_wrapper(self, obj):
-        """Add survey object and dob to to household_member(s)."""
-        obj.dob = obj.enrollmentchecklist.dob
-        obj = self.pk_wrapper(obj)  # TODO: needed?
-        obj.survey_schedule = obj.household_structure.survey_schedule_object.field_value
-        return obj
-
-    def consent_wrapper(self, obj):
-        """Add survey object to consent(s)."""
-        obj = super().consent_wrapper(obj)
-        return obj
-
-    def appointment_wrapper(self, obj, **options):
-        """Add survey object to appointment(s)."""
-        obj = super().appointment_wrapper(obj, **options)
-        return obj
+from .mixins import SubjectAppConfigViewMixin
+from .wrappers import DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, VisitModelWrapper
 
 
 class DashboardView(
-        BcppDashboardExtraFieldMixin,
-        EdcBaseViewMixin, TemplateView):
+        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, SurveyViewMixin,
+        SubjectAppConfigViewMixin,
+        HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
+        TemplateView):
 
-    dashboard_url = 'bcpp-subject:dashboard_url'
-    base_html = 'bcpp/base.html'
     add_visit_url_name = SubjectVisit().admin_url_name
-    template_name = 'bcpp_subject/dashboard.html'
+
     visit_model = SubjectVisit
     consent_model = SubjectConsent
+
+    consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
+    appointment_model_wrapper_class = AppointmentModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -122,10 +52,8 @@ class DashboardView(
         context.update(
             navbar_selected='bcpp_subject',
             MALE=MALE,
-            visit_url=SubjectVisit().get_absolute_url(),
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
-            enrollment_objects=self.enrollment_objects,
             reference_datetime=get_utcnow(),
         )
         return context
@@ -133,6 +61,7 @@ class DashboardView(
     @property
     def enrollment_objects(self):
         """ """
+        # TODO: what are these for? HIC Enrollment?? consents?? what?
         enrollment_objects = []
         enrollments_models = []
         for model in enrollments_models:

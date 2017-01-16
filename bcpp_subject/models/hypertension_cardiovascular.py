@@ -1,13 +1,15 @@
 from django.db import models
 
-from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_constants.choices import YES_NO, YES
+from edc_base.model.models import HistoricalRecords, BaseModel
+from edc_constants.choices import YES_NO
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
+
 from .list_models import MedicationGiven, MedicationTaken
+from .model_mixins import CrfModelMixin
 
 
-class HypertensionCardiovascular(BaseUuidModel):
+class HypertensionCardiovascular(CrfModelMixin):
 
     """Model used for getting hypertension and cardiovascular info"""
 
@@ -16,8 +18,7 @@ class HypertensionCardiovascular(BaseUuidModel):
         blood pressure and measure your waist and hips. Are you willing to have your blood \
         pressure and body measurements taken today?',
         choices=YES_NO,
-        max_length=5,
-        default='Yes')
+        max_length=5)
 
     hypertension_diagnosis = models.CharField(
         choices=YES_NO,
@@ -25,25 +26,22 @@ class HypertensionCardiovascular(BaseUuidModel):
         max_length=5)
 
     medications_taken = models.ManyToManyField(
-        MedicationTaken,
-        null=True)
+        MedicationTaken)
 
-    if_other = models.CharField(
+    if_other_medications_taken = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
         max_length=100)
 
     medication_still_given = models.ManyToManyField(
-        MedicationGiven,
-        null=True)
+        MedicationGiven)
 
-    if_other_given_medication_given = models.CharField(
+    if_other_medication_still_given = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
-        max_length=100,
-        default=None)
+        max_length=100)
 
     health_care_facility = models.CharField(
         choices=HEALTH_CARE_FACILITY,
@@ -98,7 +96,7 @@ class HypertensionCardiovascular(BaseUuidModel):
         verbose_name_plural = 'Hypertension and Cardiovascular Risk'
 
 
-class BPMeasurement(models.Model):
+class BPMeasurement(BaseModel):
 
     bp_measurement = models.OneToOneField(
         HypertensionCardiovascular,
@@ -142,7 +140,7 @@ class BPMeasurement(models.Model):
         verbose_name_plural = 'Blood Pressure Measurements'
 
 
-class WaistCircumferenceMeasurement(models.Model):
+class WaistCircumferenceMeasurement(BaseModel):
 
     waist_circumference_measurement = models.OneToOneField(
         HypertensionCardiovascular,
