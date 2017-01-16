@@ -12,18 +12,25 @@ class TestHivUntestedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.options = {
             'report_datetime': self.get_utcnow(),
             'why_no_hiv_test': 'I recently tested',
             'hiv_pills': YES,
             'arvs_hiv_test': YES,
             'subject_visit': self.subject_visit.id,
+            'household_log_entry': None,
         }
 
     def test_form_is_valid(self):
         hiv_untested_form = HivUntestedForm(data=self.options)
         self.assertTrue(hiv_untested_form.is_valid())
+        self.assertTrue(hiv_untested_form.save())
 
     def test_no_hiv_pills_none_arvs_hiv(self):
         """Assert information about ARV was provided without having heard of ARV's."""
