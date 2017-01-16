@@ -23,7 +23,7 @@ class HypertensionCardiovascular(CrfModelMixin):
     hypertension_diagnosis = models.CharField(
         verbose_name='Have you ever been diagnosed with hypertension?',
         choices=YES_NO_NA,
-        max_length=5)
+        max_length=20)
 
     medications_taken = models.ManyToManyField(
         MedicationTaken,
