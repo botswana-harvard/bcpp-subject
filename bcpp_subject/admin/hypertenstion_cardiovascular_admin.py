@@ -5,44 +5,32 @@ from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 from ..admin_site import bcpp_subject_admin
 from ..forms import HypertensionCardiovascularForm
 from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
+
 from .modeladmin_mixins import ModelAdminMixin
 
 
-class BPMeasurementAdmin(admin.StackedInline):
+class BPMeasurementAdminInlineAdmin(admin.StackedInline):
 
     model = BPMeasurement
 
-    fieldsets = (
-        (None, {
-            'fields': (
-                'time_zero',
-                'right_arm_one',
-                'left_arm_one',
-                'right_arm_two',
-                'left_arm_two')
-        }),
-    )
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj) + audit_fields
 
 
-class WaistCircumferenceMeasurement(admin.StackedInline):
+class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
 
     model = WaistCircumferenceMeasurement
 
-    fieldsets = (
-        (None, {
-            'fields': (
-                'waist_reading_one',
-                'waist_reading_two',
-                'hip_reading_one',
-                'hip_reading_two')
-        }),
-    )
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj) + audit_fields
 
 
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
 class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = HypertensionCardiovascularForm
+
+    filter_horizontal = ('medications_taken', 'medication_still_given')
 
     radio_fields = {
         'may_take_blood_pressure': admin.VERTICAL,
@@ -79,7 +67,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple,
     )
 
-    inlines = (BPMeasurementAdmin, WaistCircumferenceMeasurement)
+    inlines = (BPMeasurementAdminInlineAdmin, WaistCircumferenceMeasurementInlineAdmin)
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
