@@ -159,6 +159,10 @@ class ListBoardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
     model_name = 'bcpp_subject.subjectconsent'
     next_url_name = django_apps.get_app_config('bcpp_subject').listboard_url_name
 
+    @property
+    def household_member(self):
+        return self._original_object.household_member
+
 
 class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
 

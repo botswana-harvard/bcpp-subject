@@ -24,6 +24,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
                                              StiIllnesses, PartnerResidency, MedicationGiven, MedicationTaken)
+from edc_constants.constants import OTHER
 
 # from .models import Respondent, MostRecentPartner
 
@@ -341,6 +342,12 @@ medication_taken = Recipe(
     MedicationTaken,
     name='Atenolol',
     short_name='atenolol'
+)
+
+medication_taken_1 = Recipe(
+    MedicationTaken,
+    name='OTHER',
+    short_name='other'
 )
 
 nonpregnancy = Recipe(
