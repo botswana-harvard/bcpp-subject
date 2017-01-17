@@ -5,7 +5,7 @@ from model_mommy import mommy
 from edc_base_test.exceptions import TestMixinError
 from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin
 from edc_base_test.mixins import LoadListDataMixin
-from edc_constants.constants import NO, YES, NOT_APPLICABLE
+from edc_constants.constants import NO, YES, NOT_APPLICABLE, MALE
 from edc_metadata.models import CrfMetadata
 from member.constants import ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_FOR_SCREENING
 from member.list_data import list_data
@@ -134,7 +134,7 @@ class SubjectMixin(SubjectTestMixin, AddVisitMixin):
     def make_subject_visit_for_consented_subject_male(self, visit_code, report_datetime=None, **options):
         """Returns a subject visit of a consented male member."""
         household_structure = self.make_enumerated_household_with_male_member()
-        old_member = self.add_household_member(household_structure=household_structure)
+        old_member = self.add_household_member(household_structure=household_structure, gender=MALE)
         old_member = self.add_enrollment_checklist(old_member)
         old_member = self.add_subject_consent(old_member, **options)
         household_member = HouseholdMember.objects.get(pk=old_member.pk)

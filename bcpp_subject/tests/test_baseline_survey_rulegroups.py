@@ -454,4 +454,5 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, YES)
 
         # on art so no need for CD
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)

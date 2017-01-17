@@ -1,11 +1,10 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_registration.models import RegisteredSubject
 
-from .constants import DECLINED, T0
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
-from bcpp_subject.constants import T1, T2, T3, DECLINED
+from bcpp_subject.constants import T0, T1, T2, T3, DECLINED
 from bcpp_subject.models.subject_visit import SubjectVisit
 
 
@@ -299,7 +298,6 @@ def func_no_verbal_hiv_result(visit_instance, *args):
 
 
 def func_circumcision_not_required(visit_instance, *args):
-
     return is_female(visit_instance) or func_is_circumcision(visit_instance)
 
 

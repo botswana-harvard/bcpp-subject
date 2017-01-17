@@ -65,7 +65,7 @@ list_data = {
         ("doxazosin", "Doxazosin"),
         ("hydralazine", "Hydralazine"),
         ("not_applicable", "Not Applicable"),
-        ("other", "Other")],
+        ("OTHER", "Other")],
     'bcpp_subject.medicationgiven': [
         ("bisoprolol", "Bisoprolol"),
         ("carvedilol", "Carvedilol"),
@@ -82,7 +82,7 @@ list_data = {
         ("doxazosin", "Doxazosin"),
         ("hydralazine", "Hydralazine"),
         ("not_applicable", "Not Applicable"),
-        ("other", "Other")],
+        ('OTHER', "Other")],
     'bcpp_subject.heartdisease': [
         ('Myocardial infarction (heart attack)', 'Myocardial infarction (heart attack)'),
         ('Congestive cardiac failure', 'Congestive cardiac failure'),
