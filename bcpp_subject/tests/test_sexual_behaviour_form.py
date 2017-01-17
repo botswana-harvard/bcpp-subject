@@ -11,22 +11,27 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject(
-            'T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
 
         self.options = {
-           'subject_visit': self.subject_visit.id,
-           'report_datetime': self.get_utcnow(),
-           'ever_sex': YES,
-           'lifetime_sex_partners':  3,
-           'more_sex': YES,
-           'last_year_partners': 1,
-           'condom': YES,
-           'alcohol_sex': 'Myself', }
+            'subject_visit': self.bhs_subject_visit_male.id,
+            'report_datetime': self.get_utcnow(),
+            'ever_sex': YES,
+            'lifetime_sex_partners': 3,
+            'more_sex': YES,
+            'last_year_partners': 1,
+            'condom': YES,
+            'alcohol_sex': 'Myself', }
 
     def test_form_is_valid(self):
         form = SexualBehaviourForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_had_sex_and_lifetime_sex_partners(self):
         """ Assert participant has never had sex, cannot have none lifetime partners
