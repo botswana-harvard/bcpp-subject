@@ -10,8 +10,9 @@ from .form_mixins import SubjectModelFormMixin
 class EducationForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(EducationForm, self).clean()
+        cleaned_data = super().clean()
         # validating not working
+        # FIXME: Then fix it!
         try:
             subject_locator = SubjectLocator.objects.get(
                 subject_identifier=cleaned_data.get('subject_visit').subject_identifier)

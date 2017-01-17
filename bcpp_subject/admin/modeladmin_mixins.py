@@ -10,7 +10,7 @@ from edc_base.modeladmin_mixins import (
 from edc_visit_tracking.modeladmin_mixins import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
 
 from ..constants import BASELINE, ANNUAL
-from bcpp_subject.models.subject_visit import SubjectVisit
+from ..models.subject_visit import SubjectVisit
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
@@ -35,7 +35,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
                 subject_identifier=household_member.subject_identifier,
-                survey=obj.subject_visit.survey,
+                household_identifier=household_member.household_structure.household.household_identifier,
+                survey=obj.subject_visit.survey_object.field_value,
                 survey_schedule=obj.subject_visit.survey_schedule_object.field_value))
 
 

@@ -9,8 +9,6 @@ from survey.model_mixins import SurveyModelMixin
 
 class Appointment(AppointmentModelMixin, SurveyModelMixin, BaseUuidModel):
 
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
-
     household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
 
     objects = AppointmentManager()

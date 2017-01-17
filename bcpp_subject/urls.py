@@ -4,7 +4,6 @@ from edc_constants.constants import UUID_PATTERN
 
 from household.patterns import household_identifier
 from survey.patterns import survey_schedule, survey
-from enumeration.views import DashboardView as EnumerationDashboardView
 
 from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
