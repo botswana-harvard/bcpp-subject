@@ -92,6 +92,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
     def view_on_site(self, obj):
         return reverse(
             'bcpp-subject:dashboard_url', kwargs=dict(
+                household_identifier=obj.household_member.household_structure.household.household_identifier,
                 subject_identifier=obj.subject_identifier,
                 survey=obj.survey,
                 survey_schedule=obj.survey_schedule_object.field_value))
