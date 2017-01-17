@@ -7,46 +7,18 @@ from django.views.generic import TemplateView
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import (
-    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin,
-    ConsentMixin as BaseConsentMixin, ShowHideViewMixin,
-    AppointmentMixin as BaseAppointmentMixin, VisitScheduleViewMixin, SubjectIdentifierViewMixin)
+from edc_dashboard.view_mixins import DashboardViewMixin, AppConfigViewMixin
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
-from member.models.household_member.household_member import HouseholdMember
 from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
-from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator, Appointment
+from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator
 
+from .dashboard import SubjectDashboardViewMixin
 from .wrappers import (
     DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
     SubjectVisitModelWrapper)
-
-
-class AppointmentMixin(BaseAppointmentMixin):
-
-    def empty_appointment(self, **kwargs):
-        household_member = HouseholdMember(
-            household_structure=self.household_structure._original_object)
-        return Appointment(household_member=household_member)
-
-
-class ConsentMixin(BaseConsentMixin):
-
-    @property
-    def empty_consent(self):
-        return self.consent_model(
-            subject_identifier=self.subject_identifier,
-            household_member=self.household_member._original_object,
-            version=self.consent_object.version)
-
-
-class SubjectDashboardViewMixin(
-        ShowHideViewMixin, SubjectIdentifierViewMixin, HouseholdStructureViewMixin,
-        HouseholdMemberViewMixin, ConsentMixin, VisitScheduleViewMixin,
-        AppointmentMixin, MetaDataMixin):
-    pass
 
 
 class DashboardView(
