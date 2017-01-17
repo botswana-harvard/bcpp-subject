@@ -71,6 +71,7 @@ class DashboardView(
             subject_locator = None
         context.update(
             navbar_selected='bcpp_subject',
+            household_member=self.household_member,
             MALE=MALE,
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,

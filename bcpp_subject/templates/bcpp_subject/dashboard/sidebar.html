@@ -24,7 +24,7 @@
         {% else %}
 
            <a role="button" class="btn btn-sm btn-warning" 
-              href="{{ consent_object.get_absolute_url }}?next={{ consent.next_url }}&{{ consent.extra_querystring }}">
+              href="{{ consent_object.get_absolute_url }}?household_member={{household_member.wrapped_object.pk}}&next={{ consent.next_url }}&{{ consent.extra_querystring }}">
                 <i class="fa fa-plus fa-sm fa-fw"></i>
            </a>
 
