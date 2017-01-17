@@ -8,20 +8,19 @@ from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import (
-    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin, ConsentMixin,
+    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin, ConsentMixin, ShowHideViewMixin,
     AppointmentMixin as BaseAppointmentMixin, VisitScheduleViewMixin, SubjectIdentifierViewMixin)
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
+from member.models.household_member.household_member import HouseholdMember
 from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
-from ..models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
+from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator, Appointment
 
 from .wrappers import (
     DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
     SubjectVisitModelWrapper)
-from bcpp_subject.models.appointment import Appointment
-from member.models.household_member.household_member import HouseholdMember
 
 
 class AppointmentMixin(BaseAppointmentMixin):
@@ -33,8 +32,9 @@ class AppointmentMixin(BaseAppointmentMixin):
 
 
 class SubjectDashboardViewMixin(
-        SubjectIdentifierViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
-        ConsentMixin, VisitScheduleViewMixin, AppointmentMixin, MetaDataMixin):
+        ShowHideViewMixin, SubjectIdentifierViewMixin, HouseholdStructureViewMixin,
+        HouseholdMemberViewMixin, ConsentMixin, VisitScheduleViewMixin,
+        AppointmentMixin, MetaDataMixin):
     pass
 
 
