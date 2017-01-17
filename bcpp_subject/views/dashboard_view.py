@@ -8,7 +8,8 @@ from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import (
-    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin, ConsentMixin, ShowHideViewMixin,
+    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin,
+    ConsentMixin as BaseConsentMixin, ShowHideViewMixin,
     AppointmentMixin as BaseAppointmentMixin, VisitScheduleViewMixin, SubjectIdentifierViewMixin)
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
@@ -25,10 +26,20 @@ from .wrappers import (
 
 class AppointmentMixin(BaseAppointmentMixin):
 
-    def get_empty_appointment(self, **kwargs):
+    def empty_appointment(self, **kwargs):
         household_member = HouseholdMember(
             household_structure=self.household_structure._original_object)
         return Appointment(household_member=household_member)
+
+
+class ConsentMixin(BaseConsentMixin):
+
+    @property
+    def empty_consent(self):
+        return self.consent_model(
+            subject_identifier=self.subject_identifier,
+            household_member=self.household_member._original_object,
+            version=self.consent_object.version)
 
 
 class SubjectDashboardViewMixin(
