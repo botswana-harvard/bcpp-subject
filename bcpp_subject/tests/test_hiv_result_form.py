@@ -15,24 +15,29 @@ class TestHivResultForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
 
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=self.subject_visit, report_datetime=self.get_utcnow(),
+            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_subject_visit_male, report_datetime=self.get_utcnow(),
             panel_name='Microtube',
         )
         mommy.make_recipe(
-            'bcpp_subject.subjectlocator', subject_identifier=self.subject_visit.subject_identifier,
+            'bcpp_subject.subjectlocator', subject_identifier=self.bhs_subject_visit_male.subject_identifier,
             report_datetime=self.get_utcnow(),
         )
         mommy.make_recipe(
-            'bcpp_subject.residencymobility', subject_visit=self.subject_visit, report_datetime=self.get_utcnow(),
+            'bcpp_subject.residencymobility', subject_visit=self.bhs_subject_visit_male, report_datetime=self.get_utcnow(),
             permanent_resident=YES,
             intend_residency=NO)
 
         self.options = {
             'report_datetime': self.get_utcnow(),
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_male.id,
             'hiv_result': NEG,
             'hiv_result_datetime': self.get_utcnow(),
             'blood_draw_type': 'capillary',

@@ -1,16 +1,14 @@
 from django.apps import apps as django_apps
-from django.core.exceptions import ObjectDoesNotExist
 
 from edc_appointment.views import AppointmentModelWrapper
 from edc_consent.views import ConsentModelWrapper
 from edc_dashboard.wrappers.model_wrapper import ModelWrapper
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
 
 
 class ModelWrapperMixin(ModelWrapper):
 
-    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
-    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
     next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
 
     extra_querystring_attrs = {}
@@ -48,7 +46,7 @@ class ModelWrapperMixin(ModelWrapper):
         return self.survey_schedule_object.map_area_display
 
 
-class VisitModelWrapper(ModelWrapperMixin):
+class SubjectVisitModelWrapper(ModelWrapperMixin):
 
     model_name = 'bcpp_subject.subjectvisit'
     extra_querystring_attrs = {
@@ -60,22 +58,31 @@ class VisitModelWrapper(ModelWrapperMixin):
         'household_identifier', 'subject_identifier', 'survey_schedule', 'survey',
         'appointment', 'household_member']
 
+    @property
+    def household_member(self):
+        return self._original_object.household_member
+
 
 class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
     model_name = 'bcpp_subject.appointment'
-    visit_model_wrapper_class = VisitModelWrapper
+    visit_model_wrapper_class = SubjectVisitModelWrapper
     dashboard_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+
+    @property
+    def household_member(self):
+        return self._original_object.household_member
 
     @property
     def visit(self):
         """Returns a wrapped persistent or non-persistent visit instance."""
+        # FIXME: to much overriden from super class
+        # only difference are the options for the visit model
         try:
             return self.visit_model_wrapper_class(self._original_object.subjectvisit)
         except ObjectDoesNotExist:
             visit_model = django_apps.get_model(
                 *self.visit_model_wrapper_class.model_name.split('.'))
-            print(self.survey_schedule_object, self, self.survey)
             return self.visit_model_wrapper_class(
                 visit_model(
                     household_member=self.household_member,
@@ -86,6 +93,11 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
     @property
     def forms_url(self):
+        """Returns a reversed URL to show forms for this appointment/visit.
+
+        This is standard for edc_dashboard"""
+        # FIXME: to much overriden from super class
+        # only difference are the extra kwargs tp reverse
         kwargs = dict(
             subject_identifier=self.subject_identifier,
             appointment=self.wrapped_object.id,
@@ -93,6 +105,53 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
             survey=self.survey_object.field_value,
             survey_schedule=self.survey_schedule_object.field_value)
         return reverse(self.dashboard_url_name, kwargs=kwargs)
+
+
+class CrfModelWrapper(ModelWrapper):
+
+    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_attrs = dict(crf=[
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey'])
+    extra_querystring_attrs = {
+        'crf': ['subject_visit']}
+    url_instance_attrs = [
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey', 'subject_visit']
+
+    @property
+    def subject_visit(self):
+        return self._original_object.subject_visit
+
+    @property
+    def appointment(self):
+        return self._original_object.subject_visit.appointment
+
+    @property
+    def household_member(self):
+        return self.subject_visit.household_member
+
+    @property
+    def survey(self):
+        return self.subject_visit.survey
+
+    @property
+    def survey_schedule(self):
+        return self.subject_visit.survey_schedule
+
+    @property
+    def survey_object(self):
+        return self.subject_visit.survey_object
+
+    @property
+    def survey_schedule_object(self):
+        return self.subject_visit.survey_schedule_object
+
+    @property
+    def household_identifier(self):
+        return self.household_member.household_structure.household.household_identifier
 
 
 class ListBoardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
@@ -103,6 +162,7 @@ class ListBoardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
 
 class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
 
+    model_name = 'bcpp_subject.subjectconsent'
     next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
     next_url_attrs = {'bcpp_subject.subjectconsent': [
         'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
@@ -111,3 +171,7 @@ class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
     url_instance_attrs = [
         'subject_identifier', 'survey_schedule', 'survey', 'gender',
         'household_member', 'first_name', 'initials', 'household_identifier']
+
+    @property
+    def household_member(self):
+        return self._original_object.household_member

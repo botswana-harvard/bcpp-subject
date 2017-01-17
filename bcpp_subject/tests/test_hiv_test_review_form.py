@@ -15,12 +15,16 @@ class TestHivTestReviewForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject(
-            'T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
         yesterday = date.today() - timedelta(1)
 
         self.options = {
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_female.id,
             'report_datetime': get_utcnow(),
             'hiv_test_date': yesterday,
             'recorded_hiv_result': NEG,

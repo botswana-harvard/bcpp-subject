@@ -21,8 +21,6 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
 
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
-
     appointment = models.OneToOneField(Appointment, on_delete=models.PROTECT)
 
     household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)

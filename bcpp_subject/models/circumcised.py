@@ -65,6 +65,7 @@ class Circumcised (CircumcisionModelMixin, CrfModelMixin):
             raise CircumcisionError('Please leave blank.', 'age_unit_circ')
         super().common_clean()
 
+    @property
     def common_clean_exceptions(self):
         return super().common_clean_exceptions + [CircumcisionError]
 

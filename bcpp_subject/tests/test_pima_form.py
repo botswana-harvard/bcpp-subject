@@ -15,7 +15,6 @@ class TestPimaForm(SubjectMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        #self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
         self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.options = {
             'pima_today': YES,

@@ -177,9 +177,7 @@ class SubjectConsent(
 
     @property
     def common_clean_exceptions(self):
-        common_clean_exceptions = super().common_clean_exceptions
-        common_clean_exceptions.extend([ConsentValidationError, AgeValueError])
-        return common_clean_exceptions
+        return super().common_clean_exceptions + [ConsentValidationError, AgeValueError]
 
     class Meta:
         app_label = 'bcpp_subject'

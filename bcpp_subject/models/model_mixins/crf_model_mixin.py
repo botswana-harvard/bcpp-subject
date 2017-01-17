@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
 
 from edc_base.model.models import HistoricalRecords, BaseUuidModel
 from edc_base.model.validators.date import datetime_not_future
@@ -10,7 +11,6 @@ from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModel
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin
 
 from ..subject_visit import SubjectVisit
-from django.db.models.deletion import PROTECT
 
 
 class CrfModelManager(VisitTrackingCrfModelManager):
@@ -29,8 +29,6 @@ class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     UpdatesCrfMetadataModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
-
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     subject_visit = models.OneToOneField(SubjectVisit, on_delete=PROTECT)
 
@@ -61,8 +59,6 @@ class CrfModelMixinNonUniqueVisit(
         UpdatesCrfMetadataModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
-
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
 

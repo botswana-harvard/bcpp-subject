@@ -7,31 +7,51 @@ from django.views.generic import TemplateView
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import SubjectDashboardViewMixin, DashboardViewMixin
+from edc_dashboard.view_mixins import (
+    DashboardViewMixin, AppConfigViewMixin, MetaDataMixin, ConsentMixin, ShowHideViewMixin,
+    AppointmentMixin as BaseAppointmentMixin, VisitScheduleViewMixin, SubjectIdentifierViewMixin)
 
 from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
+from member.models.household_member.household_member import HouseholdMember
 from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
-from ..models import SubjectConsent, SubjectVisit, SubjectOffstudy, SubjectLocator
+from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator, Appointment
 
-from .mixins import SubjectAppConfigViewMixin
-from .wrappers import DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, VisitModelWrapper
+from .wrappers import (
+    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
+    SubjectVisitModelWrapper)
+
+
+class AppointmentMixin(BaseAppointmentMixin):
+
+    def get_empty_appointment(self, **kwargs):
+        household_member = HouseholdMember(
+            household_structure=self.household_structure._original_object)
+        return Appointment(household_member=household_member)
+
+
+class SubjectDashboardViewMixin(
+        ShowHideViewMixin, SubjectIdentifierViewMixin, HouseholdStructureViewMixin,
+        HouseholdMemberViewMixin, ConsentMixin, VisitScheduleViewMixin,
+        AppointmentMixin, MetaDataMixin):
+    pass
 
 
 class DashboardView(
-        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, SurveyViewMixin,
-        SubjectAppConfigViewMixin,
+        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, AppConfigViewMixin,
+        SurveyViewMixin,
         HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
         TemplateView):
 
-    add_visit_url_name = SubjectVisit().admin_url_name
+    app_config_name = 'bcpp_subject'
 
-    visit_model = SubjectVisit
     consent_model = SubjectConsent
 
     consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
     appointment_model_wrapper_class = AppointmentModelWrapper
+    crf_model_wrapper_class = CrfModelWrapper
+    visit_model_wrapper_class = SubjectVisitModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
