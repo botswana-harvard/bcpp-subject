@@ -4,35 +4,23 @@
 {% load edc_base_extras %}
 
 
-{% block special_forms %}
+{% block consent_forms %}
+
 <div class="table-responsive small text-default">
     <table class="table table-condensed">
         <thead></thead>
         <tbody>
 
         <tr>
-
         <td class="{% if consent %}success{% else %}warning{% endif %}">
 
-        {% if consent.id %}
-
-           <a role="button" class="btn btn-sm btn-success" 
-              href="{{ consent.get_absolute_url }}?next={{ consent.next_url }}&{{ consent.extra_querystring }}">
-                <i class="fa fa-pencil fa-sm fa-fw"></i> 
-           </a>
-
-        {% else %}
-
-           <a role="button" class="btn btn-sm btn-warning" 
-              href="{{ consent_object.get_absolute_url }}?next={{ consent.next_url }}&{{ consent.extra_querystring }}">
-                <i class="fa fa-plus fa-sm fa-fw"></i>
-           </a>
-
-        {% endif %}
-        
+        <a role="button" class="btn btn-sm btn-{% if consent %}success{% else %}warning{% endif %}" 
+           href="{{ consent.get_absolute_url }}?next={{ consent.next_url }}&{{ consent.extra_querystring }}">
+             <i class="fa fa-{% if consent %}pencil{% else %}plus{% endif %} fa-sm fa-fw"></i> 
+        </a>
 
         <td class="{% if consent %}success{% else %}warning{% endif %}">
-            <h6>{{ consent_object.verbose_name|title }} v{{ consent_object.version }}</h6>
+            <h6>{{ consent.verbose_name|title }} v{{ consent.version }}</h6>
         </td>
 
         </tr>
@@ -41,7 +29,7 @@
     </table>
 </div>
                   
-{% endblock special_forms %}
+{% endblock consent_forms %}
 
 {% block demographics %}   
 
