@@ -14,7 +14,6 @@ from .models import ResourceUtilization, SubjectVisit
 from .rule_group_funcs import (
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
-    func_hiv_neg_bhs,
     func_hiv_positive_today,
     func_hiv_untested,
     func_known_pos_in_prev_year,
@@ -28,7 +27,7 @@ from .rule_group_funcs import (
     is_male)
 
 
-# @register()
+@register()
 class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(
@@ -59,11 +58,11 @@ class SubjectVisitRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['pima'])
 
-    hiv_linkage_to_care = CrfRule(
+    hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
-            predicate=func_hiv_neg_bhs,
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            predicate=func_art_naive_at_annual_or_defaulter,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])
 
     require_microtube = RequisitionRule(
@@ -239,13 +238,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
-
-    hiv_linkage_to_care_art_naive = CrfRule(
-        logic=Logic(
-            predicate=func_art_naive_at_annual_or_defaulter,
-            consequence=REQUIRED,
-            alternative=NOT_REQUIRED),
-        target_models=['hivlinkagetocare'])
 
     class Meta:
         app_label = 'bcpp_subject'
