@@ -179,3 +179,11 @@ class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
     @property
     def household_member(self):
         return self._original_object.household_member
+
+    @property
+    def first_name(self):
+        return self._original_object.household_member.first_name
+
+    @property
+    def gender(self):
+        return self._original_object.household_member.gender
