@@ -49,4 +49,4 @@ from .subject_visit_admin import SubjectVisitAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
 from .hypertenstion_cardiovascular_admin import (
-    HypertensionCardiovascularAdmin, WaistCircumferenceMeasurement, BPMeasurementAdmin)
+    HypertensionCardiovascularAdmin, BPMeasurementAdminInlineAdmin, WaistCircumferenceMeasurementInlineAdmin)

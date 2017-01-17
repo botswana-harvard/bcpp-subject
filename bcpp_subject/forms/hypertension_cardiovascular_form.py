@@ -1,24 +1,26 @@
 from django import forms
 
+from edc_constants.constants import NO, NOT_APPLICABLE
+
 from ..models import HypertensionCardiovascular
 
 from .form_mixins import SubjectModelFormMixin
-from edc_constants.constants import NO
 
 
 class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        # self.validate_may_take_blood_pressure()
+        self.validate_hypertension_diagnosis()
         return cleaned_data
 
-    def validate_may_take_blood_pressure(self):
-        # FIXME: 
+    def validate_hypertension_diagnosis(self):
+
         if self.cleaned_data.get('may_take_blood_pressure') == NO:
-                raise forms.ValidationError(
-                    'Since the user is not prepared to have weight/bp measured\
-                    , nothing else should be filled')
+            if self.cleaned_data.get('hypertension_diagnosis') != NOT_APPLICABLE:
+                raise forms.ValidationError('Not Applicable is the only valid answer')
+                raise forms.ValidationError({
+                    'hypertension_diagnosis': _('Not Applicable is the only valid answer')})
 
     class Meta:
 

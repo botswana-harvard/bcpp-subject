@@ -14,7 +14,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      Grant, HeartAttack, HicEnrollment, HivCareAdherence, HivHealthCareCosts,
                      HivLinkageToCare, HivMedicalCare, HivResultDocumentation, HivResult,
                      HivTestReview, HivTested, HivTestingHistory, HivUntested, HospitalAdmission,
-                     HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
+                     HouseholdComposition, HypertensionCardiovascular, LabourMarketWages, MedicalDiagnoses,
                      NonPregnancy, OutpatientCare, Participation, PimaVl, Pima, PositiveParticipant,
                      Pregnancy, QualityOfLife, RbdDemographics, ReproductiveHealth,
                      ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
@@ -23,7 +23,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition)
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
-                                             StiIllnesses, PartnerResidency)
+                                             StiIllnesses, PartnerResidency, MedicationGiven, MedicationTaken)
 
 # from .models import Respondent, MostRecentPartner
 
@@ -329,6 +329,18 @@ medicaldiagnoses = Recipe(
     heart_attack_record=NO,
     cancer_record=NO,
     tb_record=NO
+)
+
+medication_given = Recipe(
+    MedicationGiven,
+    name='Atenolol',
+    short_name='atenolol'
+)
+
+medication_taken = Recipe(
+    MedicationTaken,
+    name='Atenolol',
+    short_name='atenolol'
 )
 
 nonpregnancy = Recipe(
