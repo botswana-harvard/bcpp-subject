@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
 from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
 from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, audit_fieldset_tuple, audit_fields,\
@@ -12,7 +13,6 @@ from survey.admin import survey_fields, survey_fieldset_tuple
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectConsentForm
 from ..models import SubjectConsent
-from django.urls.exceptions import NoReverseMatch
 
 
 @admin.register(SubjectConsent, site=bcpp_subject_admin)
