@@ -71,6 +71,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
+                'subject_visit',
                 'may_take_blood_pressure',
                 'hypertension_diagnosis',
                 'medications_taken',

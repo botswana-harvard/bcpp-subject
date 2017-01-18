@@ -36,7 +36,6 @@ class TestDemographicsForm(SubjectMixin, TestCase):
 
     def test_demographics_form_valid(self):
         form = DemographicsForm(data=self.data)
-        print ('*********', form.errors)
         self.assertTrue(form.is_valid())
         self.assertTrue(form.save())
 

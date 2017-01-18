@@ -12,7 +12,7 @@ from household.views import HouseholdViewMixin, HouseholdStructureViewMixin
 from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
-from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator
+from ..models import SubjectConsent, SubjectOffstudy
 
 from .dashboard import SubjectDashboardViewMixin, SubjectLocatorViewMixin
 from .wrappers import CrfModelWrapper, SubjectVisitModelWrapper
