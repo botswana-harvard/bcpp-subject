@@ -24,7 +24,10 @@ from .rule_group_funcs import (
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_male)
+    is_male,
+    func_show_recent_partner,
+    func_show_second_partner_forms,
+    func_show_third_partner_forms)
 
 
 @register()
@@ -161,7 +164,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=P('verbal_hiv_result', 'eq', POS),
             consequence=REQUIRED,
-            alternative=NOT_REQUIRED),
+            alternative=REQUIRED),
         target_models=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = CrfRule(
@@ -249,30 +252,24 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 1 else False),
+            predicate=func_show_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
+        target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 2 else False),
+            predicate=func_show_second_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['secondpartner'])
+        target_models=['recentpartner', 'secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 3 else False),
+            predicate=func_show_third_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['thirdpartner'])
+        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
 
     ever_sex = CrfRule(
         logic=Logic(

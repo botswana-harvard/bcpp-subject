@@ -1,5 +1,6 @@
 from django import forms
 from edc_constants.choices import NOT_APPLICABLE
+from edc_consent.exceptions import SiteConsentError, NotConsentedError
 
 from ..models import SubjectLocator
 
@@ -17,6 +18,11 @@ class SubjectLocatorForm (SubjectModelFormMixin):
             instance = SubjectLocator(**self.cleaned_data)
         # validating that some contact numbers exist when HicEnrollment form exists.
         instance.hic_enrollment_checks(forms.ValidationError)
+        try:
+            instance = self._meta.model(id=self.instance.id, **cleaned_data)
+            instance.common_clean()
+        except (SiteConsentError, NotConsentedError) as e:
+            raise forms.ValidationError(str(e))
         # validating home_visits
         if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):
             raise forms.ValidationError(
