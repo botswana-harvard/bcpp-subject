@@ -17,8 +17,10 @@ from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator
 
 from .dashboard import SubjectDashboardViewMixin
 from .wrappers import (
-    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
+    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper, 
     SubjectVisitModelWrapper, SubjectLocatorModelWrapper)
+
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 
 class SubjectLocatorViewMixin:
@@ -80,24 +82,17 @@ class DashboardView(
             subject_offstudy=subject_offstudy,
             subject_locator=subject_locator,
             reference_datetime=get_utcnow(),
+            enrollment_forms=self.enrollment_forms,
         )
         return context
 
     @property
-    def enrollment_objects(self):
-        """ """
-        # TODO: what are these for? HIC Enrollment?? consents?? what?
-        enrollment_objects = []
-        enrollments_models = []
-        for model in enrollments_models:
-            model = django_apps.get_model(*model.split('.'))
-            try:
-                enrollment_objects.append(
-                    model.objects.get(subject_identifier=self.subject_identifier))
-            except model.DoesNotExist:
-                enrollment_objects.append(model())
-            except MultipleObjectsReturned:
-                for obj in model.objects.filter(
-                        subject_identifier=self.subject_identifier).order_by('version'):
-                    enrollment_objects.append(obj)
-        return enrollment_objects
+    def enrollment_forms(self):
+        """Returns a generator of enrollment instances for this subject."""
+        for visit_schedule in site_visit_schedules.get_visit_schedules().values():
+            for schedule in visit_schedule.schedules.values():
+                obj = schedule.enrollment_instance(subject_identifier=self.subject_identifier)
+                if obj:
+                    yield obj
+                else:
+                    continue

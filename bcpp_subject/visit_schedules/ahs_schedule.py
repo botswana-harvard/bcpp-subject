@@ -5,7 +5,7 @@ from .requisitions import requisitions
 from edc_visit_schedule.constants import YEARS
 
 # schedule for existing participants
-ahs_schedule = Schedule(name='ahs_schedule',)
+ahs_schedule = Schedule(name='ahs_schedule', title='AHS')
 
 ahs_schedule.add_visit(
     code='T1',

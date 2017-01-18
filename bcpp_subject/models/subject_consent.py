@@ -22,6 +22,8 @@ from survey.model_mixins import SurveyModelMixin
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
 
+from .utils import get_enrollment_survey
+
 
 def is_minor(dob, reference_datetime):
     return 16 <= age(dob, reference_datetime).years < 18
@@ -34,8 +36,6 @@ class SubjectConsent(
         BaseUuidModel):
 
     """ A model completed by the user that captures the ICF."""
-
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
     household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
 
@@ -74,18 +74,10 @@ class SubjectConsent(
         super().save(*args, **kwargs)
 
     def get_survey_name(self):
-        """Returns either the first or second of two surveys in
-        the survey_schedule.
-
-        This is protocol specific and assumes there are just two
-        possibilities per survey_schedule."""
-        survey_schedule = self.household_member.survey_schedule_object
-        last = SubjectConsent.objects.filter(
-            identity=self.identity).order_by('consent_datetime').last()
-        if not last:
-            return survey_schedule.surveys[0].field_value
-        else:
-            return survey_schedule.surveys[-1].field_value
+        return get_enrollment_survey(
+            consents=SubjectConsent.objects.filter(
+                identity=self.identity),
+            survey_schedule_object=self.household_member.survey_schedule_object)
 
     def common_clean(self):
         # confirm member is eligible

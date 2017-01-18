@@ -11,9 +11,8 @@ from edc_constants.constants import YES, NO
 from edc_map.site_mappers import site_mappers
 
 from member.constants import HEAD_OF_HOUSEHOLD
-from member.models import HouseholdInfo, HouseholdHeadEligibility
+from member.models import HouseholdInfo
 
-from ..constants import BASELINE_SURVEY
 from ..models import SubjectConsent
 
 tz = pytz.timezone(settings.TIME_ZONE)
@@ -23,6 +22,7 @@ class ConsentFormMixin(ConsentModelFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
