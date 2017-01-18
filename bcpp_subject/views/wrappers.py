@@ -164,6 +164,19 @@ class ListBoardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
         return self._original_object.household_member
 
 
+class SubjectLocatorModelWrapper(ModelWrapper):
+    model_name = 'bcpp_subject.subjectlocator'
+    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+
+    next_url_attrs = {'bcpp_subject.subjectlocator': [
+        'subject_identifier', 'household_identifier',
+        'survey_schedule']}
+    url_instance_attrs = [
+        'subject_identifier', 'household_identifier',
+        'survey_schedule']
+
+
 class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
 
     model_name = 'bcpp_subject.subjectconsent'
@@ -179,3 +192,11 @@ class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
     @property
     def household_member(self):
         return self._original_object.household_member
+
+    @property
+    def first_name(self):
+        return self._original_object.household_member.first_name
+
+    @property
+    def gender(self):
+        return self._original_object.household_member.gender

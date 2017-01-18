@@ -1,16 +1,31 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 
+from django.db import transaction
 from django.dispatch import receiver
 
 from django.db.utils import IntegrityError
-from bcpp.surveys import ESS_SURVEY, AHS_SURVEY, BHS_SURVEY
-from edc_consent.exceptions import ConsentError
 
 from ..exceptions import EnrollmentError
-from ..models import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
 
+from .enrollment import EnrollmentAhs, EnrollmentBhs, EnrollmentEss
 from .subject_consent import SubjectConsent
-from django.db import transaction
+from .utils import get_enrollment_model_class
+
+
+@receiver(post_delete, weak=False, dispatch_uid="enrollment_on_post_delete")
+def enrollment_on_post_delete(sender, instance, using, **kwargs):
+    if sender in [EnrollmentAhs, EnrollmentBhs, EnrollmentEss]:
+        instance.household_member.is_consented = False
+        instance.household_member.save()
+
+
+@receiver(post_delete, weak=False, sender=SubjectConsent, dispatch_uid="subject_consent_on_post_delete")
+def subject_consent_on_post_delete(sender, instance, using, **kwargs):
+    EnrollmentModelClass = get_enrollment_model_class(instance)
+    enrollment = EnrollmentModelClass.objects.get(subject_identifier=instance.subject_identifier)
+    enrollment.delete()
+    instance.household_member.is_consented = False
+    instance.household_member.save()
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent, dispatch_uid='subject_consent_on_post_save')
@@ -25,23 +40,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
         instance.household_member.save()
 
         # auto-complete an enrollment. Enrollment will create appointments
-        try:
-            survey_name = instance.survey_object.name
-        except AttributeError:
-            raise ConsentError(
-                'Survey has not been set for survey_schedule {}.'.format(
-                    instance.survey_schedule_object.field_value))
-        if survey_name == BHS_SURVEY:
-            EnrollmentModelClass = EnrollmentBhs
-        elif survey_name == AHS_SURVEY:
-            EnrollmentModelClass = EnrollmentAhs
-        elif survey_name == ESS_SURVEY:
-            EnrollmentModelClass = EnrollmentEss
-        else:
-            raise EnrollmentError(
-                'Unable to determine the Enrollment Model from {}. '
-                'Got survey = {}.'.format(
-                    instance._meta.label_lower, survey_name))
+        EnrollmentModelClass = get_enrollment_model_class(instance)
         try:
             enrollment = EnrollmentModelClass.objects.get(
                 subject_identifier=instance.subject_identifier)

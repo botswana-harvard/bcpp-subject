@@ -12,7 +12,12 @@ from bcpp_subject.models.list_models import FamilyPlanning
 class TestReproductiveHealthForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
         self.family_planning = FamilyPlanning.objects.create(name='Condoms, consistent use (male or female)', short_name='Condoms, consistent use (male or female)')
         self.options = {
             'number_children': 4,
@@ -24,13 +29,14 @@ class TestReproductiveHealthForm(SubjectMixin, TestCase):
             'gestational_weeks': 2,
             'pregnancy_hiv_tested': NO,
             'pregnancy_hiv_retested': YES,
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_female.id,
             'report_datetime': self.get_utcnow(),
         }
 
     def test_valid_form(self):
         form = ReproductiveHealthForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_if_participant_is_not_pregnant_since_last_interview(self):
         """Asserts that participant is not pregnant"""

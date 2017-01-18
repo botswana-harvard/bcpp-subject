@@ -10,7 +10,12 @@ from ..models.list_models import StiIllnesses
 class TestStiForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow(),
+        }
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.still_illnesses = StiIllnesses.objects.create(
             name='Unexplained diarrhoea for one month', short_name='Unexplained diarrhoea for one month')
 
@@ -24,14 +29,14 @@ class TestStiForm(SubjectMixin, TestCase):
             'pcp_date': self.get_utcnow().date(),
             'herpes_date': self.get_utcnow().date(),
             'comments': 'diagnosed',
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit_male.id,
             'report_datetime': self.get_utcnow(),
         }
 
     def test_valid_form(self):
         form = StiForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
 
     def test_if_sti_dx_detected_wasting(self):
         """Asserts that severe weight loss (wasting) - more than 10% of body weight"""

@@ -922,108 +922,85 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.requisition_metadata_obj(
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED, T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
-    def test_hiv_pos_nd_art_naive_at_ahs_require_linkage_to_care(self):
-        """Previously enrollees at t0 who are HIV-positive but were not on ART, (i.e arv_naive) at the time of enrollment.
-           Still arv_naive at AHS. HIV linkage to care required.
+    def test_art_naive_at_previous_visit_and_ahs_require_linkage_to_care(self):
+        """Previously enrollees at t0, t1 who are HIV-positive but were not on ART, (i.e arv_naive) at the time of enrollment.
+           HivLinkageToCare REQUIRED
         """
         self.hiv_pos_nd_art_naive_at_bhs()
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        previous_member = self.bhs_subject_visit_male.household_member
 
-        self.hiv_result(POS, self.ahs_subject_visit_male_y2, report_datetime)
-
-        # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, YES, YES, YES, YES, report_datetime)
+        self.add_subject_visit_followup(previous_member, T1, report_datetime)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', REQUIRED, T1).count(), 1)
 
-    def test_newly_pos_and_not_art_bhs_not_require_linkage_to_care(self):
-        """Newly HIV Positive not on ART at T0, Should not offer hiv linkage to care.
+    def test_art_naive_at_previous_visit_and_ahs_require_linkage_to_care1(self):
+        """Previously enrollees at t0, t1 who are HIV-positive but were not on ART, (i.e arv_naive) at the time of enrollment.
+           HivLinkageToCare REQUIRED
         """
-        self._hiv_result = self.hiv_result(POS, self.bhs_subject_visit_male)
+        self.hiv_pos_nd_art_naive_at_bhs()
 
-        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, NO, NO, NO, NO, self.get_utcnow())
-
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
-
-    def test_pos_on_art_notrequire_linkage_to_care(self):
-        """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
-
-        self._hiv_result = self.hiv_result(POS, self.bhs_subject_visit_male)
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        previous_member = self.bhs_subject_visit_male.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T1, report_datetime)
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, NO, NO, YES, YES, self.get_utcnow())
+        self.make_hiv_care_adherence(subject_visit_y2, NO, NO, NO, NO, NO, report_datetime)
 
-        # on art so no need for CD
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
+        report_datetime = self.get_utcnow() + relativedelta(years=2)
+        previous_member = subject_visit_y2.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T2, report_datetime)
 
-    def test_known_neg_does_not_require_linkage_to_care(self):
-        """If previous result is NEG, does not require hiv linkage to care.
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', REQUIRED, T2).count(), 1)
 
-        See rule_groups.ReviewNotPositiveRuleGroup
+    def test_art_naive_at_previous_visit_and_ahs_require_linkage_to_care2(self):
+        """Previously enrollees at t0, t1 who are HIV-positive but were not on ART, (i.e arv_naive) at the time of enrollment.
+           HivLinkageToCare REQUIRED
         """
+        self.hiv_pos_nd_art_naive_at_bhs()
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        previous_member = self.bhs_subject_visit_male.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T1, report_datetime)
 
-        self._hiv_result = self.hiv_result(NEG, self.ahs_subject_visit_male_y2, report_datetime)
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, NO, NO, YES, YES, report_datetime)
+        self.make_hiv_care_adherence(subject_visit_y2, YES, YES, YES, YES, YES, report_datetime)
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
+        report_datetime = self.get_utcnow() + relativedelta(years=2)
+        previous_member = subject_visit_y2.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T2, report_datetime)
 
-    def test_known_pos_defaulter_require_linkage_to_care(self):
-        """If previous result is POS on art but no evidence.
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', REQUIRED, T2).count(), 1)
 
-        This is a defaulter
-
-        See rule_groups.ReviewNotPositiveRuleGroup
+    def test_on_art_at_previous_visit_and_ahs_require_linkage_to_care(self):
+        """Previously enrollees at t0, t1 who are HIV-positive but were on ART, (i.e not arv_naive) at the time of enrollment.
+           HivLinkageToCare NOT_REQUIRED
         """
-        self.hivtest_review(self.bhs_subject_visit_male, POS, self.get_utcnow())
+        self.make_hivtesting_history(self.bhs_subject_visit_male, YES, YES, POS, NO, self.bhs_subject_visit_male.report_datetime)
 
-        # add HivCareAdherence,
-        self.make_hiv_care_adherence(self.bhs_subject_visit_male, NO, NO, YES, NO, YES, self.get_utcnow())
+        self.hivtest_review(self.bhs_subject_visit_male, POS, self.bhs_subject_visit_male.report_datetime)
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', REQUIRED, T0).count(), 1)
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        self.make_requisition(self.bhs_subject_visit_male, RESEARCH_BLOOD_DRAW, self.bhs_subject_visit_male.report_datetime)
 
-        # add HivCareAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, NO, NO, NO, YES, report_datetime)
+        # add HivCarAdherence,
+        self.make_hiv_care_adherence(self.bhs_subject_visit_male, YES, YES, YES, YES, YES, self.get_utcnow())
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T1).count(), 1)
+        report_datetime = self.get_utcnow() + relativedelta(years=1)
+        previous_member = self.bhs_subject_visit_male.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T1, report_datetime)
 
-    def test_known_pos_not_require_linkage_to_care(self):
-        """If previous result is POS on art but no evidence.
+        # add HivCarAdherence,
+        self.make_hiv_care_adherence(subject_visit_y2, NO, NO, NO, NO, NO, report_datetime)
 
-        See rule_groups.ReviewNotPositiveRuleGroup
-        """
+        report_datetime = self.get_utcnow() + relativedelta(years=2)
+        previous_member = subject_visit_y2.household_member
+        subject_visit_y2 = self.add_subject_visit_followup(previous_member, T2, report_datetime)
 
-        self.hivtest_review(self.bhs_subject_visit_male, POS, report_datetime=self.get_utcnow())
+        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T2).count(), 1)
 
-        # add HivCareAdherence,
-        self.make_hiv_care_adherence(
-            self.bhs_subject_visit_male, NO, NO, YES, YES, YES, report_datetime=self.get_utcnow())
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)
-
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
-
-        # add HivCareAdherence,
-        self.make_hiv_care_adherence(self.ahs_subject_visit_male_y2, NO, NO, NO, NO, YES, report_datetime)
-
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T1).count(), 1)
-
-    def test_known_neg_does_requires_hiv_linkage_to_care(self):
-        """If previous result is NEG, does not need Hiv linkage to care.
-
-        See rule_groups.ReviewNotPositiveRuleGroup
-        """
-        self._hiv_result = self.hiv_result(NEG, self.bhs_subject_visit_male)
-
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T1).count(), 1)

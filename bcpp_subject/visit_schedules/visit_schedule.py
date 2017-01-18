@@ -24,7 +24,7 @@ except AttributeError as e:
 
 visit_schedule_bhs = VisitSchedule(
     name='visit_schedule_bhs',
-    verbose_name='BCPP Visit Schedule Baseline',
+    verbose_name='BCPP Baseline Survey',
     app_label='bcpp_subject',
     default_enrollment_model='bcpp_subject.enrollmentbhs',
     default_disenrollment_model='bcpp_subject.disenrollmentbhs',
@@ -34,7 +34,7 @@ visit_schedule_bhs = VisitSchedule(
 
 visit_schedule_ahs = VisitSchedule(
     name='visit_schedule_ahs',
-    verbose_name='BCPP Visit Schedule Annual',
+    verbose_name='BCPP Annual Surveys',
     app_label='bcpp_subject',
     default_enrollment_model='bcpp_subject.enrollmentahs',
     default_disenrollment_model='bcpp_subject.disenrollmentahs',
@@ -44,7 +44,7 @@ visit_schedule_ahs = VisitSchedule(
 
 visit_schedule_ess = VisitSchedule(
     name='visit_schedule_ess',
-    verbose_name='BCPP Visit Schedule End of Study',
+    verbose_name='BCPP ESS Survey',
     app_label='bcpp_subject',
     default_enrollment_model='bcpp_subject.enrollmentess',
     default_disenrollment_model='bcpp_subject.disenrollmentess',

@@ -444,14 +444,3 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
             self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
             self.requisition_metadata_obj(REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
-
-    def test_pos_on_art_notrequire_linkage_to_care(self):
-        """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
-
-        self._hiv_result = self.make_hiv_result(POS, self.subject_visit_male, self.get_utcnow())
-
-        # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, YES)
-
-        # on art so no need for CD
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0).count(), 1)

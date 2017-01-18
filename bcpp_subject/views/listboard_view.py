@@ -9,11 +9,11 @@ from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 
 from survey import SurveyViewMixin
 
-from .listboard_mixins import BcppSubjectFilteredListViewMixin, BcppSubjectSearchViewMixin
+from .listboard import FilteredListViewMixin, SearchViewMixin
 
 
 class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
-                    BcppSubjectFilteredListViewMixin, BcppSubjectSearchViewMixin,
+                    FilteredListViewMixin, SearchViewMixin,
                     SurveyViewMixin, TemplateView, FormView):
 
     app_config_name = 'bcpp_subject'

@@ -15,14 +15,14 @@ class TestPimaForm(SubjectMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+        self.bhs_subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.options = {
             'pima_today': YES,
             'pima_today_other': 'Failed Blood Collection',
             'pima_id': 12345,
             'cd4_datetime': self.get_utcnow(),
             'cd4_value': 400.00,
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.bhs_subject_visit.id,
             'report_datetime': self.get_utcnow()
         }
         form = PimaForm(data=self.options)

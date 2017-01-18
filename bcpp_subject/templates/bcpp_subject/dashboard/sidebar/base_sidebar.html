@@ -4,11 +4,22 @@
     <div class="panel panel-default">
       <div class="panel-heading">
           <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i> 
-              <a data-toggle="collapse" data-parent="#accordion" href="#enrollment">Special Forms</a>
+              <a data-toggle="collapse" data-parent="#accordion" href="#consent">Special Forms</a>
+          </h6>
+      </div>
+      <div id="consent" class="panel-collapse collapse in">
+         {% block special_forms %}{% endblock special_forms %}
+      </div>           
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#enrollment">Enrollment</a>
           </h6>
       </div>
       <div id="enrollment" class="panel-collapse collapse in">
-         {% block special_forms %}{% endblock special_forms %}
+         {% block enrollment_forms %}{% endblock enrollment_forms %}
       </div>           
     </div>
 

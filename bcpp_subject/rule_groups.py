@@ -14,7 +14,6 @@ from .models import ResourceUtilization, SubjectVisit
 from .rule_group_funcs import (
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
-    func_hiv_neg_bhs,
     func_hiv_positive_today,
     func_hiv_untested,
     func_known_pos_in_prev_year,
@@ -25,10 +24,13 @@ from .rule_group_funcs import (
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_male)
+    is_male,
+    func_show_recent_partner,
+    func_show_second_partner_forms,
+    func_show_third_partner_forms)
 
 
-# @register()
+@register()
 class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(
@@ -59,11 +61,11 @@ class SubjectVisitRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['pima'])
 
-    hiv_linkage_to_care = CrfRule(
+    hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
-            predicate=func_hiv_neg_bhs,
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            predicate=func_art_naive_at_annual_or_defaulter,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])
 
     require_microtube = RequisitionRule(
@@ -148,14 +150,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=P('other_record', 'eq', YES),
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = CrfRule(
@@ -240,13 +242,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
 
-    hiv_linkage_to_care_art_naive = CrfRule(
-        logic=Logic(
-            predicate=func_art_naive_at_annual_or_defaulter,
-            consequence=REQUIRED,
-            alternative=NOT_REQUIRED),
-        target_models=['hivlinkagetocare'])
-
     class Meta:
         app_label = 'bcpp_subject'
         source_model = 'bcpp_subject.hivcareadherence'
@@ -257,30 +252,24 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 1 else False),
+            predicate=func_show_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
+        target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 2 else False),
+            predicate=func_show_second_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['secondpartner'])
+        target_models=['recentpartner', 'secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 3 else False),
+            predicate=func_show_third_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['thirdpartner'])
+        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
 
     ever_sex = CrfRule(
         logic=Logic(
