@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
-from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin
+from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectMixin
 from edc_locator.modeladmin_mixins import ModelAdminLocatorMixin
 
 # from ..actions import export_locator_for_cdc_action
@@ -14,7 +14,8 @@ from ..models import SubjectLocator
 
 @admin.register(SubjectLocator, site=bcpp_subject_admin)
 class SubjectLocatorAdmin(
-        ModelAdminLocatorMixin, ModelAdminRevisionMixin, ModelAdminInstitutionMixin, admin.ModelAdmin):
+        ModelAdminLocatorMixin, ModelAdminRevisionMixin, ModelAdminInstitutionMixin,
+        ModelAdminNextUrlRedirectMixin, admin.ModelAdmin):
 
     form = SubjectLocatorForm
     fields = (
