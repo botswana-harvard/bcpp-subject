@@ -147,21 +147,21 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=P('other_record', 'eq', YES),
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = CrfRule(
         logic=Logic(
             predicate=P('verbal_hiv_result', 'eq', POS),
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = CrfRule(
