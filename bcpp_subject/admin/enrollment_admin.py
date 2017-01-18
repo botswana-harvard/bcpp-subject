@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 
@@ -26,11 +27,14 @@ class Mixin:
         return super().get_readonly_fields(request, obj) + audit_fields
 
     def view_on_site(self, obj):
-        return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(
-                subject_identifier=obj.subject_identifier,
-                survey=obj.survey_object.field_value,
-                survey_schedule=obj.survey_object.survey_schedule.field_value))
+        try:
+            return reverse(
+                'bcpp-subject:dashboard_url', kwargs=dict(
+                    subject_identifier=obj.subject_identifier,
+                    survey=obj.survey_object.field_value,
+                    survey_schedule=obj.survey_object.survey_schedule.field_value))
+        except NoReverseMatch:
+            return super().view_on_site(obj)
 
 
 @admin.register(EnrollmentBhs, site=bcpp_subject_admin)

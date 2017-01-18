@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
 
 from edc_admin_exclude.admin import AdminExcludeFieldsMixin
 from edc_base.modeladmin_mixins import (
@@ -32,12 +33,15 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
 
     def view_on_site(self, obj):
         household_member = obj.subject_visit.household_member
-        return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(
-                subject_identifier=household_member.subject_identifier,
-                household_identifier=household_member.household_structure.household.household_identifier,
-                survey=obj.subject_visit.survey_object.field_value,
-                survey_schedule=obj.subject_visit.survey_schedule_object.field_value))
+        try:
+            return reverse(
+                'bcpp-subject:dashboard_url', kwargs=dict(
+                    subject_identifier=household_member.subject_identifier,
+                    household_identifier=household_member.household_structure.household.household_identifier,
+                    survey=obj.subject_visit.survey_object.field_value,
+                    survey_schedule=obj.subject_visit.survey_schedule_object.field_value))
+        except NoReverseMatch:
+            return super().view_on_site(obj)
 
 
 class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):

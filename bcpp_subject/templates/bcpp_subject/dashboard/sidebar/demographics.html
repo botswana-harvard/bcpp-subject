@@ -1,4 +1,11 @@
     <div class="list-group">
+
+    {% with wrapped=subject_locator %}
+
+        {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+
+    {% endwith %}
+
     {% if subject_offstudy %}
         <a class="list-group-item list-group-item-danger">
            <i class="fa fa-ban fa-fw" aria-hidden="true"></i>
