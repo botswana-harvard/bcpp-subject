@@ -7,7 +7,6 @@ from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.model.models import HistoricalRecords, BaseUuidModel
 from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 from edc_locator.model_mixins import LocatorModelMixin
-from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 
 
 class SubjectLocator(LocatorModelMixin, BaseUuidModel):

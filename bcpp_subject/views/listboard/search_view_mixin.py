@@ -1,19 +1,10 @@
 from django.db.models import Q
 
-from edc_dashboard.view_mixins import FilteredListViewMixin
 from edc_search.view_mixins import SearchViewMixin
 
-from ..models import SubjectConsent
+from ...models import SubjectConsent
 
-from .wrappers import ListBoardSubjectConsentModelWrapper
-
-
-class BcppSubjectFilteredListViewMixin(FilteredListViewMixin):
-
-    filter_model = SubjectConsent
-    filtered_model_wrapper_class = ListBoardSubjectConsentModelWrapper
-    filtered_queryset_ordering = '-modified'
-    url_lookup_parameters = ['id', 'subject_identifier']
+from ..wrappers import ListBoardSubjectConsentModelWrapper
 
 
 class BcppSubjectSearchViewMixin(SearchViewMixin):

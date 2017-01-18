@@ -1,11 +1,14 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
 from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
 from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, audit_fieldset_tuple, audit_fields,\
     ModelAdminNextUrlRedirectMixin
 from edc_consent.modeladmin_mixins import ModelAdminConsentMixin
+
+from survey.admin import survey_fields, survey_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectConsentForm
@@ -50,6 +53,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
                 'study_questions',
                 'assessment_score',
                 'consent_copy']}),
+        survey_fieldset_tuple,
         audit_fieldset_tuple)
 
     search_fields = (
@@ -74,28 +78,19 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
         'marriage_certificate': admin.VERTICAL,
     }
 
-    def redirect_url(self, request, obj, post_url_continue=None):
-        kwargs = request.GET.dict()
-        redirect_url = super(ModelAdminNextUrlRedirectMixin, self).redirect_url(
-            request, obj, post_url_continue)
-        if kwargs.get(self.querystring_name):
-            url_name = kwargs.get(self.querystring_name).split(',')[0]
-            attrs = kwargs.get(self.querystring_name).split(',')[1:]
-            kwargs = {k: kwargs.get(k) for k in attrs if kwargs.get(k)}
-            kwargs.update(subject_identifier=obj.subject_identifier)
-            redirect_url = reverse(url_name, kwargs=kwargs)
-        return redirect_url
-
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj=obj) + audit_fields
+        return super().get_readonly_fields(request, obj=obj) + audit_fields + survey_fields
 
     def view_on_site(self, obj):
-        return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(
-                household_identifier=obj.household_member.household_structure.household.household_identifier,
-                subject_identifier=obj.subject_identifier,
-                survey=obj.survey,
-                survey_schedule=obj.survey_schedule_object.field_value))
+        try:
+            return reverse(
+                'bcpp-subject:dashboard_url', kwargs=dict(
+                    household_identifier=obj.household_member.household_structure.household.household_identifier,
+                    subject_identifier=obj.subject_identifier,
+                    survey=obj.survey,
+                    survey_schedule=obj.survey_schedule_object.field_value))
+        except NoReverseMatch:
+            return super().view_on_site(obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

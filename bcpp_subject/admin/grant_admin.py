@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc_base.modeladmin_mixins import TabularInlineMixin
+from edc_base.modeladmin_mixins import TabularInlineMixin, audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import GrantForm
@@ -11,8 +11,15 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 @admin.register(Grant, site=bcpp_subject_admin)
 class GrantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+
     form = GrantForm
-    fields = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant',)
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'labour_market_wages', 'grant_number', 'grant_type', 'other_grant',
+            ]}), audit_fieldset_tuple)
+
     list_display = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant', )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

@@ -4,7 +4,7 @@ from .crfs_ess import crfs_ess
 from .requisitions import requisitions
 
 # schedule for new participants
-ess_schedule = Schedule(name='ess_schedule',)
+ess_schedule = Schedule(name='ess_schedule', title='ESS')
 
 ess_schedule.add_visit(
     code='E0',

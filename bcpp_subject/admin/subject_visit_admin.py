@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls.base import reverse
+from django.urls.exceptions import NoReverseMatch
 
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
@@ -9,7 +11,6 @@ from ..forms import SubjectVisitForm
 from ..models import SubjectVisit, SubjectRequisition
 
 from .modeladmin_mixins import ModelAdminMixin
-from django.urls.base import reverse
 
 
 @admin.register(SubjectVisit, site=bcpp_subject_admin)
@@ -51,13 +52,16 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
     )
 
     def view_on_site(self, obj):
-        return reverse(
-            'bcpp-subject:dashboard_url', kwargs=dict(
-                household_identifier=obj.household_member.household_structure.household.household_identifier,
-                subject_identifier=obj.subject_identifier,
-                appointment=str(obj.appointment.id),
-                survey=obj.survey,
-                survey_schedule=obj.survey_schedule_object.field_value))
+        try:
+            return reverse(
+                'bcpp-subject:dashboard_url', kwargs=dict(
+                    household_identifier=obj.household_member.household_structure.household.household_identifier,
+                    subject_identifier=obj.subject_identifier,
+                    appointment=str(obj.appointment.id),
+                    survey=obj.survey,
+                    survey_schedule=obj.survey_schedule_object.field_value))
+        except NoReverseMatch:
+            return super().view_on_site(obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

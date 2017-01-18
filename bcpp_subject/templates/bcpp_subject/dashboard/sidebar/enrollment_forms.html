@@ -1,0 +1,20 @@
+
+<div class="list-group">
+
+{% for enrollment_form in enrollment_forms %}
+
+    <a class="list-group-item">
+      {{ enrollment_form.schedule.title }}
+      {{ enrollment_form.report_datetime|date:"Y-m-d" }}
+    </a>
+    <ul class="list-group-item">
+	    {% for visit in enrollment_form.schedule.visits %}
+
+	       <li class="text small">{{ visit.title }}</span></li>
+	    
+	    {% endfor %}
+    </ul>
+
+{% endfor %}
+
+</div>

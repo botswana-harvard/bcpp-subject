@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_field_label.admin_mixin import ModifyFormLabelMixin
 
 from ..admin_site import bcpp_subject_admin
@@ -57,26 +58,29 @@ class HivLinkageToCareAdmin(ModifyFormLabelMixin, CrfModelAdminMixin, admin.Mode
 
     form = HivLinkageToCareForm
 
-    fields = (
-        "subject_visit",
-        "report_datetime",
-        "kept_appt",
-        "diff_clininc",
-        "left_clininc_datetime",
-        "clinic_first_datetime",
-        "evidence_type_clinic",
-        "evidence_type_clinic_other",
-        "recommended_therapy",
-        "reason_recommended",
-        "reason_recommended_other",
-        "startered_therapy",
-        "startered_therapy_date",
-        "start_therapy_clininc",
-        "start_therapy_clininc_other",
-        "not_refered_clininc",
-        "evidence_not_refered",
-        "evidence_not_refered_other",
-    )
+    fieldsets = (
+        (None, {
+            'fields': [
+                "subject_visit",
+                "report_datetime",
+                "kept_appt",
+                "diff_clininc",
+                "left_clininc_datetime",
+                "clinic_first_datetime",
+                "evidence_type_clinic",
+                "evidence_type_clinic_other",
+                "recommended_therapy",
+                "reason_recommended",
+                "reason_recommended_other",
+                "startered_therapy",
+                "startered_therapy_date",
+                "start_therapy_clininc",
+                "start_therapy_clininc_other",
+                "not_refered_clininc",
+                "evidence_not_refered",
+                "evidence_not_refered_other",
+            ]}), audit_fieldset_tuple)
+
     radio_fields = {
         "kept_appt": admin.VERTICAL,
         "evidence_type_clinic": admin.VERTICAL,
