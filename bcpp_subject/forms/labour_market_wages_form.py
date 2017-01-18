@@ -1,8 +1,11 @@
 from django import forms
 from django.forms.utils import ErrorList
 
+from edc_constants.constants import YES
+
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
 from ..models import LabourMarketWages, Grant, SubjectLocator
+
 
 from .form_mixins import SubjectModelFormMixin
 
@@ -12,8 +15,8 @@ class LabourMarketWagesForm (SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super(LabourMarketWagesForm, self).clean()
         try:
-            subject_locator = SubjectLocator.objects.get(subject_visit=cleaned_data.get('employed'))
-            if subject_locator.may_call_work == 'Yes' and cleaned_data.get('employed') == 'not working':
+            subject_locator = SubjectLocator.objects.get(subject_identifier =cleaned_data.get('subject_visit').subject_identifier)
+            if subject_locator.may_call_work == YES and cleaned_data.get('employed') == 'not working':
                 raise forms.ValidationError(
                     'Participant gave permission to be contacted at WORK in the subject locator, \
                     but now reports to be \'Not Working\'. Either correct this form or change answer in the Locator')
@@ -35,7 +38,7 @@ class LabourMarketWagesForm (SubjectModelFormMixin):
 
         return cleaned_data
 
-    def validate_employeed_reason(self):
+    def validate_employed_reason(self):
         cleaned_data = self.cleaned_data
         employed = ['government sector', 'private sector', 'self-employed working on my own',
                     'self-employed with own employees']
