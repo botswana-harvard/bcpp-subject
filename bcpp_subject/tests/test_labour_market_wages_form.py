@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from edc_constants.constants import YES, NO, POS, NEG, DWTA, NOT_APPLICABLE
+from edc_constants.constants import NO
 
 from ..forms import LabourMarketWagesForm
 
@@ -32,7 +32,6 @@ class TestLabourMarketWagesForm(SubjectMixin, TestCase):
             'weeks_out': NO,
             'days_not_worked': None,
             'days_inactivite': None,
-            
         }
 
     def test_form_is_valid(self):
