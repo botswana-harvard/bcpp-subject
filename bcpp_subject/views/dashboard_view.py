@@ -15,9 +15,7 @@ from survey.view_mixins import SurveyViewMixin
 from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator
 
 from .dashboard import SubjectDashboardViewMixin, SubjectLocatorViewMixin
-from .wrappers import (
-    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
-    SubjectVisitModelWrapper, SubjectLocatorModelWrapper)
+from .wrappers import CrfModelWrapper, SubjectVisitModelWrapper
 
 
 class DashboardView(
@@ -30,9 +28,6 @@ class DashboardView(
 
     consent_model = SubjectConsent
 
-    consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
-    subject_locator_model_wrapper_class = SubjectLocatorModelWrapper
-    appointment_model_wrapper_class = AppointmentModelWrapper
     crf_model_wrapper_class = CrfModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
 
@@ -47,16 +42,10 @@ class DashboardView(
                 subject_identifier=self.subject_identifier)
         except SubjectOffstudy.DoesNotExist:
             subject_offstudy = None
-        try:
-            subject_locator = SubjectLocator.objects.get(
-                subject_identifier=self.subject_identifier)
-        except SubjectLocator.DoesNotExist:
-            subject_locator = None
         context.update(
             navbar_selected='bcpp_subject',
             MALE=MALE,
             subject_offstudy=subject_offstudy,
-            subject_locator=subject_locator,
             reference_datetime=get_utcnow(),
             enrollment_forms=self.enrollment_forms,
         )

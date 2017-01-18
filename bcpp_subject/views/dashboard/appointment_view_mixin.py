@@ -5,8 +5,12 @@ from member.models import HouseholdMember
 
 from ...models import Appointment
 
+from ..wrappers import AppointmentModelWrapper
+
 
 class AppointmentViewMixin(BaseAppointmentMixin):
+
+    appointment_model_wrapper_class = AppointmentModelWrapper
 
     def empty_appointment(self, **kwargs):
         household_member = HouseholdMember(

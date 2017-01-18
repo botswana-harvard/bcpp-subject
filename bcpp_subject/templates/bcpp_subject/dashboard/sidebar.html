@@ -4,7 +4,7 @@
 {% load edc_base_extras %}
 
 
-{% block consent_forms %}
+{% block special_forms %}
 
 <div class="table-responsive small text-default">
     <table class="table table-condensed">
@@ -28,11 +28,20 @@
 
         </tr>
 
+        <tr>
+            {% with wrapped=subject_locator %}
+        
+                {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+        
+            {% endwith %}
+
+        </tr>
+
         </tbody>
     </table>
 </div>
                   
-{% endblock consent_forms %}
+{% endblock special_forms %}
 
 {% block demographics %}   
 

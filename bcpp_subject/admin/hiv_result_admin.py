@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..filters import HivResultFilter
 from ..forms import HivResultForm
@@ -12,13 +14,17 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class HivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivResultForm
-    fields = (
-        'subject_visit',
-        'hiv_result',
-        'hiv_result_datetime',
-        'blood_draw_type',
-        'insufficient_vol',
-        'why_not_tested',)
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'subject_visit',
+                'hiv_result',
+                'hiv_result_datetime',
+                'blood_draw_type',
+                'insufficient_vol',
+                'why_not_tested',
+            ]}), audit_fieldset_tuple)
 
     list_filter = (HivResultFilter,)
 

@@ -7,7 +7,7 @@ from edc_locator.modeladmin_mixins import ModelAdminLocatorMixin
 
 # from ..actions import export_locator_for_cdc_action
 from ..admin_site import bcpp_subject_admin
-from ..filters import SubjectLocatorIsReferredListFilter
+# from ..filters import SubjectLocatorIsReferredListFilter
 from ..forms import SubjectLocatorForm
 from ..models import SubjectLocator
 
@@ -53,7 +53,7 @@ class SubjectLocatorAdmin(
         "may_call_work": admin.VERTICAL,
         "may_contact_someone": admin.VERTICAL, }
     list_filter = (
-        SubjectLocatorIsReferredListFilter,
+        # SubjectLocatorIsReferredListFilter,
         'may_follow_up',
         'may_contact_someone',
         'may_call_work',
