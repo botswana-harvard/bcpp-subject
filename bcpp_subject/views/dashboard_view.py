@@ -17,13 +17,35 @@ from ..models import SubjectConsent, SubjectOffstudy, SubjectLocator
 
 from .dashboard import SubjectDashboardViewMixin
 from .wrappers import (
-    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper,
-    SubjectVisitModelWrapper)
+    DashboardSubjectConsentModelWrapper, AppointmentModelWrapper, CrfModelWrapper, 
+    SubjectVisitModelWrapper, SubjectLocatorModelWrapper)
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 
+class SubjectLocatorViewMixin:
+
+    subject_locator_model_wrapper_class = SubjectLocatorModelWrapper
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.subject_locator = None
+
+    def get(self, request, *args, **kwargs):
+        try:
+            subject_locator = SubjectLocator.objects.get(
+                subject_identifier=self.subject_identifier)
+        except SubjectLocator.DoesNotExist:
+            new_obj = SubjectLocator(subject_identifier=self.subject_identifier)
+            subject_locator = self.subject_locator_model_wrapper_class(new_obj)
+        else:
+            self.subject_locator = self.subject_locator_model_wrapper_class(subject_locator)
+        kwargs['subject_locator'] = self.subject_locator
+        return super().get(request, *args, **kwargs)
+
+
 class DashboardView(
-        EdcBaseViewMixin, DashboardViewMixin, SubjectDashboardViewMixin, AppConfigViewMixin,
+        EdcBaseViewMixin, DashboardViewMixin, SubjectLocatorViewMixin, SubjectDashboardViewMixin, AppConfigViewMixin,
         SurveyViewMixin,
         HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
         TemplateView):
@@ -33,6 +55,7 @@ class DashboardView(
     consent_model = SubjectConsent
 
     consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
+    subject_locator_model_wrapper_class = SubjectLocatorModelWrapper
     appointment_model_wrapper_class = AppointmentModelWrapper
     crf_model_wrapper_class = CrfModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper

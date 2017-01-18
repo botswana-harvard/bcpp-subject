@@ -164,6 +164,17 @@ class ListBoardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
         return self._original_object.household_member
 
 
+class SubjectLocatorModelWrapper(ModelWrapper):
+    model_name = 'bcpp_subject.subjectlocator'
+    extra_querystring_attrs = {
+        'bcpp_subject.subjectlocator': ['subject_identifier']}
+    next_url_attrs = {'bcpp_subject.subjectlocator': [
+        'subject_identifier', 'household_identifier',
+        'survey_schedule', 'survey']}
+    url_instance_attrs = [
+        'subject_identifier']
+
+
 class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
 
     model_name = 'bcpp_subject.subjectconsent'

@@ -28,6 +28,20 @@
 
         </tr>
 
+        <tr>
+        <td class="{% if subject_locator %}success{% else %}warning{% endif %}">
+
+        <a role="button" class="btn btn-sm btn-{% if consent %}success{% else %}warning{% endif %}" 
+           href="{{ subject_locator.get_absolute_url }}?next={{ subject_locator.next_url }}&{{ subject_locator.extra_querystring }}">
+             <i class="fa fa-{% if subject_locator %}pencil{% else %}plus{% endif %} fa-sm fa-fw"></i> 
+        </a>
+
+        <td class="{% if subject_locator %}success{% else %}warning{% endif %}">
+            <h6>Subject Locator</h6>
+        </td>
+
+        </tr>
+
         </tbody>
     </table>
 </div>
