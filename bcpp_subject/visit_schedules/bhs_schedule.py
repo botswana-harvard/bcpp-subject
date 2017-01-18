@@ -8,7 +8,7 @@ bhs_schedule = Schedule(name='bhs_schedule', title='BHS')
 
 bhs_schedule.add_visit(
     code='T0',
-    title='Baseline Household Survey',
+    title='Baseline Survey',
     timepoint=0,
     base_interval=0,
     requisitions=requisitions,

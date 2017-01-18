@@ -1,6 +1,9 @@
 from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
+from edc_visit_schedule.admin import visit_schedule_fieldset_tuple, visit_schedule_fields
+
+from survey.admin import survey_fieldset_tuple, survey_fields
 
 from .modeladmin_mixins import ModelAdminMixin
 
@@ -20,8 +23,14 @@ class AppointmentAdmin(ModelAdminMixin):
                 'appt_status',
                 'appt_reason',
                 'comment',
-            ]}), audit_fieldset_tuple)
+            ]}),
+        survey_fieldset_tuple,
+        visit_schedule_fieldset_tuple,
+        audit_fieldset_tuple)
 
     radio_fields = {
         'appt_type': admin.VERTICAL,
         'appt_status': admin.VERTICAL}
+
+    def get_readonly_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj=obj) + survey_fields + visit_schedule_fields
