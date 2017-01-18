@@ -21,25 +21,34 @@ def is_male(visit_instance, *args):
 
 
 def func_is_baseline(visit_instance, *args):
-    if visit_instance and visit_instance.visit_code == T0:
+    if visit_instance and visit_instance.visit_code == T1:
         return True
     return False
 
 
 def func_is_annual(visit_instance, *args):
     # FIXME: THIS IS too simple,  in context of having ESS
-    if visit_instance.visit_code != T0:
+    if visit_instance.visit_code != T1:
         return True
     return False
 
 
 def func_previous_visit(visit_instance, *args):
-    if visit_instance.visit_code == T1:
-        return SubjectVisit.objects.get(visit_code=T0, subject_identifier=visit_instance.subject_identifier)
-    elif visit_instance.visit_code == T2:
-        return SubjectVisit.objects.get(visit_code=T1, subject_identifier=visit_instance.subject_identifier)
+    if visit_instance.visit_code == T2:
+        try:
+            return SubjectVisit.objects.get(visit_code=T1, subject_identifier=visit_instance.subject_identifier)
+        except SubjectVisit.DoesNotExist:
+            return False
     elif visit_instance.visit_code == T3:
-        return SubjectVisit.objects.get(visit_code=T2, subject_identifier=visit_instance.subject_identifier)
+        try:
+            return SubjectVisit.objects.get(visit_code=T2, subject_identifier=visit_instance.subject_identifier)
+        except SubjectVisit.DoesNotExist:
+            return False
+#     elif visit_instance.visit_code == T3:
+#         try:
+#             return SubjectVisit.objects.get(visit_code=T2, subject_identifier=visit_instance.subject_identifier)
+#         except SubjectVisit.DoesNotExist:
+#             return False
 
 
 def func_is_defaulter(visit_instance, *args):
