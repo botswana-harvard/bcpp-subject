@@ -12,15 +12,18 @@
         <tbody>
 
         <tr>
+        
+        
         <td class="{% if consent %}success{% else %}warning{% endif %}">
 
-        <a role="button" class="btn btn-sm btn-{% if consent %}success{% else %}warning{% endif %}" 
-           href="{{ consent.get_absolute_url }}?next={{ consent.next_url }}&{{ consent.extra_querystring }}">
-             <i class="fa fa-{% if consent %}pencil{% else %}plus{% endif %} fa-sm fa-fw"></i> 
-        </a>
+        {% with wrapped=consent %}
+
+            {% include 'edc_dashboard/controls/change_button.html' %}
+
+        {% endwith %}
 
         <td class="{% if consent %}success{% else %}warning{% endif %}">
-            <h6>{{ consent.verbose_name|title }} v{{ consent.version }}</h6>
+            <h6>{{ consent.verbose_name|title }} v{{ consent.version }} <span class="text text-muted">{{ consent.consent_datetime|date:"Y-m-d"}}</span></h6> 
         </td>
 
         </tr>
@@ -33,33 +36,16 @@
 
 {% block demographics %}   
 
-	<div class="list-group">
-	{% if subject_offstudy %}
-	    <a class="list-group-item list-group-item-danger">
-	       <i class="fa fa-ban fa-fw" aria-hidden="true"></i>
-	           Offstudy {{ subject_offstudy.offstudy_datetime|date:"Y-m-d"}}
-	    </a>
-	{% endif %}
-    <a class="list-group-item">
-        {% if anonymous %}
-            <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
-        {% else %}{{ household_member.first_name }}&nbsp;{{ household_member.initials }}{% endif%}
-    </a>
-	<a class="list-group-item"><i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i> {{ household_member.wrapped_object.get_gender_display }}</a>
-	<a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
-        {% if not anonymous %}
-            {{ household_member.dob|date:"Y-m-d" }}
-        {% endif%}
-	{{ household_member.age_in_years }}yrs</a>
-    <a class="list-group-item"><i class="fa fa-address-card-o fa-fw"></i>
-	    {% if anonymous %}
-	        <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
-	    {% else %}{{ identity|default:'?? identity' }}{% endif%}
-    </a>
-	</div>
+    {% include 'bcpp_subject/dashboard/sidebar/demographics.html' %}
 
 {% endblock demographics %}
 
+
+{% block enrollment_forms %}   
+
+    {% include 'bcpp_subject/dashboard/sidebar/enrollment_forms.html' %}
+
+{% endblock enrollment_forms %}
 
 
 {% block consent_history %}
