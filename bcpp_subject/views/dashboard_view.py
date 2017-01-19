@@ -15,7 +15,7 @@ from survey.view_mixins import SurveyViewMixin
 from ..models import SubjectConsent, SubjectOffstudy
 
 from .dashboard import SubjectDashboardViewMixin, SubjectLocatorViewMixin
-from .wrappers import CrfModelWrapper, SubjectVisitModelWrapper
+from .wrappers import CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper
 
 
 class DashboardView(
@@ -29,6 +29,7 @@ class DashboardView(
     consent_model = SubjectConsent
 
     crf_model_wrapper_class = CrfModelWrapper
+    requisition_model_wrapper_class = RequisitionModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
 
     @method_decorator(login_required)

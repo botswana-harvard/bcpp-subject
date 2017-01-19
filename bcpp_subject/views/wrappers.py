@@ -200,3 +200,50 @@ class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin
     @property
     def gender(self):
         return self._original_object.household_member.gender
+
+
+class RequisitionModelWrapper(ModelWrapper):
+
+    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_attrs = dict(requisition=[
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey'])
+    extra_querystring_attrs = {
+        'requisition': ['subject_visit']}
+    url_instance_attrs = [
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey', 'subject_visit']
+
+    @property
+    def subject_visit(self):
+        return self._original_object.subject_visit
+
+    @property
+    def appointment(self):
+        return self._original_object.subject_visit.appointment
+
+    @property
+    def household_member(self):
+        return self.subject_visit.household_member
+
+    @property
+    def survey(self):
+        return self.subject_visit.survey
+
+    @property
+    def survey_schedule(self):
+        return self.subject_visit.survey_schedule
+
+    @property
+    def survey_object(self):
+        return self.subject_visit.survey_object
+
+    @property
+    def survey_schedule_object(self):
+        return self.subject_visit.survey_schedule_object
+
+    @property
+    def household_identifier(self):
+        return self.household_member.household_structure.household.household_identifier
