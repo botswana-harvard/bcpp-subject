@@ -255,7 +255,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=func_show_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
+        target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
