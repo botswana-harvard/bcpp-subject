@@ -15,20 +15,26 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        self.ess_subject_visit_female = self.make_subject_visit_for_consented_subject_female(
+            'E0', **self.consent_data)
 
-        self.partner_residency = mommy.make_recipe('bcpp_subject.partnerresidency')
+        self.partner_residency = mommy.make_recipe('bcpp_subject.partnerresidency',)
 
         self.options = {
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.ess_subject_visit_female.id,
+            'report_datetime': self.get_utcnow(),
             'first_partner_arm': None,
             'first_partner_live': [self.partner_residency.id],
             'sex_partner_community': 'Bokaa',
             'past_year_sex_freq': 'Less than once a month',
             'third_last_sex': 'Days',
-            'third_last_sex_calc': 0,
+            'third_last_sex_calc': None,
             'first_first_sex': 'Days',
-            'first_first_sex_calc': 0,
+            'first_first_sex_calc': None,
             'first_sex_current': YES,
             'first_relationship': 'Long-term partner',
             'first_exchange': '19-29',
