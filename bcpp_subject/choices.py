@@ -1167,8 +1167,8 @@ TOBACCO_SMOKING = (
 )
 
 PANEL_CHOICE = (
-    ('Microtube', _('Microtube')),
     ('ELISA', _('ELISA')),
+    ('Microtube', _('Microtube')),
     ('Research Blood Draw', _('Research Blood Draw')),
     ('Viral Load', _('Viral Load')),
     ('Venous (HIV)', _('Venous (HIV)')),

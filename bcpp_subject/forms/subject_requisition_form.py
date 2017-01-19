@@ -13,7 +13,7 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['item_type'].initial = 'tube'
-        
+
     panel_name = forms.ChoiceField(
         choices=PANEL_CHOICE,
         label='Panel Name',
