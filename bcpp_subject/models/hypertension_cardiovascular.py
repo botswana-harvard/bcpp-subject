@@ -103,7 +103,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = 'Hypertension and Cardiovascular Risk'
         verbose_name_plural = 'Hypertension and Cardiovascular Risk'
