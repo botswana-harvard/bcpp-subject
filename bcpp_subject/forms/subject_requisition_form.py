@@ -3,6 +3,7 @@ from django import forms
 from ..constants import RESEARCH_BLOOD_DRAW, VIRAL_LOAD, MICROTUBE
 from ..models import SubjectRequisition
 
+from ..choices import PANEL_CHOICE
 from edc_constants.constants import YES
 from .form_mixins import SubjectModelFormMixin
 
@@ -12,6 +13,11 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['item_type'].initial = 'tube'
+        
+    panel_name = forms.ChoiceField(
+        choices=PANEL_CHOICE,
+        label='Panel Name',
+        widget=forms.RadioSelect)
 
     def clean(self):
         cleaned_data = super().clean()
