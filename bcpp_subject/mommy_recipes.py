@@ -338,10 +338,15 @@ medication_given = Recipe(
     short_name='atenolol'
 )
 
+medication_given_1 = Recipe(
+    MedicationGiven,
+    name='OTHER'
+)
+
 medication_taken = Recipe(
     MedicationTaken,
-    name='Atenolol',
-    short_name='atenolol'
+    name='Bisoprolol',
+    short_name='bisoprolol'
 )
 
 medication_taken_1 = Recipe(
