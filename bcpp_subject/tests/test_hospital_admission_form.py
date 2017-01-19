@@ -38,34 +38,34 @@ class TestHospitalAdmissionForm(SubjectMixin, TestCase):
     def test_zero_admission_nights_with_reason_hospitalized(self):
         """Asserts zero admission nights must have
         none hospitalization reason"""
-        self.options.update(admission_nights=0)
+        self.options.update(admission_nights=0, reason_hospitalized=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_zero_admission_nights_with_travel_hours(self):
         """Asserts zero admission nights must have
         none travel hours"""
-        self.options.update(admission_nights=0)
+        self.options.update(admission_nights=0, travel_hours=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_zero_admission_nights_with_hospitalization_costs(self):
         """Asserts zero admission nights must have
         none hospitalization_costs"""
-        self.options.update(admission_nights=None)
+        self.options.update(admission_nights=0, hospitalization_costs=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_admission_nights_value_gt_zero_none_reason_hospitalized(self):
         """Asserts zero admission nights must have
         none reason_hospitalized"""
-        self.options.update(reason_hospitalized=None)
+        self.options.update(admission_nights=0, reason_hospitalized=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_admission_nights_value_gt_zero_none_travel_hours(self):
         """Asserts zero admission nights must have travel_hours"""
-        self.options.update(travel_hours=None)
+        self.options.update(admission_nights=0, travel_hours=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
 
@@ -92,7 +92,3 @@ class TestHospitalAdmissionForm(SubjectMixin, TestCase):
         self.options.update(hospitalization_costs=None)
         form = HospitalAdmissionForm(data=self.options)
         self.assertFalse(form.is_valid())
-
-    def test_save_form(self):
-        form = HospitalAdmissionForm(data=self.options)
-        self.assertTrue(form.save())

@@ -48,15 +48,16 @@ class BasePartnerForm (SubjectModelFormMixin):
             raise forms.ValidationError(
                 'If partner status is not known, do not give information about status of ARV\'s')
         # validating number of months and days
-        if (cleaned_data.get('third_last_sex', None) == 'Days' and
-                cleaned_data.get('third_last_sex_calc') > 31):
-            raise forms.ValidationError(
-                'if last time of sex is in days, then days cannot exceed 31')
-        if (cleaned_data.get('third_last_sex', None) == 'Months' and
-                cleaned_data.get('third_last_sex_calc')):
-                if (cleaned_data.get('third_last_sex_calc') > 12):
-                    raise forms.ValidationError(
-                        'if last time of sex is in months, then months in a year cannot exceed 12')
+        if cleaned_data.get('third_last_sex_calc'):
+            if (cleaned_data.get('third_last_sex', None) == 'Days' and
+                    cleaned_data.get('third_last_sex_calc') > 31):
+                raise forms.ValidationError(
+                    'if last time of sex is in days, then days cannot exceed 31')
+            if (cleaned_data.get('third_last_sex', None) == 'Months' and
+                    cleaned_data.get('third_last_sex_calc')):
+                    if (cleaned_data.get('third_last_sex_calc') > 12):
+                        raise forms.ValidationError(
+                            'if last time of sex is in months, then months in a year cannot exceed 12')
         # validating number of months and days
         if cleaned_data.get('first_first_sex_calc'):
             if (cleaned_data.get('first_first_sex', None) == 'Days'):

@@ -50,9 +50,9 @@ class HospitalAdmissionForm (SubjectModelFormMixin):
             if cleaned_data.get('healthcare_expense') > 0 and not cleaned_data.get('hospitalization_costs'):
                 raise forms.ValidationError(
                     'If health care expenses are greater than zero, answer hospitalization costs')
-        if cleaned_data.get('total_expenses') > 0 and not cleaned_data.get('hospitalization_costs'):
-            raise forms.ValidationError(
-                'If total expenses are greater than zero, answer hospitalization costs')
+            if cleaned_data.get('total_expenses') > 0 and not cleaned_data.get('hospitalization_costs'):
+                raise forms.ValidationError(
+                    'If total expenses are greater than zero, answer hospitalization costs')
 
         self.validate_admission_nights_value_gt_zero()
 #         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('hospitalization_costs'):

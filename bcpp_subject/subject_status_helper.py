@@ -11,7 +11,7 @@ from .models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
     HivTestingHistory, HivResultDocumentation, ElisaHivResult)
 from .utils import convert_to_nullboolean
-from bcpp_subject.constants import T0
+from bcpp_subject.constants import E0, T0
 
 
 class SubjectStatusHelper(object):
@@ -125,7 +125,7 @@ class SubjectStatusHelper(object):
             try:
                 self._subject_visit = SubjectVisit.objects.get(
                     subject_identifier=visit_instance.subject_identifier,
-                    visit_code=T0)
+                    visit_code__=[T0, E0])
             except (SubjectVisit.DoesNotExist, IndexError):
                 self._subject_visit = None
         else:
