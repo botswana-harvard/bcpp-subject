@@ -12,19 +12,19 @@ from bcpp_subject.models.sexual_behaviour import SexualBehaviour
 def func_show_recent_partner(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     print("<>", sexual_behaviour.last_year_partners)
-    return True if sexual_behaviour.last_year_partners == 1 else False
+    return True if sexual_behaviour.last_year_partners >= 1 else False
 
 
 def func_show_second_partner_forms(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     print("<>", sexual_behaviour.last_year_partners)
-    return True if sexual_behaviour.last_year_partners == 2 else False
+    return True if sexual_behaviour.last_year_partners >= 2 else False
 
 
 def func_show_third_partner_forms(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     print("<>", sexual_behaviour.last_year_partners)
-    return True if sexual_behaviour.last_year_partners == 3 else False
+    return True if sexual_behaviour.last_year_partners >= 3 else False
 
 
 def is_female(visit_instance, *args):
