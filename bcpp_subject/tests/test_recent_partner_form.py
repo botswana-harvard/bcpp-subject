@@ -49,6 +49,11 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
             'first_partner_cp': NO
         }
 
+#     def test_validity(self):
+#         form = RecentPartnerForm(data=self.options)
+#         print(form.errors)
+#         self.assertTrue(form.is_valid())
+
     def test_first_partner_hiv_neg_first_haart_not_null(self):
         """Assert form is invalid if first partner hiv status is NEG and first haart is not none."""
         self.options.update(

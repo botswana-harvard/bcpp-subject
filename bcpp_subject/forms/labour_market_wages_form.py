@@ -46,8 +46,9 @@ class LabourMarketWagesForm (SubjectModelFormMixin):
         if cleaned_data.get('employed') in employed:
             for response in employed_none:
                 if cleaned_data.get(response) == 'None':
-                    self._errors[response] = ErrorList[(u'The field cannot be none')]
-                    raise forms.ValidationError('If participant is employed. The response cannot be None')
+                    raise forms.ValidationError({
+                        response: [
+                            'If participant is employed. The response cannot be None']})
 
     class Meta:
         model = LabourMarketWages

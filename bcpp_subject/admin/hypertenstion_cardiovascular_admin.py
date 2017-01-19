@@ -19,8 +19,7 @@ class BPMeasurementAdminInlineAdmin(admin.StackedInline):
                 'left_arm_one',
                 'right_arm_two',
                 'left_arm_two')
-        }),
-        audit_fieldset_tuple,
+        })
     )
 
     model = BPMeasurement
@@ -38,8 +37,7 @@ class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
                 'waist_reading_two',
                 'hip_reading_one',
                 'hip_reading_two')
-        }),
-        audit_fieldset_tuple,
+        })
     )
 
     model = WaistCircumferenceMeasurement
@@ -71,7 +69,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'subject_visit',
+                #'subject_visit',
                 'may_take_blood_pressure',
                 'hypertension_diagnosis',
                 'medications_taken',

@@ -26,6 +26,8 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
 
         self.medication_taken_1 = mommy.make_recipe('bcpp_subject.medication_taken_1')
 
+        self.medication_given_1 = mommy.make_recipe('bcpp_subject.medication_given_1')
+
         subject_visit = self.make_subject_visit_for_consented_subject_male(
             'T0', **self.consent_data)
 
@@ -33,8 +35,8 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
             'may_take_blood_pressure': NO,
             'hypertension_diagnosis': NOT_APPLICABLE,
             'medications_taken': [self.medication_taken.id, self.medication_taken_1.id],
-            'if_other_medications_taken': 'some_medication',
-            'medication_still_given': [self.medication_given.id],
+            'if_other_medications_taken': 'Some medication',
+            'medication_still_given': None,
             'if_other_medication_still_given': None,
             'health_care_facility': NOT_APPLICABLE,
             'salt_intake_counselling': NOT_APPLICABLE,
@@ -67,6 +69,24 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         if_other_medications_taken is filled"""
         self.data.update(
             medications_taken=[self.medication_taken.id],
-            if_other_medications_taken='some_medication')
+            if_other_medications_taken='Some medication')
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_validate_if_other_medication_still_given(self):
+        """Test to verify whether validation will fire when
+        'other' is selected in medications_taken but
+        if_other_medications_taken is left empty"""
+        self.data.update(if_other_medication_still_given=None)
+        form = HypertensionCardiovascularForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_validate_if_other_medication_still_given_false(self):
+        """Test to verify whether validation will fire when
+        'other' is not selected in medications_taken but
+        if_other_medications_taken is filled"""
+        self.data.update(
+            medications_taken=[self.medication_taken.id],
+            if_other_medications_taken='Some medication')
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
