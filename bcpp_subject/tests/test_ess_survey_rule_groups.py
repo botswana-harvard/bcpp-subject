@@ -3,7 +3,7 @@ from model_mommy import mommy
 from datetime import timedelta
 from django.test import TestCase
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
 from member.models.household_member import HouseholdMember
@@ -11,7 +11,6 @@ from member.models.household_member import HouseholdMember
 from ..constants import NOT_SURE, E0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
-from edc_metadata.models import CrfMetadata
 
 
 class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
@@ -203,7 +202,7 @@ class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
 #         hiv_testing_history = self.make_hivtesting_history(self.subject_visit_female, self.get_utcnow(), YES, YES, NEG, NO)
 #         print(hiv_testing_history.__dict__)
 #         for crf in CrfMetadata.objects.filter(subject_identifier=hiv_testing_history.subject_visit.subject_identifier):
-#             print(crf.model, crf.entry_status)
+#             print(crf.model, crf.entry_statmyus)
 #         self.assertEqual(
 #             self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED, E0, self.subject_identifier).count(), 1)
 #         self.assertEqual(
@@ -528,3 +527,52 @@ class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.thirdpartner', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    def test_hiv_care_adherence_not_required(self):
+        """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
+
+        Models:
+            * HivCareAdherence
+            * HivResult
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, NEG, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    def test_hiv_care_adherence_has_record_DWTA(self):
+        """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
+
+        Models:
+            * HivCareAdherence
+            * HivResult
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, NO, NO, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    def test_hiv_care_adherence_required(self):
+        """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
+
+        Models:
+            * HivCareAdherence
+            * HivResult
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', REQUIRED, E0, self.subject_identifier).count(), 1)
