@@ -14,7 +14,6 @@ class BPMeasurementAdminInlineAdmin(admin.StackedInline):
     fieldsets = (
         (None, {
             'fields': (
-                'time_zero',
                 'right_arm_one',
                 'left_arm_one',
                 'right_arm_two',
