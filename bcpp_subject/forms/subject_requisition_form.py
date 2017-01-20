@@ -1,6 +1,6 @@
 from django import forms
 
-from ..constants import RESEARCH_BLOOD_DRAW, VIRAL_LOAD, MICROTUBE
+from ..constants import RESEARCH_BLOOD_DRAW, VIRAL_LOAD, MICROTUBE, BLOOD
 from ..models import SubjectRequisition
 
 from ..choices import PANEL_CHOICE
@@ -18,6 +18,11 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
         choices=PANEL_CHOICE,
         label='Panel Name',
         widget=forms.RadioSelect)
+
+    specimen_type = forms.Field(
+        initial=BLOOD,
+        label='Specimen Type',
+        disabled=True)
 
     def clean(self):
         cleaned_data = super().clean()
