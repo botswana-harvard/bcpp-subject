@@ -1,5 +1,3 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, FormView
 
 from edc_base.utils import get_utcnow
@@ -9,18 +7,11 @@ from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 
 from survey import SurveyViewMixin
 
-from .listboard import FilteredListViewMixin, SearchViewMixin
 
-
-class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
-                    FilteredListViewMixin, SearchViewMixin,
-                    SurveyViewMixin, TemplateView, FormView):
+class ListboardView(ListboardViewMixin, SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
+                    TemplateView, FormView):
 
     app_config_name = 'bcpp_subject'
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -28,4 +19,5 @@ class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
             MALE=MALE,
             reference_datetime=get_utcnow(),
         )
+        context.update({k: v for k, v in self.url_names('anonymous_listboard_url_name')})
         return context

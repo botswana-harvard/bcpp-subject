@@ -5,7 +5,7 @@ from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
-from bcpp.surveys import ESS_SURVEY, BHS_SURVEY, AHS_SURVEY
+from bcpp.surveys import ESS_SURVEY, BHS_SURVEY, AHS_SURVEY, ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S
@@ -93,4 +93,18 @@ class EnrollmentEss(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
         app_label = 'bcpp_subject'
         consent_model = 'bcpp_subject.subjectconsent'
         visit_schedule_name = 'visit_schedule_ess.ess_schedule'
+        verbose_name = 'Enrollment'
+
+
+class EnrollmentAno(EnrollmentModelMixin, BcppEnrollmentMixin, SurveyModelMixin,
+                    CreateAppointmentsMixin, BaseUuidModel):
+
+    """A model used by the system. Auto-completed by the SubjectConsent."""
+
+    SURVEY_NAME = ANONYMOUS_SURVEY
+
+    class Meta(EnrollmentModelMixin.Meta):
+        app_label = 'bcpp_subject'
+        consent_model = 'bcpp_subject.anonymousconsent'
+        visit_schedule_name = 'visit_schedule_ano.ano_schedule'
         verbose_name = 'Enrollment'

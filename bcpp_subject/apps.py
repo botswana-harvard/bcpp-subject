@@ -7,7 +7,9 @@ class AppConfig(DjangoApponfig):
     dashboard_template_name = 'bcpp_subject/dashboard.html'
     base_template_name = 'edc_base/base.html'
     listboard_url_name = 'bcpp-subject:listboard_url'
+    anonymous_listboard_url_name = 'bcpp-subject:anonymous_listboard_url'
     dashboard_url_name = 'bcpp-subject:dashboard_url'
+    anonymous_dashboard_url_name = 'bcpp-subject:anonymous_dashboard_url'
     url_namespace = 'bcpp-subject'
     admin_site_name = 'bcpp_subject_admin'
 

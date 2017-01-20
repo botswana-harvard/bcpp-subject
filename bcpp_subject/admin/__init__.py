@@ -1,3 +1,4 @@
+from .anonymous import AnonymousConsentAdmin
 from .main import (
     SubstanceUseAdmin, StiAdmin, TubercolosisAdmin, CancerAdmin, HeartAttackAdmin, HivMedicalCareAdmin)
 

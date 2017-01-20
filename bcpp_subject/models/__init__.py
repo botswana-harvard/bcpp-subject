@@ -1,4 +1,5 @@
 from .access_to_care import AccessToCare
+from .anonymous import AnonymousConsent
 from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
@@ -8,10 +9,10 @@ from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement
 from .demographics import Demographics
-from .disenrollment import DisenrollmentBhs, DisenrollmentAhs, DisenrollmentEss
+from .disenrollment import DisenrollmentBhs, DisenrollmentAhs, DisenrollmentEss, DisenrollmentAno
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
-from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
+from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss, EnrollmentAno
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
