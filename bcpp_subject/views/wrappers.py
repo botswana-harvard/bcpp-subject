@@ -151,33 +151,6 @@ class SubjectLocatorModelWrapper(ModelWrapper):
     url_instance_attrs = [
         'subject_identifier', 'household_identifier',
         'survey_schedule']
-<<<<<<< HEAD
-=======
-
-
-class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
-
-    model_name = 'bcpp_subject.subjectconsent'
-    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
-    next_url_attrs = {'bcpp_subject.subjectconsent': [
-        'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
-    extra_querystring_attrs = {
-        'bcpp_subject.subjectconsent': ['gender', 'household_member', 'first_name', 'initials']}
-    url_instance_attrs = [
-        'subject_identifier', 'survey_schedule', 'survey', 'gender',
-        'household_member', 'first_name', 'initials', 'household_identifier']
-
-    @property
-    def household_member(self):
-        return self._original_object.household_member
-
-    @property
-    def first_name(self):
-        return self._original_object.household_member.first_name
-
-    @property
-    def gender(self):
-        return self._original_object.household_member.gender
 
 
 class RequisitionModelWrapper(ModelWrapper):
@@ -225,4 +198,3 @@ class RequisitionModelWrapper(ModelWrapper):
     @property
     def household_identifier(self):
         return self.household_member.household_structure.household.household_identifier
->>>>>>> 8c237b214f34ed83286b94fc2c91ea2a7bb0ba88
