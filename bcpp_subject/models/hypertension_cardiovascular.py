@@ -70,6 +70,11 @@ class HypertensionCardiovascular(CrfModelMixin):
         choices=YES_NO_NA,
         max_length=20)
 
+    weight_history = models.CharField(
+        verbose_name='Have you had your weight checked in the past 3 years?',
+        choices=YES_NO,
+        max_length=20)
+
     weight_counselling = models.CharField(
         verbose_name='Have you ever been counselled about what weight you '
         'should aim for by a health care worker in the past 3 years? ',
@@ -103,7 +108,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = 'Hypertension and Cardiovascular Risk'
         verbose_name_plural = 'Hypertension and Cardiovascular Risk'
@@ -114,12 +119,6 @@ class BPMeasurement(BaseModel):
     bp_measurement = models.OneToOneField(
         HypertensionCardiovascular,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True)
-
-    time_zero = models.CharField(
-        verbose_name='BP at time 0:',
-        max_length=15,
         null=True,
         blank=True)
 

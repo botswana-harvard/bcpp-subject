@@ -6,7 +6,7 @@ from edc_rule_groups.rule_group import RuleGroup
 from edc_rule_groups.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
@@ -255,7 +255,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=func_show_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
+        target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
@@ -460,6 +460,15 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
 @register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
+
+    serve_hiv_care_adherence = CrfRule(
+        logic=Logic(
+            predicate=PF(
+                'has_tested', 'verbal_hiv_result',
+                func=lambda y, x: True if x == NEG or y == DWTA else False),
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['hivcareadherence', 'hivmedicalcare'])
 
     class Meta:
         app_label = 'bcpp_subject'

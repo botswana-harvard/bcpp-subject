@@ -19,7 +19,7 @@ class BPMeasurementAdminInlineAdmin(admin.StackedInline):
                 'right_arm_two',
                 'left_arm_two')
         }),
-        audit_fieldset_tuple,
+        audit_fieldset_tuple
     )
 
     model = BPMeasurement
@@ -38,7 +38,7 @@ class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
                 'hip_reading_one',
                 'hip_reading_two')
         }),
-        audit_fieldset_tuple,
+        audit_fieldset_tuple
     )
 
     model = WaistCircumferenceMeasurement
