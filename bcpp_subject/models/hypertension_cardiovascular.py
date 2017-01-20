@@ -14,9 +14,9 @@ class HypertensionCardiovascular(CrfModelMixin):
     """Model used for getting hypertension and cardiovascular info"""
 
     may_take_blood_pressure = models.CharField(
-        verbose_name='As part of our questions about your health we would like to check your\
-        blood pressure and measure your waist and hips. Are you willing to have your blood \
-        pressure and body measurements taken today?',
+        verbose_name='As part of our questions about your health we would like to check your'
+        'blood pressure and measure your waist and hips. Are you willing to have your blood'
+        'pressure and body measurements taken today?',
         choices=YES_NO,
         max_length=5)
 
@@ -27,7 +27,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     medications_taken = models.ManyToManyField(
         MedicationTaken,
-        verbose_name='Have you ever taken any of these medications?'
+        verbose_name='Have you ever taken any of these medications? '
         'Tick all that apply')
 
     if_other_medications_taken = models.CharField(
@@ -38,7 +38,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     medication_still_given = models.ManyToManyField(
         MedicationGiven,
-        verbose_name='If yes: Are you still being given this'
+        verbose_name='If yes: Are you still being given this '
         'medication (respond for each one ticked)')
 
     if_other_medication_still_given = models.CharField(
@@ -53,7 +53,7 @@ class HypertensionCardiovascular(CrfModelMixin):
         max_length=50)
 
     salt_intake_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about salt intake'
+        verbose_name='Have you ever been counselled about salt intake '
         'by a health care worker in the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
@@ -64,46 +64,51 @@ class HypertensionCardiovascular(CrfModelMixin):
         max_length=20)
 
     tobacco_counselling = models.CharField(
-        verbose_name='If yes to any prior smoking of tobacco products'
-        'have you been counselled about smoking cessation / not'
+        verbose_name='If yes to any prior smoking of tobacco products '
+        'have you been counselled about smoking cessation / not '
         'taking up smoking by a healthcare worker in the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
 
+    weight_history = models.CharField(
+        verbose_name='Have you had your weight checked in the past 3 years?',
+        choices=YES_NO,
+        max_length=20)
+
     weight_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about what weight you'
-        'should aim for by a health care worker in the past 3 years?',
+        verbose_name='Have you ever been counselled about what weight you '
+        'should aim for by a health care worker in the past 3 years? ',
         choices=YES_NO_NA,
         max_length=20)
 
     physical_activity_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about the amount of'
-        'physical activity (or exercise) to maintain by a healthcare'
+        verbose_name='Have you ever been counselled about the amount of '
+        'physical activity (or exercise) to maintain by a healthcare '
         'worker in the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
 
     alcohol_counselling = models.CharField(
-        verbose_name='Have you ever been counselled about correct alcohol'
+        verbose_name='Have you ever been counselled about correct alcohol '
         'intake by a healthcare worker in the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
 
     blood_test_for_cholesterol = models.CharField(
-        verbose_name='Have you ever had a blood test for high cholesterol'
+        verbose_name='Have you ever had a blood test for high cholesterol '
         'in the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
 
     blood_test_for_diabetes = models.CharField(
-        verbose_name='Have you ever had blood test for sugar diabetes in'
+        verbose_name='Have you ever had blood test for sugar diabetes in '
         'the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
 
     history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = 'Hypertension and Cardiovascular Risk'
         verbose_name_plural = 'Hypertension and Cardiovascular Risk'
@@ -114,12 +119,6 @@ class BPMeasurement(BaseModel):
     bp_measurement = models.OneToOneField(
         HypertensionCardiovascular,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True)
-
-    time_zero = models.CharField(
-        verbose_name='BP at time 0:',
-        max_length=15,
         null=True,
         blank=True)
 

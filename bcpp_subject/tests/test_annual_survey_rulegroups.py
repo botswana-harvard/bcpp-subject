@@ -1002,5 +1002,3 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         subject_visit_y2 = self.add_subject_visit_followup(previous_member, T2, report_datetime)
 
         self.assertEqual(self.crf_metadata_obj('bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T2).count(), 1)
-
-

@@ -151,3 +151,78 @@ class SubjectLocatorModelWrapper(ModelWrapper):
     url_instance_attrs = [
         'subject_identifier', 'household_identifier',
         'survey_schedule']
+<<<<<<< HEAD
+=======
+
+
+class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
+
+    model_name = 'bcpp_subject.subjectconsent'
+    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_attrs = {'bcpp_subject.subjectconsent': [
+        'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
+    extra_querystring_attrs = {
+        'bcpp_subject.subjectconsent': ['gender', 'household_member', 'first_name', 'initials']}
+    url_instance_attrs = [
+        'subject_identifier', 'survey_schedule', 'survey', 'gender',
+        'household_member', 'first_name', 'initials', 'household_identifier']
+
+    @property
+    def household_member(self):
+        return self._original_object.household_member
+
+    @property
+    def first_name(self):
+        return self._original_object.household_member.first_name
+
+    @property
+    def gender(self):
+        return self._original_object.household_member.gender
+
+
+class RequisitionModelWrapper(ModelWrapper):
+
+    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_attrs = dict(requisition=[
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey'])
+    extra_querystring_attrs = {
+        'requisition': ['subject_visit']}
+    url_instance_attrs = [
+        'appointment', 'household_identifier', 'subject_identifier',
+        'survey_schedule', 'survey', 'subject_visit']
+
+    @property
+    def subject_visit(self):
+        return self._original_object.subject_visit
+
+    @property
+    def appointment(self):
+        return self._original_object.subject_visit.appointment
+
+    @property
+    def household_member(self):
+        return self.subject_visit.household_member
+
+    @property
+    def survey(self):
+        return self.subject_visit.survey
+
+    @property
+    def survey_schedule(self):
+        return self.subject_visit.survey_schedule
+
+    @property
+    def survey_object(self):
+        return self.subject_visit.survey_object
+
+    @property
+    def survey_schedule_object(self):
+        return self.subject_visit.survey_schedule_object
+
+    @property
+    def household_identifier(self):
+        return self.household_member.household_structure.household.household_identifier
+>>>>>>> 8c237b214f34ed83286b94fc2c91ea2a7bb0ba88

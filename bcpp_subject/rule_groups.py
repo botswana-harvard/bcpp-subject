@@ -6,7 +6,7 @@ from edc_rule_groups.rule_group import RuleGroup
 from edc_rule_groups.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
@@ -24,7 +24,10 @@ from .rule_group_funcs import (
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_male)
+    is_male,
+    func_show_recent_partner,
+    func_show_second_partner_forms,
+    func_show_third_partner_forms)
 
 
 @register()
@@ -147,14 +150,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=P('other_record', 'eq', YES),
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = CrfRule(
@@ -249,27 +252,21 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 1 else False),
+            predicate=func_show_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['recentpartner', 'secondpartner', 'thirdpartner'])
+        target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 2 else False),
+            predicate=func_show_second_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'last_year_partners',
-                func=lambda x: False if not x else True if x >= 3 else False),
+            predicate=func_show_third_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['thirdpartner'])
@@ -463,6 +460,15 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
 @register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
+
+    serve_hiv_care_adherence = CrfRule(
+        logic=Logic(
+            predicate=PF(
+                'has_tested', 'verbal_hiv_result',
+                func=lambda y, x: True if x == NEG or y == DWTA else False),
+            consequence=NOT_REQUIRED,
+            alternative=REQUIRED),
+        target_models=['hivcareadherence', 'hivmedicalcare'])
 
     class Meta:
         app_label = 'bcpp_subject'

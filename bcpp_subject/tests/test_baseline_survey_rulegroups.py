@@ -445,14 +445,29 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
         self.assertEqual(
             self.requisition_metadata_obj(REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
-    def test_pos_on_art_notrequire_linkage_to_care(self):
-        """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
+    def test_partner_forms_know_pos(self):
+        """HIV Positive not on ART at T0, Should offer POC CD4, RBD and VL.
+        """
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        # make
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
+        # Known POS in T0
+        mommy.make_recipe(
+            'bcpp_subject.sexualbehaviour',
+            ever_sex=YES,
+            lifetime_sex_partners=1,
+            last_year_partners=1
+        )
 
-        self._hiv_result = self.make_hiv_result(POS, self.subject_visit_male, self.get_utcnow())
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.recentpartner', REQUIRED, T0, self.subject_identifier).count(), 1)
 
-        # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, YES)
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.secondpartner', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
 
-        # on art so no need for CD
-        self.assertEqual(self.crf_metadata_obj(
-            'bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.thirdpartner', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+

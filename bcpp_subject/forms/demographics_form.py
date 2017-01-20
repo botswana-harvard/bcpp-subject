@@ -48,10 +48,15 @@ class DemographicsForm(SubjectModelFormMixin):
                 if consent.gender == MALE:
                     raise forms.ValidationError(
                         {'num_wives': 'The number of wives should be greater than 0.'})
-            if husband_wives <= 0:
+            if husband_wives == 0:
                 if consent.gender == FEMALE:
                     raise forms.ValidationError(
                         {'num_wives': 'The number of husbands should be greater than 0.'})
+
+            if consent.gender == FEMALE:
+                if num_wives is not None:
+                    raise forms.ValidationError(
+                        {'Married Female cannot have a wife'})
         return cleaned_data
 
     class Meta:
