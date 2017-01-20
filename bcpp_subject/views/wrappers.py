@@ -1,7 +1,6 @@
 from django.apps import apps as django_apps
 
 from edc_appointment.views import AppointmentModelWrapper
-from edc_consent.views import ConsentModelWrapper
 from edc_dashboard.wrappers.model_wrapper import ModelWrapper
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
@@ -154,7 +153,7 @@ class SubjectLocatorModelWrapper(ModelWrapper):
         'survey_schedule']
 
 
-class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
+class DashboardSubjectConsentModelWrapper(ModelWrapperMixin):
 
     model_name = 'bcpp_subject.subjectconsent'
     next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
