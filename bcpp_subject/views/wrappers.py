@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 
 from edc_appointment.views import AppointmentModelWrapper
+from edc_consent.views import ConsentModelWrapper
 from edc_dashboard.wrappers.model_wrapper import ModelWrapper
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
@@ -151,8 +152,6 @@ class SubjectLocatorModelWrapper(ModelWrapper):
     url_instance_attrs = [
         'subject_identifier', 'household_identifier',
         'survey_schedule']
-<<<<<<< HEAD
-=======
 
 
 class DashboardSubjectConsentModelWrapper(ConsentModelWrapper, ModelWrapperMixin):
@@ -225,4 +224,3 @@ class RequisitionModelWrapper(ModelWrapper):
     @property
     def household_identifier(self):
         return self.household_member.household_structure.household.household_identifier
->>>>>>> 8c237b214f34ed83286b94fc2c91ea2a7bb0ba88
