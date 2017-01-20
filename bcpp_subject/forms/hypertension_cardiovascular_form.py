@@ -10,7 +10,6 @@ from .form_mixins import SubjectModelFormMixin
 class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
-        #self.cleaned_data = super().clean()
         self.validate_hypertension_diagnosis()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
@@ -45,7 +44,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         cleaned_data = super().clean()
         if cleaned_data.get('if_other_medication_still_given'):
             if not any(medication_list.name == OTHER
-                       for medication_list in cleaned_data.get('if_other_medication_still_given')):
+                       for medication_list in cleaned_data.get('medication_still_given')):
                 raise forms.ValidationError({
                     'if_other_medication_still_given': [
                         'Cannot fill this field unless Other is selected above']})
