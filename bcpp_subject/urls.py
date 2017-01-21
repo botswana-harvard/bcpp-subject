@@ -5,12 +5,13 @@ from edc_constants.constants import UUID_PATTERN
 from household.patterns import household_identifier
 from survey.patterns import survey_schedule, survey
 
-from .admin_site import bcpp_subject_admin
+from .admin_site import bcpp_subject_admin, bcpp_subject_ahs_t2_admin
 from .patterns import subject_identifier
 from .views import ListBoardView, DashboardView
 
 urlpatterns = [
     url(r'^admin/', bcpp_subject_admin.urls),
+    url(r'^ahst2admin/', bcpp_subject_ahs_t2_admin.urls),
     url(r'^listboard/'
         '(?P<subject_identifier>' + subject_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/'

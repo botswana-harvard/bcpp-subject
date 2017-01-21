@@ -15,7 +15,7 @@ from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
-from .hiv_care_adherence import HivCareAdherence
+from .hiv_care_adherence import HivCareAdherence, HivCareAdherenceAhsT2
 from .hiv_health_care_costs import HivHealthCareCosts
 from .hiv_medical_care import HivMedicalCare
 from .hiv_result import HivResult

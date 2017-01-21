@@ -63,6 +63,22 @@ class MedicationTaken (ListModelMixin, BaseUuidModel):
         app_label = "bcpp_subject"
 
 
+class AntiretroviralRegimen (ListModelMixin, BaseUuidModel):
+
+    class Meta:
+        app_label = "bcpp_subject"
+        verbose_name = "Antiretroviral Regimen"
+        verbose_name_plural = "Antiretroviral Regimen"
+
+
+class HospitalizationReason (ListModelMixin, BaseUuidModel):
+
+    class Meta:
+        app_label = "bcpp_subject"
+        verbose_name = "ospitalization Reason"
+        verbose_name_plural = "ospitalization Reasons"
+
+
 class MedicationGiven(ListModelMixin, BaseUuidModel):
 
     class Meta:
