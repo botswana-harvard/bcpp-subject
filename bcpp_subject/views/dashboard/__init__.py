@@ -1,4 +1,3 @@
 from .appointment_view_mixin import AppointmentViewMixin
 from .consent_view_mixin import ConsentViewMixin
-from .subject_dashboard_view_mixin import SubjectDashboardViewMixin
-from .subject_locator_view_mixin import SubjectLocatorViewMixin
+from .enrollment_forms_view_mixin import EnrollmentFormsViewMixin

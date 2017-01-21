@@ -2,12 +2,8 @@ from edc_dashboard.view_mixins import ConsentViewMixin as BaseConsentViewMixin
 
 from ...models.utils import get_enrollment_survey
 
-from ..wrappers import DashboardSubjectConsentModelWrapper
-
 
 class ConsentViewMixin(BaseConsentViewMixin):
-
-    consent_model_wrapper_class = DashboardSubjectConsentModelWrapper
 
     @property
     def empty_consent(self):

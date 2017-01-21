@@ -1,16 +1,16 @@
 from django.db.models import Q
 
-from edc_search.view_mixins import SearchViewMixin
+from edc_search.view_mixins import SearchViewMixin as BaseSearchViewMixin
 
-from ...models import SubjectConsent
+from ....models import SubjectConsent
 
-from ..wrappers import ListBoardSubjectConsentModelWrapper
+from ...dashboard.default.wrappers import SubjectConsentModelWrapper
 
 
-class BcppSubjectSearchViewMixin(SearchViewMixin):
+class SearchViewMixin(BaseSearchViewMixin):
 
     search_model = SubjectConsent
-    search_model_wrapper_class = ListBoardSubjectConsentModelWrapper
+    search_model_wrapper_class = SubjectConsentModelWrapper
     search_queryset_ordering = '-modified'
 
     def search_options_for_date(self, search_term, **kwargs):
@@ -30,5 +30,6 @@ class BcppSubjectSearchViewMixin(SearchViewMixin):
             Q(first_name__exact=search_term) |
             Q(last_name__exact=search_term) |
             Q(household_member__household_structure__household__household_identifier__icontains=search_term) |
-            Q(household_member__household_structure__household__plot__plot_identifier__icontains=search_term))
+            Q(household_member__household_structure__household__plot__plot_identifier__icontains=search_term)
+        )
         return q, options

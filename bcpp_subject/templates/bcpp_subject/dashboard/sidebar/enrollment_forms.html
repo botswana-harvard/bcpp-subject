@@ -7,13 +7,11 @@
       {{ enrollment_form.schedule.title }}
       {{ enrollment_form.report_datetime|date:"Y-m-d" }}
     </a>
-    <ul class="list-group-item">
 	    {% for visit in enrollment_form.schedule.visits %}
-
-	       <li class="text small">{{ visit.title }}</span></li>
-	    
+        <a class="list-group-item">
+	       <span class="text small">{{ visit.title }}</span>
+	    </a>
 	    {% endfor %}
-    </ul>
 
 {% endfor %}
 

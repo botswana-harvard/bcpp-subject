@@ -44,6 +44,6 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         self.reason = SCHEDULED
         super().save(*args, **kwargs)
 
-    class Meta(VisitModelMixin.Meta):
+    class Meta(VisitModelMixin.Meta, RequiresConsentMixin.Meta):
         app_label = "bcpp_subject"
         consent_model = 'bcpp_subject.subjectconsent'

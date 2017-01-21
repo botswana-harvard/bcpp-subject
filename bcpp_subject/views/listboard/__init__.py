@@ -1,2 +1,0 @@
-from .filtered_list_view_mixin import FilteredListViewMixin
-from .search_view_mixin import SearchViewMixin

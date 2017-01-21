@@ -171,7 +171,7 @@ class SubjectConsent(
     def common_clean_exceptions(self):
         return super().common_clean_exceptions + [ConsentValidationError, AgeValueError]
 
-    class Meta:
+    class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),

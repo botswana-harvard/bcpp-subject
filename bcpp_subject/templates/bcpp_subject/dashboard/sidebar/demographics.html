@@ -1,3 +1,4 @@
+{% load edc_base_extras %}
 
     <div class="list-group">
 
@@ -7,20 +8,20 @@
                Offstudy {{ subject_offstudy.offstudy_datetime|date:"Y-m-d"}}
         </a>
     {% endif %}
-    <a class="list-group-item">
-        {% if anonymous %}
-            <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
-        {% else %}{{ household_member.first_name }}&nbsp;{{ household_member.initials }}{% endif%}
-    </a>
-    <a class="list-group-item"><i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i> {{ household_member.wrapped_object.get_gender_display }}</a>
-    <a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
-        {% if not anonymous %}
-            {{ household_member.dob|date:"Y-m-d" }}
+        {% if navbar_name != 'anonymous' %}
+        <a class="list-group-item">
+            {{ household_member.first_name }}&nbsp;{{ household_member.initials }}
+        </a>
         {% endif%}
-    {{ household_member.age_in_years }}yrs</a>
-    <a class="list-group-item"><i class="fa fa-address-card-o fa-fw"></i>
-        {% if anonymous %}
-            <span class="text text-danger"><i class="fa fa-user-secret fa-lg fa-fw"></i> Anonymous</span>
-        {% else %}{{ identity|default:'?? identity' }}{% endif%}
-    </a>
+        <a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
+            {% if navbar_name != 'anonymous' %}
+                {{ consent.dob|date:"Y-m-d" }}
+            {% endif%}
+            {% age_in_years consent.dob %} yrs
+       </a>
+       {% if navbar_name != 'anonymous' %}
+        <a class="list-group-item"><i class="fa fa-address-card-o fa-fw"></i>
+            {{ consent.identity|default:'?? identity' }}
+        </a>
+        {% endif%}
     </div>

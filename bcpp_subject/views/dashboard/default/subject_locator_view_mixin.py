@@ -1,6 +1,6 @@
-from ...models.subject_locator import SubjectLocator
+from ....models.subject_locator import SubjectLocator
 
-from ..wrappers import SubjectLocatorModelWrapper
+from ...wrappers import SubjectLocatorModelWrapper
 
 
 class SubjectLocatorViewMixin:
