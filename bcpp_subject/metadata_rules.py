@@ -1,9 +1,9 @@
-from edc_rule_groups.crf_rule import CrfRule
-from edc_rule_groups.decorators import register
-from edc_rule_groups.logic import Logic
-from edc_rule_groups.requisition_rule import RequisitionRule
-from edc_rule_groups.rule_group import RuleGroup
-from edc_rule_groups.predicate import P, PF
+from edc_metadata.rules.crf_rule import CrfRule
+from edc_metadata.rules.decorators import register
+from edc_metadata.rules.logic import Logic
+from edc_metadata.rules.requisition_rule import RequisitionRule
+from edc_metadata.rules.rule_group import RuleGroup
+from edc_metadata.rules.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA

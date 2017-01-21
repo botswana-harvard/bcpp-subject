@@ -7,7 +7,7 @@ from edc_base.model.validators.date import datetime_not_future
 from edc_base.utils import get_utcnow
 from edc_consent.model_mixins import RequiresConsentMixin as BaseRequiresConsentMixin
 from edc_consent.site_consents import site_consents
-from edc_metadata.model_mixins import UpdatesCrfMetadataModelMixin
+from edc_metadata.model_mixins.updates import UpdatesCrfMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin
