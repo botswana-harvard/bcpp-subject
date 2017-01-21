@@ -5,28 +5,37 @@
 
     <td style="white-space: nowrap">
 
-      <a role="button" title="plot" class="btn btn-sm btn-default"
-        href="{% url plot_listboard_url_name plot_identifier=result.plot_identifier %}">
-            <i class="fa fa-building-o fa-lg"></i>
-      </a>
+	  {% if navbar_name != 'anonymous' %}
 
-      <a role="button" title="household" class="btn btn-sm btn-default"
-        href="{% url household_listboard_url_name household_identifier=result.household_identifier %}">
-            <i class="fa fa-home fa-lg"></i>
-      </a>
+	       <a role="button" title="plot" class="btn btn-sm btn-default"
+	        href="{% url plot_listboard_url_name plot_identifier=result.plot_identifier %}">
+	            <i class="fa fa-building-o fa-lg"></i>
+	       </a>
+	 
+	       <a role="button" title="household" class="btn btn-sm btn-default"
+	        href="{% url household_listboard_url_name household_identifier=result.household_identifier %}">
+	            <i class="fa fa-home fa-lg"></i>
+	       </a>
+	
+		   {% with members=result.members %}
+		     {% include 'enumeration/members_button.html' %}
+		   {% endwith %}
 
-   {% with members=result.members %}
-     {% include 'enumeration/members_button.html' %}
-   {% endwith %}
-      
-      <a title="dashboard" role="button" class="btn btn-default btn-sm"
-        href="{% url dashboard_url_name subject_identifier=result.subject_consent.subject_identifier survey=result.subject_consent.survey_object.field_value survey_schedule=result.subject_consent.survey_schedule_object.field_value household_identifier=result.household_identifier %}">
-        <i class="fa fa-user-circle-o fa-lg"></i>
-        {% if result.subject_consent.gender == MALE %}
-            <i class="fa fa-male fa-lg"></i>
-        {% else %}
-            <i class="fa fa-female fa-lg"></i>
-        {% endif %}
-        {{ result.subject_consent.subject_identifier }}
-        </a>
+	   {% endif %}   
+   
+	    <a title="dashboard" role="button" class="btn btn-default btn-sm"
+		    href="{{ result.reverse }}">
+		
+		    {% if navbar_name == 'anonymous' %}
+		        <i class="fa fa-user-secret fa-lg"></i>
+		    {% else %}
+		        <i class="fa fa-user-circle-o fa-lg"></i>
+		    {% endif %}
+		    {% if result.gender == MALE %}
+		        <i class="fa fa-male fa-lg"></i>
+		    {% else %}
+		        <i class="fa fa-female fa-lg"></i>
+		    {% endif %}
+		    {{ result.subject_identifier }}
+	    </a>
     </td>

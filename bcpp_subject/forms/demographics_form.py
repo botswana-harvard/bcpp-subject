@@ -5,6 +5,7 @@ from edc_constants.constants import MALE, FEMALE
 from ..models import Demographics, SubjectConsent
 
 from .form_mixins import SubjectModelFormMixin
+from edc_registration.models import RegisteredSubject
 
 
 class DemographicsForm(SubjectModelFormMixin):
@@ -41,9 +42,9 @@ class DemographicsForm(SubjectModelFormMixin):
             num_wives = cleaned_data.get('num_wives', 0)
             subject_visit = cleaned_data.get('subject_visit')
             subject_identifier = subject_visit.subject_identifier
-            consent = SubjectConsent.objects.filter(
-                household_member__subject_identifier=subject_identifier).last()
-            if num_wives == 0:
+            consent = RegisteredSubject.objects.get(
+                household_member__subject_identifier=subject_identifier)
+            if num_wives <= 0:
                 if consent.gender == MALE:
                     raise forms.ValidationError(
                         {'num_wives': 'The number of wives should be greater than 0.'})

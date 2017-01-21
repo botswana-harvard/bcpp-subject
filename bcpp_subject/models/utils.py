@@ -1,10 +1,10 @@
 from survey import S
 
-from bcpp.surveys import BHS_SURVEY, AHS_SURVEY, ESS_SURVEY
+from bcpp.surveys import BHS_SURVEY, AHS_SURVEY, ESS_SURVEY, ANONYMOUS_SURVEY
 
 from ..exceptions import ConsentError, EnrollmentError
 
-from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
+from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss, EnrollmentAno
 
 
 def get_enrollment_model_class(instance):
@@ -22,6 +22,8 @@ def get_enrollment_model_class(instance):
         EnrollmentModelClass = EnrollmentAhs
     elif survey_name == ESS_SURVEY:
         EnrollmentModelClass = EnrollmentEss
+    elif survey_name == ANONYMOUS_SURVEY:
+        EnrollmentModelClass = EnrollmentAno
     else:
         raise EnrollmentError(
             'Unable to determine the Enrollment Model from {}. '

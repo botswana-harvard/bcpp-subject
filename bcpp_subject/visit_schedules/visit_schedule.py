@@ -9,6 +9,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from .bhs_schedule import bhs_schedule
 from .ahs_schedule import ahs_schedule
 from .ess_schedule import ess_schedule
+from .ano_schedule import ano_schedule
 
 style = color_style()
 
@@ -52,10 +53,23 @@ visit_schedule_ess = VisitSchedule(
     offstudy_model='bcpp_subject.subjectoffstudy',
 )
 
+
+visit_schedule_ano = VisitSchedule(
+    name='visit_schedule_ano',
+    verbose_name='BCPP Anonymous Survey',
+    app_label='bcpp_subject',
+    default_enrollment_model='bcpp_subject.enrollmentano',
+    default_disenrollment_model='bcpp_subject.disenrollmentano',
+    visit_model='bcpp_subject.subjectvisit',
+    offstudy_model='bcpp_subject.subjectoffstudy',
+)
+
 visit_schedule_bhs.add_schedule(bhs_schedule)
 visit_schedule_ahs.add_schedule(ahs_schedule)
 visit_schedule_ess.add_schedule(ess_schedule)
+visit_schedule_ano.add_schedule(ano_schedule)
 
 site_visit_schedules.register(visit_schedule_bhs)
 site_visit_schedules.register(visit_schedule_ahs)
 site_visit_schedules.register(visit_schedule_ess)
+site_visit_schedules.register(visit_schedule_ano)
