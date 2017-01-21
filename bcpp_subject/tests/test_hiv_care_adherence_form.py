@@ -16,6 +16,7 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
         self.consent_data = {
             'identity': '31721515',
             'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow() + relativedelta(years=3)
         }
         self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
 
@@ -180,6 +181,7 @@ class TestHivCareAdherenceAhsT2(SubjectMixin, TestCase):
         self.consent_data = {
             'identity': '31721515',
             'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow() + relativedelta(years=3)
         }
         self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
 

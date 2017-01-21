@@ -5,7 +5,7 @@ from edc_constants.constants import UUID_PATTERN
 from household.patterns import household_identifier
 from survey.patterns import survey_schedule, survey
 
-from .admin_site import bcpp_subject_admin, bcpp_subject_ahs_t2_admin
+from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
 from .views import ListboardView, DashboardView, AnonymousListboardView, AnonymousDashboardView
 
@@ -88,6 +88,4 @@ def dashboard_urls():
         ])
     return urlpatterns
 
-urlpatterns = [
-    url(r'^admin/', bcpp_subject_admin.urls),
-    url(r'^ahst2admin/', bcpp_subject_ahs_t2_admin.urls)] + listboard_urls() + dashboard_urls()
+urlpatterns = [url(r'^admin/', bcpp_subject_admin.urls)] + listboard_urls() + dashboard_urls()

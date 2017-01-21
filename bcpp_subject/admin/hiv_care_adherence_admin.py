@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from ..admin_site import bcpp_subject_admin, bcpp_subject_ahs_t2_admin
+from ..admin_site import bcpp_subject_admin
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence, HivCareAdherenceAhsT2
 
 from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
-@admin.register(HivCareAdherenceAhsT2, site=bcpp_subject_ahs_t2_admin)
+@admin.register(HivCareAdherenceAhsT2, site=bcpp_subject_admin)
 class HivCareAdherenceAhsT2Admin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     fields = [
