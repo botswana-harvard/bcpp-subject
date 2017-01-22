@@ -3,7 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_dashboard.view_mixins import DashboardViewMixin as EdcDashboardViewMixin, AppConfigViewMixin
+from edc_dashboard.view_mixins import (
+    DashboardViewMixin as EdcDashboardViewMixin, AppConfigViewMixin)
 
 from survey.view_mixins import SurveyViewMixin
 
@@ -11,15 +12,13 @@ from ....models import AnonymousConsent
 
 from ...wrappers import CrfModelWrapper, SubjectVisitModelWrapper
 
-from ..enrollment_forms_view_mixin import EnrollmentFormsViewMixin
-
 from .dashboard_view_mixin import DashboardViewMixin
 from .wrappers import AnonymousConsentModelWrapper, AppointmentModelWrapper
 
 
 class DashboardView(
-        SurveyViewMixin, DashboardViewMixin, EnrollmentFormsViewMixin,
-        AppConfigViewMixin, EdcBaseViewMixin,
+        DashboardViewMixin,
+        SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
         EdcDashboardViewMixin, TemplateView):
 
     app_config_name = 'bcpp_subject'

@@ -1,19 +1,51 @@
 from model_mommy import mommy
-
 from datetime import timedelta
-from django.test import TestCase
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK
+from django.test import TestCase, tag
+from django.core.exceptions import ObjectDoesNotExist
+
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, FEMALE, MALE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
+from edc_metadata.models import CrfMetadata, RequisitionMetadata
 
 from member.models.household_member import HouseholdMember
 
 from ..constants import NOT_SURE, T0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
+from .test_mixins import SubjectMixin
+from survey.site_surveys import site_surveys
 
 
-class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
+class MetadataRulesTestMixin:
+
+    def assertCrfRule(self, model, entry_status, visit_code=None, msg=None):
+        try:
+            CrfMetadata.objects.get(
+                entry_status=entry_status,
+                model=model,
+                visit_code=visit_code,
+                subject_identifier=self.subject_identifier)
+        except ObjectDoesNotExist:
+            msg = msg or 'Expected {} to be {} for {}'.format(model, entry_status, visit_code)
+            raise self.fail(msg)
+
+    def assertRequisitionRule(self, model, entry_status, visit_code=None, panel_name=None, msg=None):
+        try:
+            RequisitionMetadata.objects.get(
+                entry_status=entry_status,
+                model=model,
+                visit_code=visit_code,
+                subject_identifier=self.subject_identifier)
+        except ObjectDoesNotExist:
+            msg = msg or (
+                'Expected {model}.{panel} to be {entry_status} for {visit_code}'.format(
+                    model=model, entry_status=entry_status, visit_code=visit_code,
+                    panel_name=panel_name))
+            raise self.fail(msg)
+
+
+class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
     def setUp(self):
         super().setUp()
@@ -27,33 +59,44 @@ class TestBaselineRuleSurveyRuleGroups(RuleGroupMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data_male)
-        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data_female)
+        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+            'T0', **self.consent_data_male)
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
+            'T0', **self.consent_data_female)
         self.household_member = HouseholdMember.objects.filter(
             subject_identifier=self.subject_visit_male.subject_identifier)
         self.subject_identifier = self.subject_visit_male.subject_identifier
         self.hiv_test_date = self.get_utcnow() - timedelta(days=50)
 
+    def assertPos(self, subject_identifier):
+        # ???
+        pass
+
     def test_hiv_car_adherence_and_pima1(self):
         """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
-
-        Models:
-            * HivCareAdherence
-            * HivResult
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
+        # self.assertPos(self.subject_identifier)
+        self.assertCrfrule(
+            'bcpp_subject.hivcareadherence', REQUIRED, T0)
+        self.assertCrfrule(
+            'bcpp_subject.pima', REQUIRED, T0)
 
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+        # suggest this is a defaulter
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=None,
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=YES,
+            on_arv=NO,
+            arv_evidence=NO)
 
-        # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, YES, NO, NO)
-
-        # said they have taken ARV so not required
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertCrfrule(
+            'bcpp_subject.pima', NOT_REQUIRED, T0)
 
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required, not a defaulter.

@@ -24,13 +24,13 @@ def func_show_third_partner_forms(visit_instance, *args):
     return True if sexual_behaviour.last_year_partners >= 3 else False
 
 
-def is_female(visit_instance, *args):
+def female(visit_instance, *args):
     registered_subject = RegisteredSubject.objects.get(
         subject_identifier=visit_instance.subject_identifier)
     return registered_subject.gender == FEMALE
 
 
-def is_male(visit_instance, *args):
+def male(visit_instance, *args):
     registered_subject = RegisteredSubject.objects.get(
         subject_identifier=visit_instance.subject_identifier)
     return registered_subject.gender == MALE
@@ -122,7 +122,7 @@ def func_declined_at_bhs(visit_instance):
     return False
 
 
-def func_require_pima(visit_instance, *args):
+def requires_pima_vl(visit_instance, *args):
     """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
     if func_is_baseline_or_ess(visit_instance) and func_art_naive(visit_instance):
         return True
@@ -143,15 +143,6 @@ def func_known_pos(visit_instance, *args):
     return known_pos
 
 
-def func_is_circumcision(visit_instance, *args):
-    """Return True if circumcised."""
-    try:
-        Circumcised.objects.get(subject_visit=func_previous_visit(visit_instance))
-    except Circumcised.DoesNotExist:
-        return False
-    return True
-
-
 def func_show_hic_enrollment(visit_instance, *args):
     """ If the participant still test HIV NEG and was not HIC enrolled then HIC should be REQUIRED. """
     if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(visit_instance):
@@ -170,7 +161,7 @@ def func_show_microtube(visit_instance, *args):
     if func_hic_enrolled(visit_instance) and not func_pos_tested_by_bhp(visit_instance):
         show_micro = True
     elif not func_hic_enrolled(visit_instance) and not (func_hiv_positive_today(visit_instance) or
-                                                        func_known_pos_in_prev_year(visit_instance)):
+                                                        known_positive(visit_instance)):
         show_micro = True
     return show_micro
 
@@ -178,9 +169,9 @@ def func_show_microtube(visit_instance, *args):
 def func_todays_hiv_result_required(visit_instance, *args):
     """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    if subject_status_helper.todays_hiv_result and not func_known_pos_in_prev_year(visit_instance):
+    if subject_status_helper.todays_hiv_result and not known_positive(visit_instance):
         return True
-    if not func_hiv_positive_today(visit_instance) and not func_known_pos_in_prev_year(visit_instance):
+    if not func_hiv_positive_today(visit_instance) and not known_positive(visit_instance):
         return True
     return False
 
@@ -308,7 +299,7 @@ def func_not_required(visit_instance, *args):
     return True
 
 
-def func_known_pos_in_prev_year(visit_instance, *args):
+def known_positive(visit_instance, *args):
     previous_visit = func_previous_visit(visit_instance)
     while previous_visit:
         if func_hiv_positive_today(previous_visit) or func_known_pos(previous_visit):
@@ -322,8 +313,15 @@ def func_no_verbal_hiv_result(visit_instance, *args):
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
-def func_circumcision_not_required(visit_instance, *args):
-    return is_female(visit_instance) or func_is_circumcision(visit_instance)
+def circumcised(visit_instance, *args):
+    """Return True if male is circumcised."""
+    if female(visit_instance):
+        return True
+    try:
+        Circumcised.objects.get(subject_visit=func_previous_visit(visit_instance))
+    except Circumcised.DoesNotExist:
+        return False
+    return True
 
 
 def first_enrolled(visit_instance, *args):

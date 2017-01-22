@@ -1,9 +1,9 @@
-from edc_rule_groups.crf_rule import CrfRule
-from edc_rule_groups.decorators import register
-from edc_rule_groups.logic import Logic
-from edc_rule_groups.requisition_rule import RequisitionRule
-from edc_rule_groups.rule_group import RuleGroup
-from edc_rule_groups.predicate import P, PF
+from edc_metadata.rules.crf_rule import CrfRule
+from edc_metadata.rules.decorators import register
+from edc_metadata.rules.logic import Logic
+from edc_metadata.rules.requisition_rule import RequisitionRule
+from edc_metadata.rules.rule_group import RuleGroup
+from edc_metadata.rules.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA
@@ -16,15 +16,15 @@ from .rule_group_funcs import (
     func_hiv_indeterminate_today,
     func_hiv_positive_today,
     func_hiv_untested,
-    func_known_pos_in_prev_year,
+    known_positive,
     func_rbd,
-    func_require_pima,
-    func_circumcision_not_required,
+    requires_pima_vl,
+    circumcised,
     func_show_hic_enrollment,
     func_show_microtube,
     func_todays_hiv_result_required,
     func_vl,
-    is_male,
+    female,
     func_show_recent_partner,
     func_show_second_partner_forms,
     func_show_third_partner_forms)
@@ -35,28 +35,29 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     gender_circumsion = CrfRule(
         logic=Logic(
-            predicate=func_circumcision_not_required,
+            predicate=circumcised,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['circumcision', 'circumcised', 'uncircumcised'])
 
     gender_menopause = CrfRule(
         logic=Logic(
-            predicate=is_male,
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            predicate=female,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     known_pos_in_y1 = CrfRule(
         logic=Logic(
-            predicate=func_known_pos_in_prev_year,
+            predicate=known_positive,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
-        target_models=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
+        target_models=['hivtestreview', 'hivtested', 'hivtestinghistory',
+                       'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
     pima_art_naive_enrollment_req_ahs = CrfRule(
         logic=Logic(
-            predicate=func_require_pima,
+            predicate=requires_pima_vl,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['pima'])
@@ -94,7 +95,6 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = None
         source_model = 'bcpp_subject.subjectvisit'
 
 
@@ -230,7 +230,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     pima_for_art_naive = CrfRule(
         logic=Logic(
-            predicate=func_require_pima,
+            predicate=requires_pima_vl,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['pima'])
@@ -398,7 +398,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     pima_for_art_naive = CrfRule(
         logic=Logic(
-            predicate=func_require_pima,
+            predicate=requires_pima_vl,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['pima'])

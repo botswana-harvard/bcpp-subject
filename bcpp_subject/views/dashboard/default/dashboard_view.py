@@ -5,6 +5,9 @@ from django.views.generic import TemplateView
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import DashboardViewMixin as EdcDashboardViewMixin, AppConfigViewMixin
 
+from household.views.mixins import (
+    HouseholdViewMixin, HouseholdStructureViewMixin)
+from member.views.mixins import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
 from ....models import SubjectConsent, SubjectOffstudy
@@ -14,11 +17,14 @@ from ...wrappers import CrfModelWrapper, SubjectVisitModelWrapper
 from ..enrollment_forms_view_mixin import EnrollmentFormsViewMixin
 
 from .dashboard_view_mixin import DashboardViewMixin
+from .subject_locator_view_mixin import SubjectLocatorViewMixin
 from .wrappers import SubjectConsentModelWrapper
 
 
 class DashboardView(
         SurveyViewMixin, DashboardViewMixin, EnrollmentFormsViewMixin,
+        SubjectLocatorViewMixin,
+        HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdMemberViewMixin,
         AppConfigViewMixin, EdcBaseViewMixin,
         EdcDashboardViewMixin, TemplateView):
 

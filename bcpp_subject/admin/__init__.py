@@ -11,7 +11,7 @@ from .correct_consent_admin import CorrectConsentAdmin
 from .demographics_admin import DemographicsAdmin
 from .education_admin import EducationAdmin
 from .elisa_hiv_result_admin import ElisaHivResult
-from .enrollment_admin import EnrollmentBhsAdmin, EnrollmentAhsAdmin, EnrollmentEssAdmin
+from .enrollment_admin import EnrollmentAdmin
 from .grant_admin import GrantAdmin, GrantInlineAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
 from .hiv_care_adherence_admin import HivCareAdherenceAdmin

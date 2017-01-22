@@ -1,8 +1,8 @@
+from edc_visit_schedule.constants import YEARS
 from edc_visit_schedule.schedule import Schedule
 
 from .crfs_ahs import crfs_ahs
 from .requisitions import requisitions
-from edc_visit_schedule.constants import YEARS
 
 # schedule for existing participants
 ahs_schedule = Schedule(name='ahs_schedule', title='AHS')

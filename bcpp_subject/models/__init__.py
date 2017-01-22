@@ -12,7 +12,7 @@ from .demographics import Demographics
 from .disenrollment import DisenrollmentBhs, DisenrollmentAhs, DisenrollmentEss, DisenrollmentAno
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
-from .enrollment import EnrollmentBhs, EnrollmentAhs, EnrollmentEss, EnrollmentAno
+from .enrollment import Enrollment, EnrollmentAhs, EnrollmentAno, EnrollmentBhs, EnrollmentEss
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment

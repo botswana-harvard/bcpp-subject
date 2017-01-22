@@ -14,4 +14,9 @@ class AppConfig(DjangoApponfig):
     admin_site_name = 'bcpp_subject_admin'
 
     def ready(self):
-        from bcpp_subject.models.signals import subject_consent_on_post_save, subject_consent_on_post_delete
+        from bcpp_subject.models.signals import (
+            subject_consent_on_post_save,
+            subject_consent_on_post_delete,
+            enrollment_checklist_anonymous_on_post_save,
+            enrollment_checklist_anonymous_on_post_delete,
+        )

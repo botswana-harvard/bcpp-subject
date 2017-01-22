@@ -4,7 +4,7 @@ from edc_base_test.exceptions import TestMixinError
 from household.models.household_structure.household_structure import HouseholdStructure
 
 from .test_mixins import SubjectMixin
-from edc_constants.constants import MALE
+from edc_constants.constants import MALE, FEMALE
 from dateutil.relativedelta import relativedelta
 from survey.site_surveys import site_surveys
 
@@ -52,9 +52,6 @@ class TestConsentSurvey(SubjectMixin, TestCase):
         self.assertEqual(
             obj.survey_schedule_object.field_value,
             'bcpp-survey.bcpp-year-1.test_community')
-        self.assertEqual(
-            obj.survey_object.field_value,
-            'bcpp-survey.bcpp-year-1.bhs.test_community')
 
     def test_make_consent_next_survey(self):
         first_household_structure = self.make_household_ready_for_enumeration(
@@ -71,9 +68,6 @@ class TestConsentSurvey(SubjectMixin, TestCase):
         self.assertEqual(
             obj.survey_schedule_object.field_value,
             'bcpp-survey.bcpp-year-2.test_community')
-        self.assertEqual(
-            obj.survey_object.field_value,
-            'bcpp-survey.bcpp-year-2.ahs.test_community')
 
     @tag('aa')
     def test_make_consent_next_next_survey(self):
@@ -97,9 +91,6 @@ class TestConsentSurvey(SubjectMixin, TestCase):
         self.assertEqual(
             obj.survey_schedule_object.field_value,
             'bcpp-survey.bcpp-year-3.test_community')
-        self.assertEqual(
-            obj.survey_object.field_value,
-            'bcpp-survey.bcpp-year-3.ahs.test_community')
 
     def test_make_consent_ess_survey(self):
 
@@ -112,6 +103,44 @@ class TestConsentSurvey(SubjectMixin, TestCase):
         self.assertEqual(
             obj.survey_schedule_object.field_value,
             'bcpp-survey.bcpp-year-3.test_community')
-        self.assertEqual(
-            obj.survey_object.field_value,
-            'bcpp-survey.bcpp-year-3.ess.test_community')
+
+
+@tag('erikR')
+class TestCreateConsent1(SubjectMixin, TestCase):
+
+    survey_schedule_name = 'bcpp-survey.bcpp-year-1.test_community'
+
+    @property
+    def survey_schedule(self):
+        return site_surveys.get_survey_schedule_from_field_value(self.survey_schedule_name)
+
+    def setUp(self):
+        super().setUp()
+        report_datetime = self.get_utcnow()
+        household_structure = self.make_household_ready_for_enumeration(
+            report_datetime=report_datetime,
+            survey_schedule=self.survey_schedule)
+
+        household_member = self.add_household_member(
+            household_structure=household_structure,
+            gender=MALE,
+            report_datetime=report_datetime)
+        self.add_enrollment_checklist(household_member)
+        subject_consent = self.add_subject_consent(household_member)
+        self.male_member = subject_consent.household_member
+
+        household_member = self.add_household_member(
+            household_structure=household_structure,
+            gender=FEMALE,
+            report_datetime=report_datetime)
+        self.add_enrollment_checklist(household_member)
+        subject_consent = self.add_subject_consent(household_member)
+        self.female_member = subject_consent.household_member
+
+    def test_add_female_member(self):
+        self.assertEqual(self.female_member.gender, FEMALE)
+        self.assertTrue(self.female_member.is_consented)
+
+    def test_add_male_member(self):
+        self.assertEqual(self.male_member.gender, MALE)
+        self.assertTrue(self.male_member.is_consented)

@@ -7,7 +7,8 @@ from survey.patterns import survey_schedule, survey
 
 from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
-from .views import ListboardView, DashboardView, AnonymousListboardView, AnonymousDashboardView
+from .views import (
+    ListboardView, DashboardView, AnonymousListboardView, AnonymousDashboardView)
 
 
 def listboard_urls():

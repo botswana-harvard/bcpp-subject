@@ -8,7 +8,7 @@ from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, audit_fieldse
     ModelAdminNextUrlRedirectMixin
 from edc_consent.modeladmin_mixins import ModelAdminConsentMixin
 
-from survey.admin import survey_fields, survey_fieldset_tuple
+from survey.admin import survey_schedule_fields, survey_schedule_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectConsentForm
@@ -53,7 +53,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
                 'study_questions',
                 'assessment_score',
                 'consent_copy']}),
-        survey_fieldset_tuple,
+        survey_schedule_fieldset_tuple,
         audit_fieldset_tuple)
 
     search_fields = (
@@ -79,7 +79,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
     }
 
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj=obj) + audit_fields + survey_fields
+        return super().get_readonly_fields(request, obj=obj) + audit_fields + survey_schedule_fields
 
     def view_on_site(self, obj):
         try:
@@ -87,7 +87,6 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
                 'bcpp-subject:dashboard_url', kwargs=dict(
                     household_identifier=obj.household_member.household_structure.household.household_identifier,
                     subject_identifier=obj.subject_identifier,
-                    survey=obj.survey,
                     survey_schedule=obj.survey_schedule_object.field_value))
         except NoReverseMatch:
             return super().view_on_site(obj)

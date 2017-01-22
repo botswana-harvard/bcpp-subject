@@ -33,11 +33,12 @@ class AnonymousConsentModelWrapper(ModelWrapper):
     model_name = 'bcpp_subject.anonymousconsent'
     next_url_name = django_apps.get_app_config('bcpp_subject').anonymous_dashboard_url_name
     next_url_attrs = {'bcpp_subject.anonymousconsent': [
-        'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
+        'household_identifier', 'subject_identifier', 'survey_schedule']}
     extra_querystring_attrs = {
-        'bcpp_subject.anonymousconsent': ['gender', 'household_member', 'first_name', 'initials']}
+        'bcpp_subject.anonymousconsent': [
+            'gender', 'household_member', 'first_name', 'initials']}
     url_instance_attrs = [
-        'subject_identifier', 'survey_schedule', 'survey', 'gender',
+        'subject_identifier', 'survey_schedule', 'gender',
         'household_member', 'first_name', 'initials', 'household_identifier']
 
     @property

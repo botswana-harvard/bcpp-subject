@@ -27,8 +27,10 @@ class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(E0, **self.consent_data_male)
-        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(E0, **self.consent_data_female)
+        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+            E0, **self.consent_data_male)
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
+            E0, **self.consent_data_female)
         self.household_member = HouseholdMember.objects.filter(
             subject_identifier=self.subject_visit_male.subject_identifier)
         self.subject_identifier = self.subject_visit_male.subject_identifier

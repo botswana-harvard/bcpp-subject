@@ -1,5 +1,5 @@
-import datetime
-from datetime import timedelta
+from datetime import timedelta, datetime
+from dateutil.relativedelta import relativedelta
 
 from model_mommy import mommy
 
@@ -9,15 +9,12 @@ from edc_constants.constants import NO, YES, POS, NEG, NOT_APPLICABLE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 
-from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
-from ..models import Appointment
+from member.models.household_member.household_member import HouseholdMember
+
+from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
+from ..models import Appointment, SubjectVisit
 
 from .test_mixins import SubjectMixin
-
-from bcpp_subject.constants import DECLINED
-from member.models.household_member.household_member import HouseholdMember
-from dateutil.relativedelta import relativedelta
-from bcpp_subject.models.subject_visit import SubjectVisit
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
@@ -231,15 +228,15 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         report_datetime = self.get_utcnow() + relativedelta(years=2)
         self.consent_data.update(report_datetime=report_datetime)
-        new_member = self.add_subject_consent(new_household_member, **self.consent_data)
+        subject_consent = self.add_subject_consent(new_household_member, **self.consent_data)
         appointment = Appointment.objects.get(
-            subject_identifier=new_member.subject_identifier,
+            subject_identifier=subject_consent.subject_identifier,
             visit_code=T2)
 
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
-            household_member=new_member,
-            subject_identifier=new_member.subject_identifier,
+            household_member=subject_consent.household_member,
+            subject_identifier=subject_consent.household_member.subject_identifier,
             appointment=appointment,
             report_datetime=report_datetime)
 

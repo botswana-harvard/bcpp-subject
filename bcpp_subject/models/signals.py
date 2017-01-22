@@ -1,30 +1,26 @@
-from django.db.models.signals import post_save, post_delete
+from faker import Faker
 
-from django.db import transaction
+from dateutil.relativedelta import relativedelta
+
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from django.db.utils import IntegrityError
+from edc_base.utils import get_utcnow
 
-from ..exceptions import EnrollmentError
+from member.models import EnrollmentChecklistAnonymous
+from member.models.household_member import is_minor
 
-from .enrollment import EnrollmentAhs, EnrollmentBhs, EnrollmentEss
+from ..models.anonymous import AnonymousConsent
+
+from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
-from .utils import get_enrollment_model_class
-from builtins import issubclass
-from bcpp_subject.models.anonymous.anonymous_consent import AnonymousConsent
 
-
-@receiver(post_delete, weak=False, dispatch_uid="enrollment_on_post_delete")
-def enrollment_on_post_delete(sender, instance, using, **kwargs):
-    if sender in [EnrollmentAhs, EnrollmentBhs, EnrollmentEss]:
-        instance.household_member.is_consented = False
-        instance.household_member.save()
+fake = Faker()
 
 
 @receiver(post_delete, weak=False, sender=SubjectConsent, dispatch_uid="subject_consent_on_post_delete")
 def subject_consent_on_post_delete(sender, instance, using, **kwargs):
-    EnrollmentModelClass = get_enrollment_model_class(instance)
-    enrollment = EnrollmentModelClass.objects.get(subject_identifier=instance.subject_identifier)
+    enrollment = Enrollment.objects.get(consent_identifier=instance.consent_identifier)
     enrollment.delete()
     instance.household_member.is_consented = False
     instance.household_member.save()
@@ -45,21 +41,47 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
             instance.household_member.household_structure.save()
 
             # auto-complete an enrollment. Enrollment will create appointments
-            EnrollmentModelClass = get_enrollment_model_class(instance)
-            try:
-                enrollment = EnrollmentModelClass.objects.get(
-                    subject_identifier=instance.subject_identifier)
-            except EnrollmentModelClass.DoesNotExist:
-                with transaction.atomic():
-                    try:
-                        EnrollmentModelClass.objects.create(
-                            subject_identifier=instance.subject_identifier,
-                            household_member=instance.household_member,
-                            report_datetime=instance.report_datetime,
-                            survey=instance.survey_object.field_value,
-                            survey_schedule=instance.survey_schedule_object.field_value,
-                            is_eligible=True)
-                    except IntegrityError as e:
-                        raise EnrollmentError(str(e))
-            else:
-                enrollment.save()
+            if created:
+                Enrollment.objects.enroll_to_next_survey(
+                    subject_identifier=instance.subject_identifier,
+                    household_member=instance.household_member,
+                    consent_identifier=instance.consent_identifier,
+                    report_datetime=instance.report_datetime)
+
+
+@receiver(post_save, weak=False, sender=EnrollmentChecklistAnonymous,
+          dispatch_uid="enrollment_checklist_anonymous_on_post_save")
+def enrollment_checklist_anonymous_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        if created:
+            # update HHM attrs
+            instance.household_member.enrollment_checklist_completed = True
+            instance.household_member.save()
+            # fill in consent
+            identity = fake.credit_card_number()
+            dob = instance.household_member.created - relativedelta(years=instance.age_in_years)
+            AnonymousConsent.objects.create(
+                household_member=instance.household_member,
+                consent_datetime=get_utcnow(),
+                gender=instance.gender,
+                dob=dob,
+                identity=identity,
+                confirm_identity=identity,
+                study_site='88',
+                first_name=instance.household_member.first_name,
+                initials=instance.household_member.initials,
+                may_store_samples=instance.may_store_samples,
+                citizen=instance.citizen,
+                is_minor=is_minor(dob, instance.created),
+                created=instance.user_created,
+                modified=instance.user_modified,
+                hostname_created=instance.hostname_created,
+                hostname_modified=instance.hostname_modified,
+            )
+
+
+@receiver(post_delete, weak=False, sender=EnrollmentChecklistAnonymous,
+          dispatch_uid="enrollment_checklist_anonymous_on_post_delete")
+def enrollment_checklist_anonymous_on_post_delete(sender, instance, raw, created, using, **kwargs):
+    instance.household_member.anonymousconsent.delete()
+    instance.household_member.delete()

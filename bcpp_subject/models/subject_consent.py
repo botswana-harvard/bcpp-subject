@@ -17,12 +17,10 @@ from edc_map.site_mappers import site_mappers
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
 from member.models import EnrollmentChecklist, HouseholdMember
-from survey.model_mixins import SurveyModelMixin
+from survey.model_mixins import SurveyScheduleModelMixin
 
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
-
-from .utils import get_enrollment_survey
 
 
 def is_minor(dob, reference_datetime):
@@ -30,10 +28,11 @@ def is_minor(dob, reference_datetime):
 
 
 class SubjectConsent(
-        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
-        SurveyModelMixin, IdentityFieldsMixin, ReviewFieldsMixin,
-        PersonalFieldsMixin, SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
-        BaseUuidModel):
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
+        NonUniqueSubjectIdentifierModelMixin, SurveyScheduleModelMixin,
+        IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
+        SampleCollectionFieldsMixin, CitizenFieldsMixin,
+        VulnerabilityFieldsMixin, BaseUuidModel):
 
     """ A model completed by the user that captures the ICF."""
 
@@ -46,8 +45,9 @@ class SubjectConsent(
         blank=False,
         default='-',
         choices=YES_NO,
-        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
-                   'HIV status may NOT be revealed in the household.'),
+        help_text=('Subject is a minor if aged 16-17. A guardian must '
+                   'be present for consent. HIV status may NOT be '
+                   'revealed in the household.'),
         editable=False)
 
     is_signed = models.BooleanField(default=False, editable=False)
@@ -63,21 +63,20 @@ class SubjectConsent(
     natural_key.dependencies = ['bcpp_subject.household_member']
 
     def __str__(self):
-        return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
+        return '{0} ({1}) V{2}'.format(
+            self.subject_identifier,
+            self.survey_schedule_object.name,
+            self.version)
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.survey_schedule = self.household_member.survey_schedule_object.field_value
-            self.survey = self.get_survey_name()
+            # consent should not know the survey name
+            # self.survey = self.get_survey_name()
+        # FIXME: get this using the map_area from survey
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
-
-    def get_survey_name(self):
-        return get_enrollment_survey(
-            consents=SubjectConsent.objects.filter(
-                identity=self.identity),
-            survey_schedule_object=self.household_member.survey_schedule_object)
 
     def common_clean(self):
         # confirm member is eligible

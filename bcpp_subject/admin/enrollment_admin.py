@@ -4,17 +4,21 @@ from django.urls.exceptions import NoReverseMatch
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 
+from survey.admin import survey_fieldset_tuple, survey_fields
+
 from ..admin_site import bcpp_subject_admin
-from ..models import EnrollmentBhs, EnrollmentAhs, EnrollmentEss
+from ..models import Enrollment
 
 from .modeladmin_mixins import ModelAdminMixin
 
 
-class Mixin:
+@admin.register(Enrollment, site=bcpp_subject_admin)
+class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ("subject_identifier", 'report_datetime', 'survey')}),
+            'fields': ("subject_identifier", 'report_datetime')}),
+        survey_fieldset_tuple,
         audit_fieldset_tuple)
 
     readonly_fields = ("subject_identifier", 'report_datetime', 'survey')
@@ -24,7 +28,7 @@ class Mixin:
     list_filter = ('report_datetime', 'survey', 'survey_schedule')
 
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj) + audit_fields
+        return super().get_readonly_fields(request, obj) + audit_fields + survey_fields
 
     def view_on_site(self, obj):
         try:
@@ -35,21 +39,3 @@ class Mixin:
                     survey_schedule=obj.survey_object.survey_schedule.field_value))
         except NoReverseMatch:
             return super().view_on_site(obj)
-
-
-@admin.register(EnrollmentBhs, site=bcpp_subject_admin)
-class EnrollmentBhsAdmin(Mixin, ModelAdminMixin, admin.ModelAdmin):
-
-    pass
-
-
-@admin.register(EnrollmentAhs, site=bcpp_subject_admin)
-class EnrollmentAhsAdmin(Mixin, ModelAdminMixin, admin.ModelAdmin):
-
-    pass
-
-
-@admin.register(EnrollmentEss, site=bcpp_subject_admin)
-class EnrollmentEssAdmin(Mixin, ModelAdminMixin, admin.ModelAdmin):
-
-    pass

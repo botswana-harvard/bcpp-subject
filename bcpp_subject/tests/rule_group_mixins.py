@@ -4,11 +4,10 @@ from edc_metadata.models import CrfMetadata, RequisitionMetadata
 
 from ..constants import MICROTUBE
 
-from .test_mixins import SubjectMixin
 from edc_constants.constants import NO, YES
 
 
-class RuleGroupMixin(SubjectMixin):
+class RuleGroupMixin:
     """
         TODO: make reusable funcs to create male and female for different HIV STATUS.
     """

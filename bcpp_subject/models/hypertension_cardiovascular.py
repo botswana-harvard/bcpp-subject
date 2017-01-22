@@ -14,8 +14,9 @@ class HypertensionCardiovascular(CrfModelMixin):
     """Model used for getting hypertension and cardiovascular info"""
 
     may_take_blood_pressure = models.CharField(
-        verbose_name='As part of our questions about your health we would like to check your'
-        'blood pressure and measure your waist and hips. Are you willing to have your blood'
+        verbose_name='As part of our questions about your health we '
+        'would like to check your blood pressure and measure your '
+        'waist and hips. Are you willing to have your blood'
         'pressure and body measurements taken today?',
         choices=YES_NO,
         max_length=5)
