@@ -8,9 +8,9 @@ from django.dispatch import receiver
 from edc_base.utils import get_utcnow
 
 from member.models import EnrollmentChecklistAnonymous
-from member.models.household_member import is_minor
 
 from ..models.anonymous import AnonymousConsent
+from ..models.utils import is_minor
 
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
@@ -20,7 +20,8 @@ fake = Faker()
 
 @receiver(post_delete, weak=False, sender=SubjectConsent, dispatch_uid="subject_consent_on_post_delete")
 def subject_consent_on_post_delete(sender, instance, using, **kwargs):
-    enrollment = Enrollment.objects.get(consent_identifier=instance.consent_identifier)
+    enrollment = Enrollment.objects.get(
+        consent_identifier=instance.consent_identifier)
     enrollment.delete()
     instance.household_member.is_consented = False
     instance.household_member.save()
@@ -59,7 +60,8 @@ def enrollment_checklist_anonymous_on_post_save(sender, instance, raw, created, 
             instance.household_member.save()
             # fill in consent
             identity = fake.credit_card_number()
-            dob = instance.household_member.created - relativedelta(years=instance.age_in_years)
+            dob = (instance.household_member.created
+                   - relativedelta(years=instance.age_in_years))
             AnonymousConsent.objects.create(
                 household_member=instance.household_member,
                 consent_datetime=get_utcnow(),
@@ -73,8 +75,8 @@ def enrollment_checklist_anonymous_on_post_save(sender, instance, raw, created, 
                 may_store_samples=instance.may_store_samples,
                 citizen=instance.citizen,
                 is_minor=is_minor(dob, instance.created),
-                created=instance.user_created,
-                modified=instance.user_modified,
+                user_created=instance.user_created,
+                user_modified=instance.user_modified,
                 hostname_created=instance.hostname_created,
                 hostname_modified=instance.hostname_modified,
             )

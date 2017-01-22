@@ -1,13 +1,16 @@
 from django.apps import apps as django_apps
 
 from edc_dashboard.wrappers import ModelWrapper
-from bcpp_subject.views.wrappers import AppointmentModelWrapper as BaseAppointmentModelWrapper, ModelWrapperMixin
+
+from bcpp_subject.views.wrappers import (
+    AppointmentModelWrapper as BaseAppointmentModelWrapper, ModelWrapperMixin)
 
 
 class SubjectVisitModelWrapper(ModelWrapperMixin):
 
     model_name = 'bcpp_subject.subjectvisit'
-    next_url_name = django_apps.get_app_config('bcpp_subject').anonymous_dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').anonymous_dashboard_url_name
     extra_querystring_attrs = {
         'bcpp_subject.subjectvisit': ['household_member']}
     next_url_attrs = {'bcpp_subject.subjectvisit': [
@@ -19,19 +22,23 @@ class SubjectVisitModelWrapper(ModelWrapperMixin):
 
 
 class AppointmentModelWrapper(BaseAppointmentModelWrapper):
-    dashboard_url_name = django_apps.get_app_config('bcpp_subject').anonymous_dashboard_url_name
+    dashboard_url_name = django_apps.get_app_config(
+        'bcpp_subject').anonymous_dashboard_url_name
     visit_model_wrapper_class = SubjectVisitModelWrapper
-    next_url_name = django_apps.get_app_config('bcpp_subject').anonymous_dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').anonymous_dashboard_url_name
     extra_querystring_attrs = {}
     next_url_attrs = {'bcpp_subject.appointment': [
         'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
-    url_instance_attrs = ['household_identifier', 'subject_identifier', 'survey_schedule', 'survey']
+    url_instance_attrs = [
+        'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']
 
 
 class AnonymousConsentModelWrapper(ModelWrapper):
 
     model_name = 'bcpp_subject.anonymousconsent'
-    next_url_name = django_apps.get_app_config('bcpp_subject').anonymous_dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').anonymous_dashboard_url_name
     next_url_attrs = {'bcpp_subject.anonymousconsent': [
         'household_identifier', 'subject_identifier', 'survey_schedule']}
     extra_querystring_attrs = {
@@ -47,7 +54,8 @@ class AnonymousConsentModelWrapper(ModelWrapper):
 
     @property
     def household_identifier(self):
-        return self._original_object.household_member.household_structure.household.household_identifier
+        return (self._original_object.household_member.
+                household_structure.household.household_identifier)
 
     @property
     def first_name(self):

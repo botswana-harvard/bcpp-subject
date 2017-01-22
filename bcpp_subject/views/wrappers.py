@@ -8,11 +8,13 @@ from django.urls.base import reverse
 
 class ModelWrapperMixin(ModelWrapper):
 
-    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').dashboard_url_name
     extra_querystring_attrs = {}
     next_url_attrs = {'bcpp_subject.appointment': [
         'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']}
-    url_instance_attrs = ['household_identifier', 'subject_identifier', 'survey_schedule', 'survey']
+    url_instance_attrs = [
+        'household_identifier', 'subject_identifier', 'survey_schedule', 'survey']
 
     def add_extra_attributes_after(self):
         super().add_extra_attributes_after()
@@ -61,7 +63,8 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
     model_name = 'bcpp_subject.appointment'
     visit_model_wrapper_class = SubjectVisitModelWrapper
-    dashboard_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    dashboard_url_name = django_apps.get_app_config(
+        'bcpp_subject').dashboard_url_name
 
     @property
     def visit(self):
@@ -99,9 +102,11 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
 class CrfModelWrapper(ModelWrapper):
 
-    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    admin_site_name = django_apps.get_app_config(
+        'bcpp_subject').admin_site_name
     url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
-    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').dashboard_url_name
     next_url_attrs = dict(crf=[
         'appointment', 'household_identifier', 'subject_identifier',
         'survey_schedule', 'survey'])
@@ -142,9 +147,10 @@ class CrfModelWrapper(ModelWrapper):
 
 class SubjectLocatorModelWrapper(ModelWrapper):
     model_name = 'bcpp_subject.subjectlocator'
-    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
-    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
-
+    admin_site_name = django_apps.get_app_config(
+        'bcpp_subject').admin_site_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').dashboard_url_name
     next_url_attrs = {'bcpp_subject.subjectlocator': [
         'subject_identifier', 'household_identifier',
         'survey_schedule']}
@@ -155,9 +161,11 @@ class SubjectLocatorModelWrapper(ModelWrapper):
 
 class RequisitionModelWrapper(ModelWrapper):
 
-    admin_site_name = django_apps.get_app_config('bcpp_subject').admin_site_name
+    admin_site_name = django_apps.get_app_config(
+        'bcpp_subject').admin_site_name
     url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
-    next_url_name = django_apps.get_app_config('bcpp_subject').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'bcpp_subject').dashboard_url_name
     next_url_attrs = dict(requisition=[
         'appointment', 'household_identifier', 'subject_identifier',
         'survey_schedule', 'survey'])

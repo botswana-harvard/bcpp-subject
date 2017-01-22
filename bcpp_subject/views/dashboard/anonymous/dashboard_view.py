@@ -9,16 +9,15 @@ from edc_dashboard.view_mixins import (
 from survey.view_mixins import SurveyViewMixin
 
 from ....models import AnonymousConsent
-
-from ...wrappers import CrfModelWrapper, SubjectVisitModelWrapper
-
+from ...wrappers import (
+    CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper)
 from .dashboard_view_mixin import DashboardViewMixin
 from .wrappers import AnonymousConsentModelWrapper, AppointmentModelWrapper
 
 
 class DashboardView(
-        DashboardViewMixin,
-        SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
+        SurveyViewMixin, DashboardViewMixin,
+        AppConfigViewMixin, EdcBaseViewMixin,
         EdcDashboardViewMixin, TemplateView):
 
     app_config_name = 'bcpp_subject'
@@ -27,6 +26,7 @@ class DashboardView(
     consent_model_wrapper_class = AnonymousConsentModelWrapper
     consent_model = AnonymousConsent
     crf_model_wrapper_class = CrfModelWrapper
+    requisition_model_wrapper_class = RequisitionModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
     appointment_model_wrapper_class = AppointmentModelWrapper
 

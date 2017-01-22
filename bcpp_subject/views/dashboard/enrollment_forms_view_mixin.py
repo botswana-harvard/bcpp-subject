@@ -10,7 +10,8 @@ class EnrollmentFormsViewMixin:
         """Returns a generator of enrollment instances for this subject."""
         for visit_schedule in site_visit_schedules.get_visit_schedules().values():
             for schedule in visit_schedule.schedules.values():
-                obj = schedule.enrollment_instance(subject_identifier=self.subject_identifier)
+                obj = schedule.enrollment_instance(
+                    subject_identifier=self.subject_identifier)
                 if obj:
                     yield obj
                 else:
