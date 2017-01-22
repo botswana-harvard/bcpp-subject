@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
@@ -33,6 +34,8 @@ class DashboardView(
     def get(self, request, *args, **kwargs):
         self.anonymous = True
         kwargs['anonymous'] = 'anonymous'
+        kwargs['anonymous_dashboard_url_name'] = django_apps.get_app_config(
+            'bcpp_subject').anonymous_dashboard_url_name
         return super().get(request, *args, **kwargs)
 
     @method_decorator(login_required)

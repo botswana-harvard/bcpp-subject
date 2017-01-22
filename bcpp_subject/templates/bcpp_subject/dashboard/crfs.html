@@ -4,9 +4,20 @@
 
 {% block schedule_button %}
 
+    {% if anonymous %}
+    
+    <a href="{% url anonymous_dashboard_url_name household_identifier=household_identifier subject_identifier=subject_identifier survey=survey_object.field_value survey_schedule=survey_schedule_object.field_value %}"
+       role="button" class="btn btn-sm btn-default">
+        <i class="fa fa-reply fa-fw" aria-hidden="true"></i> <i class="fa fa-calendar fa-fw"></i> Schedule
+    </a>
+
+    {% else %}
+
 	<a href="{% url dashboard_url_name household_identifier=household_identifier subject_identifier=subject_identifier survey=survey_object.field_value survey_schedule=survey_schedule_object.field_value %}"
 	   role="button" class="btn btn-sm btn-default">
 		<i class="fa fa-reply fa-fw" aria-hidden="true"></i> <i class="fa fa-calendar fa-fw"></i> Schedule
 	</a>
+
+	{% endif %}
 
 {% endblock schedule_button %}
