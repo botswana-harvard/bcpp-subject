@@ -6,10 +6,12 @@ from edc_base.model.validators import date_not_future
 from edc_constants.choices import YES_NO_DWTA, YES_NO
 
 from ..choices import (
-    WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE,
-    ADHERENCE_4WK_CHOICE, NO_MEDICAL_CARE, WHY_ARV_STOP_CHOICE)
+    WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE, WEEKS_MONTHS,
+    ADHERENCE_4WK_CHOICE, NO_MEDICAL_CARE, WHY_ARV_STOP_CHOICE, YES_NO_REGIMEN)
 
 from .model_mixins import CrfModelMixin
+from ..models.list_models import AntiretroviralRegimen, HospitalizationReason
+from bcpp_subject.choices import SOURCE_EVIDENCE
 
 
 class HivCareAdherence (CrfModelMixin):
@@ -105,6 +107,54 @@ class HivCareAdherence (CrfModelMixin):
         help_text="If yes, need to answer next two questions.",   # Q11 all
     )
 
+    regimen_currently_prescribed = models.ManyToManyField(
+        AntiretroviralRegimen,
+        blank=False,
+        verbose_name='What antiretroviral regimen are you currently prescribed?')
+
+    first_regimen = models.CharField(
+        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+        max_length=25,
+        choices=YES_NO_REGIMEN,
+        null=True,
+        blank=False,
+        help_text="If the participant answered NO to the question above, record prior regimen and timing of switch.",
+    )
+
+    admitted_at_art_start = models.CharField(
+        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+        max_length=25,
+        choices=YES_NO,
+        null=True,
+        blank=False
+    )
+
+    weeks_months_admitted = models.CharField(
+        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+        max_length=25,
+        choices=WEEKS_MONTHS,
+        null=True,
+        blank=False
+    )
+
+    hospitalization_reason = models.ManyToManyField(
+        HospitalizationReason,
+        blank=False,
+        max_length=100,
+        verbose_name="What was the primary reason for the hospitalization?",
+        help_text="If yes to question about hospital admission"
+    )
+
+    hospitalizationevidence_source = models.CharField(
+        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+        max_length=25,
+        choices=SOURCE_EVIDENCE,
+        null=True,
+        blank=False
+    )
+
+    hospitalizationevidence_source_other = OtherCharField()
+
     clinic_receiving_from = models.CharField(
         verbose_name='Which clinic facility are you already receiving therapy from?',
         default=None,
@@ -175,3 +225,13 @@ class HivCareAdherence (CrfModelMixin):
         app_label = 'bcpp_subject'
         verbose_name = "HIV care & Adherence"
         verbose_name_plural = "HIV care & Adherence"
+
+
+class HivCareAdherenceAhsT2 (HivCareAdherence):
+    """A model completed by the user on the participant's access to and adherence to HIV care."""
+
+    class Meta(CrfModelMixin.Meta):
+        proxy = True
+        app_label = 'bcpp_subject'
+        verbose_name = "HIV care & Adherence AHS T2"
+        verbose_name_plural = "HIV care & Adherence  Ahs T2"

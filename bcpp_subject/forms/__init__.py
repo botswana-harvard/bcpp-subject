@@ -11,7 +11,7 @@ from .education_form import EducationForm
 from .elisa_hiv_result_form import ElisaHivResultForm
 from .hypertension_cardiovascular_form import HypertensionCardiovascularForm
 from .hic_enrollment_form import HicEnrollmentForm
-from .hiv_care_adherence_form import HivCareAdherenceForm
+from .hiv_care_adherence_form import HivCareAdherenceForm, HivCareAdherenceAhsT2Form
 from .hiv_health_care_costs_form import HivHealthCareCostsForm
 from .hiv_medical_care_form import HivMedicalCareForm
 from .hiv_result_documentation_form import HivResultDocumentationForm

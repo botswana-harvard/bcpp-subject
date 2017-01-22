@@ -4,16 +4,16 @@ from django import forms
 
 from edc_constants.constants import YES, NO
 
-from ..models import HivCareAdherence
+from ..models import HivCareAdherence, HivCareAdherenceAhsT2
 
 from .form_mixins import SubjectModelFormMixin
 
 
-class HivCareAdherenceForm (SubjectModelFormMixin):
+class HivCareAdherenceFormMixin (SubjectModelFormMixin):
 
     def clean(self):
 
-        cleaned_data = super(HivCareAdherenceForm, self).clean()
+        cleaned_data = super(HivCareAdherenceFormMixin, self).clean()
         # if no medical care, explain why not
         if cleaned_data.get('medical_care') == NO and not cleaned_data.get('no_medical_care'):
             raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
@@ -119,4 +119,18 @@ class HivCareAdherenceForm (SubjectModelFormMixin):
 
     class Meta:
         model = HivCareAdherence
+        fields = '__all__'
+
+
+class HivCareAdherenceForm (HivCareAdherenceFormMixin):
+
+    class Meta:
+        model = HivCareAdherence
+        fields = '__all__'
+
+
+class HivCareAdherenceAhsT2Form (HivCareAdherenceFormMixin):
+
+    class Meta:
+        model = HivCareAdherenceAhsT2
         fields = '__all__'

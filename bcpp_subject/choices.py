@@ -1173,3 +1173,20 @@ PANEL_CHOICE = (
     ('Viral Load', _('Viral Load')),
     ('Venous (HIV)', _('Venous (HIV)')),
 )
+
+YES_NO_REGIMEN = (
+    ('yes_first_regimen', 'Yes, this is the first regimen'),
+    ('No', 'I previously took at least 1 different ARV (and was switched to this regimen)')
+)
+
+WEEKS_MONTHS = (
+    ('Weeks', 'weeks'),
+    ('Months', 'months')
+)
+
+SOURCE_EVIDENCE = (
+    ('Self-report', 'Self report'),
+    ('Medical-card', 'Medical Card'),
+    ('Both', 'Both'),
+    (OTHER, OTHER)
+)

@@ -5,10 +5,12 @@ from edc_consent.model_mixins import RequiresConsentMixin
 from edc_lab.model_mixins import RequisitionModelMixin
 from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
-from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
-from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin
+from edc_visit_tracking.managers import (
+    CrfModelManager as VisitTrackingCrfModelManager)
+from edc_visit_tracking.model_mixins import (
+    CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin)
 
-from bcpp_subject.models.subject_visit import SubjectVisit
+from .subject_visit import SubjectVisit
 
 
 class SubjectRequisition(

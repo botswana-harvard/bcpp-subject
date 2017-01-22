@@ -6,7 +6,7 @@ from django.test import TestCase
 from edc_constants.constants import YES, NO
 
 from .test_mixins import SubjectMixin
-from ..forms import HivCareAdherenceForm
+from ..forms import HivCareAdherenceForm, HivCareAdherenceAhsT2Form
 
 
 class TestHivCareAdherence(SubjectMixin, TestCase):
@@ -16,9 +16,9 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
         self.consent_data = {
             'identity': '31721515',
             'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
+            'report_datetime': self.get_utcnow() + relativedelta(years=3)
         }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
 
         self.options = {
             'subject_visit': self.bhs_subject_visit_female.id,
@@ -29,6 +29,13 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             'ever_taken_arv': YES,
             'first_arv': (self.get_utcnow() - relativedelta(years=1)).date(),
             'on_arv': YES,
+            'regimen_currently_prescribed': None,
+            'first_regimen': None,
+            'admitted_at_art_start': None,
+            'weeks_months_admitted': None,
+            'hospitalization_reason': None,
+            'hospitalizationevidence_source': None,
+            'hospitalizationevidence_source_other': None,
             'clinic_receiving_from': 'Bokaa',
             'next_appointment_date': (self.get_utcnow() - relativedelta(months=1)).date(),
             'arv_stop_date': None,
@@ -37,6 +44,11 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             'adherence_4_wk': 'Good',
             'arv_evidence': YES
         }
+
+    def test_form_is_valid(self):
+        """Assert that form is valid."""
+        form = HivCareAdherenceForm(data=self.options)
+        self.assertFalse(form.is_valid())
 
     def test_medical_care_no(self):
         """Assert form invalid when medical care is NO."""
@@ -159,4 +171,46 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             clinic_receiving_from=None,
             next_appointment_date=(self.get_utcnow() - relativedelta(months=1)).date())
         form = HivCareAdherenceForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+
+class TestHivCareAdherenceAhsT2(SubjectMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+            'report_datetime': self.get_utcnow() + relativedelta(years=3)
+        }
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
+
+        self.options = {
+            'subject_visit': self.bhs_subject_visit_female.id,
+            'first_positive': (self.get_utcnow() - relativedelta(years=1)).date(),
+            'medical_care': YES,
+            'no_medical_care': None,
+            'ever_recommended_arv': YES,
+            'ever_taken_arv': YES,
+            'first_arv': (self.get_utcnow() - relativedelta(years=1)).date(),
+            'on_arv': YES,
+            'regimen_currently_prescribed': None,
+            'first_regimen': None,
+            'admitted_at_art_start': None,
+            'weeks_months_admitted': None,
+            'hospitalization_reason': None,
+            'hospitalizationevidence_source': None,
+            'hospitalizationevidence_source_other': None,
+            'clinic_receiving_from': 'Bokaa',
+            'next_appointment_date': (self.get_utcnow() - relativedelta(months=1)).date(),
+            'arv_stop_date': None,
+            'arv_stop': None,
+            'adherence_4_day': 'Zero',
+            'adherence_4_wk': 'Good',
+            'arv_evidence': YES
+        }
+
+    def test_form_is_valid(self):
+        """Assert that form is valid."""
+        form = HivCareAdherenceAhsT2Form(data=self.options)
         self.assertFalse(form.is_valid())
