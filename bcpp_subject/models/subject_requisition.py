@@ -1,7 +1,6 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel
-from edc_consent.model_mixins import RequiresConsentMixin
 from edc_lab.model_mixins import RequisitionModelMixin
 from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
@@ -11,6 +10,7 @@ from edc_visit_tracking.model_mixins import (
     CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin)
 
 from .subject_visit import SubjectVisit
+from .requires_consent_model_mixin import RequiresConsentMixin
 
 
 class SubjectRequisition(
@@ -24,6 +24,7 @@ class SubjectRequisition(
 
     objects = VisitTrackingCrfModelManager()
 
-    class Meta(VisitTrackingCrfModelMixin.Meta):
+    class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
         consent_model = 'bcpp_subject.subjectconsent'
         app_label = 'bcpp_subject'
+        anonymous_consent_model = 'bcpp_subject.anonymousconsent'

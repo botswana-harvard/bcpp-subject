@@ -9,10 +9,10 @@ from edc_dashboard.view_mixins import (
 from survey.view_mixins import SurveyViewMixin
 
 from ....models import AnonymousConsent
-from ...wrappers import (
-    CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper)
 from .dashboard_view_mixin import DashboardViewMixin
-from .wrappers import AnonymousConsentModelWrapper, AppointmentModelWrapper
+from .wrappers import (
+    AnonymousConsentModelWrapper, AppointmentModelWrapper,
+    SubjectVisitModelWrapper, CrfModelWrapper, RequisitionModelWrapper)
 
 
 class DashboardView(
@@ -29,6 +29,11 @@ class DashboardView(
     requisition_model_wrapper_class = RequisitionModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
     appointment_model_wrapper_class = AppointmentModelWrapper
+
+    def get(self, request, *args, **kwargs):
+        self.anonymous = True
+        kwargs['anonymous'] = 'anonymous'
+        return super().get(request, *args, **kwargs)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
