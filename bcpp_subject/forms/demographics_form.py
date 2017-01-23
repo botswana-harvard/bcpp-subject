@@ -42,8 +42,7 @@ class DemographicsForm(SubjectModelFormMixin):
             num_wives = cleaned_data.get('num_wives', 0)
             subject_visit = cleaned_data.get('subject_visit')
             subject_identifier = subject_visit.subject_identifier
-            registered_subject = RegisteredSubject.objects.get(
-                household_member__subject_identifier=subject_identifier)
+            registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
             if num_wives <= 0:
                 if registered_subject.gender == MALE:
                     raise forms.ValidationError(
