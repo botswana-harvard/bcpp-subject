@@ -42,18 +42,18 @@ class DemographicsForm(SubjectModelFormMixin):
             num_wives = cleaned_data.get('num_wives', 0)
             subject_visit = cleaned_data.get('subject_visit')
             subject_identifier = subject_visit.subject_identifier
-            consent = RegisteredSubject.objects.get(
+            registered_subject = RegisteredSubject.objects.get(
                 household_member__subject_identifier=subject_identifier)
             if num_wives <= 0:
-                if consent.gender == MALE:
+                if registered_subject.gender == MALE:
                     raise forms.ValidationError(
                         {'num_wives': 'The number of wives should be greater than 0.'})
             if husband_wives == 0:
-                if consent.gender == FEMALE:
+                if registered_subject.gender == FEMALE:
                     raise forms.ValidationError(
                         {'num_wives': 'The number of husbands should be greater than 0.'})
 
-            if consent.gender == FEMALE:
+            if registered_subject.gender == FEMALE:
                 if num_wives is not None:
                     raise forms.ValidationError(
                         {'Married Female cannot have a wife'})
