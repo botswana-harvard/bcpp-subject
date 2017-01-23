@@ -22,9 +22,7 @@ from survey.model_mixins import SurveyScheduleModelMixin
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
 
-
-def is_minor(dob, reference_datetime):
-    return 16 <= age(dob, reference_datetime).years < 18
+from .utils import is_minor
 
 
 class SubjectConsent(
@@ -36,7 +34,8 @@ class SubjectConsent(
 
     """ A model completed by the user that captures the ICF."""
 
-    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
+    household_member = models.ForeignKey(
+        HouseholdMember, on_delete=models.PROTECT)
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
@@ -75,7 +74,8 @@ class SubjectConsent(
             # self.survey = self.get_survey_name()
         # FIXME: get this using the map_area from survey
         self.study_site = site_mappers.current_map_code
-        self.is_minor = YES if is_minor(self.dob, self.consent_datetime) else NO
+        self.is_minor = YES if is_minor(
+            self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
 
     def common_clean(self):
@@ -86,9 +86,11 @@ class SubjectConsent(
                 self.household_member.inability_to_participate == NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
-        HicEnrollment = django_apps.get_model(*'bcpp_subject.hicenrollment'.split('.'))
+        HicEnrollment = django_apps.get_model(
+            *'bcpp_subject.hicenrollment'.split('.'))
         try:
-            HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
+            HicEnrollment.objects.get(
+                subject_visit__household_member=self.household_member)
             if self.dob != self.dob:
                 raise ConsentValidationError('Does not match \'{}\'.'.format(
                     HicEnrollment._meta.verbose_name), 'dob')
@@ -154,7 +156,8 @@ class SubjectConsent(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'is_literate')
         elif enrollment_checklist.literacy == NO and self.is_literate == NO and not self.witness_name:
-            raise ConsentValidationError('Witness name is required', 'witness_name')
+            raise ConsentValidationError(
+                'Witness name is required', 'witness_name')
         # match marriage if not citizen
         if self.citizen == NO:
             if (enrollment_checklist.legal_marriage != self.legal_marriage) or (

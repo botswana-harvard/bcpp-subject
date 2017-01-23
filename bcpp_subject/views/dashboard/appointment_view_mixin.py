@@ -1,5 +1,5 @@
-from edc_dashboard.view_mixins.subject_dashboard import AppointmentViewMixin as BaseAppointmentMixin
-
+from edc_dashboard.view_mixins.subject_dashboard import (
+    AppointmentViewMixin as BaseAppointmentMixin)
 
 from member.models import HouseholdMember
 

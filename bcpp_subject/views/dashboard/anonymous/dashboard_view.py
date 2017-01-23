@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
@@ -9,16 +10,15 @@ from edc_dashboard.view_mixins import (
 from survey.view_mixins import SurveyViewMixin
 
 from ....models import AnonymousConsent
-
-from ...wrappers import CrfModelWrapper, SubjectVisitModelWrapper
-
 from .dashboard_view_mixin import DashboardViewMixin
-from .wrappers import AnonymousConsentModelWrapper, AppointmentModelWrapper
+from .wrappers import (
+    AnonymousConsentModelWrapper, AppointmentModelWrapper,
+    SubjectVisitModelWrapper, CrfModelWrapper, RequisitionModelWrapper)
 
 
 class DashboardView(
-        DashboardViewMixin,
-        SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
+        SurveyViewMixin, DashboardViewMixin,
+        AppConfigViewMixin, EdcBaseViewMixin,
         EdcDashboardViewMixin, TemplateView):
 
     app_config_name = 'bcpp_subject'
@@ -27,8 +27,16 @@ class DashboardView(
     consent_model_wrapper_class = AnonymousConsentModelWrapper
     consent_model = AnonymousConsent
     crf_model_wrapper_class = CrfModelWrapper
+    requisition_model_wrapper_class = RequisitionModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
     appointment_model_wrapper_class = AppointmentModelWrapper
+
+    def get(self, request, *args, **kwargs):
+        self.anonymous = True
+        kwargs['anonymous'] = 'anonymous'
+        kwargs['anonymous_dashboard_url_name'] = django_apps.get_app_config(
+            'bcpp_subject').anonymous_dashboard_url_name
+        return super().get(request, *args, **kwargs)
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

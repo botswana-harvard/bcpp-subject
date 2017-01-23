@@ -77,7 +77,7 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.subject_identifier
+        return '{}'.format(self.subject_identifier)
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
@@ -104,7 +104,8 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
 
         ...see_also:: SubjectReferral."""
         try:
-            SubjectReferral = django_apps.get_model('bcpp_subject', 'subjectreferral')
+            SubjectReferral = django_apps.get_model(
+                'bcpp_subject', 'subjectreferral')
             subject_referral = SubjectReferral.objects.get(
                 subject_visit__appointment__subject_identifier=self.subject_identifier)
             if subject_referral.referral_code:
@@ -124,7 +125,8 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
                 'Phone: {subject_phone} {alt_subject_phone}\n'
                 '').format(
                     may_sms_follow_up='SMS permitted' if self.may_sms_follow_up == 'Yes' else 'NO SMS!',
-                    subject_cell='{} (primary)'.format(self.subject_cell) if self.subject_cell else '(none)',
+                    subject_cell='{} (primary)'.format(
+                        self.subject_cell) if self.subject_cell else '(none)',
                     alt_subject_cell=self.subject_cell_alt,
                     subject_phone=self.subject_phone or '(none)', alt_subject_phone=self.subject_phone_alt
             )

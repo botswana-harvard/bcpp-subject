@@ -1,5 +1,4 @@
 from plot.utils import get_anonymous_plot
-
 from household.views import HouseholdViewMixin as BaseHouseholdViewMixin
 
 

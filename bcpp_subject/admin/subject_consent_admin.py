@@ -4,8 +4,9 @@ from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
-from edc_base.modeladmin_mixins import ModelAdminInstitutionMixin, audit_fieldset_tuple, audit_fields,\
-    ModelAdminNextUrlRedirectMixin
+from edc_base.modeladmin_mixins import (
+    ModelAdminInstitutionMixin, audit_fieldset_tuple, audit_fields,
+    ModelAdminNextUrlRedirectMixin)
 from edc_consent.modeladmin_mixins import ModelAdminConsentMixin
 
 from survey.admin import survey_schedule_fields, survey_schedule_fieldset_tuple
@@ -79,13 +80,16 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
     }
 
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj=obj) + audit_fields + survey_schedule_fields
+        return (super().get_readonly_fields(request, obj=obj)
+                + audit_fields
+                + survey_schedule_fields)
 
     def view_on_site(self, obj):
         try:
             return reverse(
                 'bcpp-subject:dashboard_url', kwargs=dict(
-                    household_identifier=obj.household_member.household_structure.household.household_identifier,
+                    household_identifier=(obj.household_member.household_structure.
+                                          household.household_identifier),
                     subject_identifier=obj.subject_identifier,
                     survey_schedule=obj.survey_schedule_object.field_value))
         except NoReverseMatch:
@@ -93,6 +97,9 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            HouseholdMember = django_apps.get_model('member', 'householdmember')
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member'))
-        return super(SubjectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+            HouseholdMember = django_apps.get_model(
+                'member', 'householdmember')
+            kwargs["queryset"] = HouseholdMember.objects.filter(
+                id__exact=request.GET.get('household_member'))
+        return super().formfield_for_foreignkey(
+            db_field, request, **kwargs)

@@ -18,6 +18,7 @@ class AppointmentAdmin(ModelAdminMixin):
     fieldsets = (
         (None, {
             'fields': [
+                'subject_identifier',
                 'appt_datetime',
                 'appt_type',
                 'appt_status',
@@ -28,9 +29,19 @@ class AppointmentAdmin(ModelAdminMixin):
         visit_schedule_fieldset_tuple,
         audit_fieldset_tuple)
 
+    list_display = (
+        'subject_identifier', 'visit_code', 'appt_datetime', 'appt_status')
+
+    list_filter = ('visit_code', 'appt_datetime', 'appt_status', 'appt_type')
+
+    search_fields = ('subject_identifier', )
+
     radio_fields = {
         'appt_type': admin.VERTICAL,
         'appt_status': admin.VERTICAL}
 
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj=obj) + survey_fields + visit_schedule_fields
+        return (super().get_readonly_fields(request, obj=obj)
+                + survey_fields
+                + visit_schedule_fields
+                + ('subject_identifier', ))

@@ -5,13 +5,13 @@ from edc_appointment.model_mixins import CreateAppointmentsMixin
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
+from bcpp.surveys import (
+    BHS_SURVEY, AHS_SURVEY, ESS_SURVEY, ANONYMOUS_SURVEY, BCPP_YEAR_3)
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 
 from ..exceptions import EnrollmentError
 from ..managers import EnrollmentManager as BaseEnrollmentManager
-from bcpp.surveys import (
-    BHS_SURVEY, AHS_SURVEY, ESS_SURVEY, ANONYMOUS_SURVEY)
 
 
 class EnrollmentManager(BaseEnrollmentManager):
@@ -31,29 +31,48 @@ class EnrollmentManager(BaseEnrollmentManager):
             subject_identifier=subject_identifier,
             survey_schedule=survey_schedule_object.field_value)
         # loop through looking for a survey not yet enrolled to.
+        existing = None  # existing enrollment instance
         for survey in survey_schedule_object.surveys:
             try:
-                self.get(
+                existing = self.get(
                     survey=survey.field_value,
                     **defaults)
             except Enrollment.DoesNotExist:
-                # enroll
-                model = self.get_enrollment_model_class(survey)
-                enrollment = model(
-                    consent_identifier=consent_identifier,
-                    subject_identifier=subject_identifier,
-                    household_member=household_member,
-                    report_datetime=report_datetime,
-                    survey=survey.field_value)
-                if save:
-                    enrollment.save()
                 break
             else:
                 continue
-        if not enrollment:
+        if existing:
+            survey = existing.survey.next
+        else:
+            survey = self.get_first_survey(
+                subject_identifier=subject_identifier,
+                survey_schedule_object=survey_schedule_object)
+        if survey:
+            model = self.get_enrollment_model_class(survey)
+            enrollment = model(
+                consent_identifier=consent_identifier,
+                subject_identifier=subject_identifier,
+                household_member=household_member,
+                report_datetime=report_datetime,
+                survey=survey.field_value)
+            if save:
+                enrollment.save()
+        else:
             raise EnrollmentError(
                 'No surveys in this schedule left to enroll.')
         return survey
+
+    def get_first_survey(self, subject_identifier=None,
+                         survey_schedule_object=None):
+        """Returns a survey object.
+
+        This is the first ever survey
+
+        Note special case for YEAR 3 where first survey is ESS"""
+        if survey_schedule_object.name == BCPP_YEAR_3:
+            return survey_schedule_object.get_survey(name=ESS_SURVEY)
+        else:
+            return survey_schedule_object.surveys[0]
 
     def get_enrollment_model_class(self, survey):
         """Returns the proxy model class for the given survey name."""
@@ -78,11 +97,15 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
         verbose_name="Subject Identifier",
         max_length=50)
 
-    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
+    household_member = models.ForeignKey(
+        HouseholdMember,
+        on_delete=models.PROTECT)
 
     consent_identifier = models.UUIDField()
 
-    report_datetime = models.DateTimeField(default=timezone.now, editable=False)
+    report_datetime = models.DateTimeField(
+        default=timezone.now,
+        editable=False)
 
     objects = EnrollmentManager()
 
@@ -90,7 +113,8 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
 
     def save(self, *args, **kwargs):
         self.facility_name = 'home'
-        self.survey_schedule = self.household_member.survey_schedule_object.field_value
+        self.survey_schedule = (
+            self.household_member.survey_schedule_object.field_value)
         super().save(*args, **kwargs)
 
     @property
