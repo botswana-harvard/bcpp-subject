@@ -50,6 +50,12 @@ class TestDemographicsForm(SubjectMixin, TestCase):
         form = DemographicsForm(data=self.data)
         self.assertFalse(form.is_valid())
 
+    def test_marriage_gender_female_none_valid(self):
+        """ Assert that is a participant is married and with number of wife not provided validation error thrown"""
+        self.data.update(num_wives=None, husband_wives=0, marital_status='Married')
+        form = DemographicsForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
     def test_live_with_alone_valid(self):
         """ Assert that the many to many Alone can not be selected with another value."""
         livewith2 = mommy.make_recipe('bcpp_subject.livewith', name='Alone', short_name='Alone')
