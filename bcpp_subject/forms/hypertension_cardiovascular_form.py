@@ -11,6 +11,7 @@ from .form_mixins import SubjectModelFormMixin
 class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
+        self.validate_tobacco_smoking()
         self.validate_not_available_fields()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
@@ -71,6 +72,16 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                 if cleaned_data.get(field) != 'N/A':
                     raise forms.ValidationError({
                         field: [
+                            'Not Applicable is the only valid answer']})
+        return cleaned_data
+
+    def validate_tobacco_smoking(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data.get('tobacco_smoking') == NO:
+            if cleaned_data.get('tobacco_counselling') != 'N/A':
+                    raise forms.ValidationError({
+                        'tobacco_counselling': [
                             'Not Applicable is the only valid answer']})
         return cleaned_data
 
