@@ -1,7 +1,7 @@
 from django import forms
 
 from edc_base.model.constants import DEFAULT_BASE_FIELDS
-from edc_constants.constants import NO, NOT_APPLICABLE, OTHER
+from edc_constants.constants import NO, OTHER
 
 from ..models import HypertensionCardiovascular
 
@@ -12,7 +12,6 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
         self.validate_not_available_fields()
-        self.validate_hypertension_diagnosis()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
         return self.cleaned_data
@@ -59,7 +58,9 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                                                    'bpmeasurement',
                                                    'medications_taken',
                                                    'medication_still_given',
-                                                   'consent_version']
+                                                   'consent_version',
+                                                   'if_other_medications_taken',
+                                                   'if_other_medication_still_given']
 
         for field in HypertensionCardiovascular._meta.get_fields():
             if field.name not in fields_to_exclude:
@@ -67,7 +68,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
         if cleaned_data.get('may_take_blood_pressure') == NO:
             for field in all_na_fields:
-                if self.cleaned_data.get(field) is not NOT_APPLICABLE:
+                if cleaned_data.get(field) != 'N/A':
                     raise forms.ValidationError({
                         field: [
                             'Not Applicable is the only valid answer']})
