@@ -1284,3 +1284,25 @@ SOURCE_EVIDENCE = (
     ('Both', 'Both'),
     (OTHER, 'Other reason, specify')
 )
+
+COUNTRIES = (
+    ('Algeria' , 'Algeria') ,
+    ('Angola' , 'Angola') ,
+    ('Botswana' , 'Botswana') ,
+    ('Brazil' , 'Brazil') ,
+    ('Cameroon' , 'Cameroon') ,
+    ('Canada' , 'Canada') ,
+    ('China' , 'China') ,
+    ('Kenya' , 'Kenya') ,
+    ('Lesotho' , 'Lesotho') ,
+    ('Mauritius' , 'Mauritius') ,
+    ('Mozambique' , 'Mozambique') ,
+    ('Nigeria' , 'Nigeria') ,
+    ('South Africa' , 'South Africa') ,
+    ('Swaziland' , 'Swaziland') ,
+    ('Tanzania' , 'Tanzania') ,
+    ('United States' , 'United States') ,
+    ('Zambia' , 'Zambia') ,
+    ('Zimbabwe' , 'Zimbabwe'),
+    (OTHER, 'OTHER'),
+)
