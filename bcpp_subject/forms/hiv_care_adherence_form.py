@@ -4,7 +4,7 @@ from django import forms
 
 from edc_constants.constants import YES, NO
 
-from ..models import HivCareAdherence, HivCareAdherenceAhsT2
+from ..models import HivCareAdherence
 
 from .form_mixins import SubjectModelFormMixin
 
@@ -16,8 +16,10 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
         cleaned_data = super(HivCareAdherenceFormMixin, self).clean()
         # if no medical care, explain why not
         if cleaned_data.get('medical_care') == NO and not cleaned_data.get('no_medical_care'):
-            raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
-        # if on_arv, need to answer clinic taking from and next scheduled appointment.
+            raise forms.ValidationError(
+                'If participant has not received any medical care, please give reason why not')
+        # if on_arv, need to answer clinic taking from and next scheduled
+        # appointment.
         self.validate_on_arv()
         self.validate_ever_taken_arv()
         if (cleaned_data.get('ever_recommended_arv') == YES and
@@ -25,7 +27,8 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
                 not cleaned_data.get('why_no_arv')):
             raise forms.ValidationError(
                 'If participant has not taken any ARV\'s, give the main reason why not')
-        # if currently taking arv's, how well has participant been taking medication
+        # if currently taking arv's, how well has participant been taking
+        # medication
         if cleaned_data.get('arv_stop') == 'Other' and not cleaned_data.get('arv_stop_other'):
             raise forms.ValidationError(
                 'If participant reason for stopping ARV\'s is \'OTHER\', '
@@ -53,7 +56,8 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
 
     def validate_ever_taken_arv(self):
         cleaned_data = self.cleaned_data
-        # if you are not currently on arv's you have to give the date you stopped taking arv
+        # if you are not currently on arv's you have to give the date you
+        # stopped taking arv
         if (cleaned_data.get('ever_taken_arv') == YES and
                 cleaned_data.get('on_arv') == NO and not cleaned_data.get('arv_stop_date')):
             raise forms.ValidationError(
@@ -62,13 +66,16 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
         if cleaned_data.get('ever_taken_arv') == YES and not cleaned_data.get('first_arv'):
             raise forms.ValidationError(
                 'If participant has taken ARV\'s, give the date when these were first started.')
-        # if participant has never taken ARV's, dont give a reason why they stopped.
+        # if participant has never taken ARV's, dont give a reason why they
+        # stopped.
         if cleaned_data.get('ever_taken_arv') == NO and cleaned_data.get('arv_stop'):
             raise forms.ValidationError(
                 'If participant has NEVER taken ARV\'s, reason why they stopped should be \'None\'.')
-        # if was recommended to take arv's but never taken arv's give reason why
+        # if was recommended to take arv's but never taken arv's give reason
+        # why
 
-        # if ARVs where taken in the past, then no need for reason why not started ARVS
+        # if ARVs where taken in the past, then no need for reason why not
+        # started ARVS
         if cleaned_data.get('ever_taken_arv') == YES and cleaned_data.get('why_no_arv'):
             raise forms.ValidationError(
                 'If participant has not taken ARV\'s in the past, DO NOT give '
@@ -84,11 +91,13 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
                     not cleaned_data.get('next_appointment_date')):
                 raise forms.ValidationError(
                     'If patient is on ARV, provide the clinic facility and next scheduled appointment.')
-        # if you are not taking any arv's do not indicate that you have missed taking medication
+        # if you are not taking any arv's do not indicate that you have missed
+        # taking medication
         if cleaned_data.get('on_arv') == NO and cleaned_data.get('adherence_4_day'):
             raise forms.ValidationError(
                 'You do not have to indicate missed medication because you are not taking any ARV\'s')
-        # if you are currently on arv's do not give the date or reason you stopped taking arv
+        # if you are currently on arv's do not give the date or reason you
+        # stopped taking arv
         if (cleaned_data.get('on_arv') == YES and
                 (cleaned_data.get('arv_stop_date') or cleaned_data.get('arv_stop'))):
             raise forms.ValidationError(
@@ -101,9 +110,11 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
 
     def validate_not_on_art(self):
         cleaned_data = self.cleaned_data
-        # Particpants that reports to have never taken ARV's cannot be on ARV's now.
+        # Particpants that reports to have never taken ARV's cannot be on ARV's
+        # now.
         if cleaned_data.get('ever_taken_arv') == NO and cleaned_data.get('on_arv') == YES:
-            raise forms.ValidationError('Particpants that reports to have never taken ARV\'s cannot be on ARV\'s now.')
+            raise forms.ValidationError(
+                'Particpants that reports to have never taken ARV\'s cannot be on ARV\'s now.')
         if cleaned_data.get('on_arv') == NO:
             if cleaned_data.get('clinic_receiving_from') or cleaned_data.get('next_appointment_date'):
                 raise forms.ValidationError(
@@ -115,7 +126,8 @@ class HivCareAdherenceFormMixin (SubjectModelFormMixin):
                 raise forms.ValidationError(
                     'If patient is was NEVER ON ARV, DO NOT provide the stop date and reason for stopping.')
             if cleaned_data.get('adherence_4_wk') or cleaned_data.get('adherence_4_day'):
-                raise forms.ValidationError('If patient is NOT ARV, DO NOT provide any adherance information.')
+                raise forms.ValidationError(
+                    'If patient is NOT ARV, DO NOT provide any adherance information.')
 
     class Meta:
         model = HivCareAdherence
@@ -126,11 +138,4 @@ class HivCareAdherenceForm (HivCareAdherenceFormMixin):
 
     class Meta:
         model = HivCareAdherence
-        fields = '__all__'
-
-
-class HivCareAdherenceAhsT2Form (HivCareAdherenceFormMixin):
-
-    class Meta:
-        model = HivCareAdherenceAhsT2
         fields = '__all__'

@@ -50,22 +50,7 @@ class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
 class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    filter_horizontal = ('medications_taken', 'medication_still_given')
-
     form = HypertensionCardiovascularForm
-
-    radio_fields = {
-        'may_take_blood_pressure': admin.VERTICAL,
-        'hypertension_diagnosis': admin.VERTICAL,
-        'health_care_facility': admin.VERTICAL,
-        'salt_intake_counselling': admin.VERTICAL,
-        'tobacco_smoking': admin.VERTICAL,
-        'tobacco_counselling': admin.VERTICAL,
-        'weight_counselling': admin.VERTICAL,
-        'physical_activity_counselling': admin.VERTICAL,
-        'alcohol_counselling': admin.VERTICAL,
-        'blood_test_for_cholesterol': admin.VERTICAL,
-        'blood_test_for_diabetes': admin.VERTICAL}
 
     fieldsets = (
         (None, {
@@ -90,7 +75,23 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple,
     )
 
-    inlines = (BPMeasurementAdminInlineAdmin, WaistCircumferenceMeasurementInlineAdmin)
+    filter_horizontal = ('medications_taken', 'medication_still_given')
+
+    radio_fields = {
+        'may_take_blood_pressure': admin.VERTICAL,
+        'hypertension_diagnosis': admin.VERTICAL,
+        'health_care_facility': admin.VERTICAL,
+        'salt_intake_counselling': admin.VERTICAL,
+        'tobacco_smoking': admin.VERTICAL,
+        'tobacco_counselling': admin.VERTICAL,
+        'weight_counselling': admin.VERTICAL,
+        'physical_activity_counselling': admin.VERTICAL,
+        'alcohol_counselling': admin.VERTICAL,
+        'blood_test_for_cholesterol': admin.VERTICAL,
+        'blood_test_for_diabetes': admin.VERTICAL}
+
+    inlines = (BPMeasurementAdminInlineAdmin,
+               WaistCircumferenceMeasurementInlineAdmin)
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields

@@ -12,25 +12,30 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class LabourMarketWagesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = LabourMarketWagesForm
+
     inlines = [GrantInlineAdmin, ]
-    fields = (
-        "subject_visit",
-        "employed",
-        "occupation",
-        "occupation_other",
-        "job_description_change",
-        "days_worked",
-        "monthly_income",
-        "salary_payment",
-        "household_income",
-        "other_occupation",
-        "other_occupation_other",
-        "govt_grant",
-        "nights_out",
-        "weeks_out",
-        "days_not_worked",
-        "days_inactivite",
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                "employed",
+                "occupation",
+                "occupation_other",
+                "job_description_change",
+                "days_worked",
+                "monthly_income",
+                "salary_payment",
+                "household_income",
+                "other_occupation",
+                "other_occupation_other",
+                "govt_grant",
+                "nights_out",
+                "weeks_out",
+                "days_not_worked",
+                "days_inactivite")}),
     )
+
     radio_fields = {
         "employed": admin.VERTICAL,
         "occupation": admin.VERTICAL,

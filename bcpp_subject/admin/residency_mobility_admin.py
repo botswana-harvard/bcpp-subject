@@ -1,29 +1,35 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_base.fieldsets import Remove
+
 from ..admin_site import bcpp_subject_admin
-from ..constants import ANNUAL
 from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
-
-from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
+from ..constants import E0
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(ResidencyMobility, site=bcpp_subject_admin)
-class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
+class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResidencyMobilityForm
 
-    fields = (
-        "subject_visit",
-        'length_residence',
-        'permanent_resident',
-        'intend_residency',
-        'nights_away',
-        'cattle_postlands',
-        'cattle_postlands_other')
+    conditional_fieldlist = {
+        E0: Remove(['intend_residency']),
+    }
 
-    custom_exclude = {ANNUAL: ('length_residence', )}
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'length_residence',
+                'permanent_resident',
+                'intend_residency',
+                'nights_away',
+                'cattle_postlands',
+                'cattle_postlands_other')}),
+    )
 
     radio_fields = {
         "length_residence": admin.VERTICAL,

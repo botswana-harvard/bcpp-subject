@@ -15,10 +15,12 @@ class Circumcision (CircumcisionModelMixin, CrfModelMixin):
         verbose_name="Are you circumcised?",
         max_length=15,
         choices=YES_NO_UNSURE,
+        null=True,
+        blank=False,
         help_text="")
 
     last_seen_circumcised = models.CharField(
-        verbose_name="Since we last spoke with you on last_seen_circumcised, have you been circumcised?",
+        verbose_name="Since we last spoke with you on {previous}, have you been circumcised?",
         max_length=15,
         null=True,
         blank=True,

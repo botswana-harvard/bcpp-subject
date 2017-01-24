@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_field_label.admin_mixin import ModifyFormLabelMixin
+from edc_constants.constants import YES
 
 from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
@@ -13,32 +13,27 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(Circumcision, site=bcpp_subject_admin)
-class CircumcisionAdmin(ModifyFormLabelMixin, CrfModelAdminMixin, admin.ModelAdmin):
-
-    replacements = {
-        'first_circ_rep': {
-            'field_attr': 'last_seen_circumcised',
-            'placeholder': 'last_seen_circumcised',
-            'replacement_attr': 'report_datetime',
-            'attr': 'previous_visit',
-        }
-    }
+class CircumcisionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CircumcisionForm
+
+    custom_form_labels = {
+        'circumcised': {
+            'label': 'Since we last saw you in {previous}, were you circumcised?',
+            'callback': lambda obj: True if obj.circumcised != YES else False}
+    }
 
     fieldsets = (
         (None, {
             'fields': [
                 "subject_visit",
                 'circumcised',
-                'last_seen_circumcised',
                 'circumcised_location',
                 'circumcised_location_other',
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
         'circumcised': admin.VERTICAL,
-        'last_seen_circumcised': admin.VERTICAL,
         'circumcised_location': admin.VERTICAL}
 
     instructions = [

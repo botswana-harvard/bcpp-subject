@@ -12,15 +12,19 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class QualityOfLifeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = QualityOfLifeForm
-    fields = (
-        "subject_visit",
-        "mobility",
-        "self_care",
-        "activities",
-        "pain",
-        "anxiety",
-        "health_today",
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                "mobility",
+                "self_care",
+                "activities",
+                "pain",
+                "anxiety",
+                "health_today")}),
     )
+
     radio_fields = {
         "mobility": admin.VERTICAL,
         "self_care": admin.VERTICAL,
@@ -28,6 +32,7 @@ class QualityOfLifeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "pain": admin.VERTICAL,
         "anxiety": admin.VERTICAL,
     }
+
     instructions = [(
         "Note to Interviewer: In this section, read the heading (question) and then each of the "
         "5 possible responses for each question. Do not read -Do not want to answer-, but record "

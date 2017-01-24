@@ -4,7 +4,7 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_DWTA
 
-from ..choices import ALCOHOL_SEX
+from ..choices import ALCOHOL_SEX, PARTNER_AGE
 
 from .model_mixins import CrfModelMixin, CrfModelManager
 
@@ -60,6 +60,22 @@ class SexualBehaviour (CrfModelMixin):
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],
         help_text="Note:leave blank if participant does not want to respond.",
+    )
+
+    first_sex_partner_age = models.CharField(
+        verbose_name=(
+            'How old was your sex partner when you had sex for the first time'),
+        max_length=25,
+        choices=PARTNER_AGE,
+        null=True,
+        blank=False,
+    )
+
+    # FIXME: add validation in form
+    first_sex_partner_age_other = models.IntegerField(
+        verbose_name='If 19 or older, specify age',
+        null=True,
+        blank=True,
     )
 
     condom = models.CharField(

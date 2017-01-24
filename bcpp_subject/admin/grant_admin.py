@@ -16,15 +16,21 @@ class GrantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': [
-                'labour_market_wages', 'grant_number', 'grant_type', 'other_grant',
-            ]}), audit_fieldset_tuple)
+            'fields': (
+                'labour_market_wages',
+                'grant_number',
+                'grant_type',
+                'other_grant',
+            )}),
+        audit_fieldset_tuple)
 
-    list_display = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant', )
+    list_display = (
+        'labour_market_wages', 'grant_number', 'grant_type', 'other_grant', )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "labour_market_wages":
-            kwargs["queryset"] = LabourMarketWages.objects.filter(id__exact=request.GET.get('labour_market_wages'))
+            kwargs["queryset"] = LabourMarketWages.objects.filter(
+                id__exact=request.GET.get('labour_market_wages'))
         return super(GrantAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 

@@ -1,9 +1,9 @@
-from django.contrib.admin import AdminSite
+from django.contrib.admin import AdminSite as DjangoAdminSite
 
 
-class BcppSubjectAdminSite(AdminSite):
+class AdminSite(DjangoAdminSite):
     site_title = 'BCPP Subject'
     site_header = 'BCPP Subject'
     index_title = 'BCPP Subject'
     site_url = '/bcpp_subject/list/'
-bcpp_subject_admin = BcppSubjectAdminSite(name='bcpp_subject_admin')
+bcpp_subject_admin = AdminSite(name='bcpp_subject_admin')

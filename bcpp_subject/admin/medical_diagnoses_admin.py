@@ -6,25 +6,31 @@ from ..constants import BASELINE, ANNUAL
 from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
 
-from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(MedicalDiagnoses, site=bcpp_subject_admin)
-class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
+class MedicalDiagnosesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = MedicalDiagnosesForm
-    fields = (
-        'subject_visit',
-        'diagnoses',
-        'heart_attack_record',
-        'cancer_record',
-        'tb_record',
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'subject_visit',
+                'diagnoses',
+                'heart_attack_record',
+                'cancer_record',
+                'tb_record')}),
     )
+
     radio_fields = {
         "heart_attack_record": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
+
     filter_horizontal = ('diagnoses',)
+
     instructions = {
         BASELINE: [_(
             "<h5>Read to Participant</h5> I am now going to ask you"

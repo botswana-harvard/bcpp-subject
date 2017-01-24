@@ -12,13 +12,18 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class StigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = StigmaForm
-    fields = (
-        "subject_visit",
-        'anticipate_stigma',
-        'enacted_shame_stigma',
-        'saliva_stigma',
-        'teacher_stigma',
-        'children_stigma',)
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'anticipate_stigma',
+                'enacted_shame_stigma',
+                'saliva_stigma',
+                'teacher_stigma',
+                'children_stigma',)}),
+    )
+
     radio_fields = {
         "anticipate_stigma": admin.VERTICAL,
         "enacted_shame_stigma": admin.VERTICAL,

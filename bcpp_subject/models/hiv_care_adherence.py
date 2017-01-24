@@ -89,7 +89,8 @@ class HivCareAdherence (CrfModelMixin):
 
     # longitudinal, DATE if terminal value date is provided
     first_arv = models.DateField(
-        verbose_name="When did you first start taking antiretroviral therapy (ARVs)?",  # Q10 populate if possible
+        # Q10 populate if possible
+        verbose_name="When did you first start taking antiretroviral therapy (ARVs)?",
         validators=[date_not_future],
         null=True,
         blank=True,
@@ -97,7 +98,6 @@ class HivCareAdherence (CrfModelMixin):
                    "If participant is unable to estimate date, leave blank."),
     )
 
-    # --------------------all
     on_arv = models.CharField(
         verbose_name="Are you currently taking antiretroviral therapy (ARVs)?",
         max_length=25,
@@ -112,54 +112,65 @@ class HivCareAdherence (CrfModelMixin):
         blank=False,
         verbose_name='What antiretroviral regimen are you currently prescribed?')
 
+    # TODO: add rule group to required ArvHistory if NO
+    # FIXME:
     first_regimen = models.CharField(
-        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+        verbose_name=(
+            'Is this the first regimen that you were prescribed for your '
+            'HIV infection?'),
         max_length=25,
         choices=YES_NO_REGIMEN,
         null=True,
         blank=False,
-        help_text="If the participant answered NO to the question above, record prior regimen and timing of switch.",
+        help_text=(
+            'If the participant answered NO to the question above, record '
+            'prior regimen and timing of switch.'),
     )
 
-    admitted_at_art_start = models.CharField(
-        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+    hospitalized_art_start = models.CharField(
+        verbose_name=(
+            'Were you admitted to the hospital during the ~6 months following '
+            'the date on which you started ART'),
         max_length=25,
         choices=YES_NO,
         null=True,
         blank=False
     )
 
-    weeks_months_admitted = models.CharField(
-        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+    # FIXME: add conversion in forms.py to accept phrase "XX weeks" or "XX
+    #        months"
+    # required if hospitalized_art_start == YES
+    hospitalized_art_start_duration = models.CharField(
+        verbose_name=(
+            'About how many weeks or months after starting ART were you '
+            'admitted to the hospital'),
         max_length=25,
-        choices=WEEKS_MONTHS,
         null=True,
-        blank=False
     )
 
-    hospitalization_reason = models.ManyToManyField(
+    hospitalized_art_start_reason = models.ManyToManyField(
         HospitalizationReason,
-        blank=False,
         max_length=100,
-        verbose_name="What was the primary reason for the hospitalization?",
-        help_text="If yes to question about hospital admission"
+        verbose_name=(
+            'What was the primary reason for the hospitalization?'),
+        help_text='Required if hospitalized after starting ART.'
     )
 
-    hospitalizationevidence_source = models.CharField(
-        verbose_name="Is this the first regimen that you were prescribed for your HIV infection?",
+    hospitalized_reason_evidence = models.CharField(
+        verbose_name=(
+            'Is this the first regimen that you were prescribed for your '
+            'HIV infection?'),
         max_length=25,
         choices=SOURCE_EVIDENCE,
         null=True,
-        blank=False
     )
 
-    hospitalizationevidence_source_other = OtherCharField()
+    hospitalized_reason_evidence_other = OtherCharField()
 
     clinic_receiving_from = models.CharField(
         verbose_name='Which clinic facility are you already receiving therapy from?',
         default=None,
         null=True,
-        blank=True,
         max_length=50,
         help_text=""
     )
@@ -225,13 +236,3 @@ class HivCareAdherence (CrfModelMixin):
         app_label = 'bcpp_subject'
         verbose_name = "HIV care & Adherence"
         verbose_name_plural = "HIV care & Adherence"
-
-
-class HivCareAdherenceAhsT2 (HivCareAdherence):
-    """A model completed by the user on the participant's access to and adherence to HIV care."""
-
-    class Meta(CrfModelMixin.Meta):
-        proxy = True
-        app_label = 'bcpp_subject'
-        verbose_name = "HIV care & Adherence AHS T2"
-        verbose_name_plural = "HIV care & Adherence  Ahs T2"

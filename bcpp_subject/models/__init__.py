@@ -1,6 +1,7 @@
 from .access_to_care import AccessToCare
 from .anonymous import AnonymousConsent
 from .appointment import Appointment
+from .arv_history import ArvHistory
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
@@ -16,7 +17,7 @@ from .enrollment import Enrollment, EnrollmentAhs, EnrollmentAno, EnrollmentBhs,
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
-from .hiv_care_adherence import HivCareAdherence, HivCareAdherenceAhsT2
+from .hiv_care_adherence import HivCareAdherence
 from .hiv_health_care_costs import HivHealthCareCosts
 from .hiv_medical_care import HivMedicalCare
 from .hiv_result import HivResult
@@ -27,6 +28,7 @@ from .hiv_testing_history import HivTestingHistory
 from .hiv_untested import HivUntested
 from .household_composition import HouseholdComposition
 from .hospital_admission import HospitalAdmission
+from .immigration_status import ImmigrationStatus
 from .labour_market_wages import LabourMarketWages
 from .medical_diagnoses import MedicalDiagnoses
 from .non_pregnancy import NonPregnancy
@@ -53,7 +55,7 @@ from .subject_requisition import SubjectRequisition
 from .subject_visit import SubjectVisit
 from .substance_use import SubstanceUse
 from .tb_symptoms import TbSymptoms
-from .tubercolosis import Tubercolosis
+from .tuberculosis import Tuberculosis
 from .uncircumcised import Uncircumcised
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult

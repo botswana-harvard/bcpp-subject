@@ -16,7 +16,7 @@ class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = HicEnrollmentForm
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 "subject_visit",
                 "dob",
                 "hic_permission",
@@ -27,7 +27,9 @@ class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "citizen_or_spouse",
                 "locator_information",
                 "consent_datetime"
-            ]}), audit_fieldset_tuple)
+            )}),
+        audit_fieldset_tuple
+    )
 
     radio_fields = {
         'hic_permission': admin.VERTICAL,

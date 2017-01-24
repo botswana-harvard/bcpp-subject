@@ -1,6 +1,6 @@
 from django import forms
 
-from ..models import HeartAttack, Cancer, Tubercolosis, Sti
+from ..models import HeartAttack, Cancer, Tuberculosis, Sti
 
 from .form_mixins import SubjectModelFormMixin
 
@@ -19,10 +19,10 @@ class CancerForm (SubjectModelFormMixin):
         fields = '__all__'
 
 
-class TubercolosisForm (SubjectModelFormMixin):
+class TuberculosisForm (SubjectModelFormMixin):
 
     class Meta:
-        model = Tubercolosis
+        model = Tuberculosis
         fields = '__all__'
 
 

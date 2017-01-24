@@ -11,15 +11,20 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class StigmaOpinionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = StigmaOpinionForm
-    fields = (
-        "subject_visit",
-        'test_community_stigma',
-        'gossip_community_stigma',
-        'respect_community_stigma',
-        'enacted_verbal_stigma',
-        'enacted_phyical_stigma',
-        'enacted_family_stigma',
-        'fear_stigma',)
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'test_community_stigma',
+                'gossip_community_stigma',
+                'respect_community_stigma',
+                'enacted_verbal_stigma',
+                'enacted_phyical_stigma',
+                'enacted_family_stigma',
+                'fear_stigma')}),
+    )
+
     radio_fields = {
         "test_community_stigma": admin.VERTICAL,
         "gossip_community_stigma": admin.VERTICAL,

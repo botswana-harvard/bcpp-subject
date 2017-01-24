@@ -11,14 +11,20 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class TbSymptomsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = TbSymptomsForm
-    fields = (
-        "subject_visit",
-        'cough',
-        'fever',
-        'lymph_nodes',
-        'cough_blood',
-        'night_sweat',
-        'weight_loss',)
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'cough',
+                'fever',
+                'lymph_nodes',
+                'cough_blood',
+                'night_sweat',
+                'weight_loss')
+        }),
+    )
+
     radio_fields = {
         "cough": admin.VERTICAL,
         "fever": admin.VERTICAL,

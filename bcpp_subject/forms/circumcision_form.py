@@ -1,7 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from ..constants import ANNUAL
 from ..models import Circumcision, Uncircumcised, Circumcised
 
 from .form_mixins import SubjectModelFormMixin
@@ -9,12 +8,6 @@ from edc_constants.constants import YES
 
 
 class CircumcisionForm (SubjectModelFormMixin):
-
-    optional_labels = {
-        ANNUAL: {'circumcised': (
-            'Have you been circumcised since we last spoke with you?'),
-        }
-    }
 
     class Meta:
         model = Circumcision

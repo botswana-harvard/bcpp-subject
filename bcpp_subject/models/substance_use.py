@@ -24,6 +24,13 @@ class SubstanceUse(CrfModelMixin):
         help_text="",
     )
 
+    drug_use = models.CharField(
+        verbose_name='Do you currently use recreational drugs',
+        max_length=25,
+        choices=YES_NO_DWTA,
+        help_text="",
+    )
+
     history = HistoricalRecords()
 
     class Meta(CrfModelMixin.Meta):

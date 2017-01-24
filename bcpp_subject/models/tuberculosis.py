@@ -9,7 +9,7 @@ from ..choices import DX_TB_CHOICE
 from .model_mixins import CrfModelMixin
 
 
-class Tubercolosis (CrfModelMixin):
+class Tuberculosis (CrfModelMixin):
 
     """A model completed by the user to record any diagnosis of
     Tuberculosis in the past 12 months."""
@@ -34,5 +34,5 @@ class Tubercolosis (CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
-        verbose_name = "Tubercolosis"
-        verbose_name_plural = "Tubercolosis"
+        verbose_name = "Tuberculosis"
+        verbose_name_plural = "Tuberculosis"

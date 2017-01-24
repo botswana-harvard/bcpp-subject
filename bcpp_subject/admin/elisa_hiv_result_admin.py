@@ -17,11 +17,12 @@ class ElisaHivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 'subject_visit',
                 'hiv_result',
                 'hiv_result_datetime',
-            ]}), audit_fieldset_tuple)
+            )}),
+        audit_fieldset_tuple)
 
     list_filter = (HivResultFilter,)
 

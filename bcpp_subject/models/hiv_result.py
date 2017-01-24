@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 
 from edc_base.model.models import HistoricalRecords
@@ -8,9 +7,7 @@ from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import HIV_RESULT, WHY_NO_HIV_TESTING_CHOICE
 
-from .hic_enrollment import HicEnrollment
 from .model_mixins import CrfModelMixin
-from .subject_requisition import SubjectRequisition
 
 
 class HivResult(CrfModelMixin):
@@ -32,7 +29,8 @@ class HivResult(CrfModelMixin):
     blood_draw_type = models.CharField(
         verbose_name="What type of blood was used for the test",
         max_length=15,
-        choices=(('capillary', 'Capillary'), ('venous', 'Venous'), (NOT_APPLICABLE, 'Not applicable')),
+        choices=(('capillary', 'Capillary'), ('venous', 'Venous'),
+                 (NOT_APPLICABLE, 'Not applicable')),
         default=NOT_APPLICABLE,
         help_text="",
     )

@@ -11,14 +11,18 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class NonPregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = NonPregnancyForm
-    fields = (
-        "subject_visit",
-        'last_birth',
-        'anc_last_pregnancy',
-        'hiv_last_pregnancy',
-        'preg_arv',
-        'more_children'
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'last_birth',
+                'anc_last_pregnancy',
+                'hiv_last_pregnancy',
+                'preg_arv',
+                'more_children')}),
     )
+
     radio_fields = {"more_children": admin.VERTICAL,
                     "anc_last_pregnancy": admin.VERTICAL,
                     "hiv_last_pregnancy": admin.VERTICAL,

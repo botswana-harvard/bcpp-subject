@@ -1,35 +1,43 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_base.fieldsets import Remove
+
 from ..admin_site import bcpp_subject_admin
+from ..constants import T0
 from ..forms import ReproductiveHealthForm
 from ..models import ReproductiveHealth
 
-from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
+from .modeladmin_mixins import CrfModelAdminMixin
+
+fields = (
+    "when_pregnant",
+    "gestational_weeks",
+    "pregnancy_hiv_tested",
+    "pregnancy_hiv_retested")
 
 
 @admin.register(ReproductiveHealth, site=bcpp_subject_admin)
-class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
+class ReproductiveHealthAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ReproductiveHealthForm
-    fields = [
-        "subject_visit",
-        "number_children",
-        "menopause",
-        "family_planning",
-        "family_planning_other",
-        'currently_pregnant',
-        'when_pregnant',
-        'gestational_weeks',
-        'pregnancy_hiv_tested',
-        'pregnancy_hiv_retested']
 
-    custom_exclude = {'baseline': [
-        "when_pregnant",
-        "gestational_weeks",
-        "pregnancy_hiv_tested",
-        "pregnancy_hiv_retested"]
-    }
+    conditional_fieldlist = {T0: Remove(fields)}
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                "number_children",
+                "menopause",
+                "family_planning",
+                "family_planning_other",
+                'currently_pregnant',
+                'when_pregnant',
+                'gestational_weeks',
+                'pregnancy_hiv_tested',
+                'pregnancy_hiv_retested')}),
+    )
 
     radio_fields = {
         "menopause": admin.VERTICAL,

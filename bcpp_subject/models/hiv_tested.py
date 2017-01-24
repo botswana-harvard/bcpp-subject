@@ -5,10 +5,11 @@ from edc_base.model.fields import OtherCharField
 
 from ..choices import WHERE_HIV_TEST_CHOICE, WHY_HIV_TEST_CHOICE
 
-from .model_mixins import CrfModelMixin, HivTestingSupplementalMixin
+from .model_mixins import CrfModelMixin
+from edc_constants.choices import YES_NO_UNSURE
 
 
-class HivTested (HivTestingSupplementalMixin, CrfModelMixin):
+class HivTested (CrfModelMixin):
 
     """CS002- for those who have tested for HIV. Its branch off from Q18 - HIV testing History"""
 
@@ -25,6 +26,7 @@ class HivTested (HivTestingSupplementalMixin, CrfModelMixin):
         choices=WHERE_HIV_TEST_CHOICE,
         help_text="",
     )
+
     where_hiv_test_other = OtherCharField()
 
     why_hiv_test = models.CharField(
@@ -35,6 +37,24 @@ class HivTested (HivTestingSupplementalMixin, CrfModelMixin):
         null=True,
         choices=WHY_HIV_TEST_CHOICE,
         help_text="",
+    )
+
+    hiv_pills = models.CharField(
+        verbose_name="Have you ever heard about treatment for"
+                     " HIV with pills called antiretroviral therapy or ARVs [or HAART]?",
+        max_length=25,
+        choices=YES_NO_UNSURE,
+        null=True,
+    )
+
+    arvs_hiv_test = models.CharField(
+        verbose_name="Do you believe that treatment for HIV with "
+                     "antiretroviral therapy (or ARVs) can help HIV-positive people"
+                     " to live longer?",
+        max_length=25,
+        null=True,
+        blank=True,
+        choices=YES_NO_UNSURE,
     )
 
     history = HistoricalRecords()

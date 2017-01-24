@@ -12,15 +12,20 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class PositiveParticipantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = PositiveParticipantForm
-    fields = (
-        "subject_visit",
-        'internalize_stigma',
-        'internalized_stigma',
-        'friend_stigma',
-        'family_stigma',
-        'enacted_talk_stigma',
-        'enacted_respect_stigma',
-        'enacted_jobs_tigma',)
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'internalize_stigma',
+                'internalized_stigma',
+                'friend_stigma',
+                'family_stigma',
+                'enacted_talk_stigma',
+                'enacted_respect_stigma',
+                'enacted_jobs_tigma')}),
+    )
+
     radio_fields = {
         "internalize_stigma": admin.VERTICAL,
         "internalized_stigma": admin.VERTICAL,
@@ -29,8 +34,9 @@ class PositiveParticipantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "enacted_talk_stigma": admin.VERTICAL,
         "enacted_respect_stigma": admin.VERTICAL,
         "enacted_jobs_tigma": admin.VERTICAL, }
+
     instructions = [(
-        "<h5>Interviewer Note</h5> The following supplemental questions"
+        "Interviewer: Note The following supplemental questions"
         " are only asked for respondents with known HIV infection."
         " SKIP for respondents without known HIV infection. "),
         _(" Read to Participant: You let us know earlier that you"

@@ -11,23 +11,27 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class OutpatientCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = OutpatientCareForm
-    fields = (
-        "subject_visit",
-        "govt_health_care",
-        "dept_care",
-        "prvt_care",
-        "trad_care",
-        "care_visits",
-        "facility_visited",
-        "specific_clinic",
-        "care_reason",
-        "care_reason_other",
-        "outpatient_expense",
-        "travel_time",
-        "transport_expense",
-        "cost_cover",
-        "waiting_hours",
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                "govt_health_care",
+                "dept_care",
+                "prvt_care",
+                "trad_care",
+                "care_visits",
+                "facility_visited",
+                "specific_clinic",
+                "care_reason",
+                "care_reason_other",
+                "outpatient_expense",
+                "travel_time",
+                "transport_expense",
+                "cost_cover",
+                "waiting_hours")}),
     )
+
     radio_fields = {
         "govt_health_care": admin.VERTICAL,
         "dept_care": admin.VERTICAL,

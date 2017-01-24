@@ -11,17 +11,22 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class ResourceUtilizationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResourceUtilizationForm
-    fields = (
-        "subject_visit",
-        "out_patient",
-        "hospitalized",
-        "money_spent",
-        "medical_cover",
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                "out_patient",
+                "hospitalized",
+                "money_spent",
+                "medical_cover")}),
     )
+
     radio_fields = {
         "out_patient": admin.VERTICAL,
         "medical_cover": admin.VERTICAL,
     }
+
     instructions = [
         ("<H5>Note to Interviewer</H5> Complete this interview with the participant and enter "
          "the participant's response for each question. Each question is to be answered by "
