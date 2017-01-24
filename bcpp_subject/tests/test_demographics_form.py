@@ -1,6 +1,8 @@
 from django.test import TestCase
 from model_mommy import mommy
 
+from member.models.household_member import HouseholdMember
+
 from ..forms import DemographicsForm
 from .test_mixins import SubjectMixin
 from django.forms.forms import Form
@@ -17,22 +19,25 @@ class TestDemographicsForm(SubjectMixin, TestCase):
         }
         self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
 
+        self.household_member = HouseholdMember.objects.filter(
+            subject_identifier=self.subject_visit_male.subject_identifier)
+
         self.religion = mommy.make_recipe('bcpp_subject.religion')
         self.ethics = mommy.make_recipe('bcpp_subject.ethnicgroups')
         self.livewith = mommy.make_recipe('bcpp_subject.livewith')
 
         self.data = {
-            'ethnic_other': '',
+            'ethnic_other': None,
             'husband_wives': None,
             'marital_status': 'Widowed',
             'report_datetime': self.get_utcnow(),
             'num_wives': None,
             'live_with': [self.livewith.id],
             'religion': [self.religion.id],
-            'religion_other': u'',
+            'religion_other': None,
             'subject_visit': self.bhs_subject_visit_female.id,
-            'ethnic': [self.ethics.id]
-        }
+            'ethnic': [self.ethics.id],
+            'household_member': self.household_member}
 
     def test_demographics_form_valid(self):
         form = DemographicsForm(data=self.data)
@@ -42,6 +47,12 @@ class TestDemographicsForm(SubjectMixin, TestCase):
     def test_marriage_gender_female_valid(self):
         """ Assert that is a participant is married and with number of wife less than zero validation error thrown"""
         self.data.update(num_wives=0, husband_wives=0, marital_status='Married')
+        form = DemographicsForm(data=self.data)
+        self.assertFalse(form.is_valid())
+
+    def test_marriage_gender_female_none_valid(self):
+        """ Assert that is a participant is married and with number of wife not provided validation error thrown"""
+        self.data.update(num_wives=None, husband_wives=0, marital_status='Married')
         form = DemographicsForm(data=self.data)
         self.assertFalse(form.is_valid())
 
