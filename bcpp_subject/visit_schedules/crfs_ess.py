@@ -2,7 +2,7 @@ from edc_visit_schedule.visit import Crf
 
 _crfs_ess = (
     Crf(show_order=10, model='bcpp_subject.residencymobility', required=True),
-#     Crf(show_order=30, model='bcpp_subject.immigrationsstatus', required=True),
+    Crf(show_order=30, model='bcpp_subject.immigrationstatus', required=True),
     Crf(show_order=35, model='bcpp_subject.demographics', required=True),
     Crf(show_order=37, model='bcpp_subject.education', required=True),
     Crf(show_order=40, model='bcpp_subject.hivtestinghistory', required=True),
