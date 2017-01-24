@@ -1,7 +1,7 @@
 from django import forms
 
 from edc_base.model.constants import DEFAULT_BASE_FIELDS
-from edc_constants.constants import NO, OTHER
+from edc_constants.constants import NO, OTHER, NEVER
 
 from ..models import HypertensionCardiovascular
 
@@ -78,7 +78,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
     def validate_tobacco_smoking(self):
         cleaned_data = super().clean()
 
-        if cleaned_data.get('tobacco_smoking') == NO:
+        if cleaned_data.get('tobacco_smoking') == 'never':
             if cleaned_data.get('tobacco_counselling') != 'N/A':
                     raise forms.ValidationError({
                         'tobacco_counselling': [
