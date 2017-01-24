@@ -186,11 +186,10 @@ class SexualPartnerMixin (models.Model):
         for partner in first_partner_choices:
             if partner.name in first_partner_live:
                 skip = True
-            if 'In this community' == partner.name:
-                in_out_comm.append(partner.name)
-            if 'Outside community' == partner.name:
-                in_out_comm.append(partner.name)
-            if len(in_out_comm) == 2:
+                if partner.name == 'In this community' and \
+                   partner.name == 'Outside community':
+                    in_out_comm.append(partner.name)
+            if(len(in_out_comm) == 2):
                 return not_skip
         return skip and not not_skip
 
