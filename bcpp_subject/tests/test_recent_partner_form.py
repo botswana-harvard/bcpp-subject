@@ -1,11 +1,8 @@
-from datetime import date
-from dateutil.relativedelta import relativedelta
-
 from model_mommy import mommy
 
 from django.test import TestCase
 
-from edc_constants.constants import YES, NO, NEG, POS
+from edc_constants.constants import YES, NO, NEG, POS, OTHER
 
 from .test_mixins import SubjectMixin
 from ..forms import RecentPartnerForm
@@ -16,16 +13,16 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
+            'identity': '31721516',
+            'confirm_identity': '31721516',
         }
-        self.ess_subject_visit_female = self.make_subject_visit_for_consented_subject_female(
-            'E0', **self.consent_data)
+        self.ess_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+            'T0', **self.consent_data)
 
         self.partner_residency = mommy.make_recipe('bcpp_subject.partnerresidency',)
 
         self.options = {
-            'subject_visit': self.ess_subject_visit_female.id,
+            'subject_visit': self.ess_subject_visit_male.id,
             'report_datetime': self.get_utcnow(),
             'first_partner_arm': None,
             'first_partner_live': [self.partner_residency.id],
@@ -46,7 +43,8 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
             'first_haart': NO,
             'first_disclose': YES,
             'first_condom_freq': 'All of the time',
-            'first_partner_cp': NO
+            'first_partner_cp': NO,
+            'first_exchange2': 'lte_18',
         }
 
 #     def test_validity(self):
@@ -107,5 +105,15 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
            sex partner community is not in NOT_APPLICABLE."""
         self.options.update(
             sex_partner_community='Bokaa')
+        form = RecentPartnerForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_first_exchange2_other_valid(self):
+        self.options.update(first_exchange2=OTHER, first_exchange2_other=None)
+        form = RecentPartnerForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_first_exchange2_other_optional_valid(self):
+        self.options.update(first_exchange2_other=20)
         form = RecentPartnerForm(data=self.options)
         self.assertFalse(form.is_valid())
