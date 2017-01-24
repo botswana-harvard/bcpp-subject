@@ -356,12 +356,12 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['cancer'])
 
-    tb_record_tubercolosis = CrfRule(
+    tb_record_tuberculosis = CrfRule(
         logic=Logic(
             predicate=P('tb_record', 'eq', YES),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['tubercolosis'])
+        target_models=['tuberculosis'])
 
     class Meta:
         app_label = 'bcpp_subject'

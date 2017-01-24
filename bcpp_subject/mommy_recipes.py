@@ -19,7 +19,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      Pregnancy, QualityOfLife, RbdDemographics, ReproductiveHealth,
                      ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
-                     SubstanceUse, TbSymptoms, ThirdPartner, Tubercolosis, Uncircumcised,
+                     SubstanceUse, TbSymptoms, ThirdPartner, Tuberculosis, Uncircumcised,
                      ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition)
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
@@ -637,7 +637,7 @@ thirdpartner = Recipe(
 )
 
 tubercolosis = Recipe(
-    Tubercolosis,
+    Tuberculosis,
     date_tb=fake.last_year,
     dx_tb='Pulmonary tuberculosis',
 )

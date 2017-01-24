@@ -116,18 +116,19 @@ class SubjectTestMixin:
             subject_identifier=subject_identifier)
 
     def make_subject_visit_for_consented_subject_female(
-            self, visit_code, report_datetime=None, survey=None, **options):
+            self, visit_code, report_datetime=None, survey_schedule=None, **options):
         """Returns a subject visit the given visit_code.
 
         Creates all needed relations."""
-        household_structure = self.make_household_ready_for_enumeration()
+        household_structure = self.make_household_ready_for_enumeration(survey_schedule=survey_schedule)
         household_member = self.add_household_member(
             household_structure=household_structure)
         household_member = self.add_enrollment_checklist(household_member)
-        household_member = self.add_subject_consent(household_member, **options)
+        self.add_subject_consent(household_member, **options)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
             visit_code=visit_code)
+        household_member = HouseholdMember.objects.get(pk=household_member.pk)
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
             household_member=household_member,
