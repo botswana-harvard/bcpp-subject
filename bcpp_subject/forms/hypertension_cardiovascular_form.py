@@ -1,5 +1,6 @@
 from django import forms
 
+from edc_base.model.constants import DEFAULT_BASE_FIELDS
 from edc_constants.constants import NO, NOT_APPLICABLE, OTHER
 
 from ..models import HypertensionCardiovascular
@@ -10,19 +11,11 @@ from .form_mixins import SubjectModelFormMixin
 class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
+        self.validate_not_available_fields()
         self.validate_hypertension_diagnosis()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
         return self.cleaned_data
-
-    def validate_hypertension_diagnosis(self):
-        cleaned_data = super().clean()
-        if cleaned_data.get('may_take_blood_pressure') == NO:
-            if cleaned_data.get('hypertension_diagnosis') != NOT_APPLICABLE:
-                raise forms.ValidationError({
-                    'hypertension_diagnosis': [
-                        'Not Applicable is the only valid answer']})
-        return cleaned_data
 
     def validate_if_other_medication_taken(self):
         cleaned_data = super().clean()
@@ -54,6 +47,30 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                 raise forms.ValidationError({
                     'if_other_medication_still_given': [
                         'This field is mandatory since other was selected above']})
+        return cleaned_data
+
+    def validate_not_available_fields(self):
+        cleaned_data = super().clean()
+        all_na_fields = []
+        fields_to_exclude = DEFAULT_BASE_FIELDS + ['may_take_blood_pressure',
+                                                   'subject_visit',
+                                                   'waistcircumferencemeasurement',
+                                                   'report_datetime',
+                                                   'bpmeasurement',
+                                                   'medications_taken',
+                                                   'medication_still_given',
+                                                   'consent_version']
+
+        for field in HypertensionCardiovascular._meta.get_fields():
+            if field.name not in fields_to_exclude:
+                all_na_fields.append(field.name)
+
+        if cleaned_data.get('may_take_blood_pressure') == NO:
+            for field in all_na_fields:
+                if self.cleaned_data.get(field) is not NOT_APPLICABLE:
+                    raise forms.ValidationError({
+                        field: [
+                            'Not Applicable is the only valid answer']})
         return cleaned_data
 
     class Meta:
