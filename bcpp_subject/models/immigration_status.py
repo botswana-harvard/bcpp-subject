@@ -2,8 +2,12 @@ from django.db import models
 
 from .model_mixins import CrfModelMixin
 
+from ..choices import COUNTRIES
+
+
 # FIXME
-COUNTRIES = (('country', 'Country'), )
+# added the countries to the choices
+# COUNTRIES = (('country', 'Country'), )
 
 IMMIGRATION_STATUS = (
     ('visitor_permit', 'In Botswana with visitor’s permit'),
