@@ -4,6 +4,8 @@ from edc_base.model.models import HistoricalRecords
 
 from .model_mixins import CrfModelMixin, CrfModelManager
 
+ARVS = (('something', 'something'), )
+
 
 class ArvHistory (CrfModelMixin):
 
@@ -15,7 +17,8 @@ class ArvHistory (CrfModelMixin):
     # TODO: populate on the form from the ArvRegimen table
     # FIXME:
     arv = models.CharField(
-        max_length=25)
+        max_length=25,
+        choices=ARVS)
 
     date_started = models.DateField(
         null=True)
