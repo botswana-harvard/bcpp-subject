@@ -1,4 +1,5 @@
 from .access_to_care_form import AccessToCareForm
+from .arv_history_form import ArvHistoryForm
 from .cd4_history_form import Cd4HistoryForm
 from .cea_enrollment_checklist_form import CeaEnrollmentChecklistForm
 from .circumcision_form import CircumcisionForm, CircumcisedForm, UncircumcisedForm

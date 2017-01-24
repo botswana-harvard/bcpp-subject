@@ -4,7 +4,7 @@ from ..forms import SexualBehaviourForm
 
 from .test_mixins import SubjectMixin
 
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, OTHER
 
 
 class TestSexualBehaviourForm(SubjectMixin, TestCase):
@@ -26,7 +26,8 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
             'more_sex': YES,
             'last_year_partners': 1,
             'condom': YES,
-            'alcohol_sex': 'Myself', }
+            'alcohol_sex': 'Myself',
+            'first_sex_partner_age': 'lte_18', }
 
     def test_form_is_valid(self):
         form = SexualBehaviourForm(data=self.options)
@@ -108,6 +109,21 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
 
         self.options.update(ever_sex=NO, lifetime_sex_partners=0,
                             last_year_partners=0, more_sex=None,
-                            first_sex=None, condom=None, alcohol_sex=None)
+                            first_sex=None, condom=None, alcohol_sex=None,first_sex_partner_age=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertTrue(form.is_valid())
+
+    def test_first_sex_partner_age_valid(self):
+        self.options.update(first_sex_partner_age=20)
+        form = SexualBehaviourForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_first_sex_partner_age_other_valid(self):
+        self.options.update(first_sex_partner_age=OTHER, first_sex_partner_age_other=None)
+        form = SexualBehaviourForm(data=self.options)
+        self.assertFalse(form.is_valid())
+
+    def test_first_sex_partner_age_other_optional_valid(self):
+        self.options.update(first_sex_partner_age_other=20)
+        form = SexualBehaviourForm(data=self.options)
+        self.assertFalse(form.is_valid())

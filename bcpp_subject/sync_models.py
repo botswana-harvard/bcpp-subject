@@ -55,7 +55,7 @@ sync_models = [
     'bcpp_subject.tbsymptoms',
     'bcpp_subject.thirdpartner',
     'bcpp_subject.hivresult',
-    'bcpp_subject.tubercolosis',
+    'bcpp_subject.tuberculosis',
     'bcpp_subject.uncircumcised',
     'bcpp_subject.viralloadresult',
     'bcpp_subject.appointment',

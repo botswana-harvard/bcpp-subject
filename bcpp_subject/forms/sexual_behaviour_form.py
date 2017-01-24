@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, OTHER
 
 from ..models import SexualBehaviour
 
@@ -32,6 +32,8 @@ class SexualBehaviourForm (SubjectModelFormMixin):
         self.validate_no_sex('last_year_partners', cleaned_data)
         self.validate_no_sex('more_sex', cleaned_data)
         self.validate_no_sex('first_sex', cleaned_data)
+        self.validate_no_sex('first_sex_partner_age', cleaned_data)
+        self.validate_no_sex('first_sex_partner_age_other', cleaned_data)
         self.validate_no_sex('condom', cleaned_data)
         self.validate_no_sex('alcohol_sex', cleaned_data)
 
@@ -64,6 +66,13 @@ class SexualBehaviourForm (SubjectModelFormMixin):
             raise forms.ValidationError(
                 'If participant has had sex at some point in their life, did participant '
                 'drink alcohol before sex last time?')
+
+        if cleaned_data.get('first_sex_partner_age') == OTHER and not cleaned_data.get('first_sex_partner_age_other'):
+                raise forms.ValidationError(
+                    'If first sex partner age is 19 or older, please specify the age')
+        if cleaned_data.get('first_sex_partner_age') != OTHER and cleaned_data.get('first_sex_partner_age_other'):
+                raise forms.ValidationError(
+                    'If first sex partner age is not less than 19 or not specified, cannot provide the age')
 
         return cleaned_data
 

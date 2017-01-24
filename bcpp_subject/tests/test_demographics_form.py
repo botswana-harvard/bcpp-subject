@@ -17,10 +17,10 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
 
         self.household_member = HouseholdMember.objects.filter(
-            subject_identifier=self.subject_visit_male.subject_identifier)
+            subject_identifier=self.bhs_subject_visit_male.subject_identifier)
 
         self.religion = mommy.make_recipe('bcpp_subject.religion')
         self.ethics = mommy.make_recipe('bcpp_subject.ethnicgroups')
@@ -35,7 +35,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'live_with': [self.livewith.id],
             'religion': [self.religion.id],
             'religion_other': None,
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.bhs_subject_visit_male.id,
             'ethnic': [self.ethics.id],
             'household_member': self.household_member}
 
@@ -91,7 +91,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'confirm_identity': '31721516',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('E0', **self.consent_data)
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.data.update(marital_status='Single/never married', num_wives=3, subject_visit=self.bhs_subject_visit_male.id)
         form = DemographicsForm(data=self.data)
         self.assertFalse(form .is_valid())
@@ -109,7 +109,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'confirm_identity': '31721517',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('E0', **self.consent_data)
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.data.update(marital_status='Married', num_wives=0, husband_wives=0, subject_visit=self.bhs_subject_visit_male.id)
         form = DemographicsForm(data=self.data)
         self.assertFalse(form .is_valid())
@@ -128,7 +128,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'confirm_identity': '31721517',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
+        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
         self.data.update(marital_status='Married', num_wives=None, husband_wives=1, subject_visit=self.bhs_subject_visit_female.id)
         form = DemographicsForm(data=self.data)
         self.assertTrue(form.is_valid())
@@ -141,7 +141,7 @@ class TestDemographicsForm(SubjectMixin, TestCase):
             'confirm_identity': '31721517',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('E0', **self.consent_data)
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         self.data.update(marital_status='Married', num_wives=2, husband_wives=None, subject_visit=self.bhs_subject_visit_male.id)
         form = DemographicsForm(data=self.data)
         self.assertTrue(form .is_valid())

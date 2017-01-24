@@ -636,7 +636,7 @@ thirdpartner = Recipe(
     intercourse_type='Vaginal',
 )
 
-tubercolosis = Recipe(
+tuberculosis = Recipe(
     Tuberculosis,
     date_tb=fake.last_year,
     dx_tb='Pulmonary tuberculosis',

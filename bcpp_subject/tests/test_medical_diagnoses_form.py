@@ -55,7 +55,7 @@ class TestMedicalDiagnosesForm(SubjectMixin, TestCase):
 
     def test_if_participant_has_been_diagnosed_tubercolosis(self):
         """Asserts that participant has been diagnosed with Tubercolosis"""
-        self.diagnoses3 = mommy.make_recipe('bcpp_subject.diagnoses', name='Tubercolosis')
+        self.diagnoses3 = mommy.make_recipe('bcpp_subject.diagnoses', name='Tuberculosis')
         self.diagnoses3.save()
         self.options.update(tb_record=None, diagnoses=[self.diagnoses3.id])
         form = MedicalDiagnosesForm(data=self.options)

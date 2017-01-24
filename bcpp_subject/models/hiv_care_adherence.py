@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import RegexValidator
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
@@ -146,6 +147,7 @@ class HivCareAdherence (CrfModelMixin):
             'admitted to the hospital'),
         max_length=25,
         null=True,
+        validators=[RegexValidator('^[0-99] (weeks|months)$', 'Invalid format.')]
     )
 
     hospitalized_art_start_reason = models.ManyToManyField(

@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import NOT_APPLICABLE, NO, DWTA
+from edc_constants.constants import NOT_APPLICABLE, NO, DWTA, OTHER
 from edc_constants.choices import YES_NO_UNSURE
 
 from ..choices import FIRST_PARTNER_HIV_CHOICE
@@ -73,6 +73,12 @@ class BasePartnerForm (SubjectModelFormMixin):
                 raise forms.ValidationError(
                     'if response in question 3, is In this community or Farm within this community or'
                     'Cattle post within this community. The response in the next question is NOT_APPLICABLE')
+        if cleaned_data.get('first_exchange2') == OTHER and not cleaned_data.get('first_exchange2_age_other'):
+                raise forms.ValidationError(
+                    'If first exchange age is 19 or older, please specify the age')
+        if cleaned_data.get('first_exchange2') != OTHER and cleaned_data.get('first_exchange2_age_other'):
+                raise forms.ValidationError(
+                    'If first exchange age is not less than 19 or not specified, cannot provide the age')
 
         return cleaned_data
 
