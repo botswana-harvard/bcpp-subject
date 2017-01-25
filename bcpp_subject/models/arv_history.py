@@ -2,23 +2,19 @@ from django.db import models
 
 from edc_base.model.models import HistoricalRecords
 
+from .list_models import Arv
 from .model_mixins import CrfModelMixin, CrfModelManager
-
-ARVS = (('something', 'something'), )
 
 
 class ArvHistory (CrfModelMixin):
 
     """A model completed by the user to capture prior ARV history.
 
-    See also: model `HivCarAdherence`.
+    See also: model `HivCareAdherence`.
     """
 
-    # TODO: populate on the form from the ArvRegimen table
-    # FIXME:
-    arv = models.CharField(
-        max_length=25,
-        choices=ARVS)
+    arv = models.ForeignKey(
+        Arv, on_delete=models.PROTECT, to_field='short_name')
 
     date_started = models.DateField(
         null=True)

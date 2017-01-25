@@ -1,17 +1,22 @@
 from edc_base.model.models import ListModelMixin, BaseUuidModel
 
 
+class Arv (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+
+
 class CircumcisionBenefits (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Circumcision Benefits"
-        verbose_name_plural = "Circumcision Benefits"
+        verbose_name_plural = "Circumcision benefits"
 
 
 class Diagnoses (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Diagnoses"
         verbose_name_plural = "Diagnoses"
@@ -19,107 +24,91 @@ class Diagnoses (ListModelMixin, BaseUuidModel):
 
 class EthnicGroups (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Ethnic Groups"
-        verbose_name_plural = "Ethnic Groups"
+        verbose_name_plural = "Ethnic groups"
 
 
 class FamilyPlanning (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Family Planning"
-        verbose_name_plural = "Family Planning"
+        verbose_name_plural = "Family planning"
 
 
 class HeartDisease (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Heart Disease"
-        verbose_name_plural = "Heart Disease"
+        verbose_name_plural = "Heart disease"
 
 
 class LiveWith (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Living With"
-        verbose_name_plural = "Living With"
+        verbose_name_plural = "Living with"
 
 
 class MedicalCareAccess (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Medical Care Access"
-        verbose_name_plural = "Medical Care Access"
+        verbose_name_plural = "Medical care access"
 
 
 class MedicationTaken (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-
-
-class AntiretroviralRegimen (ListModelMixin, BaseUuidModel):
-
-    class Meta:
-        app_label = "bcpp_subject"
-        verbose_name = "Antiretroviral Regimen"
-        verbose_name_plural = "Antiretroviral Regimen"
+        verbose_name_plural = "Medical taken"
 
 
 class HospitalizationReason (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "ospitalization Reason"
-        verbose_name_plural = "ospitalization Reasons"
+        verbose_name_plural = "Hospitalization Reasons"
 
 
 class MedicationGiven(ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
+        verbose_name_plural = "Medical given"
 
 
 class NeighbourhoodProblems (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Neighbourhood Problems"
-        verbose_name_plural = "Neighbourhood Problems"
+        verbose_name_plural = "Neighbourhood problems"
 
 
 class PartnerResidency (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Partner Residency"
-        verbose_name_plural = "Partner Residency"
+        verbose_name_plural = "Partner residency"
 
 
 class Religion (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Religion"
-        verbose_name_plural = "Religion"
 
 
 class ResidentMostLikely (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "Resident Most Likely Status"
-        verbose_name_plural = "Resident Most Likely Status"
+        verbose_name_plural = "Resident most likely"
 
 
 class StiIllnesses (ListModelMixin, BaseUuidModel):
 
-    class Meta:
+    class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "HIV-related illness"
-        verbose_name_plural = "HIV-related illness"
+        verbose_name_plural = "HIV-related illnesses"
