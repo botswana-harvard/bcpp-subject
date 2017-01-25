@@ -24,6 +24,13 @@ class ImmigrationStatus(CrfModelMixin):
         choices=COUNTRIES
     )
 
+    country_of_origin_other = models.CharField(
+        verbose_name='If other was selected, above, write down your country '
+        'of origin?',
+        max_length=50,
+        null=True,
+        blank=True)
+
     immigration_status = models.CharField(
         verbose_name='What is your immigration status in Botswana?',
         max_length=25,
