@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import OutpatientCareForm
 from ..models import OutpatientCare
@@ -30,6 +32,7 @@ class OutpatientCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "transport_expense",
                 "cost_cover",
                 "waiting_hours")}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

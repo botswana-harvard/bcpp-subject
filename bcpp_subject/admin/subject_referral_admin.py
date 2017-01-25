@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
@@ -14,6 +16,18 @@ class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = SubjectReferralForm
 
     date_hierarchy = 'referral_appt_date'
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'subject_visit',
+                'report_datetime',
+                'subject_referred',
+                'scheduled_appt_date',
+                'referral_appt_comment',
+                'comment')}),
+        audit_fieldset_tuple,
+    )
 
     search_fields = ['subject_visit__appointment__registered_subject__first_name',
                      'subject_visit__appointment__registered_subject__subject_identifier']
@@ -39,15 +53,6 @@ class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'referral_code', 'report_datetime', 'referral_appt_date',
         # 'exported_datetime',
         'hostname_created']
-
-    fields = (
-        'subject_visit',
-        'report_datetime',
-        'subject_referred',
-        'scheduled_appt_date',
-        'referral_appt_comment',
-        'comment'
-    )
 
     radio_fields = {
         "referral_code": admin.VERTICAL,

@@ -17,14 +17,16 @@ class HivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 'subject_visit',
                 'hiv_result',
                 'hiv_result_datetime',
                 'blood_draw_type',
                 'insufficient_vol',
                 'why_not_tested',
-            ]}), audit_fieldset_tuple)
+            )}),
+        audit_fieldset_tuple,
+    )
 
     list_filter = (HivResultFilter,)
 

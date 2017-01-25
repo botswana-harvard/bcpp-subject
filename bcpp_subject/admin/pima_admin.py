@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..filters import Cd4ThreshHoldFilter
 from ..forms import PimaForm
@@ -23,6 +25,7 @@ class PimaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'pima_id',
                 'cd4_value',
                 'cd4_datetime')}),
+        audit_fieldset_tuple,
     )
 
     list_filter = (

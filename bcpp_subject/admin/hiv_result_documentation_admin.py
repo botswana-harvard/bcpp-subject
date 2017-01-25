@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL, BASELINE
 from ..forms import HivResultDocumentationForm
@@ -12,10 +14,16 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class HivResultDocumentationAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivResultDocumentationForm
-    fields = (
-        'subject_visit',
-        'result_date',
-        'result_doc_type',)
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'subject_visit',
+                'result_date',
+                'result_doc_type')}),
+        audit_fieldset_tuple,
+    )
+
     radio_fields = {
         'result_doc_type': admin.VERTICAL, }
 

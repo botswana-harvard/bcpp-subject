@@ -32,6 +32,7 @@ from .non_pregnancy_admin import NonPregnancyAdmin
 from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
 from .pima_admin import PimaAdmin
+from .immigrations_status_admin import ImmigrationStatusAdmin
 from .pima_vl_admin import PimaVlAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin
@@ -50,6 +51,7 @@ from .subject_locator_admin import SubjectLocatorAdmin
 from .subject_referral_admin import SubjectReferralAdmin
 from .subject_requisition_admin import SubjectRequisitionAdmin
 from .subject_visit_admin import SubjectVisitAdmin
+from .substance_use_admin import SubstanceUseAdmin
 from .sti_admin import StiAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .tuberculosis_admin import TuberculosisAdmin

@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..models import PimaVl
 from ..forms import PimaVlForm
@@ -26,6 +28,7 @@ class PimaVlAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'time_of_result',
                 'easy_of_use',
                 'stability')}),
+        audit_fieldset_tuple,
     )
 
     list_filter = ('subject_visit', 'time_of_test', 'pima_id')

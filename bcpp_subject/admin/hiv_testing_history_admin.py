@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..models import HivTestingHistory
 from ..forms import HivTestingHistoryForm
@@ -13,13 +15,17 @@ class HivTestingHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestingHistoryForm
 
-    fields = (
-        "subject_visit",
-        'has_tested',
-        "when_hiv_test",
-        'has_record',
-        'verbal_hiv_result',
-        'other_record',)
+    fieldsets = (
+        (None, {
+            'fields': (
+                "subject_visit",
+                'has_tested',
+                "when_hiv_test",
+                'has_record',
+                'verbal_hiv_result',
+                'other_record')}),
+        audit_fieldset_tuple,
+    )
 
     radio_fields = {
         "has_tested": admin.VERTICAL,

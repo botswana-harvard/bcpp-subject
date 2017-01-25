@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import PositiveParticipantForm
 from ..models import PositiveParticipant
@@ -24,6 +26,7 @@ class PositiveParticipantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'enacted_talk_stigma',
                 'enacted_respect_stigma',
                 'enacted_jobs_tigma')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {
