@@ -1,16 +1,14 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-
 from edc_base.fieldsets import Fieldset
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import EducationForm
 from ..models import Education
 from ..constants import T1, T2, T3, E0
-
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 education_fields = (
     'education',
@@ -34,7 +32,9 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         ('Employment', {
             'fields': (
-                'subject_visit'),
+                'subject_visit',
+                'job_description',
+                'monthly_income'),
         }),
         audit_fieldset_tuple,
     )

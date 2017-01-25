@@ -2,7 +2,7 @@ from django import forms
 
 from edc_constants.constants import MALE, FEMALE
 
-from ..models import Demographics, SubjectConsent
+from ..models import Demographics
 
 from .form_mixins import SubjectModelFormMixin
 from edc_registration.models import RegisteredSubject
@@ -42,22 +42,26 @@ class DemographicsForm(SubjectModelFormMixin):
             num_wives = cleaned_data.get('num_wives', 0)
             subject_visit = cleaned_data.get('subject_visit')
             subject_identifier = subject_visit.subject_identifier
-            registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
+            registered_subject = RegisteredSubject.objects.get(
+                subject_identifier=subject_identifier)
 
             if not num_wives or num_wives <= 0:
-                if registered_subject.gender == MALE:
+                if registered_subject.gender == FEMALE:
                     raise forms.ValidationError(
                         {'num_wives':
                          'The number of wives should not be empty and should be greater than 0.'})
             if not husband_wives or husband_wives <= 0:
-                if registered_subject.gender == FEMALE:
+                if registered_subject.gender == MALE:
                     raise forms.ValidationError(
                         {'husband_wives':
-                         'The number of husbands should not be empty and should be greater than 0.'})
+                         'The number of wives should not be empty and should be greater than 0.'})
 
-            if registered_subject.gender == FEMALE:
-                if num_wives is not None:
-                    raise forms.ValidationError('Married Female cannot have a wife')
+            if registered_subject.gender == FEMALE and husband_wives:
+                    raise forms.ValidationError(
+                        {'husband_wives':'Married Female cannot have a wife'})
+            if registered_subject.gender == MALE and num_wives:
+                    raise forms.ValidationError({'num_wives':
+                        'Married Male cannot have a husband with wives'})
         return cleaned_data
 
     class Meta:
