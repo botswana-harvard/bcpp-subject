@@ -25,7 +25,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
 
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 'household_member',
                 'subject_identifier',
                 'first_name',
@@ -53,7 +53,7 @@ class SubjectConsentAdmin(ModelAdminConsentMixin, ModelAdminRevisionMixin,
                 'consent_reviewed',
                 'study_questions',
                 'assessment_score',
-                'consent_copy']}),
+                'consent_copy')}),
         survey_schedule_fieldset_tuple,
         audit_fieldset_tuple)
 

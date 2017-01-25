@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..models import Pregnancy
 from ..forms import PregnancyForm
@@ -22,6 +24,7 @@ class PregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'preg_arv',
                 'anc_reg',
                 'lnmp')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

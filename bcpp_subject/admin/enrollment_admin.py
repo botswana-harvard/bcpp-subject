@@ -18,14 +18,16 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ("subject_identifier", 'report_datetime')}),
+            'fields': (
+                'subject_identifier',
+                'report_datetime')}),
         visit_schedule_fieldset_tuple,
         survey_fieldset_tuple,
         audit_fieldset_tuple)
 
-    readonly_fields = ("subject_identifier", 'report_datetime', 'survey')
+    readonly_fields = ('subject_identifier', 'report_datetime', 'survey')
 
-    list_display = ("subject_identifier", 'report_datetime', 'survey')
+    list_display = ('subject_identifier', 'report_datetime', 'survey')
 
     list_filter = ('report_datetime', 'survey', 'survey_schedule')
 

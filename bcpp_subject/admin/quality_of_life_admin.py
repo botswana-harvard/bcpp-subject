@@ -1,6 +1,8 @@
 from django.utils.translation import ugettext as _
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import QualityOfLifeForm
 from ..models import QualityOfLife
@@ -23,6 +25,7 @@ class QualityOfLifeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "pain",
                 "anxiety",
                 "health_today")}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

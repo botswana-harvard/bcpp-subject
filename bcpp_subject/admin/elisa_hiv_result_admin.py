@@ -22,7 +22,8 @@ class ElisaHivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
                 'hiv_result',
                 'hiv_result_datetime',
             )}),
-        audit_fieldset_tuple)
+        audit_fieldset_tuple,
+    )
 
     list_filter = (HivResultFilter,)
 

@@ -23,7 +23,9 @@ class HivHealthCareCostsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "place_care_received",
                 "care_regularity",
                 "doctor_visits",
-            ]}), audit_fieldset_tuple)
+            ]}),
+        audit_fieldset_tuple,
+    )
 
     radio_fields = {
         "hiv_medical_care": admin.VERTICAL,

@@ -8,6 +8,7 @@ from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
 from ..constants import E0
 from .modeladmin_mixins import CrfModelAdminMixin
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(ResidencyMobility, site=bcpp_subject_admin)
@@ -29,6 +30,7 @@ class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'nights_away',
                 'cattle_postlands',
                 'cattle_postlands_other')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

@@ -7,6 +7,7 @@ from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(MedicalDiagnoses, site=bcpp_subject_admin)
@@ -22,6 +23,7 @@ class MedicalDiagnosesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'heart_attack_record',
                 'cancer_record',
                 'tb_record')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

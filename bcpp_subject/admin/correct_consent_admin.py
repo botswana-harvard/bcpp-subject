@@ -1,9 +1,10 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import CorrectConsentForm
 from ..models import CorrectConsent, SubjectConsent
-from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(CorrectConsent, site=bcpp_subject_admin)
@@ -13,7 +14,7 @@ class CorrectConsentAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 'subject_consent',
                 'report_datetime',
                 'old_last_name',
@@ -34,7 +35,9 @@ class CorrectConsentAdmin(admin.ModelAdmin):
                 'new_is_literate',
                 'new_witness_name',
                 'old_witness_name',
-            ]}), audit_fieldset_tuple)
+            )}),
+        audit_fieldset_tuple,
+    )
 
     list_display = ('subject_consent', 'report_datetime')
 
@@ -54,5 +57,6 @@ class CorrectConsentAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "subject_consent":
-            kwargs["queryset"] = SubjectConsent.objects.filter(id__exact=request.GET.get('subject_consent'))
+            kwargs["queryset"] = SubjectConsent.objects.filter(
+                id__exact=request.GET.get('subject_consent'))
         return super(CorrectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)

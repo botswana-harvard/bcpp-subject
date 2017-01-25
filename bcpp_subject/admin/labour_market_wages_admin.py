@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import LabourMarketWagesForm
 from ..models import LabourMarketWages
@@ -34,6 +36,7 @@ class LabourMarketWagesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "weeks_out",
                 "days_not_worked",
                 "days_inactivite")}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

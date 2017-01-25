@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 
 from edc_base.fieldsets import Remove
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..constants import T0
@@ -37,6 +38,7 @@ class ReproductiveHealthAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'gestational_weeks',
                 'pregnancy_hiv_tested',
                 'pregnancy_hiv_retested')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

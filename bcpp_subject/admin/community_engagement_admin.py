@@ -16,14 +16,15 @@ class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': [
+            'fields': (
                 "subject_visit",
                 'community_engagement',
                 'vote_engagement',
                 'problems_engagement',
                 'problems_engagement_other',
-                'solve_engagement',
-            ]}), audit_fieldset_tuple)
+                'solve_engagement')}),
+        audit_fieldset_tuple,
+    )
 
     radio_fields = {
         "community_engagement": admin.VERTICAL,

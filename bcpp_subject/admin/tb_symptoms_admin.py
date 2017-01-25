@@ -5,6 +5,7 @@ from ..forms import TbSymptomsForm
 from ..models import TbSymptoms
 
 from .modeladmin_mixins import CrfModelAdminMixin
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(TbSymptoms, site=bcpp_subject_admin)
@@ -23,6 +24,7 @@ class TbSymptomsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'night_sweat',
                 'weight_loss')
         }),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

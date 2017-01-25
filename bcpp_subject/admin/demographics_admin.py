@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from edc_base.fieldsets import Fieldset
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import DemographicsForm
@@ -36,8 +37,8 @@ class DemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'marital_status',
                 'num_wives',
                 'husband_wives',
-                'live_with'),
-        }),
+                'live_with')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

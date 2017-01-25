@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import StigmaOpinionForm
 from ..models import StigmaOpinion
@@ -23,6 +25,7 @@ class StigmaOpinionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'enacted_phyical_stigma',
                 'enacted_family_stigma',
                 'fear_stigma')}),
+        audit_fieldset_tuple,
     )
 
     radio_fields = {

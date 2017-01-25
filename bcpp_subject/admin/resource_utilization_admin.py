@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+
 from ..admin_site import bcpp_subject_admin
 from ..forms import ResourceUtilizationForm
 from ..models import ResourceUtilization
@@ -20,6 +22,7 @@ class ResourceUtilizationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 "hospitalized",
                 "money_spent",
                 "medical_cover")}),
+        audit_fieldset_tuple
     )
 
     radio_fields = {
