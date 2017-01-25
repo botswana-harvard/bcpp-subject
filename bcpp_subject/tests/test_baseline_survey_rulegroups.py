@@ -1,10 +1,11 @@
 from model_mommy import mommy
 from datetime import timedelta
+from django.utils import timezone
 
 from django.test import TestCase, tag
 from django.core.exceptions import ObjectDoesNotExist
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, FEMALE, MALE
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 
@@ -14,7 +15,6 @@ from ..constants import NOT_SURE, T0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
-from survey.site_surveys import site_surveys
 
 
 class MetadataRulesTestMixin:
@@ -52,12 +52,10 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.consent_data_female = {
             'identity': '31722515',
             'confirm_identity': '31722515',
-            'report_datetime': self.get_utcnow(),
         }
         self.consent_data_male = {
             'identity': '31721515',
             'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
         }
         self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             'T0', **self.consent_data_male)
@@ -66,7 +64,7 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.household_member = HouseholdMember.objects.filter(
             subject_identifier=self.subject_visit_male.subject_identifier)
         self.subject_identifier = self.subject_visit_male.subject_identifier
-        self.hiv_test_date = self.get_utcnow() - timedelta(days=50)
+        self.hiv_test_date = timezone.now() - timedelta(days=50)
 
     def assertPos(self, subject_identifier):
         # ???
@@ -513,4 +511,3 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.thirdpartner', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
-

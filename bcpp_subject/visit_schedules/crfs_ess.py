@@ -2,7 +2,7 @@ from edc_visit_schedule.visit import Crf
 
 _crfs_ess = (
     Crf(show_order=10, model='bcpp_subject.residencymobility', required=True),
-#     Crf(show_order=30, model='bcpp_subject.immigrationsstatus', required=True),
+    Crf(show_order=30, model='bcpp_subject.immigrationsstatus', required=True),
     Crf(show_order=35, model='bcpp_subject.demographics', required=True),
     Crf(show_order=37, model='bcpp_subject.education', required=True),
     Crf(show_order=40, model='bcpp_subject.hivtestinghistory', required=True),
@@ -16,7 +16,7 @@ _crfs_ess = (
     Crf(show_order=110, model='bcpp_subject.secondpartner', required=True),
     Crf(show_order=120, model='bcpp_subject.thirdpartner', required=True),
     Crf(show_order=130, model='bcpp_subject.hivcareadherence', required=True),
-    Crf(show_order=135, model='bcpp_subject.arvhistory', required=True),
+    Crf(show_order=135, model='bcpp_subject.arvhistory', required=False),
     Crf(show_order=140, model='bcpp_subject.hivmedicalcare', required=True),
     Crf(show_order=145, model='bcpp_subject.accesstocare', required=False),
     Crf(show_order=150, model='bcpp_subject.circumcision', required=True),

@@ -2,6 +2,7 @@ from model_mommy import mommy
 
 from datetime import timedelta
 from django.test import TestCase
+from django.utils import timezone
 
 from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
@@ -11,30 +12,31 @@ from member.models.household_member import HouseholdMember
 from ..constants import NOT_SURE, E0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
+from .test_mixins import SubjectMixin
+from django.test.utils import tag
 
 
-class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
+class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
     def setUp(self):
         super().setUp()
         self.consent_data_female = {
             'identity': '31722515',
             'confirm_identity': '31722515',
-            'report_datetime': self.get_utcnow(),
         }
         self.consent_data_male = {
             'identity': '31721515',
             'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
         }
+        survey_schedule = self.get_survey_schedule(index=2)
         self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
-            E0, **self.consent_data_male)
+            E0, survey_schedule=survey_schedule, **self.consent_data_male)
         self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
-            E0, **self.consent_data_female)
+            E0, survey_schedule=survey_schedule, **self.consent_data_female)
         self.household_member = HouseholdMember.objects.filter(
             subject_identifier=self.subject_visit_male.subject_identifier)
         self.subject_identifier = self.subject_visit_male.subject_identifier
-        self.hiv_test_date = self.get_utcnow() - timedelta(days=50)
+        self.hiv_test_date = timezone.now() - timedelta(days=50)
 
     def test_hiv_car_adherence_and_pima1(self):
         """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
@@ -578,3 +580,32 @@ class TestEssSurveyRuleGroups(RuleGroupMixin, TestCase):
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag("test_arv_history")
+    def test_hiv_care_adherence_required1(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        report_datetime = self.subject_visit_male.report_datetime + timedelta(hours=1)
+
+        self.make_hiv_care_adherence(self.subject_visit_male, report_datetime, NO, NO, NO, NO, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.arvhistory', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag("test_arv_history")
+    def test_hiv_care_adherence_required2(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        report_datetime = self.subject_visit_male.report_datetime + timedelta(hours=1)
+
+#         self.assertEqual(
+#             self.crf_metadata_obj('bcpp_subject.arvhistory', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        hivcare_adherence = self.make_hiv_care_adherence(self.subject_visit_male, report_datetime, NO, NO, NO, NO, NO)
+        hivcare_adherence.first_regimen = YES
+        hivcare_adherence.save()
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.arvhistory', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)

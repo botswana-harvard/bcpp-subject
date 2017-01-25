@@ -81,6 +81,7 @@ class RuleGroupMixin:
             ever_taken_arv=ever_taken_arv,
             on_arv=on_arv,
             arv_evidence=arv_evidence,  # this is the rule field
+            first_regimen=NO  # this is the rule field
         )
         return hiv_care_adherence
 

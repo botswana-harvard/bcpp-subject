@@ -137,13 +137,13 @@ class SubjectTestMixin:
             report_datetime=report_datetime or self.get_utcnow())
 
     def make_subject_visit_for_consented_subject_male(
-            self, visit_code, report_datetime=None, **options):
+            self, visit_code, report_datetime=None, survey_schedule=None, **options):
         """Returns a subject visit of a consented male member."""
-        household_structure = self.make_enumerated_household_with_male_member()
+        household_structure = self.make_enumerated_household_with_male_member(survey_schedule=survey_schedule)
         old_member = self.add_household_member(
             household_structure=household_structure, gender=MALE)
         old_member = self.add_enrollment_checklist(old_member)
-        old_member = self.add_subject_consent(old_member, **options)
+        self.add_subject_consent(old_member, **options)
         household_member = HouseholdMember.objects.get(pk=old_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
