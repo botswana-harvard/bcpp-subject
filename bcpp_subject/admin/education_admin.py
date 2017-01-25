@@ -34,7 +34,7 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         ('Employment', {
             'fields': (
-                "subject_visit"),
+                'subject_visit'),
         }),
         audit_fieldset_tuple,
     )
