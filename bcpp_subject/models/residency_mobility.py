@@ -31,7 +31,8 @@ class ResidencyMobility (CrfModelMixin):
         help_text=("If participant has moved into the "
                    "community in the past 12 months, then "
                    "since moving in has the participant typically "
-                   "spent more than 14 nights per month in this community. " ),
+                   "spent more than 14 nights per month in this community. "
+                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
     )
 
     intend_residency = models.CharField(
