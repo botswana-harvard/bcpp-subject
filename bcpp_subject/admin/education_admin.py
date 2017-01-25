@@ -35,9 +35,6 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ('Employment', {
             'fields': (
                 "subject_visit",
-                'working',
-                'job_type',
-                'reason_unemployed',
                 'job_description',
                 'monthly_income'),
         }),
