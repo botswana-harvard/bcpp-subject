@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.db import models
+
 from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 
@@ -157,7 +158,7 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
                             info=info, physical_address=self.physical_address)
         return info
 
-    class Meta:
+    class Meta(RequiresConsentMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = 'Subject Locator'
         consent_model = 'bcpp_subject.subjectconsent'

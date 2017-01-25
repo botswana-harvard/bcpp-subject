@@ -9,7 +9,12 @@ from survey.model_mixins import SurveyModelMixin
 
 class Appointment(AppointmentModelMixin, SurveyModelMixin, BaseUuidModel):
 
-    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
+    # survey schedule fields are updated when the appointment
+    # is created by 'create_appointments'.
+    # See `extra_create_appointment_options` on the enrollment models.
+
+    household_member = models.ForeignKey(
+        HouseholdMember, on_delete=models.PROTECT)
 
     objects = AppointmentManager()
 
