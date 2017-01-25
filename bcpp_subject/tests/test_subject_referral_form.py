@@ -15,7 +15,6 @@ class TestSubjectReferralForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        super().setUp()
 
         self.consent_data = {
             'identity': '31721515',
