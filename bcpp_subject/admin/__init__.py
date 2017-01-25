@@ -32,6 +32,7 @@ from .non_pregnancy_admin import NonPregnancyAdmin
 from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
 from .pima_admin import PimaAdmin
+from .immigrations_status_admin import ImmigrationStatusAdmin
 from .pima_vl_admin import PimaVlAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin
