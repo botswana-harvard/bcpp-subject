@@ -12,7 +12,7 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 
 hospitalization_fieldset = Fieldset(
-    'hospitalized_art_start'
+    'hospitalized_art_start',
     'hospitalized_art_start_duration',
     'hospitalized_art_start_reason',
     'hospitalized_reason_evidence',
