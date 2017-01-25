@@ -51,6 +51,7 @@ from .subject_locator_admin import SubjectLocatorAdmin
 from .subject_referral_admin import SubjectReferralAdmin
 from .subject_requisition_admin import SubjectRequisitionAdmin
 from .subject_visit_admin import SubjectVisitAdmin
+from .substance_use_admin import SubstanceUseAdmin
 from .sti_admin import StiAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .tuberculosis_admin import TuberculosisAdmin

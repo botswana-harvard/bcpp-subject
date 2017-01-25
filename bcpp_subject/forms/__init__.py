@@ -22,6 +22,7 @@ from .hiv_tested_form import HivTestedForm
 from .hiv_testing_history_form import HivTestingHistoryForm
 from .hiv_untested_form import HivUntestedForm
 from .hospital_admission_form import HospitalAdmissionForm
+from .immigration_status_form import ImmigrationStatusForm
 from .labour_market_wages_form import LabourMarketWagesForm, GrantForm
 from .main import QualityOfLifeForm, SubstanceUseForm
 from .medical_diagnoses_form import MedicalDiagnosesForm
