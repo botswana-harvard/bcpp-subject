@@ -23,6 +23,8 @@ class ImmigrationStatusForm (SubjectModelFormMixin):
                     'country_of_origin_other': [
                         'Has to be blank since option is selected']})
 
+        return self.cleaned_data
+
     class Meta:
         model = ImmigrationStatus
         fields = '__all__'
