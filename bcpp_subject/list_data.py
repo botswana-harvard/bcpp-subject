@@ -164,7 +164,28 @@ list_data = {
         ('Access to internet', 'Access to internet'),
         ("Refrigerator", "Refrigerator"),
         ("Don't want to answer", "Don't want to answer"), ],
+    'bcpp_subject.arv': [
+        ('Efavirenz', 'EFV (Stocrin, Sustiva)'),
+        ('Dolutegravir', 'DTG (Tivicay)'),
+        ('Tenofovir/emtricitabine', 'TDF/FTC (Truvada)'),
+        ('Nevirapine', 'NVP (Viramune)'),
+        ('Zidovudine/lamivudine', 'ZDV/3TC or AZT/3TC (Combivir)'),
+        ('Lopinavir/ritonavir', 'LPV/r (Aluvia, Kaletra)'),
+        ('Abacavir', 'ABC/3TC (Epzicom)'),
+        ("Abacavir", 'ABC (Ziagen)'),
+        ('Zidovudine', 'ZDV or AZT (Retrovir)'),
+        ('Lamivudine', '3TC (Epivir)'),
+        ('Atazanavir', 'ATV (Reyataz)'),
+        ('Raltegravir', 'RAL (Isentress)'),
+        ('Didanosine', 'ddI (Videx)'),
+        ('Stavudine', 'D4T (Zerit)'),
+        ('Tenofovir', 'TDF (Viread)'),
+        ('Darunavir', 'DRV (Prezista)'),
+        ('Saquinavir', 'SQV (Invirase)'),
+        ('Ritonavir', 'RTV or r (Norvir)'),
+        ('OTHER', 'Other: Specify')],
 }
+
 
 from django.apps import apps as django_apps
 
