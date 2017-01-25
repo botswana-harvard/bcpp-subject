@@ -34,7 +34,7 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         ('Employment', {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'job_description',
                 'monthly_income'),
         }),
@@ -42,8 +42,8 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "education": admin.VERTICAL,
-        "working": admin.VERTICAL,
+        'education': admin.VERTICAL,
+        'working': admin.VERTICAL,
         'job_type': admin.VERTICAL,
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
