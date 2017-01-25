@@ -6,7 +6,7 @@ from edc_metadata.rules.rule_group import RuleGroup
 from edc_metadata.rules.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA, UNK
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
@@ -146,12 +146,21 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['hivuntested'])
 
-    other_record = CrfRule(
+    currently_pregnant = CrfRule(
         logic=Logic(
-            predicate=P('other_record', 'eq', YES),
+            predicate=PF(
+                'has_tested', 'has_record', 'other_record',
+                func=lambda x, y, z: True if x == YES and x == YES or z == YES else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
+
+#     other_record = CrfRule(
+#         logic=Logic(
+#             predicate=P('other_record', 'eq', YES),
+#             consequence=REQUIRED,
+#             alternative=NOT_REQUIRED),
+#         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
@@ -164,7 +173,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=P('verbal_hiv_result', 'eq', POS),
             consequence=REQUIRED,
-            alternative=REQUIRED),
+            alternative=NOT_REQUIRED),
         target_models=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = CrfRule(
@@ -319,19 +328,15 @@ class ReproductiveRuleGroup(RuleGroup):
 
     currently_pregnant = CrfRule(
         logic=Logic(
-            # TODO: verify this is correct
             predicate=PF(
                 'currently_pregnant', 'menopause',
-                func=lambda x, y: True if x == YES or y == YES else False),
+                func=lambda x, y: True if x == YES or x == 'Not Sure' and y == NO else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.pregnancy'])
 
     non_pregnant = CrfRule(
         logic=Logic(
-            # TODO: verify this is correct
-            # predicate=PF(('currently_pregnant', 'eq', 'No'),
-            #    ('menopause', 'eq', 'No', 'and')), TODO: Convert to func
             predicate=PF(
                 'currently_pregnant', 'menopause',
                 func=lambda x, y: True if x == NO and y == NO else False),
@@ -472,7 +477,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
         logic=Logic(
             predicate=PF(
                 'has_tested', 'verbal_hiv_result',
-                func=lambda y, x: True if x == NEG or y == DWTA else False),
+                func=lambda y, x: True if x == NEG or y == DWTA or x == UNK else False),
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['hivcareadherence', 'hivmedicalcare'])

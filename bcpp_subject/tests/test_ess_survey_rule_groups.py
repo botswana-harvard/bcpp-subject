@@ -533,12 +533,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 'bcpp_subject.thirdpartner', REQUIRED, E0, self.subject_identifier).count(), 1)
 
     def test_hiv_care_adherence_not_required(self):
-        """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
 
-        Models:
-            * HivCareAdherence
-            * HivResult
-        """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, NEG, NO)
 
@@ -549,12 +544,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
 
     def test_hiv_care_adherence_has_record_DWTA(self):
-        """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
 
-        Models:
-            * HivCareAdherence
-            * HivResult
-        """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, NO, NO, NO)
 
@@ -581,7 +571,17 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', REQUIRED, E0, self.subject_identifier).count(), 1)
 
-    @tag("test_arv_history")
+    def test_hiv_care_adherence_required3(self):
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, UNK, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
     def test_hiv_care_adherence_required1(self):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
@@ -593,7 +593,6 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.arvhistory', REQUIRED, E0, self.subject_identifier).count(), 1)
 
-    @tag("test_arv_history")
     def test_hiv_care_adherence_required2(self):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
@@ -609,3 +608,119 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.arvhistory', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('reproductive_rules')
+    def test_reproductive_health(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit=self.subject_visit_male)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.nonpregnancy', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.pregnancy', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('reproductive_rules')
+    def test_reproductive_health1(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        reproductivehealth = mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit=self.subject_visit_male)
+        reproductivehealth.currently_pregnant = YES
+        reproductivehealth.menopause = NO
+        reproductivehealth.save()
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.pregnancy', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.nonpregnancy', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('reproductive_rules')
+    def test_reproductive_health2(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        reproductivehealth = mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit=self.subject_visit_male)
+        reproductivehealth.currently_pregnant = 'Not Sure'
+        reproductivehealth.menopause = NO
+        reproductivehealth.save()
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.pregnancy', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.nonpregnancy', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('reproductive_rules')
+    def test_3(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        reproductivehealth = mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit=self.subject_visit_male)
+        reproductivehealth.currently_pregnant = 'Not Sure'
+        reproductivehealth.menopause = NO
+        reproductivehealth.save()
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.pregnancy', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.nonpregnancy', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required1(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, POS, YES)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required2(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, POS, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required4(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, NEG, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required5(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, NEG, YES)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', REQUIRED, E0, self.subject_identifier).count(), 1)
