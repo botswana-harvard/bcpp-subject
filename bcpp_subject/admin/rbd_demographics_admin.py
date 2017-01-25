@@ -17,7 +17,7 @@ class RbdDemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'religion',
                 'religion_other',
                 'ethnic',
@@ -30,6 +30,6 @@ class RbdDemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "marital_status": admin.VERTICAL, }
+        'marital_status': admin.VERTICAL, }
 
     filter_horizontal = ('live_with', 'religion', 'ethnic')

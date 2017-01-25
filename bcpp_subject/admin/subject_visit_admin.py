@@ -28,9 +28,9 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
         (None, {
             'fields': [
                 'household_member',
-                "appointment",
-                "report_datetime",
-                "comments"]}),
+                'appointment',
+                'report_datetime',
+                'comments']}),
         visit_schedule_fieldset_tuple,
         survey_schedule_fieldset_tuple,
         audit_fieldset_tuple)
@@ -39,7 +39,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
         'appointment',
         'report_datetime',
         'reason',
-        "info_source",
+        'info_source',
         'created',
         'user_created',
     )
@@ -80,10 +80,10 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
             return super().view_on_site(obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
+        if db_field.name == 'household_member':
             household_members = HouseholdMember.objects.none()
             if HouseholdMember.objects.filter(id=request.GET.get('household_member')):
                 household_members = HouseholdMember.objects.filter(
                     id=request.GET.get('household_member'))
-            kwargs["queryset"] = household_members
+            kwargs['queryset'] = household_members
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

@@ -17,7 +17,7 @@ class StigmaOpinionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'test_community_stigma',
                 'gossip_community_stigma',
                 'respect_community_stigma',
@@ -29,15 +29,15 @@ class StigmaOpinionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "test_community_stigma": admin.VERTICAL,
-        "gossip_community_stigma": admin.VERTICAL,
-        "respect_community_stigma": admin.VERTICAL,
-        "enacted_verbal_stigma": admin.VERTICAL,
-        "enacted_phyical_stigma": admin.VERTICAL,
-        "enacted_family_stigma": admin.VERTICAL,
-        "fear_stigma": admin.VERTICAL, }
+        'test_community_stigma': admin.VERTICAL,
+        'gossip_community_stigma': admin.VERTICAL,
+        'respect_community_stigma': admin.VERTICAL,
+        'enacted_verbal_stigma': admin.VERTICAL,
+        'enacted_phyical_stigma': admin.VERTICAL,
+        'enacted_family_stigma': admin.VERTICAL,
+        'fear_stigma': admin.VERTICAL, }
     instructions = [
-        ("<h5>Read to Participant</h5>Using your own opinions and"
-         " thinking about this community, please tell me how"
-         " strongly you agree or disagree with the following"
-         " statements.")]
+        ('<h5>Read to Participant</h5>Using your own opinions and'
+         ' thinking about this community, please tell me how'
+         ' strongly you agree or disagree with the following'
+         ' statements.')]
