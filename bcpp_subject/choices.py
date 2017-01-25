@@ -1214,6 +1214,8 @@ PARTNER_AGE = (
     (OTHER, '19 years old or older'),
     (DONT_KNOW, 'Not sure'),
     (DWTA, _('Don\'t want to answer')),
+    (NOT_APPLICABLE, "Not applicable"),
+    
 )
 
 TYPE_OF_EVIDENCE = (
