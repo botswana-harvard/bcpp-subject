@@ -30,10 +30,6 @@ class DemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 "subject_visit",
-                'religion',
-                'religion_other',
-                'ethnic',
-                'ethnic_other',
                 'marital_status',
                 'num_wives',
                 'husband_wives',
