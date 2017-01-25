@@ -103,7 +103,7 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
 
     def test_validate_dependent_fields(self):
         """Assert participant never had sex,no sex related follow-up
-            questions asked"""
+            questions asked."""
         self.options.update(ever_sex=NO)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -116,14 +116,16 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_first_sex_partner_age_no_other_valid(self):
-        """Assert precise age not provided for age 19 and older"""
+        """Assert precise age not provided for age 19 and older.
+        """
         self.options.update(first_sex_partner_age=OTHER,
                             first_sex_partner_age_other=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_first_sex_partner_age_other_valid(self):
-        """Assert precise age not provided for age less than 19"""
+        """Assert precise age not provided for age less than 19.
+        """
         self.options.update(first_sex_partner_age_other=20)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())

@@ -109,12 +109,15 @@ class TestRecentPartnerForm(SubjectMixin, TestCase):
         self.assertFalse(form.is_valid())
 
     def test_first_exchange2_no_other_valid(self):
-        """Assert precise age not provided for age 19 and older"""
+        """Assert precise age not provided for age 19 and older.
+        """
         self.options.update(first_exchange2=OTHER, first_exchange2_other=None)
         form = RecentPartnerForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_first_exchange2_other_valid(self):
+        """Assert precise age not provided for age less than 19.
+        """
         self.options.update(first_exchange2_other=20)
         form = RecentPartnerForm(data=self.options)
         self.assertFalse(form.is_valid())
