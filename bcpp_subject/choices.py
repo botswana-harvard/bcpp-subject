@@ -870,7 +870,7 @@ WHY_NO_ARV_CHOICE = (
     ('Hard due to family/childcare responsibilities',
      _('Hard due to family/childcare responsibilities')),
     ('Transportation costs', _('Transportation costs')),
-    ('High cost', _('High costs')),
+    ('Costs', _('Costs')),
     ('Was afraid of someone (friends/family) seeing me at the HIV clinic', _('Was afraid of someone (friends/family)'
                                                                              ' seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',
