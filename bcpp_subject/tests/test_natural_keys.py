@@ -5,22 +5,33 @@ from edc_sync.test_mixins import SyncTestSerializerMixin
 from ..sync_models import sync_models
 # from bcpp_subject
 
-from .test_mixins import CompleteCrfsMixin
+from .test_mixins import CompleteCrfsMixin, SubjectMixin
 from edc_sync.models import OutgoingTransaction
+from django.test.utils import tag
+from ..constants import E0
 
 
-class TestNaturalKey(SyncTestSerializerMixin, CompleteCrfsMixin, TestCase):
+class TestNaturalKey(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):
 
+    @tag('natural_key')
     def test_natural_key_attrs(self):
         self.sync_test_natural_key_attr('bcpp_subject')
 
+    @tag('natural_key')
     def test_get_by_natural_key_attr(self):
         self.sync_test_get_by_natural_key_attr('bcpp_subject')
 
+    @tag('natural_key')
     def test_enrollment_models(self):
         """bcpp_subject.subjectconsent,  bcpp_subject.enrollment, bcpp_subject.subjectvisit"""
         verbose = False
-        self.make_subject_visit_for_consented_subject(visit_code='T0')
+        self.consent_data_male = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        survey_schedule = self.get_survey_schedule(index=2)
+        self.make_subject_visit_for_consented_subject_male(
+            E0, survey_schedule=survey_schedule, **self.consent_data_male)
         model_objs = []
         completed_model_objs = {}
         completed_model_lower = []
@@ -36,15 +47,19 @@ class TestNaturalKey(SyncTestSerializerMixin, CompleteCrfsMixin, TestCase):
         completed_model_objs.update({'bcpp_subject': model_objs})
         self.sync_test_natural_keys(completed_model_objs, verbose=verbose)
 
+    @tag('natural_key')
     def test_crf_models(self):
         """ """
-#         self.complete_crfs(      , visit, visit_attr, entry_status, subject_identifier)
-        subject_visit = self.make_subject_visit_for_consented_subject(visit_code='T0')
-        verbose = False
-        visits = ['T0']
-        subject_visits = self.add_subject_visits(*visits, subject_identifier=subject_visit.subject_identifier)
+        consent_data_male = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        survey_schedule = self.get_survey_schedule(index=2)
+        subject_visit = self.make_subject_visit_for_consented_subject_male(
+            E0, survey_schedule=survey_schedule, **consent_data_male)
+        verbose = True
         self.sync_test_natural_keys_by_schedule(
-            visits=subject_visits,
+            visits=[subject_visit],
             verbose=verbose,
             visit_attr='subject_visit'
         )
