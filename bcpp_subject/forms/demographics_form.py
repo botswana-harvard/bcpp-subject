@@ -58,9 +58,11 @@ class DemographicsForm(SubjectModelFormMixin):
 
             if registered_subject.gender == FEMALE and husband_wives:
                     raise forms.ValidationError(
-                        {'husband_wives':'Married Female cannot have a wife'})
+                        {'husband_wives':
+                         'Married Female cannot have a wife'})
             if registered_subject.gender == MALE and num_wives:
-                    raise forms.ValidationError({'num_wives':
+                    raise forms.ValidationError(
+                        {'num_wives':
                         'Married Male cannot have a husband with wives'})
         return cleaned_data
 
