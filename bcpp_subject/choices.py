@@ -870,6 +870,7 @@ WHY_NO_ARV_CHOICE = (
     ('Hard due to family/childcare responsibilities',
      _('Hard due to family/childcare responsibilities')),
     ('Transportation costs', _('Transportation costs')),
+    ('High cost', _('High costs')),
     ('Was afraid of someone (friends/family) seeing me at the HIV clinic', _('Was afraid of someone (friends/family)'
                                                                              ' seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',
@@ -898,6 +899,7 @@ WHY_ARV_STOP_CHOICE = (
     ('Doctor or nurse at clinic told me to stop',
      _('Doctor or nurse at clinic told me to stop')),
     ('Transportation costs', _('Transportation costs')),
+    ('Cost/could not afford', _('Cost/could not afford')),
     ('Was afraid of someone (friends/family) seeing me at the HIV'
      ' clinic', _('Was afraid of someone (friends/family) seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',
@@ -946,6 +948,8 @@ NO_MEDICAL_CARE = (
      _('Traditional healer advised against going')),
     ('Religious beliefs', _('Religious beliefs')),
     ('Cultural beliefs', _('Cultural beliefs')),
+    ('Not provided free of charge for non-citizens',
+     _('Not provided free of charge for non-citizens')),
     (OTHER, _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
