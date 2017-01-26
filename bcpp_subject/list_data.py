@@ -162,7 +162,7 @@ list_data = {
         ('Cell phone', 'Cell phone'),
         ('Computer', 'Computer'),
         ('Access to internet', 'Access to internet'),
-        ("Refrigerator", "Refrigerator"),
+        ('Refrigerator', 'Refrigerator'),
         ("Don't want to answer", "Don't want to answer"), ],
     'bcpp_subject.arv': [
         ('Efavirenz', 'EFV (Stocrin, Sustiva)'),
@@ -171,8 +171,8 @@ list_data = {
         ('Nevirapine', 'NVP (Viramune)'),
         ('Zidovudine/lamivudine', 'ZDV/3TC or AZT/3TC (Combivir)'),
         ('Lopinavir/ritonavir', 'LPV/r (Aluvia, Kaletra)'),
-        ('Abacavir', 'ABC/3TC (Epzicom)'),
-        ("Abacavir", 'ABC (Ziagen)'),
+        ('Abacavir/lamivudine', 'ABC/3TC (Epzicom)'),
+        ('Abacavir', 'ABC (Ziagen)'),
         ('Zidovudine', 'ZDV or AZT (Retrovir)'),
         ('Lamivudine', '3TC (Epivir)'),
         ('Atazanavir', 'ATV (Reyataz)'),
@@ -184,6 +184,23 @@ list_data = {
         ('Saquinavir', 'SQV (Invirase)'),
         ('Ritonavir', 'RTV or r (Norvir)'),
         ('OTHER', 'Other: Specify')],
+    'bcpp_subject.hospitalizationreason': [
+        ('Tuberculosis (TB, MTB)', 'Tuberculosis (TB, MTB)'),
+        ('Pneumonia', 'Pneumonia'),
+        ('Cryptococcal meningitis', 'Cryptococcal meningitis'),
+        ('Immune Reconstitution Inflammatory Syndrome (IRIS)', 'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
+        ('Other HIV-related illness', 'Other HIV-related illness'),
+        ('Pregnancy-related care, including delivery', 'Pregnancy-related care, including delivery'),
+        ('Injury or accident', 'Injury or accident'),
+        ('Medication toxicity (specify)', 'Medication toxicity (specify)'),
+        ('High blood pressure', 'High blood pressure'),
+        ('Diabetes', 'Diabetes'),
+        ('Cancer', 'Cancer'),
+        ('Mental illness (specify which)', 'Mental illness (specify which)'),
+        ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)')
+        ('Other', 'Other (specify)'),
+        ("Don't know", "Don't know"),
+    ]
 }
 
 
@@ -194,6 +211,8 @@ for list_obj in list_data.keys():
         model = django_apps.get_app_config(list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
         for ob in list_data.get(list_obj):
             a, b = ob
-            model.objects.create(name=a)
-    except:
-        pass
+            if model.objects.filter(name=a).exists():
+                continue
+            created_model = model.objects.create(name=a)
+    except Exception as e:
+        print(e)
