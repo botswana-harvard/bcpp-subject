@@ -1,7 +1,7 @@
 from django import forms
 
 from edc_base.model.constants import DEFAULT_BASE_FIELDS
-from edc_constants.constants import NO, OTHER, NEVER
+from edc_constants.constants import NO, OTHER
 
 from ..models import HypertensionCardiovascular
 
@@ -43,7 +43,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                         'Cannot fill this field unless Other is selected above']})
         else:
             if any(medication_list.name == OTHER
-                   for medication_list in cleaned_data.get('if_other_medication_still_given')):
+                   for medication_list in cleaned_data.get('medication_still_given')):
                 raise forms.ValidationError({
                     'if_other_medication_still_given': [
                         'This field is mandatory since other was selected above']})
@@ -55,6 +55,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         fields_to_exclude = DEFAULT_BASE_FIELDS + ['may_take_blood_pressure',
                                                    'subject_visit',
                                                    'waistcircumferencemeasurement',
+                                                   'weight_history',
                                                    'report_datetime',
                                                    'bpmeasurement',
                                                    'medications_taken',

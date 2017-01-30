@@ -8,6 +8,7 @@ from edc_map.site_mappers import site_mappers
 
 from .choices import REFERRAL_CODES
 from .utils import next_clinic_date
+from edc_appointment.models import Holiday
 
 
 class SubjectReferralApptHelper(object):
@@ -19,7 +20,8 @@ class SubjectReferralApptHelper(object):
     """
 
     def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
-                 community_code=None, community_clinic_days=None, intervention_communities=None, hiv_care_adherence_next_appointment=None):
+                 community_code=None, community_clinic_days=None, intervention_communities=None,
+                 hiv_care_adherence_next_appointment=None):
         """This class and its needed attribute values are wrapped by
         the SubjectReferralHelper.
 
@@ -46,8 +48,6 @@ class SubjectReferralApptHelper(object):
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
             # TODO: use facility from edc_appointment
-            #self.clinic_days = site_mappers.get_mapper(
-            #    site_mappers.community).current_clinic_days.get(self.referral_clinic_type)
             self.clinic_days = ClinicDaysTuple((MO, TU, WE, TH, FR), None)
             pass
 
@@ -171,7 +171,7 @@ class SubjectReferralApptHelper(object):
         """Returns a datetime that is either the smc start date or the
         next smc clinic day depending on whether today is before or
         after smc_start_date,"""
-        if site_mappers.get_current_mapper().intervention:
+        if site_mappers.current_mapper.intervention:
             smc_appt_datetime = self.next_workday()
         else:
             return None
@@ -180,15 +180,27 @@ class SubjectReferralApptHelper(object):
     def next_workday(self):
         """This method returns the next week day that is not a holyday and is not a weekend."""
         holidays = []
-        next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
-        for _, holyday_date in BcppAppConfiguration.holidays_setup.iteritems():
-            holidays.append(holyday_date)
+        next_workday = datetime(
+            (datetime.today() + timedelta(days=1)).year,
+            (datetime.today() + timedelta(days=1)).month,
+            (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+        for holyday in Holiday.objects.all():
+            holidays.append(holyday.day)
         if next_workday.date() not in holidays:
             if next_workday.isoweekday() == 6:
-                next_workday = datetime(( next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=3)).day, 7, 30, 0)
+                next_workday = datetime(
+                    (next_workday + timedelta(days=1)).year,
+                    (datetime.today() + timedelta(days=1)).month,
+                    (datetime.today() + timedelta(days=3)).day, 7, 30, 0)
             elif next_workday.isoweekday() == 7 and next_workday.date() not in holidays:
-                next_workday = datetime((next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+                next_workday = datetime(
+                    (next_workday + timedelta(days=1)).year,
+                    (datetime.today() + timedelta(days=1)).month,
+                    (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
         else:
-            next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+            next_workday = datetime(
+                (datetime.today() + timedelta(days=1)).year,
+                (datetime.today() + timedelta(days=1)).month,
+                (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
             next_workday()
         return next_workday

@@ -14,19 +14,15 @@ class TestEducationForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
+
         mommy.make_recipe(
-            'bcpp_subject.subjectlocator', subject_identifier=self.bhs_subject_visit_female.subject_identifier,
+            'bcpp_subject.subjectlocator',
+            subject_identifier=self.subject_visit_female.subject_identifier,
             report_datetime=self.get_utcnow(),
         )
         self.options = {
             'report_datetime': self.get_utcnow(),
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.subject_visit_female.id,
             'education': 'Senior Secondary',
             'working': YES,
             'job_type': 'part-time',
@@ -41,9 +37,10 @@ class TestEducationForm(SubjectMixin, TestCase):
         self.assertTrue(education_form.save())
 
     def test_permission_to_contact_at_work(self):
-        """Assert participant consented to be contacted at work is working."""
+        """Assert participant consented to be contacted at work is working
+        """
         subject_locator = SubjectLocator.objects.get(
-            subject_identifier=self.bhs_subject_visit_female.subject_identifier)
+            subject_identifier=self.subject_visit_female.subject_identifier)
         subject_locator.may_call_work = YES
         subject_locator.save_base(update_fields=['may_call_work'])
 

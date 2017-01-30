@@ -197,7 +197,7 @@ list_data = {
         ('Diabetes', 'Diabetes'),
         ('Cancer', 'Cancer'),
         ('Mental illness (specify which)', 'Mental illness (specify which)'),
-        ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)')
+        ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
         ('Other', 'Other (specify)'),
         ("Don't know", "Don't know"),
     ]
