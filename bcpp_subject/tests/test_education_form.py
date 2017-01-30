@@ -14,6 +14,7 @@ class TestEducationForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+
         mommy.make_recipe(
             'bcpp_subject.subjectlocator',
             subject_identifier=self.subject_visit_female.subject_identifier,
