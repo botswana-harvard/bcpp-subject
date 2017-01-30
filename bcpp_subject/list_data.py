@@ -200,6 +200,11 @@ list_data = {
         ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
         ('Other', 'Other (specify)'),
         ("Don't know", "Don't know"),
+    ],
+    'bcpp_subject.chronicdisease': [
+        ('High blood pressure', 'High blood pressure'),
+        ('Diabetes', 'Diabetes'),
+        ('Mental illness', 'Cancer'),
     ]
 }
 
