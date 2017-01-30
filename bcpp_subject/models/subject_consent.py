@@ -1,9 +1,10 @@
+import re
+
 from django.apps import apps as django_apps
 from django.db import models
 
 from edc_base.exceptions import AgeValueError
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_base.utils import age
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
     ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
@@ -14,15 +15,57 @@ from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
-from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
+from edc_registration.exceptions import RegisteredSubjectError
+from edc_registration.model_mixins import (
+    UpdatesOrCreatesRegistrationModelMixin
+    as BaseUpdatesOrCreatesRegistrationModelMixin)
 
 from member.models import EnrollmentChecklist, HouseholdMember
 from survey.model_mixins import SurveyScheduleModelMixin
 
 from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
+from ..patterns import subject_identifier
 
 from .utils import is_minor
+
+
+class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationModelMixin):
+
+    @property
+    def registration_options(self):
+        """Insert internal_identifier to be updated on
+        RegisteredSubject.
+        """
+        registration_options = super().registration_options
+        registration_options.update(
+            registration_identifier=self.household_member.internal_identifier)
+        return registration_options
+
+    def registration_raise_on_illegal_value_change(self, registered_subject):
+        """Raises an exception if a value changes between
+        updates.
+        """
+        if registered_subject.identity != self.identity:
+            raise RegisteredSubjectError(
+                'Identity may not be changed. Expected {}. Got {}'.format(
+                    registered_subject.identity,
+                    self.identity))
+        if (registered_subject.registration_identifier
+                != self.household_member.internal_identifier):
+            raise RegisteredSubjectError(
+                'Internal Identifier may not be changed. Expected {}. '
+                'Got {}'.format(
+                    registered_subject.registration_identifier,
+                    self.internal_identifier))
+        if registered_subject.dob != self.dob:
+            raise RegisteredSubjectError(
+                'DoB may not be changed. Expected {}. Got {}'.format(
+                    registered_subject.dob,
+                    self.dob))
+
+    class Meta:
+        abstract = True
 
 
 class SubjectConsent(
@@ -31,8 +74,8 @@ class SubjectConsent(
         IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
         SampleCollectionFieldsMixin, CitizenFieldsMixin,
         VulnerabilityFieldsMixin, BaseUuidModel):
-
-    """ A model completed by the user that captures the ICF."""
+    """ A model completed by the user that captures the ICF.
+    """
 
     household_member = models.ForeignKey(
         HouseholdMember, on_delete=models.PROTECT)
@@ -57,10 +100,6 @@ class SubjectConsent(
 
     history = HistoricalRecords()
 
-    def natural_key(self):
-        return (self.subject_identifier, self.version, ) + self.household_member.natural_key()
-    natural_key.dependencies = ['bcpp_subject.household_member']
-
     def __str__(self):
         return '{0} ({1}) V{2}'.format(
             self.subject_identifier,
@@ -70,20 +109,25 @@ class SubjectConsent(
     def save(self, *args, **kwargs):
         if not self.id:
             self.survey_schedule = self.household_member.survey_schedule_object.field_value
-            # consent should not know the survey name
-            # self.survey = self.get_survey_name()
+            if re.match(subject_identifier, self.household_member.subject_identifier):
+                self.subject_identifier = self.household_member.subject_identifier
         # FIXME: get this using the map_area from survey
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(
             self.dob, self.consent_datetime) else NO
         super().save(*args, **kwargs)
 
+    def natural_key(self):
+        return ((self.subject_identifier, self.version, )
+                + self.household_member.natural_key())
+    natural_key.dependencies = ['bcpp_subject.household_member']
+
     def common_clean(self):
         # confirm member is eligible
-        if not (self.household_member.age_in_years >= 16 and
-                self.household_member.age_in_years <= 64 and
-                self.household_member.study_resident == YES and
-                self.household_member.inability_to_participate == NOT_APPLICABLE):
+        if not (self.household_member.age_in_years >= 16
+                and self.household_member.age_in_years <= 64
+                and self.household_member.study_resident == YES
+                and self.household_member.inability_to_participate == NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
         HicEnrollment = django_apps.get_model(
@@ -96,14 +140,18 @@ class SubjectConsent(
                     HicEnrollment._meta.verbose_name), 'dob')
         except HicEnrollment.DoesNotExist:
             pass
-        # match with enrollment checklist.
+
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member__subject_identifier=self.household_member.subject_identifier, is_eligible=True)
+                household_member=self.household_member)
         except EnrollmentChecklist.DoesNotExist:
             raise ConsentValidationError(
-                'Member has not completed the \'{}\'. Please correct before continuing'.format(
+                'Member has not completed the \'{}\'. '
+                'Please correct before continuing'.format(
                     EnrollmentChecklist._meta.verbose_name))
+        if not enrollment_checklist.is_eligible:
+            raise ConsentValidationError('Member is not eligible.')
+
         # other model/form validations
         # match initials
         if not self.household_member.personal_details_changed == YES:
@@ -112,8 +160,8 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name), 'initials')
         if self.dob:
             # minor (do this before comparing DoB)
-            if (is_minor(enrollment_checklist.dob, enrollment_checklist.report_datetime) and not
-                    is_minor(self.dob, self.consent_datetime)):
+            if (is_minor(enrollment_checklist.dob, enrollment_checklist.report_datetime)
+                    and not is_minor(self.dob, self.consent_datetime)):
                 if is_minor(enrollment_checklist.dob, enrollment_checklist.report_datetime):
                     raise ConsentValidationError(
                         'Subject is a minor by the {}.'.format(
@@ -124,9 +172,10 @@ class SubjectConsent(
                             EnrollmentChecklist._meta.verbose_name), 'dob')
             # match DoB
             if enrollment_checklist.dob != self.dob:
-                raise ConsentValidationError('Does not match \'{}\'. Expected {}.'.format(
-                    EnrollmentChecklist._meta.verbose_name,
-                    enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
+                raise ConsentValidationError(
+                    'Does not match \'{}\'. Expected {}.'.format(
+                        EnrollmentChecklist._meta.verbose_name,
+                        enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
         # match gender
         if enrollment_checklist.gender != self.gender:
             raise ConsentValidationError(
@@ -155,23 +204,27 @@ class SubjectConsent(
             raise ConsentValidationError(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'is_literate')
-        elif enrollment_checklist.literacy == NO and self.is_literate == NO and not self.witness_name:
+        elif (enrollment_checklist.literacy == NO
+                and self.is_literate == NO
+                and not self.witness_name):
             raise ConsentValidationError(
                 'Witness name is required', 'witness_name')
         # match marriage if not citizen
         if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage) or (
-                    enrollment_checklist.marriage_certificate != self.marriage_certificate):
+            if (enrollment_checklist.legal_marriage != self.legal_marriage
+                    or enrollment_checklist.marriage_certificate != self.marriage_certificate):
                 raise ConsentValidationError(
-                    'Citizenship by marriage mismatch. {} reports subject is married '
-                    'to a citizen with a valid marriage certificate. This does not match \'{}\''.format(
+                    'Citizenship by marriage mismatch. {} reports subject '
+                    'is married to a citizen with a valid marriage '
+                    'certificate. This does not match \'{}\''.format(
                         self._meta.verbose_name,
                         EnrollmentChecklist._meta.verbose_name))
         super().common_clean()
 
     @property
     def common_clean_exceptions(self):
-        return super().common_clean_exceptions + [ConsentValidationError, AgeValueError]
+        return super().common_clean_exceptions + [
+            ConsentValidationError, AgeValueError, RegisteredSubjectError]
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'

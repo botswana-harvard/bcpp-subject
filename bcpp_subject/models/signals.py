@@ -14,17 +14,17 @@ from ..models.utils import is_minor
 
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
+from member.models.enrollment_checklist import EnrollmentChecklist
 
 fake = Faker()
 
 
-@receiver(post_delete, weak=False, sender=SubjectConsent, dispatch_uid="subject_consent_on_post_delete")
+@receiver(post_delete, weak=False, sender=SubjectConsent,
+          dispatch_uid="subject_consent_on_post_delete")
 def subject_consent_on_post_delete(sender, instance, using, **kwargs):
     enrollment = Enrollment.objects.get(
         consent_identifier=instance.consent_identifier)
     enrollment.delete()
-    instance.household_member.is_consented = False
-    instance.household_member.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -32,7 +32,6 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
     if not raw:
         if issubclass(sender, (SubjectConsent, AnonymousConsent)):
             # update household member field attrs
-            instance.household_member.is_consented = True
             instance.household_member.absent = False
             instance.household_member.undecided = False
             instance.household_member.refused = False
@@ -52,7 +51,8 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
 
 @receiver(post_save, weak=False, sender=EnrollmentChecklistAnonymous,
           dispatch_uid="enrollment_checklist_anonymous_on_post_save")
-def enrollment_checklist_anonymous_on_post_save(sender, instance, raw, created, using, **kwargs):
+def enrollment_checklist_anonymous_on_post_save(
+        sender, instance, raw, created, using, **kwargs):
     if not raw:
         if created:
             # update HHM attrs

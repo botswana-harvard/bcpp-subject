@@ -10,7 +10,7 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
-from bcpp.consents import ANONYMOUS_CONSENT
+from bcpp.consents import ANONYMOUS_CONSENT_GROUP
 from bcpp.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
@@ -31,7 +31,8 @@ class AnonymousConsent(
 
     """ A model completed by the user that captures the ICF."""
 
-    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
+    household_member = models.ForeignKey(
+        HouseholdMember, on_delete=models.PROTECT)
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
@@ -74,7 +75,7 @@ class AnonymousConsent(
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
-        consent_group = ANONYMOUS_CONSENT
+        consent_group = ANONYMOUS_CONSENT_GROUP
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))

@@ -9,9 +9,11 @@ from bcpp.surveys import (
     BHS_SURVEY, AHS_SURVEY, ESS_SURVEY, ANONYMOUS_SURVEY, BCPP_YEAR_3)
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
+from survey import S
 
 from ..exceptions import EnrollmentError
 from ..managers import EnrollmentManager as BaseEnrollmentManager
+from survey.site_surveys import site_surveys
 
 
 class EnrollmentManager(BaseEnrollmentManager):
@@ -24,46 +26,52 @@ class EnrollmentManager(BaseEnrollmentManager):
                               save=None):
         """Returns a survey object, or None, which represents the
         next survey in the survey schedule that the subject has not yet
-        enrolled into."""
+        enrolled into.
+        """
+        next_survey_object = None
         save = True if save is None else save
-        survey_schedule_object = household_member.survey_schedule_object
-        defaults = dict(
-            subject_identifier=subject_identifier,
-            survey_schedule=survey_schedule_object.field_value)
-        # loop through looking for a survey not yet enrolled to.
-        existing = None  # existing enrollment instance
-        for survey in survey_schedule_object.surveys:
-            try:
-                existing = self.get(
-                    survey=survey.field_value,
-                    **defaults)
-            except Enrollment.DoesNotExist:
-                break
-            else:
-                continue
-        if existing:
-            survey = existing.survey.next
+
+        # do you have any previous surveys?
+        last_enrollment = self.filter(
+            subject_identifier=subject_identifier).order_by(
+                '-report_datetime').last()
+        if last_enrollment:
+            # get last survey object
+            last_survey_object = last_enrollment.survey_object
+            # build survey object for next using current survey_schedule_object
+            if last_survey_object.next:
+                survey_field_value = S(
+                    household_member.survey_schedule_object.field_value,
+                    survey_name=last_survey_object.next.name).survey_field_value
+                next_survey_object = site_surveys.get_survey(
+                    survey_field_value, current=False)
         else:
-            survey = self.get_first_survey(
-                subject_identifier=subject_identifier,
-                survey_schedule_object=survey_schedule_object)
-        if survey:
-            model = self.get_enrollment_model_class(survey)
-            enrollment = model(
-                consent_identifier=consent_identifier,
-                subject_identifier=subject_identifier,
-                household_member=household_member,
-                report_datetime=report_datetime,
-                survey=survey.field_value)
-            if save:
-                enrollment.save()
+            next_survey_object = self.get_first_survey(
+                household_member.survey_schedule_object)
+
+        if next_survey_object:
+            try:
+                enrollment = self.get(
+                    survey=next_survey_object.field_value,
+                    subject_identifier=subject_identifier)
+            except Enrollment.DoesNotExist:
+                model = self.get_enrollment_model_class(next_survey_object)
+                enrollment = model(
+                    consent_identifier=consent_identifier,
+                    subject_identifier=subject_identifier,
+                    household_member=household_member,
+                    report_datetime=report_datetime,
+                    survey=next_survey_object.field_value)
+                if save:
+                    enrollment.save()
         else:
             raise EnrollmentError(
-                'No surveys in this schedule left to enroll.')
-        return survey
+                'No surveys in this survey schedule left to enroll. '
+                'Got {}.'.format(
+                    household_member.survey_schedule_object.field_value))
+        return next_survey_object
 
-    def get_first_survey(self, subject_identifier=None,
-                         survey_schedule_object=None):
+    def get_first_survey(self, survey_schedule_object=None):
         """Returns a survey object.
 
         This is the first ever survey
@@ -74,22 +82,36 @@ class EnrollmentManager(BaseEnrollmentManager):
         else:
             return survey_schedule_object.surveys[0]
 
-    def get_enrollment_model_class(self, survey):
+    def get_enrollment_model_class(self, survey_object):
         """Returns the proxy model class for the given survey name."""
-        if survey.name == BHS_SURVEY:
+        if survey_object.name == BHS_SURVEY:
             return EnrollmentBhs
-        elif survey.name == AHS_SURVEY:
+        elif survey_object.name == AHS_SURVEY:
             return EnrollmentAhs
-        elif survey.name == ESS_SURVEY:
+        elif survey_object.name == ESS_SURVEY:
             return EnrollmentEss
-        elif survey.name == ANONYMOUS_SURVEY:
+        elif survey_object.name == ANONYMOUS_SURVEY:
             return EnrollmentAno
+
+
+class EnrollmentProxyModelManager(BaseEnrollmentManager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        visit_schedule_name = qs.model._meta.visit_schedule_name.split('.')[0]
+        schedule_name = qs.model._meta.visit_schedule_name.split('.')[1]
+        return qs.filter(
+            visit_schedule_name=visit_schedule_name,
+            schedule_name=schedule_name,
+        )
 
 
 class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
                  CreateAppointmentsMixin, BaseUuidModel):
 
-    """A model used by the system. Auto-completed by the SubjectConsent."""
+    """A model used by the system. Auto-completed by the
+    SubjectConsent.
+    """
 
     ADMIN_SITE_NAME = 'bcpp_subject_admin'
 
@@ -131,24 +153,36 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
 
 
 class EnrollmentBhs(Enrollment):
+
+    objects = EnrollmentProxyModelManager()
+
     class Meta:
         proxy = True
         visit_schedule_name = 'visit_schedule_bhs.bhs_schedule'
 
 
 class EnrollmentAhs(Enrollment):
+
+    objects = EnrollmentProxyModelManager()
+
     class Meta:
         proxy = True
         visit_schedule_name = 'visit_schedule_ahs.ahs_schedule'
 
 
 class EnrollmentEss(Enrollment):
+
+    objects = EnrollmentProxyModelManager()
+
     class Meta:
         proxy = True
         visit_schedule_name = 'visit_schedule_ess.ess_schedule'
 
 
 class EnrollmentAno(Enrollment):
+
+    objects = EnrollmentProxyModelManager()
+
     class Meta:
         proxy = True
         visit_schedule_name = 'visit_schedule_ano.ano_schedule'

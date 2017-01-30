@@ -2,7 +2,7 @@ from django.db.models import options
 
 from edc_consent.model_mixins import RequiresConsentMixin as BaseRequiresConsentMixin
 from edc_consent.site_consents import site_consents
-from bcpp.consents import ANONYMOUS_CONSENT
+from bcpp.consents import ANONYMOUS_CONSENT_GROUP
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('anonymous_consent_model',)
 
@@ -13,7 +13,7 @@ class RequiresConsentMixin(BaseRequiresConsentMixin):
         if self.household_member.anonymous:
             consent_object = site_consents.get_consent(
                 consent_model=self._meta.anonymous_consent_model,
-                consent_group=ANONYMOUS_CONSENT,
+                consent_group=ANONYMOUS_CONSENT_GROUP,
                 report_datetime=self.report_datetime)
         else:
             consent_object = site_consents.get_consent(

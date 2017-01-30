@@ -5,13 +5,12 @@
 
     <a class="list-group-item">
       {{ enrollment_form.schedule.title }}
-      {{ enrollment_form.report_datetime|date:"Y-m-d" }}
+      {% if enrollment_form.current %}
+          <i class="fa fa-check fa-fw"></i>
+      {% endif %}
+      <br><span class="text small">{{ enrollment_form.survey_schedule_object.name }}
+      {{ enrollment_form.report_datetime|date:"Y-m-d" }}</span>
     </a>
-	    {% for visit in enrollment_form.schedule.visits %}
-        <a class="list-group-item">
-	       <span class="text small">{{ visit.title }}</span>
-	    </a>
-	    {% endfor %}
 
 {% endfor %}
 
