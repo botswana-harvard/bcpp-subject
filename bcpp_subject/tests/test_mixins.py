@@ -1,5 +1,4 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from faker import Faker
 from model_mommy import mommy
 
@@ -11,8 +10,7 @@ from edc_constants.constants import NO, YES, NOT_APPLICABLE, MALE
 from edc_metadata.models import CrfMetadata
 
 from household.tests.household_test_mixin import HouseholdTestMixin
-from member.constants import (
-    ELIGIBLE_FOR_CONSENT, HEAD_OF_HOUSEHOLD, ELIGIBLE_FOR_SCREENING)
+from member.constants import HEAD_OF_HOUSEHOLD
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models import HouseholdMember
@@ -23,6 +21,12 @@ from survey.tests import (
 
 from ..constants import T0, E0
 from ..models import Appointment
+from edc_consent.site_consents import site_consents
+from django.db.utils import IntegrityError
+from bcpp_subject.models.subject_consent import SubjectConsent
+from django.db import transaction
+from edc_registration.models import RegisteredSubject
+from pprint import pprint
 
 fake = Faker()
 
@@ -90,26 +94,55 @@ class SubjectTestMixin:
 
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member__subject_identifier=household_member.subject_identifier)
+                household_member=household_member)
             self.assertTrue(enrollment_checklist.is_eligible)
         except EnrollmentChecklist.DoesNotExist:
-            self.assertEqual(
-                household_member.member_status, ELIGIBLE_FOR_SCREENING)
+            self.assertTrue(
+                household_member.eligible_member)
             household_member = self.add_enrollment_checklist(
                 household_member, **options)
             household_member = HouseholdMember.objects.get(
                 pk=household_member.pk)
-            self.assertEqual(household_member.member_status,
-                             ELIGIBLE_FOR_CONSENT)
+            self.assertTrue(household_member.eligible_subject)
             enrollment_checklist = household_member.enrollmentchecklist
         # update options for subject consent from enrollment checklist
+        report_datetime = options.get(
+            'report_datetime') or self.get_utcnow()
+        consent_object = site_consents.get_consent(
+            report_datetime=report_datetime,
+            consent_model='bcpp_subject.subjectconsent')
+
+        # fake values
         fake_identity = fake.credit_card_number()
+        last_name = fake.last_name()
+        initials = options.get(
+            'initials', enrollment_checklist.initials)
+        last_name = initials[1] + last_name
+
+        # if RegisteredSubject exists, use those values unless
+        # explicitly provided through 'options'
+        # see UpdatesOrCreatesRegistrationModelMixin in subject_consent
+        try:
+            registered_subject = RegisteredSubject.objects.get(
+                registration_identifier=household_member.internal_identifier)
+        except RegisteredSubject.DoesNotExist:
+            identity = options.get('identity', fake_identity)
+            confirm_identity = options.get('confirm_identity', fake_identity)
+            dob = options.get('dob', enrollment_checklist.dob)
+        else:
+            identity = options.get('identity', registered_subject.identity)
+            confirm_identity = options.get(
+                'confirm_identity', registered_subject.identity)
+            dob = options.get('dob', registered_subject.dob)
+
         consent_options = dict(
-            consent_datetime=options.get('report_datetime') or self.get_utcnow(),
-            dob=options.get('dob', enrollment_checklist.dob),
+            first_name=household_member.first_name,
+            last_name=last_name,
+            version=consent_object.version,
+            consent_datetime=report_datetime,
+            dob=dob,
             gender=options.get('gender', enrollment_checklist.gender),
-            initials=options.get(
-                'initials', enrollment_checklist.initials),
+            initials=initials,
             is_literate=options.get(
                 'is_literate', enrollment_checklist.literacy),
             witness_name=options.get(
@@ -123,16 +156,25 @@ class SubjectTestMixin:
             guardian_name=options.get(
                 'guardian_name',
                 fake.name() if enrollment_checklist.guardian == YES else None),
-            identity=options.get('identity', fake_identity),
-            confirm_identity=options.get(
-                'confirm_identity', fake_identity))
+            identity=identity,
+            confirm_identity=confirm_identity)
 
         # add subject consent
-        return mommy.make_recipe(
-            'bcpp_subject.subjectconsent',
-            household_member=household_member,
-            survey_schedule=household_member.survey_schedule_object.field_value,
-            **consent_options)
+        with transaction.atomic():
+            try:
+                subject_consent = mommy.make_recipe(
+                    'bcpp_subject.subjectconsent',
+                    household_member=household_member,
+                    survey_schedule=household_member.survey_schedule_object.field_value,
+                    **consent_options)
+            except IntegrityError:
+                subject_consent = None
+        if not subject_consent:
+            # subject consent not added, fetching existing
+            subject_consent = SubjectConsent.objects.get(
+                subject_identifier=household_member.subject_identifier,
+                version=consent_object.version)
+        return subject_consent
 
     def add_subject_visits(self, visit_codes, subject_identifier):
         return self.add_visits(
@@ -145,7 +187,8 @@ class SubjectTestMixin:
         """Returns a subject visit the given visit_code.
 
         Creates all needed relations."""
-        household_structure = self.make_household_ready_for_enumeration(survey_schedule=survey_schedule)
+        household_structure = self.make_household_ready_for_enumeration(
+            survey_schedule=survey_schedule)
         household_member = self.add_household_member(
             household_structure=household_structure)
         household_member = self.add_enrollment_checklist(household_member)
@@ -162,14 +205,19 @@ class SubjectTestMixin:
             report_datetime=report_datetime or self.get_utcnow())
 
     def make_subject_visit_for_consented_subject_male(
-            self, visit_code, report_datetime=None, survey_schedule=None, **options):
-        """Returns a subject visit of a consented male member."""
-        household_structure = self.make_enumerated_household_with_male_member(survey_schedule=survey_schedule)
-        old_member = self.add_household_member(
+            self, visit_code, report_datetime=None, survey_schedule=None,
+            **options):
+        """Returns a subject visit of a consented male member.
+
+        By default this is for the first survey_schedule.
+        """
+        household_structure = self.make_enumerated_household_with_male_member(
+            survey_schedule=survey_schedule)
+        household_member = self.add_household_member(
             household_structure=household_structure, gender=MALE)
-        old_member = self.add_enrollment_checklist(old_member)
-        self.add_subject_consent(old_member, **options)
-        household_member = HouseholdMember.objects.get(pk=old_member.pk)
+        household_member = self.add_enrollment_checklist(household_member)
+        self.add_subject_consent(household_member, **options)
+        household_member = HouseholdMember.objects.get(pk=household_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
             visit_code=visit_code)

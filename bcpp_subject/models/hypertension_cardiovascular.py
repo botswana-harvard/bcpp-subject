@@ -74,7 +74,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     weight_history = models.CharField(
         verbose_name='Have you had your weight checked in the past 3 years?',
-        choices=YES_NO,
+        choices=YES_NO_NA,
         max_length=20)
 
     weight_counselling = models.CharField(
