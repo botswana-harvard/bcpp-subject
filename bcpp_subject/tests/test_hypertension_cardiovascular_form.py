@@ -39,7 +39,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
             'health_care_facility': NOT_APPLICABLE,
             'salt_intake_counselling': NOT_APPLICABLE,
             'tobacco_smoking': NOT_APPLICABLE,
-            'weight_history': NO,
+            'weight_history': NOT_APPLICABLE,
             'tobacco_counselling': NOT_APPLICABLE,
             'weight_counselling': NOT_APPLICABLE,
             'physical_activity_counselling': NOT_APPLICABLE,

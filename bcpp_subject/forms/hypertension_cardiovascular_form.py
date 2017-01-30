@@ -55,7 +55,6 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         fields_to_exclude = DEFAULT_BASE_FIELDS + ['may_take_blood_pressure',
                                                    'subject_visit',
                                                    'waistcircumferencemeasurement',
-                                                   'weight_history',
                                                    'report_datetime',
                                                    'bpmeasurement',
                                                    'medications_taken',

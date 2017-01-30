@@ -11,14 +11,9 @@ class TestHivTestingHistoryForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
         self.options = {
             'report_datetime': self.get_utcnow(),
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.subject_visit_female.id,
             'has_tested': YES,
             'when_hiv_test': '1 to 5 months ago',
             'has_record': YES,
@@ -37,7 +32,7 @@ class TestHivTestingHistoryForm(SubjectMixin, TestCase):
         self.assertFalse(hiv_testing_history_form.is_valid())
 
     def test_validate_prior_hiv_DWTA(self):
-        """Assert other fields provided only if prior hiv test"""
+        """Assert other fields provided only if prior hiv test."""
         self.options.update(has_tested=DWTA)
         hiv_testing_history_form = HivTestingHistoryForm(data=self.options)
         self.assertFalse(hiv_testing_history_form.is_valid())
@@ -53,13 +48,13 @@ class TestHivTestingHistoryForm(SubjectMixin, TestCase):
         self.assertFalse(hiv_testing_history_form.is_valid())
 
     def test_hiv_neg_with_other_record(self):
-        """Assert if hiv negative with other records is invalid"""
+        """Assert if hiv negative with other records is invalid."""
         self.options.update(verbal_hiv_result=NEG)
         hiv_testing_history_form = HivTestingHistoryForm(data=self.options)
         self.assertFalse(hiv_testing_history_form.is_valid())
 
     def test_hiv_pos_without_other_record(self):
-        """Assert if other records were provided for hiv positive subject"""
+        """Assert if other records were provided for hiv positive subject."""
         self.options.update(other_record=NOT_APPLICABLE)
         hiv_testing_history_form = HivTestingHistoryForm(data=self.options)
         self.assertFalse(hiv_testing_history_form.is_valid())
