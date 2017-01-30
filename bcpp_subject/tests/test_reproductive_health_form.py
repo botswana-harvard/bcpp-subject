@@ -12,13 +12,9 @@ from bcpp_subject.models.list_models import FamilyPlanning
 class TestReproductiveHealthForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('T0', **self.consent_data)
-        self.family_planning = FamilyPlanning.objects.create(name='Condoms, consistent use (male or female)', short_name='Condoms, consistent use (male or female)')
+        self.family_planning = FamilyPlanning.objects.create(
+            name='Condoms, consistent use (male or female)', 
+            short_name='Condoms, consistent use (male or female)')
         self.options = {
             'number_children': 4,
             'menopause': NO,
@@ -29,7 +25,7 @@ class TestReproductiveHealthForm(SubjectMixin, TestCase):
             'gestational_weeks': 2,
             'pregnancy_hiv_tested': NO,
             'pregnancy_hiv_retested': YES,
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.subject_visit_female.id,
             'report_datetime': self.get_utcnow(),
         }
 
@@ -39,26 +35,29 @@ class TestReproductiveHealthForm(SubjectMixin, TestCase):
         self.assertTrue(form.save())
 
     def test_if_participant_is_not_pregnant_since_last_interview(self):
-        """Asserts that participant is not pregnant"""
+        """Asserts that participant is not pregnant."""
         self.options.update(when_pregnant=NO, gestational_weeks=2)
         form = ReproductiveHealthForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_if_participant_has_reached_menopause(self):
-        """Asserts that participant has reached menopause"""
-        planning = FamilyPlanning.objects.create(name='Injectable contraceptive', short_name='Injectable contraceptive')
+        """Asserts that participant has reached menopause."""
+        planning = FamilyPlanning.objects.create(
+            name='Injectable contraceptive',
+            short_name='Injectable contraceptive')
         self.options.update(menopause=YES, family_planning=[str(planning.id)])
         form = ReproductiveHealthForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_if_menopause_then_no_pregnancy(self):
-        """Asserts that participant reached menopause then she cannot be pregnant"""
+        """Asserts that participant reached menopause then she cannot be pregnant."""
         self.options.update(menopause=YES, currently_pregnant=YES)
         form = ReproductiveHealthForm(data=self.options)
         self.assertFalse(form.is_valid())
 
     def test_if_no_menopause_then_provide_family_planning_details(self):
-        """Asserts that participant has not reached menopause then family planning details should be provided"""
+        """Asserts that participant has not reached menopause then family 
+        planning details should be provided."""
         self.options.update(menopause=NO, family_planning=None)
         form = ReproductiveHealthForm(data=self.options)
         self.assertFalse(form.is_valid())

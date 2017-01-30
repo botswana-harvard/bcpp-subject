@@ -15,23 +15,16 @@ class TestPregnancyForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.subject_visit = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
-
-        mommy.make_recipe('bcpp_subject.reproductivehealth', subject_visit
-                          =self.subject_visit, report_datetime=self.get_utcnow
+        mommy.make_recipe('bcpp_subject.reproductivehealth',
+                          subject_visit=self.subject_visit_male, report_datetime=self.get_utcnow
                           (), currently_pregnant=YES)
         self.options = {
-           'subject_visit': self.subject_visit.id,
-           'report_datetime': self.get_utcnow(),
-           'current_pregnant': NO,
-           'anc_reg': YES,
-           'lnmp': date.today()
-         }
+            'subject_visit': self.subject_visit_male.id,
+            'report_datetime': self.get_utcnow(),
+            'current_pregnant': NO,
+            'anc_reg': YES,
+            'lnmp': date.today()
+        }
 
     def test_form_is_valid(self):
         form = PregnancyForm(data=self.options)
@@ -44,7 +37,7 @@ class TestPregnancyForm(SubjectMixin, TestCase):
         self.assertFalse(form.is_valid())
 
     def test_provide_lnmp_when_pregnant(self):
-        demo_preg_lmnp_date = date.today()-timedelta(90)
+        demo_preg_lmnp_date = date.today() - timedelta(90)
         self.options.update(current_pregnant=YES, lnmp=demo_preg_lmnp_date)
         form = PregnancyForm(data=self.options)
         self.assertTrue(form.is_valid())
