@@ -516,6 +516,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj(
                 'bcpp_subject.thirdpartner', REQUIRED, E0, self.subject_identifier).count(), 1)
 
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_not_required(self):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
@@ -527,17 +528,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
 
-    def test_hiv_care_adherence_has_record_DWTA(self):
-
-        self.subject_identifier = self.subject_visit_male.subject_identifier
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, NO, NO, NO)
-
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_required(self):
         """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
 
@@ -555,6 +546,19 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', REQUIRED, E0, self.subject_identifier).count(), 1)
 
+    @tag("hivcareadherence")
+    def test_hiv_care_adherence_has_record_DWTA(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, DWTA, DWTA, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_required3(self):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
@@ -719,4 +723,3 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
