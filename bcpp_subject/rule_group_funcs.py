@@ -7,6 +7,7 @@ from .subject_status_helper import SubjectStatusHelper
 from bcpp_subject.constants import T1, T2, T3, DECLINED, E0
 from bcpp_subject.models.subject_visit import SubjectVisit
 from bcpp_subject.models.sexual_behaviour import SexualBehaviour
+from member.models.household_member.household_member import HouseholdMember
 
 
 def func_show_recent_partner(visit_instance, *args):
@@ -406,3 +407,14 @@ def func_hiv_untested(visit_instance, *args):
     if func_is_baseline_or_ess(visit_instance):
         return hiv_testing_history(visit_instance)
     return False
+
+
+def func_anonymous_member(visit_instance, *args):
+    try:
+        household_member = HouseholdMember.objects.get(
+            subject_identifier=visit_instance.subject_identifier)
+        return household_member.anonymous
+    except HouseholdMember.DoesNotExist:
+        return False
+    except HouseholdMember.MultipleObjectsReturned:
+        return False

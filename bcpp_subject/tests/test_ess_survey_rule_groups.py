@@ -4,16 +4,21 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA, MALE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
 from member.models.household_member import HouseholdMember
+from member.models.enrollment_checklist_anonymous import EnrollmentChecklistAnonymous
 
 from ..constants import NOT_SURE, E0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
 from django.test.utils import tag
+from bcpp_subject.models.appointment import Appointment
+from plot.models import Plot
+from household.models.household_structure.household_structure import HouseholdStructure
+from bcpp_subject.models.anonymous.anonymous_consent import AnonymousConsent
 
 
 class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
@@ -723,3 +728,12 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('immigrationstatus')
+    def test_immigration_notrequired_noncitizens(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.immigrationstatus', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)

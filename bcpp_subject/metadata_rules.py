@@ -27,7 +27,8 @@ from .rule_group_funcs import (
     female,
     func_show_recent_partner,
     func_show_second_partner_forms,
-    func_show_third_partner_forms)
+    func_show_third_partner_forms,
+    func_anonymous_member)
 
 
 @register()
@@ -61,6 +62,13 @@ class SubjectVisitRuleGroup(RuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['pima'])
+
+    immigration_status = CrfRule(
+        logic=Logic(
+            predicate=func_anonymous_member,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['immigrationstatus'])
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
