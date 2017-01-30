@@ -51,7 +51,7 @@ class SubjectTestMixin:
 
         survey_schedule = self.get_survey_schedule(index=2)
 
-        self.subject_visit_male = self.make_subject_visit_for_consented_subject_female(
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
             E0,
             survey_schedule=survey_schedule,
             **self.consent_data_female)
