@@ -14,11 +14,6 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
         super().__init__(*args, **kwargs)
         self.fields['item_type'].initial = 'tube'
 
-    panel_name = forms.ChoiceField(
-        choices=PANEL_CHOICE,
-        label='Panel Name',
-        widget=forms.RadioSelect)
-
     specimen_type = forms.Field(
         initial=BLOOD,
         label='Specimen Type',

@@ -27,7 +27,8 @@ from .rule_group_funcs import (
     female,
     func_show_recent_partner,
     func_show_second_partner_forms,
-    func_show_third_partner_forms)
+    func_show_third_partner_forms,
+    func_anonymous_member)
 
 
 @register()
@@ -61,6 +62,13 @@ class SubjectVisitRuleGroup(RuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['pima'])
+
+    immigration_status = CrfRule(
+        logic=Logic(
+            predicate=func_anonymous_member,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_models=['immigrationstatus'])
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
@@ -150,7 +158,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=PF(
                 'has_tested', 'has_record', 'other_record',
-                func=lambda x, y, z: True if x == YES and x == YES or z == YES else False),
+                func=lambda x, y, z: True if x == YES and (y == YES or z == YES) else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
@@ -473,13 +481,20 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 @register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
+#     serve_hiv_care_adherence = CrfRule(
+#         logic=Logic(
+#             predicate=PF(
+#                 'has_tested', 'verbal_hiv_result',
+#                 func=lambda y, x: True if y in [NO, DWTA] or x in [NEG, UNK] else False),
+#             consequence=NOT_REQUIRED,
+#             alternative=REQUIRED),
+#         target_models=['hivcareadherence', 'hivmedicalcare'])
+
     serve_hiv_care_adherence = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'has_tested', 'verbal_hiv_result',
-                func=lambda y, x: True if x == NEG or y == DWTA or x == UNK else False),
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            P('verbal_hiv_result', 'eq', POS),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['hivcareadherence', 'hivmedicalcare'])
 
     class Meta:

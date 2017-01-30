@@ -898,6 +898,7 @@ WHY_ARV_STOP_CHOICE = (
     ('Doctor or nurse at clinic told me to stop',
      _('Doctor or nurse at clinic told me to stop')),
     ('Transportation costs', _('Transportation costs')),
+    ('Cost/could not afford', _('Cost/could not afford')),
     ('Was afraid of someone (friends/family) seeing me at the HIV'
      ' clinic', _('Was afraid of someone (friends/family) seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',

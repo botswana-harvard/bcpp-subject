@@ -1,12 +1,13 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords, BaseModel
+from edc_base.model.models import BaseModel
 from edc_constants.choices import YES_NO_NA, YES_NO
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 
 from .list_models import MedicationGiven, MedicationTaken
 from .model_mixins import CrfModelMixin
+from ..managers import WaistCircumferenceMeasurementManager, BPMeasurementManager
 
 
 class HypertensionCardiovascular(CrfModelMixin):
@@ -73,7 +74,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     weight_history = models.CharField(
         verbose_name='Have you had your weight checked in the past 3 years?',
-        choices=YES_NO,
+        choices=YES_NO_NA,
         max_length=20)
 
     weight_counselling = models.CharField(
@@ -106,8 +107,6 @@ class HypertensionCardiovascular(CrfModelMixin):
         'the past 3 years?',
         choices=YES_NO_NA,
         max_length=20)
-
-    history = HistoricalRecords()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
@@ -147,6 +146,12 @@ class BPMeasurement(BaseModel):
         null=True,
         blank=True)
 
+    objects = BPMeasurementManager()
+
+    def natural_key(self):
+        return self.bp_measurement.natural_key()
+    natural_key.dependencies = ['bcpp_subject.hypertensioncardiovascular']
+
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = 'Blood Pressure Measurements'
@@ -184,6 +189,12 @@ class WaistCircumferenceMeasurement(BaseModel):
         max_length=15,
         null=True,
         blank=True)
+
+    objects = WaistCircumferenceMeasurementManager()
+
+    def natural_key(self):
+        return self.waist_circumference_measurement.natural_key()
+    natural_key.dependencies = ['bcpp_subject.hypertensioncardiovascular']
 
     class Meta:
         app_label = 'bcpp_subject'

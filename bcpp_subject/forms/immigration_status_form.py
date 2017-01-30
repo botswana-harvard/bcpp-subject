@@ -10,10 +10,10 @@ class ImmigrationStatusForm (SubjectModelFormMixin):
 
     def clean(self):
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super().clean()
 
         if cleaned_data.get('country_of_origin') == OTHER:
-            if cleaned_data.get('country_of_origin_other') == None:
+            if not cleaned_data.get('country_of_origin_other'):
                 raise forms.ValidationError({
                     'country_of_origin_other': [
                         'This field is mandatory since other was selected above']})
@@ -21,7 +21,7 @@ class ImmigrationStatusForm (SubjectModelFormMixin):
             if cleaned_data.get('country_of_origin_other'):
                 raise forms.ValidationError({
                     'country_of_origin_other': [
-                        'Has to be blank since option is selected']})
+                        'Has to be blank since OTHER option is not selected']})
 
         return self.cleaned_data
 

@@ -19,7 +19,7 @@ from plot.tests.plot_test_mixin import PlotTestMixin
 from survey.tests import (
     SurveyTestMixin, DatesTestMixin as SurveyDatesTestMixin)
 
-from ..constants import T0
+from ..constants import T0, E0
 from ..models import Appointment
 from edc_consent.site_consents import site_consents
 from django.db.utils import IntegrityError
@@ -35,6 +35,31 @@ class SubjectTestMixin:
 
     def setUp(self):
         super().setUp()
+
+        self.consent_data_male = {
+            'identity': '317115158',
+            'confirm_identity': '317115158',
+        }
+
+        survey_schedule = self.get_survey_schedule(index=2)
+
+        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+            E0,
+            survey_schedule=survey_schedule,
+            **self.consent_data_male)
+
+        self.consent_data_female = {
+            'identity': '317221515',
+            'confirm_identity': '317221515',
+        }
+
+        survey_schedule = self.get_survey_schedule(index=2)
+
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
+            E0,
+            survey_schedule=survey_schedule,
+            **self.consent_data_female)
+
         self.study_site = '40'
 
     def add_subject_consent(self, household_member=None,
@@ -204,11 +229,11 @@ class SubjectTestMixin:
             report_datetime=report_datetime or self.get_utcnow())
 
     def add_subject_visit_followup(self, previous_member, visit_code,
-                                   report_datetime):
+                                   report_datetime=None):
 
         next_household_structure = self.get_next_household_structure_ready(
             previous_member.household_structure, make_hoh=None)
-
+        report_datetime = report_datetime or next_household_structure.enumerated_datetime
         new_member = previous_member.clone(
             household_structure=next_household_structure,
             report_datetime=next_household_structure.enumerated_datetime)

@@ -4,16 +4,21 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA, MALE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
 from member.models.household_member import HouseholdMember
+from member.models.enrollment_checklist_anonymous import EnrollmentChecklistAnonymous
 
 from ..constants import NOT_SURE, E0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
 from django.test.utils import tag
+from bcpp_subject.models.appointment import Appointment
+from plot.models import Plot
+from household.models.household_structure.household_structure import HouseholdStructure
+from bcpp_subject.models.anonymous.anonymous_consent import AnonymousConsent
 
 
 class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
@@ -197,22 +202,6 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, E0, self.subject_identifier).count(), 1)
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivresult', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
-#     def test_known_pos_stigma_forms(self):
-#         """If known posetive, test stigma forms
-#         """
-#         self.subject_identifier = self.subject_visit_female.subject_identifier
-#         #  self.check_male_registered_subject_rule_groups(self.subject_visit_female_E0)
-#         hiv_testing_history = self.make_hivtesting_history(self.subject_visit_female, self.get_utcnow(), YES, YES, NEG, NO)
-#         print(hiv_testing_history.__dict__)
-#         for crf in CrfMetadata.objects.filter(subject_identifier=hiv_testing_history.subject_visit.subject_identifier):
-#             print(crf.model, crf.entry_statmyus)
-#         self.assertEqual(
-#             self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED, E0, self.subject_identifier).count(), 1)
-#         self.assertEqual(
-#             self.crf_metadata_obj('bcpp_subject.stigma', REQUIRED, E0, self.subject_identifier).count(), 1)
-#         self.assertEqual(
-#             self.crf_metadata_obj('bcpp_subject.stigmaopinion', REQUIRED, E0, self.subject_identifier).count(), 1)
 
     def test_hiv_tested_forms(self):
         """If known posetive, test hivtested forms
@@ -532,6 +521,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj(
                 'bcpp_subject.thirdpartner', REQUIRED, E0, self.subject_identifier).count(), 1)
 
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_not_required(self):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
@@ -543,17 +533,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
 
-    def test_hiv_care_adherence_has_record_DWTA(self):
-
-        self.subject_identifier = self.subject_visit_male.subject_identifier
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, NO, NO, NO)
-
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
-        self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_required(self):
         """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
 
@@ -571,6 +551,19 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivmedicalcare', REQUIRED, E0, self.subject_identifier).count(), 1)
 
+    @tag("hivcareadherence")
+    def test_hiv_care_adherence_has_record_DWTA(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), DWTA, DWTA, DWTA, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivcareadherence', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivmedicalcare', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag("hivcareadherence")
     def test_hiv_care_adherence_required3(self):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
@@ -686,7 +679,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, POS, YES)
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -697,18 +690,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, POS, NO)
-
-        self.assertEqual(
-            self.crf_metadata_obj(
-                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
-
-    @tag('hivresultdocumentation')
-    def test_hivresult_documentation_required4(self):
-
-        self.subject_identifier = self.subject_visit_male.subject_identifier
-
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, NEG, NO)
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -719,8 +701,39 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), NO, NO, NEG, YES)
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
-                'bcpp_subject.hivresultdocumentation', REQUIRED, E0, self.subject_identifier).count(), 1)
+                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required4(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('hivresultdocumentation')
+    def test_hivresult_documentation_required6(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('immigrationstatus')
+    def test_immigration_notrequired_noncitizens(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.immigrationstatus', NOT_REQUIRED, E0, self.subject_identifier).count(), 1)

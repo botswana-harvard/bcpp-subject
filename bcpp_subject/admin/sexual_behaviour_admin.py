@@ -41,6 +41,7 @@ class SexualBehaviourAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'ever_sex': admin.VERTICAL,
         'more_sex': admin.VERTICAL,
         'condom': admin.VERTICAL,
+        'first_sex_partner_age': admin.VERTICAL, 
         'alcohol_sex': admin.VERTICAL}
 
     instructions = [_('<h5>Read to Participant</h5> In this part of the interview,'
