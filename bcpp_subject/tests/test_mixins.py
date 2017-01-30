@@ -155,25 +155,6 @@ class SubjectTestMixin:
             appointment=appointment,
             report_datetime=report_datetime or self.get_utcnow())
 
-    def make_subject_visit_ahs_subject(self, visit_code, survey_schedule=None,
-                                       report_datetime=None):
-        """Returns a subject visit of a consented male member."""
-        bhs_subject_visit = self.make_subject_visit_for_a_male_subject(T0)
-        bhs_household_member = bhs_subject_visit.household_member
-        # Create an ahs member
-        household_member = self.make_ahs_household_member(
-            bhs_household_member, survey_schedule=survey_schedule)
-        appointment = Appointment.objects.get(
-            subject_identifier=household_member.subject_identifier,
-            visit_code=visit_code)
-        return mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=household_member,
-            subject_identifier=household_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=(report_datetime or self.get_utcnow() +
-                             datetime.timedelta(3 * 365 / 12)))
-
     def add_subject_visit_followup(self, previous_member, visit_code,
                                    report_datetime=None):
 
