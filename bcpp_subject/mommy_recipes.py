@@ -14,17 +14,18 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Ci
                      Grant, HeartAttack, HicEnrollment, HivCareAdherence, HivHealthCareCosts,
                      HivLinkageToCare, HivMedicalCare, HivResultDocumentation, HivResult,
                      HivTestReview, HivTested, HivTestingHistory, HivUntested, HospitalAdmission,
-                     HouseholdComposition, HypertensionCardiovascular, LabourMarketWages, MedicalDiagnoses,
+                     HouseholdComposition, LabourMarketWages, MedicalDiagnoses, ImmigrationStatus,
                      NonPregnancy, OutpatientCare, Participation, PimaVl, Pima, PositiveParticipant,
                      Pregnancy, QualityOfLife, RbdDemographics, ReproductiveHealth,
                      ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
                      SubstanceUse, TbSymptoms, ThirdPartner, Tuberculosis, Uncircumcised,
-                     ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition)
+                     ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition, HypertensionCardiovascular)
+
 from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
                                              CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
                                              StiIllnesses, PartnerResidency, MedicationGiven, MedicationTaken)
-from edc_constants.constants import OTHER
+from bcpp_subject.models.sexual_partner import RecentPartner
 
 # from .models import Respondent, MostRecentPartner
 
@@ -451,6 +452,11 @@ rbddemographics = Recipe(
     live_with=None,  # Many2Many
 )
 
+recentpartner = Recipe(
+    RecentPartner,
+    sex_partner_community='test_community'
+)
+
 # mostrecentpartner = Recipe(
 #     MostRecentPartner,
 #     rel_type='Longterm partner',
@@ -505,21 +511,7 @@ resourceutilization = Recipe(
 
 secondpartner = Recipe(
     SecondPartner,
-    rel_type='Longterm partner',
-    partner_residency='In this community',
-    partner_age=30,
-    partner_gender='M',
-    last_sex_contact=1,
-    first_sex_contact=5,
-    regular_sex=4,
-    having_sex=YES,
-    having_sex_reg='Sometimes',
-    alcohol_before_sex=YES,
-    partner_status=NEG,
-    partner_arv=NO,
-    status_disclosure=YES,
-    multiple_partners=NO,
-    intercourse_type='Vaginal',
+    sex_partner_community='test_community',
 )
 still_illness = Recipe(StiIllnesses)
 sti = Recipe(
@@ -619,27 +611,21 @@ tbsymptoms = Recipe(
 
 thirdpartner = Recipe(
     ThirdPartner,
-    rel_type='Longterm partner',
-    partner_residency='In this community',
-    partner_age=30,
-    partner_gender='M',
-    last_sex_contact=1,
-    first_sex_contact=5,
-    regular_sex=4,
-    having_sex=YES,
-    having_sex_reg='Sometimes',
-    alcohol_before_sex=YES,
-    partner_status=NEG,
-    partner_arv=NO,
-    status_disclosure=YES,
-    multiple_partners=NO,
-    intercourse_type='Vaginal',
+    sex_partner_community='test_community',
 )
 
 tuberculosis = Recipe(
     Tuberculosis,
     date_tb=fake.last_year,
     dx_tb='Pulmonary tuberculosis',
+)
+
+immigrationstatus = Recipe(
+    ImmigrationStatus,
+)
+
+hypertensioncardiovascular = Recipe(
+    HypertensionCardiovascular,
 )
 
 circumcision_benefits_hiv = Recipe(CircumcisionBenefits, name='Reduced risk of HIV ', short_name='Reduced risk of HIV ')

@@ -17,3 +17,9 @@ class SubjectRequisitionAdmin (CrfModelAdminMixin, admin.ModelAdmin):
         'reason_not_drawn': admin.VERTICAL,
         'item_type': admin.VERTICAL,
     }
+
+    exclude = ('panel_name',)
+    
+    def save_model(self, request, obj, form, change):
+        obj.panel_name = request.GET.get('panel_name')
+        CrfModelAdminMixin.save_model(self, request, obj, form, change)

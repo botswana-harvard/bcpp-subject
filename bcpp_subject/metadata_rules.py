@@ -473,13 +473,20 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 @register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
+#     serve_hiv_care_adherence = CrfRule(
+#         logic=Logic(
+#             predicate=PF(
+#                 'has_tested', 'verbal_hiv_result',
+#                 func=lambda y, x: True if y in [NO, DWTA] or x in [NEG, UNK] else False),
+#             consequence=NOT_REQUIRED,
+#             alternative=REQUIRED),
+#         target_models=['hivcareadherence', 'hivmedicalcare'])
+
     serve_hiv_care_adherence = CrfRule(
         logic=Logic(
-            predicate=PF(
-                'has_tested', 'verbal_hiv_result',
-                func=lambda y, x: True if x == NEG or y == DWTA or x == UNK else False),
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            P('verbal_hiv_result', 'eq', POS),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['hivcareadherence', 'hivmedicalcare'])
 
     class Meta:
