@@ -1,6 +1,6 @@
 from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 from edc_visit_schedule.admin import (
-    visit_schedule_fieldset_tuple, visit_schedule_fields)
+    visit_schedule_only_fieldset_tuple, visit_schedule_only_fields)
 
 from survey.admin import survey_fieldset_tuple, survey_fields
 
@@ -21,7 +21,7 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
             'fields': (
                 'subject_identifier',
                 'report_datetime')}),
-        visit_schedule_fieldset_tuple,
+        visit_schedule_only_fieldset_tuple,
         survey_fieldset_tuple,
         audit_fieldset_tuple)
 
@@ -35,7 +35,7 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return (super().get_readonly_fields(request, obj)
                 + audit_fields
                 + survey_fields
-                + visit_schedule_fields)
+                + visit_schedule_only_fields)
 
     def view_on_site(self, obj):
         try:
