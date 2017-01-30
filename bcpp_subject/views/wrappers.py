@@ -170,10 +170,10 @@ class RequisitionModelWrapper(ModelWrapper):
         'appointment', 'household_identifier', 'subject_identifier',
         'survey_schedule', 'survey'])
     extra_querystring_attrs = {
-        'requisition': ['subject_visit']}
+        'requisition': ['subject_visit', 'panel_name']}
     url_instance_attrs = [
         'appointment', 'household_identifier', 'subject_identifier',
-        'survey_schedule', 'survey', 'subject_visit']
+        'survey_schedule', 'survey', 'subject_visit', 'panel_name']
 
     @property
     def subject_visit(self):
