@@ -16,6 +16,7 @@ git+https://github.com/botswana-harvard/edc-map@develop#egg=edc-map
 git+https://github.com/botswana-harvard/edc-meta-data@develop#egg=edc_metadata
 git+https://github.com/botswana-harvard/edc-offstudy@develop#egg=edc_offstudy
 git+https://github.com/botswana-harvard/edc-protocol@develop#egg=edc_protocol
+git+https://github.com/botswana-harvard/edc-quota@develop#egg=edc-quota
 git+https://github.com/botswana-harvard/edc-registration@develop#egg=edc_registration
 git+https://github.com/botswana-harvard/edc-search@develop#egg=edc-search
 git+https://github.com/botswana-harvard/edc-sync@develop#egg=edc-sync
