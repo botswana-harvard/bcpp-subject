@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from edc_sync.test_mixins import SyncTestSerializerMixin
 from ..sync_models import sync_models
-# from bcpp_subject
 
 from .test_mixins import CompleteCrfsMixin, SubjectMixin
 from edc_sync.models import OutgoingTransaction
@@ -25,13 +24,13 @@ class TestNaturalKey(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, T
     def test_enrollment_models(self):
         """bcpp_subject.subjectconsent,  bcpp_subject.enrollment, bcpp_subject.subjectvisit"""
         verbose = False
-        self.consent_data_male = {
+        consent_data_male = {
             'identity': '31721515',
             'confirm_identity': '31721515',
         }
         survey_schedule = self.get_survey_schedule(index=2)
         self.make_subject_visit_for_consented_subject_male(
-            E0, survey_schedule=survey_schedule, **self.consent_data_male)
+            E0, survey_schedule=survey_schedule, **consent_data_male)
         model_objs = []
         completed_model_objs = {}
         completed_model_lower = []

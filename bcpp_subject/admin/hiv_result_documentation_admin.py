@@ -34,7 +34,8 @@ class HivResultDocumentationAdmin (CrfModelAdminMixin, admin.ModelAdmin):
                     " most recent HIV test (positive, negative, or "
                     " indeterminate) ; OR </li>"
                     " <li> documentation that supports a previous diagnosis of"
-                    " HIV, if record of positive HIV test is not available.</li></ol> (baseline) ")],
+                    " HIV, if record of positive HIV test is not available.</li>"
+                    "</ol> (baseline) ")],
         ANNUAL: [("This section collects information on whether or not the"
                   " participant has either:"
                   " <ol><li>documentation of an HIV test result other than the"

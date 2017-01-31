@@ -6,7 +6,7 @@ from edc_metadata.rules.rule_group import RuleGroup
 from edc_metadata.rules.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE, DWTA, UNK
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE
 
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
@@ -481,15 +481,6 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 @register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
-#     serve_hiv_care_adherence = CrfRule(
-#         logic=Logic(
-#             predicate=PF(
-#                 'has_tested', 'verbal_hiv_result',
-#                 func=lambda y, x: True if y in [NO, DWTA] or x in [NEG, UNK] else False),
-#             consequence=NOT_REQUIRED,
-#             alternative=REQUIRED),
-#         target_models=['hivcareadherence', 'hivmedicalcare'])
-
     serve_hiv_care_adherence = CrfRule(
         logic=Logic(
             P('verbal_hiv_result', 'eq', POS),
@@ -499,7 +490,6 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = 'bcpp_subject.hivtestinghistory'
 
 
@@ -508,7 +498,6 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = 'bcpp_subject.hivtestreview'
 
 
@@ -517,7 +506,6 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = 'bcpp_subject.hivresultdocumentation'
 
 
@@ -526,5 +514,4 @@ class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = 'bcpp_subject.elisahivresult'

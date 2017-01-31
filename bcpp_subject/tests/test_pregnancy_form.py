@@ -16,10 +16,10 @@ class TestPregnancyForm(SubjectMixin, TestCase):
     def setUp(self):
         super().setUp()
         mommy.make_recipe('bcpp_subject.reproductivehealth',
-                          subject_visit=self.subject_visit_male, report_datetime=self.get_utcnow
+                          subject_visit=self.subject_visit_female, report_datetime=self.get_utcnow
                           (), currently_pregnant=YES)
         self.options = {
-            'subject_visit': self.subject_visit_male.id,
+            'subject_visit': self.subject_visit_female.id,
             'report_datetime': self.get_utcnow(),
             'current_pregnant': NO,
             'anc_reg': YES,

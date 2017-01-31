@@ -68,8 +68,8 @@ def hic_for_consents(verbose, subject_consents, total_consents):
         except HicEnrollment.DoesNotExist:
             create_hic_enrollment(n, created, verbose, subject_consent, hic_enrollment)
         n += 1
-    print('Reviewed {} consents from Pair 1. Created {} HIC Enrollment forms. {} already enrolled'.format(
-        total_consents, created, enrolled))
+    print('Reviewed {} consents from Pair 1. Created {} HIC Enrollment forms.'
+          ' {} already enrolled'.format(total_consents, created, enrolled))
 
 
 class Command(BaseCommand):

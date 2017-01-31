@@ -4,21 +4,16 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA, MALE
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, DWTA
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
 from member.models.household_member import HouseholdMember
-from member.models.enrollment_checklist_anonymous import EnrollmentChecklistAnonymous
 
 from ..constants import NOT_SURE, E0, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
 from django.test.utils import tag
-from bcpp_subject.models.appointment import Appointment
-from plot.models import Plot
-from household.models.household_structure.household_structure import HouseholdStructure
-from bcpp_subject.models.anonymous.anonymous_consent import AnonymousConsent
 
 
 class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):

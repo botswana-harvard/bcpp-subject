@@ -19,7 +19,7 @@ class SubjectRequisitionAdmin (CrfModelAdminMixin, admin.ModelAdmin):
     }
 
     exclude = ('panel_name',)
-    
+
     def save_model(self, request, obj, form, change):
         obj.panel_name = request.GET.get('panel_name')
         CrfModelAdminMixin.save_model(self, request, obj, form, change)

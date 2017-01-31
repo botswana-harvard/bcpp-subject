@@ -10,7 +10,7 @@ from ..choices import (
     WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE,
     ADHERENCE_4WK_CHOICE, NO_MEDICAL_CARE, WHY_ARV_STOP_CHOICE,
     YES_NO_REGIMEN, SOURCE_EVIDENCE)
-from ..models.list_models import Arv, HospitalizationReason
+from ..models.list_models import Arv, HospitalizationReason, ChronicDisease
 from .model_mixins import CrfModelMixin
 
 
@@ -166,6 +166,20 @@ class HivCareAdherence (CrfModelMixin):
         verbose_name=(
             'What was the primary reason for the hospitalization?'),
         help_text='Required if hospitalized after starting ART.'
+    )
+
+    hospitalized_art_start_reason_other = OtherCharField()
+
+    chronic_diseases = models.ManyToManyField(
+        ChronicDisease,
+        verbose_name='Chronic disease related care, Specify which?',
+        max_length=100,
+        help_text='Required if hospitalized for chronic diseases.'
+    )
+
+    medication_toxicity = models.CharField(
+        verbose_name='Medication toxicity, Specify which?',
+        max_length=100,
     )
 
     hospitalized_reason_evidence = models.CharField(

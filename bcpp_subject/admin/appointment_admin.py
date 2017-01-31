@@ -41,7 +41,5 @@ class AppointmentAdmin(ModelAdminMixin):
         'appt_status': admin.VERTICAL}
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj)
-                + survey_fields
-                + visit_schedule_fields
-                + ('subject_identifier', ))
+        return (super().get_readonly_fields(request, obj=obj) + survey_fields +
+                visit_schedule_fields + ('subject_identifier',))

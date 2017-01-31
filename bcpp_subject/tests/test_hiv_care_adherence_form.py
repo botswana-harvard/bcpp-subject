@@ -1,28 +1,25 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from django.test.utils import tag
 from django.test import TestCase
 
 from edc_constants.constants import YES, NO
 
 from .test_mixins import SubjectMixin
+from ..models.list_models import ChronicDisease
 from ..forms import HivCareAdherenceForm
+from ..models.list_models import HospitalizationReason
 
 
 class TestHivCareAdherence(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow() + relativedelta(years=3)
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female(
-            'E0', **self.consent_data)
-
+        self.chronic_diseases = ChronicDisease.objects.create(
+            name='High blood pressure', short_name='High blood pressure')
         self.options = {
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.subject_visit_female.id,
             'first_positive': (self.get_utcnow() - relativedelta(years=1)).date(),
             'medical_care': YES,
             'no_medical_care': None,
@@ -32,6 +29,8 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             'on_arv': YES,
             'regimen_currently_prescribed': None,
             'first_regimen': None,
+            'chronic_diseases': [str(self.chronic_diseases.id)],
+            'medication_toxicity': None,
             'admitted_at_art_start': None,
             'weeks_months_admitted': None,
             'hospitalization_reason': None,
@@ -174,3 +173,18 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             next_appointment_date=(self.get_utcnow() - relativedelta(months=1)).date())
         form = HivCareAdherenceForm(data=self.options)
         self.assertFalse(form.is_valid())
+
+    @tag('check_chronic_disease')
+    def test_if_chronic_disease_selected(self):
+        """ Assert form invalid when on arv and a chronic disease is not selected."""
+        hospitalized_chronic = HospitalizationReason.objects.create(
+            name='Chronic disease related care',
+            short_name='Chronic disease related care'
+        )
+        self.options.update(
+            hospitalized_art_start_reason=[hospitalized_chronic.id],
+            on_arv=YES,
+            chronic_diseases='Chronic disease related care'
+        )
+        form = HivCareAdherenceForm(data=self.options)
+        self.assertTrue(form.is_valid())

@@ -32,10 +32,8 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
     list_filter = ('report_datetime', 'survey', 'survey_schedule')
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj)
-                + audit_fields
-                + survey_fields
-                + visit_schedule_only_fields)
+        return (super().get_readonly_fields(request, obj) + audit_fields +
+                survey_fields + visit_schedule_only_fields)
 
     def view_on_site(self, obj):
         try:

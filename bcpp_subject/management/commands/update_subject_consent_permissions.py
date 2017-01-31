@@ -9,5 +9,6 @@ class Command(BaseCommand):
         for permission in Permission.objects.filter(
                 content_type__app_label='bcpp_subject',
                 content_type__model='SubjectConsent',
-                codename__icontains='subjectconsentextended').exclude(codename__startswith='delete'):
+                codename__icontains='subjectconsentextended'
+                ).exclude(codename__startswith='delete'):
             group.permissions.add(permission)
