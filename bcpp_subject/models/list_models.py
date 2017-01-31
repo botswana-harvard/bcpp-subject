@@ -71,6 +71,13 @@ class HospitalizationReason (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Hospitalization Reasons"
 
 
+class ChronicDisease (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+        verbose_name_plural = "Chronic Diseases"
+
+
 class MedicationGiven(ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):

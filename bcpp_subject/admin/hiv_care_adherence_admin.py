@@ -20,7 +20,13 @@ hospitalization_fieldset = Fieldset(
     section='Hospitalization')
 
 insert_regimen_fields = Insert(
-    ('regimen_currently_prescribed', 'first_regimen'),
+    ('regimen_currently_prescribed',
+     'first_regimen',
+     'hospitalized_art_start_reason',
+     'hospitalized_art_start_reason_other',
+     'chronic_diseases',
+     'medication_toxicity',
+     ),
     after='arv_evidence')
 
 

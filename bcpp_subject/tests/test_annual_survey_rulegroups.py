@@ -12,12 +12,27 @@ from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from member.models.household_member.household_member import HouseholdMember
 
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
-from ..models import Appointment, SubjectVisit
 
 from .test_mixins import SubjectMixin
+from survey.site_surveys import site_surveys
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
+
+    @tag("setup")
+    def test_setup(self):
+        pass
+        print(site_surveys.surveys)
+        previous_member = self.bhs_subject_visit_male.household_member
+        next_household_structure = self.get_next_household_structure_ready(
+            previous_member.household_structure, make_hoh=None)
+
+        print(next_household_structure, "next_household_structure")
+
+        new_member = previous_member.clone(
+            household_structure=next_household_structure,
+            report_datetime=next_household_structure.enumerated_datetime)
+        new_member.save()
 
     def setUp(self):
         super().setUp()
@@ -33,6 +48,23 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.ahs_subject_visit_male_y2 = None  # self.ahs_y2_subject_visit()
         # self.ahs_subject_visit_male_y3()
         self.ahs_subject_visit_male_y3 = None
+        self.consent_data_male = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        #survey_schedule = self.get_survey_schedule(index=1)
+        survey_schedule = site_surveys.surveys[2]
+        hs = self.make_household_structure(survey_schedule=survey_schedule)
+        print(hs)
+#         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+#             T0, survey_schedule=survey_schedule, **self.consent_data_male)
+#         print()
+
+#         self.visit_code_T1 = T1
+#         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+#         self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
+#         self.ahs_subject_visit_male_y2 = None  # self.ahs_y2_subject_visit()
+#         self.ahs_subject_visit_male_y3 = None  # self.ahs_subject_visit_male_y3()
 
     def crf_metadata_obj(self, model, entry_status, visit_code):
         return CrfMetadata.objects.filter(
