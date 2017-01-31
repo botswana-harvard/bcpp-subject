@@ -89,4 +89,6 @@ def dashboard_urls():
         ])
     return urlpatterns
 
-urlpatterns = [url(r'^admin/', bcpp_subject_admin.urls)] + listboard_urls() + dashboard_urls()
+
+urlpatterns = [url(r'^admin/', bcpp_subject_admin.urls)] + \
+    listboard_urls() + dashboard_urls()
