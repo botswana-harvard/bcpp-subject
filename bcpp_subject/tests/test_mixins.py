@@ -27,6 +27,7 @@ from bcpp_subject.models.subject_consent import SubjectConsent
 from django.db import transaction
 from edc_registration.models import RegisteredSubject
 from pprint import pprint
+from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 
 fake = Faker()
 
@@ -134,7 +135,6 @@ class SubjectTestMixin:
             confirm_identity = options.get(
                 'confirm_identity', registered_subject.identity)
             dob = options.get('dob', registered_subject.dob)
-
         consent_options = dict(
             first_name=household_member.first_name,
             last_name=last_name,
