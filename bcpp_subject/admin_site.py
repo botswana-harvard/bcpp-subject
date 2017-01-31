@@ -6,4 +6,6 @@ class AdminSite(DjangoAdminSite):
     site_header = 'BCPP Subject'
     index_title = 'BCPP Subject'
     site_url = '/bcpp_subject/list/'
+
+
 bcpp_subject_admin = AdminSite(name='bcpp_subject_admin')

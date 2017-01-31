@@ -1,5 +1,4 @@
 from ....models import SubjectLocator
-
 from ...wrappers import SubjectLocatorModelWrapper
 
 
