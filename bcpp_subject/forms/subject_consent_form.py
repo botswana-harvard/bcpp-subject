@@ -23,20 +23,11 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         cleaned_data = super().clean()
 
         self.clean_consent_with_household_member()
-        self.clean_citizen_with_legally_married()
+        self.clean_citizen()
+        self.clean_not_citizen()
         self.limit_edit_to_current_community()
         self.limit_edit_to_current_survey()
         self.household_info()
-        # TODO: does this need to be filled in ??
-#         if cleaned_data.get('household_member'):
-#             try:
-#                 HouseholdHeadEligibility.objects.get(
-#                     household_member__in=cleaned_data.get(
-#                         'household_member').household_structure.householdmember_set.all())
-#             except HouseholdHeadEligibility.DoesNotExist:
-#                 raise forms.ValidationError(
-#                     'Please fill household head eligibility form before completing subject consent.',
-#                     code='invalid')
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):
@@ -63,31 +54,22 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         household_member = self.cleaned_data.get("household_member")
         if household_member:
             if initials != household_member.initials:
-                raise forms.ValidationError(
-                    'Initials do not match with household member. '
-                    '%(initials)s <> %(hm_initials)s',
-                    params={
-                        'hm_initials': household_member.initials,
-                        'initials': initials},
-                    code='invalid')
+                raise forms.ValidationError({
+                    'initials':
+                    'Initials do not match with household member. {} <> {}'.format(
+                        initials, household_member.initials)})
             if household_member.first_name != first_name:
-                raise forms.ValidationError(
-                    'First name does not match with household member. '
-                    'Got %(first_name)s <> %(hm_first_name)s',
-                    params={
-                        'hm_first_name': household_member.first_name,
-                        'first_name': first_name},
-                    code='invalid')
+                raise forms.ValidationError({
+                    'first_name': 'First name does not match with household member. '
+                    'Got {} <> {}'.format(
+                        household_member.first_name, first_name)})
             if household_member.gender != gender:
-                raise forms.ValidationError(
-                    'Gender does not match with household member. '
-                    'Got %(gender)s <> %(hm_gender)s',
-                    params={
-                        'hm_gender': household_member.gender,
-                        'gender': gender},
-                    code='invalid')
+                raise forms.ValidationError({
+                    'gender': 'Gender does not match with household member. '
+                    'Got %(gender)s <> %(hm_gender)s'.format(
+                        household_member.gender, gender)})
 
-    def clean_citizen_with_legally_married(self):
+    def clean_citizen(self):
         citizen = self.cleaned_data.get('citizen')
         legal_marriage = self.cleaned_data.get('legal_marriage')
         marriage_certificate = self.cleaned_data.get('marriage_certificate')
@@ -95,32 +77,42 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
             'marriage_certificate_no')
         if citizen == NO:
             if legal_marriage == NOT_APPLICABLE:
-                raise forms.ValidationError(
-                    'You wrote subject is NOT a citizen. Is the subject legally married to a citizen?',
-                    code='invalid')
+                raise forms.ValidationError({
+                    'legal_marriage':
+                    'You wrote subject is NOT a citizen. Is the subject '
+                    'legally married to a citizen?'})
             elif legal_marriage == NO:
-                raise forms.ValidationError(
-                    'You wrote subject is NOT a citizen and is NOT legally married to a citizen. '
-                    'Subject cannot be consented',
-                    code='invalid')
+                raise forms.ValidationError({
+                    'legal_marriage':
+                    'You wrote subject is NOT a citizen and is NOT legally '
+                    'married to a citizen. Subject cannot be consented'})
             elif legal_marriage == YES and marriage_certificate != YES:
-                raise forms.ValidationError(
-                    'You wrote subject is NOT a citizen. Subject needs to produce a marriage certificate',
-                    code='invalid')
+                raise forms.ValidationError({
+                    'marriage_certificate':
+                    'You wrote subject is NOT a citizen. Subject needs to '
+                    'produce a marriage certificate'})
             elif legal_marriage == YES and marriage_certificate == YES:
                 if not marriage_certificate_no:
-                    raise forms.ValidationError(
-                        'You wrote subject is NOT a citizen and has marriage certificate. Please provide certificate number.',
-                        code='invalid')
+                    raise forms.ValidationError({
+                        'marriage_certificate_no':
+                        'You wrote subject is NOT a citizen and has marriage '
+                        'certificate. Please provide certificate number.'})
 
+    def clean_citizen_not_citizen(self):
+        cleaned_data = self.cleaned_data
+        citizen = cleaned_data.get('citizen')
+        legal_marriage = cleaned_data.get('legal_marriage')
+        marriage_certificate = cleaned_data.get('marriage_certificate')
         if citizen == YES:
             if legal_marriage != NOT_APPLICABLE:
                 raise forms.ValidationError(
-                    'You wrote subject is a citizen. That subject is legally married to a citizen is not applicable.',
+                    'You wrote subject is a citizen. That subject is '
+                    'legally married to a citizen is not applicable.',
                     code='invalid')
             elif marriage_certificate != NOT_APPLICABLE:
                 raise forms.ValidationError(
-                    'You wrote subject is a citizen. The subject\'s marriage certificate is not applicable.',
+                    'You wrote subject is a citizen. The subject\'s marriage '
+                    'certificate is not applicable.',
                     code='invalid')
 
     def household_info(self):
@@ -132,8 +124,8 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                         household_structure=household_member.household_structure)
                 except HouseholdInfo.DoesNotExist:
                     raise forms.ValidationError(
-                        'Complete \'%(model)s\' before consenting head of household',
-                        params={'model': HouseholdInfo._meta.verbose_name}, code='invalid')
+                        'Complete \'{}\' before consenting head of household'.format(
+                            HouseholdInfo._meta.verbose_name))
 
     @property
     def personal_details_changed(self):
@@ -145,8 +137,8 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
     def validate_legal_marriage(self):
         if self.cleaned_data.get("legal_marriage") == NO:
             if not (self.cleaned_data.get("marriage_certificate") in [YES, NO]):
-                raise forms.ValidationError(
-                    "if married not to a citizen, marriage_certificate proof should be YES or NO.")
+                raise forms.ValidationError({
+                    'marriage_certificate': 'This field is required.'})
 
     def clean_identity_with_unique_fields(self):
         identity = self.cleaned_data.get('identity')
@@ -160,20 +152,19 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                 consent.first_name, consent.initials, consent.dob)
             if not self.personal_details_changed:
                 if unique_together_form != unique_together_model:
-                    raise ValidationError(
-                        'Identity \'%(identity)s\' is already in use by subject %(subject_identifier)s. '
-                        'Please resolve.',
-                        params={
-                            'subject_identifier': consent.subject_identifier, 'identity': identity},
-                        code='invalid')
-        for consent in self._meta.model.objects.filter(first_name=first_name, initials=initials, dob=dob):
+                    raise ValidationError({
+                        'identity':
+                        'Identity {} is already in use by subject {}. '
+                        'Please resolve.'.format(
+                            identity, consent.subject_identifier)})
+        for consent in self._meta.model.objects.filter(
+                first_name=first_name, initials=initials, dob=dob):
             if consent.identity != identity:
-                raise ValidationError(
-                    'Subject\'s identity was previously reported as \'%(existing_identity)s\'. '
-                    'You wrote \'%(identity)s\'. Please resolve.',
-                    params={
-                        'existing_identity': consent.identity, 'identity': identity},
-                    code='invalid')
+                raise ValidationError({
+                    'identity':
+                    'Subject\'s identity was previously reported as \'{}\'. '
+                    'You wrote \'{}\'. Please resolve.'.format(
+                        consent.identity, identity)})
 
 
 class SubjectConsentForm(ConsentModelFormMixin, forms.ModelForm):
