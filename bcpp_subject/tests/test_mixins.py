@@ -48,6 +48,16 @@ class SubjectTestMixin:
             survey_schedule=survey_schedule,
             **self.consent_data_male)
 
+        self.consent_data_male_t0 = {
+            'identity': '317115159',
+            'confirm_identity': '317115159',
+        }
+
+        self.subject_visit_male_t0 = self.make_subject_visit_for_consented_subject_male(
+            T0,
+            survey_schedule=self.get_survey_schedule(index=1),
+            **self.consent_data_male_t0)
+
         self.consent_data_female = {
             'identity': '317221515',
             'confirm_identity': '317221515',
