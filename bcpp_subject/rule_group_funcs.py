@@ -11,21 +11,24 @@ from member.models.household_member.household_member import HouseholdMember
 
 
 def func_show_recent_partner(visit_instance, *args):
-    sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
+    sexual_behaviour = SexualBehaviour.objects.get(
+        subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
         return True if sexual_behaviour.last_year_partners >= 1 else False
     return False
 
 
 def func_show_second_partner_forms(visit_instance, *args):
-    sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
+    sexual_behaviour = SexualBehaviour.objects.get(
+        subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
         return True if sexual_behaviour.last_year_partners >= 2 else False
     return False
 
 
 def func_show_third_partner_forms(visit_instance, *args):
-    sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
+    sexual_behaviour = SexualBehaviour.objects.get(
+        subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
         return True if sexual_behaviour.last_year_partners >= 3 else False
     return False
@@ -59,32 +62,35 @@ def func_is_annual(visit_instance, *args):
 def func_previous_visit(visit_instance, *args):
     if visit_instance.visit_code == T2:
         try:
-            return SubjectVisit.objects.get(visit_code__in=[T1, E0], subject_identifier=visit_instance.subject_identifier)
+            return SubjectVisit.objects.get(
+                visit_code__in=[T1, E0],
+                subject_identifier=visit_instance.subject_identifier)
         except SubjectVisit.DoesNotExist:
             return False
     elif visit_instance.visit_code == T3:
         try:
-            return SubjectVisit.objects.get(visit_code=T2, subject_identifier=visit_instance.subject_identifier)
+            return SubjectVisit.objects.get(
+                visit_code=T2,
+                subject_identifier=visit_instance.subject_identifier)
         except SubjectVisit.DoesNotExist:
             return False
-#     elif visit_instance.visit_code == T3:
-#         try:
-#             return SubjectVisit.objects.get(visit_code=T2, subject_identifier=visit_instance.subject_identifier)
-#         except SubjectVisit.DoesNotExist:
-#             return False
 
 
 def func_is_defaulter(visit_instance, *args):
     """Returns True is a participant is a defaulter."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    subject_status_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False)
     return subject_status_helper.defaulter
 
 
 def func_art_naive(visit_instance, *args):
     """Returns True if the participant is NOT on art or cannot
-    be confirmed to be on art."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    be confirmed to be on art.
+    """
+    subject_status_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False)
+    art_naive = (
+        not subject_status_helper.on_art and subject_status_helper.hiv_result == POS)
     return art_naive
 
 
@@ -100,14 +106,18 @@ def func_art_naive_at_annual_or_defaulter(visit_instance, *args):
 
 
 def func_on_art(visit_instance, *args):
-    """Returns True if the participant cannot be confirmed to be on art."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    art_status = subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    """Returns True if the participant cannot be confirmed to be on art.
+    """
+    subject_status_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False)
+    art_status = (
+        subject_status_helper.on_art and subject_status_helper.hiv_result == POS)
     return art_status
 
 
 def func_rbd_ahs(visit_instance, *args):
-    """Returns True if the participant is on art at ahs"""
+    """Returns True if the participant is on art at ahs.
+    """
     if not func_is_baseline_or_ess(visit_instance):
         if func_hiv_negative_today(func_previous_visit(visit_instance)):
             return False
@@ -118,10 +128,13 @@ def func_rbd_ahs(visit_instance, *args):
 
 
 def func_declined_at_bhs(visit_instance):
-    """Returns True if the participant is  has refused to test at t0 or t1"""
+    """Returns True if the participant is has refused to test
+    at t0 or t1.
+    """
     previous_visit = func_previous_visit(visit_instance)
     while previous_visit:
-        subject_status_helper = SubjectStatusHelper(previous_visit, use_baseline_visit=False)
+        subject_status_helper = SubjectStatusHelper(
+            previous_visit, use_baseline_visit=False)
         if subject_status_helper.hiv_result:
             if subject_status_helper.hiv_result == DECLINED:
                 return True
@@ -130,7 +143,9 @@ def func_declined_at_bhs(visit_instance):
 
 
 def requires_pima_vl(visit_instance, *args):
-    """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
+    """Returns True or False for doing PIMA based on hiv status
+    and art status at each survey.
+    """
     if func_is_baseline_or_ess(visit_instance) and func_art_naive(visit_instance):
         return True
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
@@ -143,16 +158,21 @@ def requires_pima_vl(visit_instance, *args):
 
 
 def func_known_pos(visit_instance, *args):
-    """Returns True if participant is NOT a newly diagnosed POS as determined
-    by the SubjectStatusHelper.new_pos method."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    """Returns True if participant is NOT a newly diagnosed
+    POS as determined by the SubjectStatusHelper.new_pos method.
+    """
+    subject_status_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False)
     known_pos = subject_status_helper.new_pos is False
     return known_pos
 
 
 def func_show_hic_enrollment(visit_instance, *args):
-    """ If the participant still test HIV NEG and was not HIC enrolled then HIC should be REQUIRED. """
-    if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(visit_instance):
+    """If the participant still test HIV NEG and was not HIC
+    enrolled then HIC should be REQUIRED.
+    """
+    if (func_hiv_negative_today(visit_instance)
+            and not func_hic_enrolled(visit_instance)):
         return True
     else:
         return False
@@ -161,21 +181,24 @@ def func_show_hic_enrollment(visit_instance, *args):
 def func_show_microtube(visit_instance, *args):
     """Returns True to trigger the Microtube requisition if one is
     1. an hic participant who is still HIV-
-    2. an hic participant who has sero-converted but the HIV+ result was not tested by bhp
+    2. an hic participant who has sero-converted but the HIV+
+       result was not tested by bhp
     3. a new enrollee that is HIV-
      """
     show_micro = False
     if func_hic_enrolled(visit_instance) and not func_pos_tested_by_bhp(visit_instance):
         show_micro = True
-    elif not func_hic_enrolled(visit_instance) and not (func_hiv_positive_today(visit_instance) or
-                                                        known_positive(visit_instance)):
+    elif not func_hic_enrolled(visit_instance) and not (
+            func_hiv_positive_today(visit_instance) or
+            known_positive(visit_instance)):
         show_micro = True
     return show_micro
 
 
 def func_todays_hiv_result_required(visit_instance, *args):
     """Returns True if the an HIV test is required."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    subject_status_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False)
     if subject_status_helper.todays_hiv_result and not known_positive(visit_instance):
         return True
     if not func_hiv_positive_today(visit_instance) and not known_positive(visit_instance):
@@ -184,30 +207,41 @@ def func_todays_hiv_result_required(visit_instance, *args):
 
 
 def func_hiv_negative_today(visit_instance, *args):
-    """Returns True if the participant tests negative today."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
+    """Returns True if the participant tests negative today.
+    """
+    hiv_result = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == NEG
 
 
 def func_hiv_indeterminate_today(visit_instance, *args):
-    """Returns True if the participant tests indeterminate today."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
+    """Returns True if the participant tests indeterminate today.
+    """
+    hiv_result = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == IND
 
 
 def func_hiv_positive_today(visit_instance, *args):
-    """Returns True if the participant is known or newly diagnosed HIV positive."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
+    """Returns True if the participant is known or newly
+    diagnosed HIV positive.
+    """
+    hiv_result = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == POS
 
 
 def func_pos_tested_by_bhp(visit_instance, *args):
-    """Returns True if the participant is HIV+ and has a POS HivResult record."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
+    """Returns True if the participant is HIV+ and has a POS
+    HivResult record.
+    """
+    hiv_result = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=False).hiv_result
     if hiv_result != POS:
         previous_visit = func_previous_visit(visit_instance)
         while previous_visit:
-            hiv_result = SubjectStatusHelper(previous_visit, use_baseline_visit=False).hiv_result
+            hiv_result = SubjectStatusHelper(
+                previous_visit, use_baseline_visit=False).hiv_result
             if hiv_result == POS:
                 break
             previous_visit = func_previous_visit(previous_visit)
@@ -221,14 +255,17 @@ def func_hiv_positive_today_ahs(visit_instance, *args):
         return func_hiv_positive_today(visit_instance)
     else:
         # FIXME: why also has to ne on ART??
-        if func_hiv_positive_today(visit_instance) and SubjectStatusHelper(visit_instance).on_art:
+        if (func_hiv_positive_today(visit_instance)
+                and SubjectStatusHelper(visit_instance).on_art):
             return True
     return False
 
 
 def func_hic_enrolled(visit_instance, *args):
     try:
-        HicEnrollment.objects.get(subject_visit__subject_identifier=visit_instance.subject_identifier, hic_permission=YES)
+        HicEnrollment.objects.get(
+            subject_visit__subject_identifier=visit_instance.subject_identifier,
+            hic_permission=YES)
         return True
     except HicEnrollment.DoesNotExist:
         pass
@@ -236,8 +273,10 @@ def func_hic_enrolled(visit_instance, *args):
 
 
 def func_hiv_result_neg_baseline(visit_instance, *args):
-    """ Returns HIV negative result """
-    subject_status_helper = SubjectStatusHelper(func_previous_visit(visit_instance))
+    """ Returns HIV negative result.
+    """
+    subject_status_helper = SubjectStatusHelper(
+        func_previous_visit(visit_instance))
     return True if subject_status_helper.hiv_result == NEG else False
 
 
@@ -251,20 +290,24 @@ def func_hiv_neg_bhs(visit_instance, *args):
 
 
 def func_baseline_hiv_positive_today(visit_instance, *args):
-    """Returns the baseline visit instance."""
+    """Returns the baseline visit instance.
+    """
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result == POS
 
 
 def func_baseline_hiv_positive_and_documentation_pos(visit_instance, *args):
-    """Returns the baseline visit instance."""
-    subject_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    """Returns the baseline visit instance.
+    """
+    subject_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=True)
     return (subject_helper.hiv_result == POS and
             subject_helper.direct_hiv_pos_documentation or
             not subject_helper.direct_hiv_pos_documentation)
 
 
 def func_baseline_hiv_positive_and_not_on_art(visit_instance, *args):
-    """Returns the baseline visit instance."""
+    """Returns the baseline visit instance.
+    """
     # FIXME: previous is not baseline!!
     baseline_visit_instance = func_previous_visit(visit_instance)
     subject_helper = SubjectStatusHelper(baseline_visit_instance)
@@ -272,18 +315,22 @@ def func_baseline_hiv_positive_and_not_on_art(visit_instance, *args):
 
 
 def func_baseline_pos_and_testreview_documentation_pos(visit_instance, *args):
-    """Returns the baseline visit instance."""
-    subject_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    """Returns the baseline visit instance.
+    """
+    subject_helper = SubjectStatusHelper(
+        visit_instance, use_baseline_visit=True)
     return subject_helper.hiv_result == POS and subject_helper.direct_hiv_pos_documentation
 
 
 def func_baseline_vl_drawn(visit_instance, *args):
-    """Returns the baseline visit instance."""
+    """Returns the baseline visit instance.
+    """
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).vl_sample_drawn
 
 
 def func_rbd_drawn_in_past(visit_instance, *args):
-    """Returns the baseline visit instance."""
+    """Returns the baseline visit instance.
+    """
     # FIXME: previous is not baseline!!
     previous_visit = func_previous_visit(visit_instance)
     while previous_visit:
@@ -294,15 +341,18 @@ def func_rbd_drawn_in_past(visit_instance, *args):
 
 
 def func_baseline_pima_keyed(visit_instance, *args):
-    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).pima_instance
+    return SubjectStatusHelper(
+        visit_instance, use_baseline_visit=True).pima_instance
 
 
 def func_baseline_hiv_care_adherance_keyed(visit_instance, *args):
-    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_care_adherence_instance
+    return SubjectStatusHelper(
+        visit_instance, use_baseline_visit=True).hiv_care_adherence_instance
 
 
 def func_not_required(visit_instance, *args):
-    """Returns True (always)."""
+    """Returns True (always).
+    """
     return True
 
 
@@ -316,8 +366,11 @@ def known_positive(visit_instance, *args):
 
 
 def func_no_verbal_hiv_result(visit_instance, *args):
-    """Returns True if verbal_hiv_positive response is not POS or NEG."""
-    return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
+    """Returns True if verbal_hiv_positive response is not
+    POS or NEG.
+    """
+    return SubjectStatusHelper(
+        visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
 def circumcised(visit_instance, *args):
@@ -325,15 +378,19 @@ def circumcised(visit_instance, *args):
     if female(visit_instance):
         return True
     try:
-        Circumcised.objects.get(subject_visit=func_previous_visit(visit_instance))
+        Circumcised.objects.get(
+            subject_visit=func_previous_visit(visit_instance))
     except Circumcised.DoesNotExist:
         return False
     return True
 
 
 def first_enrolled(visit_instance, *args):
-    """ Returns true if visit_instance is the visit of first enrollment. """
-    # visit_instance is the visit of first enrollment if no other visit exists prior to it.
+    """ Returns true if visit_instance is the visit of first
+    enrollment.
+    """
+    # visit_instance is the visit of first enrollment if no other visit exists
+    # prior to it.
     if func_previous_visit(visit_instance):
         return False
     return True
@@ -360,16 +417,20 @@ def sero_converter(visit_instance):
 
 
 def func_rbd(visit_instance, *args):
-    """Returns True or False to indicate a participant should be offered an rbd."""
+    """Returns True or False to indicate a participant should be
+    offered an rbd.
+    """
     # if pos at bhs then return true
-    if func_hiv_positive_today(visit_instance) and not func_rbd_drawn_in_past(visit_instance):
+    if (func_hiv_positive_today(visit_instance)
+            and not func_rbd_drawn_in_past(visit_instance)):
         return True
     return False
 
 
 def func_vl(visit_instance, *args):
-    """Returns True  or False to indicate participant needs to be offered a viral load."""
-
+    """Returns True  or False to indicate participant needs to be
+    offered a viral load.
+    """
     if func_is_baseline_or_ess(visit_instance):
         return func_hiv_positive_today(visit_instance)
     # Hiv+ve at enrollment, art naive at enrollment
@@ -379,7 +440,8 @@ def func_vl(visit_instance, *args):
     elif sero_converter(visit_instance):
         return True
     elif func_hiv_positive_today(visit_instance):
-        helper = SubjectStatusHelper(func_previous_visit(visit_instance), use_baseline_visit=True)
+        helper = SubjectStatusHelper(
+            func_previous_visit(visit_instance), use_baseline_visit=True)
         try:
             if helper.hiv_result == DECLINED:
                 return True
@@ -389,7 +451,9 @@ def func_vl(visit_instance, *args):
 
 
 def func_poc_vl(visit_instance, *args):
-    """Returns True or False to indicate participant needs to be offered a POC viral load."""
+    """Returns True or False to indicate participant needs to be
+    offered a POC viral load.
+    """
     if func_art_naive(visit_instance):
         return True
     return False
@@ -397,7 +461,8 @@ def func_poc_vl(visit_instance, *args):
 
 def hiv_testing_history(visit_instance, *args):
     try:
-        hiv_testing = HivTestingHistory.objects.get(subject_visit=visit_instance)
+        hiv_testing = HivTestingHistory.objects.get(
+            subject_visit=visit_instance)
     except HivTestingHistory.DoesNotExist:
         return False
     return hiv_testing.has_tested == NO
