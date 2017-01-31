@@ -10,11 +10,6 @@ class TestSubjectLocatorForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female('E0', **self.consent_data)
         self.options = {
             'date_signed': self.get_utcnow(),
             'home_visit_permission': YES,
@@ -25,7 +20,7 @@ class TestSubjectLocatorForm(SubjectMixin, TestCase):
             'may_call_work': NO,
             'may_contact_someone': NO,
             'has_alt_contact': NOT_APPLICABLE,
-            'subject_identifier': self.bhs_subject_visit_female.subject_identifier,
+            'subject_identifier': self.subject_visit_female.subject_identifier,
             'report_datetime': self.get_utcnow(),
         }
 

@@ -7,12 +7,17 @@ class EnrollmentFormsViewMixin:
 
     @property
     def enrollment_forms(self):
-        """Returns a generator of enrollment instances for this subject."""
+        """Returns a generator of enrollment instances for this
+        subject.
+        """
         for visit_schedule in site_visit_schedules.get_visit_schedules().values():
             for schedule in visit_schedule.schedules.values():
                 obj = schedule.enrollment_instance(
                     subject_identifier=self.subject_identifier)
                 if obj:
+                    if (obj.survey_schedule_object.field_value
+                            == self.survey_schedule_object.field_value):
+                        obj.current = True
                     yield obj
                 else:
                     continue

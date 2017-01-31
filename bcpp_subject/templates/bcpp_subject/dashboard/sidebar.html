@@ -81,19 +81,21 @@
     
 	    <div class="list-group">
 	    {% for household_member in household_members %}
-	        {% if household_member.subject_identifier != subject_identifier %}
-		        {% if household_member.is_consented %}
-		            <a class="list-group-item" href="{% url bcpp_subject_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
-		        {% else %}
-		            <a class="list-group-item" href="{% url enumeration_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
+		    {% if household_member.survey_schedule_object.field_value == survey_schedule_object.field_value %}
+		        {% if household_member.subject_identifier != subject_identifier %}
+			        {% if household_member.is_consented %}
+			            <a class="list-group-item" href="{% url bcpp_subject_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
+			        {% else %}
+			            <a class="list-group-item" href="{% url enumeration_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
+			        {% endif %}
+		            <i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i>
+		                {{ household_member.first_name }} {{ household_member.initials }} {{ household_member.age_in_years }}
+		                {% if not household_member.eligible_member %}<i class="fa fa-ban fa-fw"></i>{% endif %}
+		                {% if household_member.eligible_subject and household_member.is_consented %}<i class="fa fa-dot-circle-o fa-fw"></i>{% endif %}
+		                {% if household_member.eligible_subject and not household_member.is_consented %}<i class="fa fa-circle-o fa-fw"></i>{% endif %}
+			        </a>
 		        {% endif %}
-	            <i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i>
-	                {{ household_member.first_name }} {{ household_member.initials }} {{ household_member.age_in_years }}
-	                {% if not household_member.eligible_member %}<i class="fa fa-ban fa-fw"></i>{% endif %}
-	                {% if household_member.eligible_subject and household_member.is_consented %}<i class="fa fa-dot-circle-o fa-fw"></i>{% endif %}
-	                {% if household_member.eligible_subject and not household_member.is_consented %}<i class="fa fa-circle-o fa-fw"></i>{% endif %}
-		        </a>
-	        {% endif %}
+             {% endif %}
 	    {% endfor %}
 	    </div>
 

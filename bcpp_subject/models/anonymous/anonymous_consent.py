@@ -10,7 +10,7 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
-from bcpp.consents import ANONYMOUS_CONSENT
+from bcpp.consents import ANONYMOUS_CONSENT_GROUP
 from bcpp.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
@@ -24,14 +24,17 @@ def is_minor(dob, reference_datetime):
 
 
 class AnonymousConsent(
-        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
+        NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
         BaseUuidModel):
 
-    """ A model completed by the user that captures the ICF."""
+    """ A model completed by the user that captures the ICF.
+    """
 
-    household_member = models.ForeignKey(HouseholdMember, on_delete=models.PROTECT)
+    household_member = models.ForeignKey(
+        HouseholdMember, on_delete=models.PROTECT)
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
@@ -47,7 +50,8 @@ class AnonymousConsent(
         blank=False,
         default='-',
         choices=YES_NO,
-        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+        help_text=('Subject is a minor if aged 16-17. A guardian must '
+                   'be present for consent. '
                    'HIV status may NOT be revealed in the household.'),
         editable=False)
 
@@ -74,7 +78,7 @@ class AnonymousConsent(
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
-        consent_group = ANONYMOUS_CONSENT
+        consent_group = ANONYMOUS_CONSENT_GROUP
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
