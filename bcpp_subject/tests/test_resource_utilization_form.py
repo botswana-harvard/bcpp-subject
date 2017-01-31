@@ -8,20 +8,19 @@ class TestResourceUtilizationForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.subject_visit = self.make_subject_visit_for_consented_subject('T0')
-
         self.options = {
             'out_patient': YES,
             'hospitalized': 3,
             'money_spent': 3000.00,
             'medical_cover': YES,
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.subject_visit_male.id,
             'report_datetime': self.get_utcnow(),
         }
 
     def test_form_valid(self):
         form = ResourceUtilizationForm(data=self.options)
         self.assertTrue(form.is_valid())
+        self.assertTrue(form.save)
 
     def test_if_money_spent_is_not_medical_aid_cover(self):
         """Assert that money spent was not from the medical aid cover"""
