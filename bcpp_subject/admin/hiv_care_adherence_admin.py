@@ -84,10 +84,9 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "adherence_4_day": admin.VERTICAL,
         "adherence_4_wk": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL,
-        'first_regimen': admin.VERTICAL,
         "first_regimen": admin.VERTICAL,
-        'hospitalized_art_start': admin.VERTICAL,
-        'hospitalized_reason_evidence': admin.VERTICAL,
+        "hospitalized_art_start": admin.VERTICAL,
+        "hospitalized_reason_evidence": admin.VERTICAL,
     }
 
     filter_horizontal = (

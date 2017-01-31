@@ -29,7 +29,8 @@ class AnonymousConsentAdmin(ModelAdminMixin):
         survey_fieldset_tuple,
         audit_fieldset_tuple)
 
-    list_display = ('subject_identifier', 'consent_datetime', 'version', 'survey', 'user_created', 'hostname_created')
+    list_display = ('subject_identifier', 'consent_datetime', 'version', 'survey',
+                    'user_created', 'hostname_created')
 
     search_fields = (
         'household_member__household_structure__household__plot__plot_identifier',
