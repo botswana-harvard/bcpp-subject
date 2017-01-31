@@ -19,13 +19,15 @@ class MedicalDiagnoses (CrfModelMixin):
     )
 
     heart_attack_record = models.CharField(
-        verbose_name="Is a record (OPD card, discharge summary) of a heart disease or stroke"
-                     " diagnosis available to review?",
+        verbose_name=(
+            "Is a record (OPD card, discharge summary) of "
+            "a heart disease or stroke diagnosis available to review?"),
         max_length=25,
         null=True,
         blank=True,
         choices=YES_NO_DWTA,
-        help_text="Please review the available OPD card or other medical records, for all participants",
+        help_text=("Please review the available OPD card or "
+                   "other medical records, for all participants"),
     )
 
     cancer_record = models.CharField(
@@ -35,12 +37,14 @@ class MedicalDiagnoses (CrfModelMixin):
         null=True,
         blank=True,
         choices=YES_NO_DWTA,
-        help_text="Please review the available OPD card or other medical records, for all participants",
+        help_text=("Please review the available OPD card or other "
+                   "medical records, for all participants"),
     )
 
     tb_record = models.CharField(
-        verbose_name="Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
-                     " infection available to review?",
+        verbose_name=(
+            "Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
+            " infection available to review?"),
         max_length=25,
         null=True,
         blank=True,

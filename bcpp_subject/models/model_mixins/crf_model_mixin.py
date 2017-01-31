@@ -7,7 +7,8 @@ from edc_base.utils import get_utcnow
 from edc_metadata.model_mixins.updates import UpdatesCrfMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
-from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin
+from edc_visit_tracking.model_mixins import (
+    CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin)
 
 from ..subject_visit import SubjectVisit
 from ..requires_consent_model_mixin import RequiresConsentMixin
@@ -15,7 +16,8 @@ from ..requires_consent_model_mixin import RequiresConsentMixin
 
 class CrfModelManager(VisitTrackingCrfModelManager):
 
-    def get_by_natural_key(self, subject_identifier, visit_schedule_name, schedule_name, visit_code):
+    def get_by_natural_key(self, subject_identifier, visit_schedule_name,
+                           schedule_name, visit_code):
         return self.get(
             subject_visit__subject_identifier=subject_identifier,
             subject_visit__visit_schedule_name=visit_schedule_name,

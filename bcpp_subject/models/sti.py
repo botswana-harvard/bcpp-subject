@@ -26,42 +26,48 @@ class Sti (CrfModelMixin):
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on "
+                   "the card. If no card, provide verbal response."),
     )
     diarrhoea_date = models.DateField(
         verbose_name='Diarrhoea diagnosis date',
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on "
+                   "the card. If no card, provide verbal response."),
     )
     yeast_infection_date = models.DateField(
         verbose_name='Yeast Infection diagnosis date',
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on the"
+                   " card. If no card, provide verbal response."),
     )
     pneumonia_date = models.DateField(
         verbose_name='Pneumonia diagnosis date',
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on the"
+                   " card. If no card, provide verbal response."),
     )
     pcp_date = models.DateField(
         verbose_name='Date diagnosed with PCP',
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on the "
+                   "card. If no card, provide verbal response."),
     )
     herpes_date = models.DateField(
         verbose_name='Date diagnosed with herpes',
         validators=[date_not_future],
         null=True,
         blank=True,
-        help_text="If participant has a record, provide the details on the card. If no card, provide verbal response.",
+        help_text=("If participant has a record, provide the details on the"
+                   " card. If no card, provide verbal response."),
     )
 
     comments = models.CharField(

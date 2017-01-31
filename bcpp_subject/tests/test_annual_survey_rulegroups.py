@@ -14,48 +14,19 @@ from member.models.household_member.household_member import HouseholdMember
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
 
 from .test_mixins import SubjectMixin
-from survey.site_surveys import site_surveys
+from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
+from bcpp_subject.models.appointment import Appointment
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
     @tag("setup")
     def test_setup(self):
-        pass
-        print(site_surveys.surveys)
-        previous_member = self.bhs_subject_visit_male.household_member
-        next_household_structure = self.get_next_household_structure_ready(
-            previous_member.household_structure, make_hoh=None)
-
-        print(next_household_structure, "next_household_structure")
-
-        new_member = previous_member.clone(
-            household_structure=next_household_structure,
-            report_datetime=next_household_structure.enumerated_datetime)
-        new_member.save()
+        print(self.subject_visit_male_t0)
+        print(self.ahs_y2_subject_visit())
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.visit_code_T1 = T1
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
-            'T0', **self.consent_data)
-        self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
-        self.ahs_subject_visit_male_y2 = None  # self.ahs_y2_subject_visit()
-        # self.ahs_subject_visit_male_y3()
-        self.ahs_subject_visit_male_y3 = None
-        self.consent_data_male = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-        }
-        #survey_schedule = self.get_survey_schedule(index=1)
-        survey_schedule = site_surveys.surveys[2]
-        hs = self.make_household_structure(survey_schedule=survey_schedule)
-        print(hs)
 #         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
 #             T0, survey_schedule=survey_schedule, **self.consent_data_male)
 #         print()
@@ -65,6 +36,43 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 #         self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
 #         self.ahs_subject_visit_male_y2 = None  # self.ahs_y2_subject_visit()
 #         self.ahs_subject_visit_male_y3 = None  # self.ahs_subject_visit_male_y3()
+
+    def ahs_y2_subject_visit(self):
+        """Return an ahs subject visit."""
+        # Create an ahs member
+        self.consent_data_male = {
+            'identity': '317115158', 'confirm_identity': '317115158', }
+        household_member = self.subject_visit_male_t0.household_member
+        next_household_structure = self.get_next_household_structure_ready(
+            self.subject_visit_male_t0.household_member.household_structure,
+            make_hoh=None)
+        new_household_member = household_member.clone(
+            household_structure=next_household_structure,
+            report_datetime=next_household_structure.enumerated_datetime)
+        new_household_member.save()
+        new_household_member.inability_to_participate = NOT_APPLICABLE
+        new_household_member.study_resident = YES
+        new_household_member.save()
+        new_household_member = HouseholdMember.objects.get(pk=new_household_member.pk)
+        report_datetime = self.get_utcnow() + relativedelta(years=1, months=6)
+        report = datetime(2010, 3, 4)
+        mommy.make_recipe(
+            'household.householdlogentry',
+            report_datetime=report,
+            household_log=new_household_member.household_structure.householdlog,
+            household_status=ELIGIBLE_REPRESENTATIVE_PRESENT)
+
+        self.consent_data_male.update(report_datetime=report_datetime)
+        self.add_subject_consent(new_household_member, **self.consent_data_male)
+        print(new_household_member.__dict__)
+        appointment = Appointment.objects.get(
+            subject_identifier=new_household_member.subject_identifier, visit_code=T1)
+        return mommy.make_recipe(
+            'bcpp_subject.subjectvisit',
+            household_member=new_household_member,
+            subject_identifier=new_household_member.subject_identifier,
+            appointment=appointment,
+            report_datetime=report_datetime)
 
     def crf_metadata_obj(self, model, entry_status, visit_code):
         return CrfMetadata.objects.filter(
@@ -246,39 +254,39 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', KEYED,
             T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-    def ahs_y2_subject_visit(self):
-        """Return an ahs subject visit."""
-        # Create an ahs member
-        y1_member = self.bhs_subject_visit_male.household_member
-        next_household_structure = self.get_next_household_structure_ready(
-            y1_member.household_structure, make_hoh=None)
-
-        new_member = y1_member.clone(
-            household_structure=next_household_structure,
-            report_datetime=next_household_structure.enumerated_datetime)
-        new_member.save()
-
-        self.assertEqual(
-            'bcpp-survey.bcpp-year-2.test_community',
-            new_member.survey_schedule)
-
-        new_member.inability_to_participate = NOT_APPLICABLE
-        new_member.study_resident = YES
-        new_member.save()
-
-        new_member = HouseholdMember.objects.get(pk=new_member.pk)
-        report_datetime = self.get_utcnow() + relativedelta(years=1)
-        self.consent_data.update(report_datetime=report_datetime)
-        new_member = self.add_subject_consent(new_member, **self.consent_data)
-        appointment = Appointment.objects.get(
-            subject_identifier=new_member.subject_identifier,
-            visit_code=T1)
-        return mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=new_member,
-            subject_identifier=new_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=report_datetime)
+#     def ahs_y2_subject_visit(self):
+#         """Return an ahs subject visit."""
+#         # Create an ahs member
+#         y1_member = self.bhs_subject_visit_male.household_member
+#         next_household_structure = self.get_next_household_structure_ready(
+#             y1_member.household_structure, make_hoh=None)
+# 
+#         new_member = y1_member.clone(
+#             household_structure=next_household_structure,
+#             report_datetime=next_household_structure.enumerated_datetime)
+#         new_member.save()
+# 
+#         self.assertEqual(
+#             'bcpp-survey.bcpp-year-2.test_community',
+#             new_member.survey_schedule)
+# 
+#         new_member.inability_to_participate = NOT_APPLICABLE
+#         new_member.study_resident = YES
+#         new_member.save()
+# 
+#         new_member = HouseholdMember.objects.get(pk=new_member.pk)
+#         report_datetime = self.get_utcnow() + relativedelta(years=1)
+#         self.consent_data.update(report_datetime=report_datetime)
+#         new_member = self.add_subject_consent(new_member, **self.consent_data)
+#         appointment = Appointment.objects.get(
+#             subject_identifier=new_member.subject_identifier,
+#             visit_code=T1)
+#         return mommy.make_recipe(
+#             'bcpp_subject.subjectvisit',
+#             household_member=new_member,
+#             subject_identifier=new_member.subject_identifier,
+#             appointment=appointment,
+#             report_datetime=report_datetime)
 
     def ahs_y3_subject_visit(self, household_member):
         """Return an ahs  year 3 subject visit."""
@@ -1325,7 +1333,9 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
         self.make_requisition(
-            self.bhs_subject_visit_male, RESEARCH_BLOOD_DRAW, self.bhs_subject_visit_male.report_datetime)
+            self.bhs_subject_visit_male,
+            RESEARCH_BLOOD_DRAW,
+            self.bhs_subject_visit_male.report_datetime)
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(

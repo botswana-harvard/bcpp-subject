@@ -87,21 +87,25 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
     def hic_enrollment_checks(self, exception_cls=None):
         from .hic_enrollment import HicEnrollment
         exception_cls = exception_cls or ValidationError
-        if (self.may_follow_up == YES) or (self.may_follow_up == NO and self.may_sms_follow_up == YES):
+        if (self.may_follow_up == YES) or (
+                self.may_follow_up == NO and self.may_sms_follow_up == YES):
             if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
                 try:
                     HicEnrollment.objects.get(
                         subject_visit__subject_identifier=self.subject_identifier)
                     raise exception_cls(
-                        'An HicEnrollment form exists for this subject. At least one of '
-                        '\'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+                        'An HicEnrollment form exists for this subject. '
+                        'At least one of \'subject_cell\', '
+                        '\'subject_cell_alt\' or \'subject_phone\' is required.')
                 except HicEnrollment.DoesNotExist:
                     pass
 
     @property
     def ready_to_export_transaction(self):
-        """Evaluates to True only if the subject has a referral instance with a referral code
-        to avoid exporting locator information on someone who is not yet been referred.
+        """Evaluates to True only if the subject has a referral"
+        " instance with a referral code
+        to avoid exporting locator information on someone who"
+        " is not yet been referred.
 
         ...see_also:: SubjectReferral."""
         try:
@@ -117,21 +121,24 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
 
     @property
     def formatted_locator_information(self):
-        """Returns a formatted string that summarizes contact and locator info."""
+        """Returns a formatted string that summarizes contact "
+        "and locator info."""
         info = 'May not follow-up.'
-        if self.may_follow_up == 'Yes':
+        may_sms_follow_up = 'SMS permitted' if self.may_sms_follow_up == YES else 'NO SMS!'
+        if self.may_follow_up == YES:
             info = (
                 '{may_sms_follow_up}\n'
                 'Cell: {subject_cell} {alt_subject_cell}\n'
                 'Phone: {subject_phone} {alt_subject_phone}\n'
                 '').format(
-                    may_sms_follow_up='SMS permitted' if self.may_sms_follow_up == 'Yes' else 'NO SMS!',
+                    may_sms_follow_up=may_sms_follow_up,
                     subject_cell='{} (primary)'.format(
                         self.subject_cell) if self.subject_cell else '(none)',
                     alt_subject_cell=self.subject_cell_alt,
-                    subject_phone=self.subject_phone or '(none)', alt_subject_phone=self.subject_phone_alt
+                    subject_phone=self.subject_phone or '(none)',
+                    alt_subject_phone=self.subject_phone_alt
             )
-            if self.may_call_work == 'Yes':
+            if self.may_call_work == YES:
                 info = (
                     '{info}\n Work Contacts:\n'
                     '{subject_work_place}\n'
@@ -140,7 +147,7 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
                         info=info,
                         subject_work_place=self.subject_work_place or '(work place not known)',
                         subject_work_phone=self.subject_work_phone)
-            if self.may_contact_someone == 'Yes':
+            if self.may_contact_someone == YES:
                 info = (
                     '{info}\n Contacts of someone else:\n'
                     '{contact_name} - {contact_rel}\n'

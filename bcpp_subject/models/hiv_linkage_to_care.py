@@ -12,8 +12,11 @@ from .model_mixins import CrfModelMixin
 class HivLinkageToCare (CrfModelMixin):
 
     kept_appt = models.CharField(
-        verbose_name="We last spoke with you on last_visit_date and scheduled an appointment for you "
-                     "in an HIV care clinic on last_appt_date. Did you keep that appointment?",
+        verbose_name=(
+            "We last spoke with you on last_visit_date and "
+            "scheduled an appointment for you "
+            "in an HIV care clinic on last_appt_date. "
+            "Did you keep that appointment?"),
         max_length=50,
         choices=KEPT_APPT,
         null=True,
@@ -29,7 +32,9 @@ class HivLinkageToCare (CrfModelMixin):
     )
 
     left_clininc_datetime = models.DateField(
-        verbose_name='If you tried to attend an HIV care clinic and left before You saw a healthcare provider specify the date?',
+        verbose_name=(
+            "If you tried to attend an HIV care clinic and "
+            "left before You saw a healthcare provider specify the date?"),
         default=None,
         null=True,
         blank=True,
@@ -37,7 +42,8 @@ class HivLinkageToCare (CrfModelMixin):
     )
 
     clinic_first_datetime = models.DateField(
-        verbose_name="What was the date when you first went to the community_name clinic?",
+        verbose_name=("What was the date when you first went "
+                      "to the community_name clinic?"),
         default=None,
         null=True,
         blank=True,
@@ -54,10 +60,13 @@ class HivLinkageToCare (CrfModelMixin):
     evidence_type_clinic_other = OtherCharField()
 
     recommended_therapy = models.CharField(
-        verbose_name="[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] Since the last time we spoke with "
-                     "you on last_visit_date, has a doctor/nurse or other healthcare worker recommended "
-                     "that you start antiretroviral therapy (ARVs), a combination of medicines to treat your "
-                     "HIV infection?",
+        verbose_name=(
+            "[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] "
+            "Since the last time we spoke with "
+            "you on last_visit_date, has a doctor/nurse or "
+            "other healthcare worker recommended "
+            "that you start antiretroviral therapy (ARVs), a "
+            "combination of medicines to treat your HIV infection?"),
         max_length=50,
         choices=RECOMMENDED_THERAPY,
         null=True,
@@ -74,8 +83,10 @@ class HivLinkageToCare (CrfModelMixin):
     reason_recommended_other = OtherCharField()
 
     startered_therapy = models.CharField(
-        verbose_name="[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] Did you [start/restart] ART since we "
-                     "spoke with you on last_visit_date?",
+        verbose_name=(
+            "[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] "
+            "Did you [start/restart] ART since we "
+            "spoke with you on last_visit_date?"),
         max_length=50,
         choices=STARTERED_THERAPY,
         null=True,
@@ -98,7 +109,8 @@ class HivLinkageToCare (CrfModelMixin):
     start_therapy_clininc_other = OtherCharField()
 
     not_refered_clininc = models.CharField(
-        verbose_name="[If Clinic is not the referred clinic] In which community is this clinic located",
+        verbose_name=("[If Clinic is not the referred clinic] "
+                      "In which community is this clinic located"),
         default=None,
         null=True,
         blank=True,

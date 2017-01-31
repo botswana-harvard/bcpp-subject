@@ -29,7 +29,7 @@ class PimaVl (QuotaMixin, CrfModelMixin):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.now,  # ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
+        default=datetime.now,
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))
 
@@ -60,7 +60,8 @@ class PimaVl (QuotaMixin, CrfModelMixin):
     pima_id = models.CharField(
         verbose_name="POC viral load machine ID?",
         max_length=9,
-        validators=[RegexValidator(regex='\d+', message='POC viral load ID must be a two digit number.')],
+        validators=[
+            RegexValidator(regex='\d+', message='POC viral load ID must be a two digit number.')],
         null=True,
         blank=True,
         help_text="type this id directly from the machine as labeled")
@@ -71,7 +72,7 @@ class PimaVl (QuotaMixin, CrfModelMixin):
 #         validators=[datetime_not_future],
 #         null=True,
 #         blank=True,
-#     )
+#     )`
 
     vl_value_quatifier = models.CharField(
         verbose_name="Select a quantifier for the value of the result",
@@ -125,7 +126,8 @@ class PimaVl (QuotaMixin, CrfModelMixin):
 
     def pre_order(self):
         url = reverse('admin:bcpp_lab_preorder_changelist')
-        return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
+        return '<a href="{0}?q={1}">pre_orders</a>'.format(
+            url, self.subject_visit.subject_identifier)
     pre_order.allow_tags = True
 
     class Meta(CrfModelMixin.Meta):

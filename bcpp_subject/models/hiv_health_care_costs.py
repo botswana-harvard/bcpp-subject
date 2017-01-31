@@ -37,8 +37,9 @@ class HivHealthCareCosts(CrfModelMixin):
         help_text="",
     )
     care_regularity = models.CharField(
-        verbose_name="In the past 3 months, how many times did you have clinic visits to see a health care worker,"
-                     " a nurse, or doctor? ",
+        verbose_name=(
+            "In the past 3 months, how many times did you have clinic visits "
+            "to see a health care worker, a nurse, or doctor? "),
         max_length=20,
         choices=CARE_REGULARITY,
         null=True,
