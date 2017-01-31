@@ -65,4 +65,5 @@ class HivCareAdherenceHelper(object):
         baseline_appointment = Appointment.objects.filter(
             registered_subject=registered_subject, visit_definition__code='T0')[0]
         return SubjectVisit.objects.get(
-            household_member__registered_subject=registered_subject, appointment=baseline_appointment)
+            household_member__registered_subject=registered_subject,
+            appointment=baseline_appointment)

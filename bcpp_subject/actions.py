@@ -10,4 +10,6 @@ def update_referrals(modeladmin, request, queryset):
             obj.save(update_fields=['bhs_referral_code'])
         except SubjectReferral.DoesNotExist:
             pass
-update_referrals.short_description = "Update selected referrals"
+
+
+update_referrals.short_description = 'Update selected referrals'

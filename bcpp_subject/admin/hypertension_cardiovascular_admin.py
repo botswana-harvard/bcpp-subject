@@ -4,47 +4,8 @@ from edc_base.modeladmin_mixins import audit_fieldset_tuple, audit_fields
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import HypertensionCardiovascularForm
-from ..models import HypertensionCardiovascular, BPMeasurement, WaistCircumferenceMeasurement
-
+from ..models import HypertensionCardiovascular
 from .modeladmin_mixins import ModelAdminMixin
-
-
-class BPMeasurementAdminInlineAdmin(admin.StackedInline):
-
-    fieldsets = (
-        (None, {
-            'fields': (
-                'right_arm_one',
-                'left_arm_one',
-                'right_arm_two',
-                'left_arm_two')
-        }),
-        audit_fieldset_tuple
-    )
-
-    model = BPMeasurement
-
-    def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj) + audit_fields
-
-
-class WaistCircumferenceMeasurementInlineAdmin(admin.StackedInline):
-
-    fieldsets = (
-        (None, {
-            'fields': (
-                'waist_reading_one',
-                'waist_reading_two',
-                'hip_reading_one',
-                'hip_reading_two')
-        }),
-        audit_fieldset_tuple
-    )
-
-    model = WaistCircumferenceMeasurement
-
-    def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj) + audit_fields
 
 
 @admin.register(HypertensionCardiovascular, site=bcpp_subject_admin)
@@ -58,10 +19,10 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'subject_visit',
                 'may_take_blood_pressure',
                 'hypertension_diagnosis',
-                'medications_taken',
-                'if_other_medications_taken',
-                'medication_still_given',
-                'if_other_medication_still_given',
+                'medication_taken',
+                'other_medication_taken',
+                'medication_given',
+                'other_medication_given',
                 'health_care_facility',
                 'salt_intake_counselling',
                 'tobacco_smoking',
@@ -72,10 +33,26 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'blood_test_for_cholesterol',
                 'blood_test_for_diabetes')
         }),
+        ('Blood Pressure Measurement', {
+            'fields': (
+                'right_arm_one',
+                'left_arm_one',
+                'right_arm_two',
+                'left_arm_two')
+        }),
+        ('Waist Circumference Measurement', {
+            'fields': (
+                'waist_reading_one',
+                'waist_reading_two',
+                'hip_reading_one',
+                'hip_reading_two')
+        }),
         audit_fieldset_tuple,
     )
 
-    filter_horizontal = ('medications_taken', 'medication_still_given')
+    filter_horizontal = (
+        'medication_taken',
+        'medication_given')
 
     radio_fields = {
         'may_take_blood_pressure': admin.VERTICAL,
@@ -89,9 +66,6 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
         'alcohol_counselling': admin.VERTICAL,
         'blood_test_for_cholesterol': admin.VERTICAL,
         'blood_test_for_diabetes': admin.VERTICAL}
-
-    inlines = (BPMeasurementAdminInlineAdmin,
-               WaistCircumferenceMeasurementInlineAdmin)
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
