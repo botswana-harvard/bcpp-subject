@@ -55,26 +55,3 @@ class CorrectConsentManager(models.Manager):
                 '__household__plot__plot_identifier':
                 plot_identifier}
         )
-
-
-class BPMeasurementManager(models.Manager):
-
-    def get_by_natural_key(self, subject_identifier, visit_schedule_name,
-                           schedule_name, visit_code):
-        return self.get(
-            bp_measurement__subject_visit__subject_identifier=subject_identifier,
-            bp_measurement__subject_visit__visit_schedule_name=visit_schedule_name,
-            bp_measurement__subject_visit__schedule_name=schedule_name,
-            bp_measurement__subject_visit__visit_code=visit_code
-        )
-
-
-class WaistCircumferenceMeasurementManager(models.Manager):
-
-    def get_by_natural_key(self, subject_identifier, visit_schedule_name, schedule_name, visit_code):
-        return self.get(
-            waist_circumference_measurement__subject_visit__subject_identifier=subject_identifier,
-            waist_circumference_measurement__subject_visit__visit_schedule_name=visit_schedule_name,
-            waist_circumference_measurement__subject_visit__schedule_name=schedule_name,
-            waist_circumference_measurement__subject_visit__visit_code=visit_code
-        )

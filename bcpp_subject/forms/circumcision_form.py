@@ -18,7 +18,8 @@ class CircumcisedForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('circumcised') == YES and not cleaned_data.get('health_benefits_smc'):
+        if (cleaned_data.get('circumcised') == YES
+                and not cleaned_data.get('health_benefits_smc')):
             raise forms.ValidationError({
                 'health_benefits_smc': _('Please select all that apply.')})
         return cleaned_data
@@ -32,7 +33,8 @@ class UncircumcisedForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('circumcised') == YES and not cleaned_data.get('health_benefits_smc'):
+        if (cleaned_data.get('circumcised') == YES
+                and not cleaned_data.get('health_benefits_smc')):
             raise forms.ValidationError({
                 'health_benefits_smc': _('Please select all that apply.')})
         return cleaned_data

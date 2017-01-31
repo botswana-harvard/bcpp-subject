@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import MALE, FEMALE
+from edc_constants.constants import MALE, FEMALE, DWTA
 
 from ..models import Demographics
 
@@ -17,19 +17,26 @@ class DemographicsForm(SubjectModelFormMixin):
             ethnic_count = cleaned_data.get('ethnic').count()
             religion_count = cleaned_data.get('religion').count()
             if ethnic_count > 1 or religion_count > 1:
-                raise forms.ValidationError('Can only belong to one religion or ethnic group')
+                raise forms.ValidationError(
+                    'Can only belong to one religion or ethnic group')
         # validating living with
         if cleaned_data.get('live_with'):
             if cleaned_data.get('live_with').count() > 1:
                 for item in cleaned_data.get('live_with'):
-                    if str(item) == "Alone" or str(item) == 'Don\'t want to answer':
+                    if item == "Alone" or item == DWTA:
                         raise forms.ValidationError(
-                            "\"Don't want to answer\" or \"Alone\" options can only be selected singularly")
+                            '\'Don\'t want to answer\' or \'Alone\' '
+                            'options can only be selected singularly')
         # validating unmarried
-        if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('num_wives', None):
-            raise forms.ValidationError('If participant is not married, do not give number of wives')
-        if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('husband_wives', None):
-            raise forms.ValidationError('If participant is not married, the number of wives is not required')
+        if (cleaned_data.get('marital_status', None) != 'Married'
+                and cleaned_data.get('num_wives', None)):
+            raise forms.ValidationError(
+                'If participant is not married, do not give number of wives')
+        if (cleaned_data.get('marital_status', None) != 'Married'
+                and cleaned_data.get('husband_wives', None)):
+            raise forms.ValidationError(
+                'If participant is not married, the number of wives '
+                'is not required')
         self.marital_status_married()
 
         return cleaned_data
@@ -49,21 +56,23 @@ class DemographicsForm(SubjectModelFormMixin):
                 if registered_subject.gender == FEMALE:
                     raise forms.ValidationError(
                         {'num_wives':
-                         'The number of wives should not be empty and should be greater than 0.'})
+                         'The number of wives should not be '
+                         'empty and should be greater than 0.'})
             if not husband_wives or husband_wives <= 0:
                 if registered_subject.gender == MALE:
                     raise forms.ValidationError(
                         {'husband_wives':
-                         'The number of wives should not be empty and should be greater than 0.'})
+                         'The number of wives should not be empty '
+                         'and should be greater than 0.'})
 
             if registered_subject.gender == FEMALE and husband_wives:
-                    raise forms.ValidationError(
-                        {'husband_wives':
-                         'Married Female cannot have a wife'})
+                raise forms.ValidationError(
+                    {'husband_wives':
+                     'Married Female cannot have a wife'})
             if registered_subject.gender == MALE and num_wives:
-                    raise forms.ValidationError(
-                        {'num_wives':
-                        'Married Male cannot have a husband with wives'})
+                raise forms.ValidationError(
+                    {'num_wives':
+                     'Married Male cannot have a husband with wives'})
         return cleaned_data
 
     class Meta:

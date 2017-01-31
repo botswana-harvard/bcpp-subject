@@ -20,11 +20,13 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
             if cleaned_data.get('arv_stop'):
                 raise forms.ValidationError({
                     'arv_stop':
-                    'Participant has never taken ART. This field is not required.'})
+                    'Participant has never taken ART. '
+                    'This field is not required.'})
             if cleaned_data.get('on_arv') == YES:
                 raise forms.ValidationError({
                     'on_arv':
-                    'Participant has never taken ART. This field is not required.'})
+                    'Participant has never taken ART. '
+                    'This field is not required.'})
 
         self.validate_on_arv()
         self.validate_not_on_arv()
@@ -72,7 +74,8 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                     cleaned_data.get('arv_stop_date')):
                 raise forms.ValidationError({
                     'arv_stop_date':
-                    'Participant has taken ART but stopped. This field is required.'})
+                    'Participant has taken ART but stopped. '
+                    'This field is required.'})
             if not cleaned_data.get('first_arv'):
                 raise forms.ValidationError({
                     'first_arv':
@@ -144,13 +147,14 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
 
     def validate_choose_chronic_infection(self):
         cleaned_data = self.cleaned_data
-        hospitalised_reasons = cleaned_data.get('hospitalized_art_start_reason')
+        hospitalised_reasons = cleaned_data.get(
+            'hospitalized_art_start_reason')
         if hospitalised_reasons.count() != 0:
             if any(hospitalised_reason == 'Chronic disease related care'
                    for hospitalised_reason in hospitalised_reasons):
-                        raise forms.ValidationError({
-                            'hospitalized_art_start_reason':
-                            'Participant choose chronic disease. Ans next question'})
+                raise forms.ValidationError({
+                    'hospitalized_art_start_reason':
+                    'Participant choose chronic disease. Ans next question'})
 
     class Meta:
         model = HivCareAdherence
