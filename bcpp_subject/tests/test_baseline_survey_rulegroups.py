@@ -27,10 +27,12 @@ class MetadataRulesTestMixin:
                 visit_code=visit_code,
                 subject_identifier=self.subject_identifier)
         except ObjectDoesNotExist:
-            msg = msg or 'Expected {} to be {} for {}'.format(model, entry_status, visit_code)
+            msg = msg or 'Expected {} to be {} for {}'.format(
+                model, entry_status, visit_code)
             raise self.fail(msg)
 
-    def assertRequisitionRule(self, model, entry_status, visit_code=None, panel_name=None, msg=None):
+    def assertRequisitionRule(self, model, entry_status,
+                              visit_code=None, panel_name=None, msg=None):
         try:
             RequisitionMetadata.objects.get(
                 entry_status=entry_status,
@@ -105,16 +107,23 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_female.subject_identifier
         self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
+            self.crf_metadata_obj(
+                'bcpp_subject.hivcareadherence', REQUIRED, T0,
+                self.subject_identifier).count(), 1)
 
         self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+            self.crf_metadata_obj(
+                'bcpp_subject.pima',
+                NOT_REQUIRED,
+                T0, self.subject_identifier).count(), 1)
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_female, self.get_utcnow(), NO, NO, NO, YES, YES)
+        self.make_hiv_care_adherence(
+            self.subject_visit_female, self.get_utcnow(), NO, NO, NO, YES, YES)
 
         # on art so no need for CD4
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
 
     def test_hiv_car_adherence_and_pima3(self):
         """If POS and on arv but do not have doc evidence, Pima required.
@@ -132,7 +141,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, NO)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, NO)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
@@ -145,15 +155,18 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.make_hiv_result(POS, self.subject_visit_male, self.get_utcnow())
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
 
     def test_not_known_pos_runs_hiv_and_cd4(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # add hivtestreview,
-        hiv_test_review = self.make_hivtest_review(self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
+        hiv_test_review = self.make_hivtest_review(
+            self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
 
         def assert_crfs():
             self.assertEqual(
@@ -177,7 +190,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         # add hivtestreview
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -188,7 +202,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """If known POS (not including today's test), requires hiv_care_adherence."""
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # add HivTestHistory,
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED, T0, self.subject_identifier).count(), 1)
@@ -196,7 +211,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj('bcpp_subject.hivtestreview', REQUIRED, T0, self.subject_identifier).count(), 1)
 
         # add HivTestReview,
-        self.make_hivtest_review(self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
 
         # hiv_care_adherence.save()
 
@@ -213,7 +229,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # add HivTestReview
-        self.make_hivtest_review(self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -228,7 +245,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         # add hivtestreview
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -240,7 +258,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_female.subject_identifier
         #  self.check_male_registered_subject_rule_groups(self.subject_visit_female_T0)
-        self.make_hivtesting_history(self.subject_visit_female, self.get_utcnow(), YES, YES, NEG, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_female, self.get_utcnow(), YES, YES, NEG, NO)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED, T0, self.subject_identifier).count(), 1)
@@ -283,12 +302,14 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         # add HivTestReview,
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
 
         # add HivCareAdherence,
-        hivcareadherence = self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, NO)
+        hivcareadherence = self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, NO)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -301,7 +322,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         hivcareadherence.on_arv = NO
         hivcareadherence.save()
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
 
     def test_hiv_care_adherance_for_verbal_posetive_only(self):
         """HivCareAdharance form should be made available any verbal positive,
@@ -309,7 +331,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
@@ -321,13 +344,15 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # add HivTestReview,
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
 
         # add HivCareAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, YES)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, YES, YES)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -348,13 +373,15 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         # add HivTestReview,
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivcareadherence', REQUIRED, T0, self.subject_identifier).count(), 1)
 
         # add HivCareAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, YES)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, YES)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, T0, self.subject_identifier).count(), 1)
@@ -372,7 +399,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
         # add HivTestReview,
-        self.make_hivtest_review(self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, NEG, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivresult', REQUIRED, T0, self.subject_identifier).count(), 1)
@@ -385,7 +413,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.elisahivresult', REQUIRED, T0, self.subject_identifier).count(), 1)
 
-        self.make_requisition(self.subject_visit_male, 'ELISA', self.get_utcnow())
+        self.make_requisition(
+            self.subject_visit_male, 'ELISA', self.get_utcnow())
 
         mommy.make_recipe(
             'bcpp_subject.elisahivresult', subject_visit=self.subject_visit_male, report_datetime=self.get_utcnow(),
@@ -394,7 +423,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         )
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.elisahivresult', KEYED, T0, self.subject_identifier).count(), 1)
-        self.assertEqual(self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj(
+            REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
             self.requisition_metadata_obj(REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
@@ -421,7 +451,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.make_hiv_result(NEG, self.subject_visit_male, self.get_utcnow())
 
-        # Enforce that entering an HivResult does not affect Circumcition Meta Data.
+        # Enforce that entering an HivResult does not affect Circumcition Meta
+        # Data.
         assert_circumsition(KEYED, NOT_REQUIRED, REQUIRED)
 
         circumcition.circumcised = NO
@@ -437,9 +468,11 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
     def test_Known_hiv_pos_y1_require_no_testing(self):
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
 
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.hivresult', NOT_REQUIRED, T0, self.subject_identifier).count(), 1)
@@ -451,20 +484,26 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # Known POS in T0
 
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
 
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         self.assertEqual(self.requisition_metadata_obj(
             'bcpp_subject.subjectrequisition', REQUIRED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
-        self.make_requisition(self.subject_visit_male, RESEARCH_BLOOD_DRAW, self.get_utcnow())
+        self.make_requisition(
+            self.subject_visit_male, RESEARCH_BLOOD_DRAW, self.get_utcnow())
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
-        self.assertEqual(self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(self.requisition_metadata_obj(
+            REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
             self.requisition_metadata_obj(KEYED, T0, RESEARCH_BLOOD_DRAW, self.subject_identifier).count(), 1)
 
@@ -473,14 +512,18 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # Known POS in T0
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
 
-        self.make_hivtest_review(self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
+        self.make_hivtest_review(
+            self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
 
         # add HivCarAdherence,
-        self.make_hiv_care_adherence(self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
+        self.make_hiv_care_adherence(
+            self.subject_visit_male, self.get_utcnow(), NO, NO, NO, NO, NO)
 
-        self.assertEqual(self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.pima', REQUIRED, T0, self.subject_identifier).count(), 1)
         self.assertEqual(
             self.requisition_metadata_obj(REQUIRED, T0, VIRAL_LOAD, self.subject_identifier).count(), 1)
         self.assertEqual(
@@ -491,7 +534,8 @@ class TestBaselineRuleSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         self.subject_identifier = self.subject_visit_male.subject_identifier
         # make
-        self.make_hivtesting_history(self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         # Known POS in T0
         mommy.make_recipe(
             'bcpp_subject.sexualbehaviour',

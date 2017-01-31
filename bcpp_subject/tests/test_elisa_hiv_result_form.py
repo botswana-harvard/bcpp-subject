@@ -14,8 +14,8 @@ class TestElisaHivResultForm(SubjectMixin, TestCase):
         super().setUp()
 
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', 
-            subject_visit=self.subject_visit_female, 
+            'bcpp_subject.subjectrequisition',
+            subject_visit=self.subject_visit_female,
             report_datetime=self.get_utcnow(),
             panel_name='ELISA',
         )
@@ -33,13 +33,17 @@ class TestElisaHivResultForm(SubjectMixin, TestCase):
         self.assertTrue(elisa_hiv_result_form.save())
 
     def test_no_date_time(self):
-        """Assert test with negative results was carried out without date provided."""
+        """Assert test with negative results was carried out
+        without date provided.
+        """
         self.options.update(hiv_result_datetime=None)
         elisa_hiv_result_form = ElisaHivResultForm(data=self.options)
         self.assertFalse(elisa_hiv_result_form.is_valid())
 
     def test_no_date_time_for_pos(self):
-        """Assert test with positive results was carried out without date provided."""
+        """Assert test with positive results was carried out
+        without date provided.
+        """
         self.options.update(hiv_result=POS, hiv_result_datetime=None)
         elisa_hiv_result_form = ElisaHivResultForm(data=self.options)
         self.assertFalse(elisa_hiv_result_form.is_valid())

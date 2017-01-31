@@ -1,14 +1,9 @@
-from dateutil.relativedelta import relativedelta
-
 from django.db import models
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
-from edc_base.utils import age
 from edc_constants.choices import YES_NO
-from edc_constants.constants import YES
 
-from ..exceptions import EnrollmentError
 from .model_mixins import CrfModelMixin
 from .subject_consent import SubjectConsent
 
@@ -16,8 +11,9 @@ from .subject_consent import SubjectConsent
 class HicEnrollment (CrfModelMixin):
 
     hic_permission = models.CharField(
-        verbose_name='Is it okay for the project to visit you every year for '
-                     'the next three years for further questions and testing?',
+        verbose_name=(
+            'Is it okay for the project to visit you every year for '
+            'the next three years for further questions and testing?'),
         max_length=25,
         choices=YES_NO,
         help_text='If \'No\', subject is not eligible.'
@@ -57,8 +53,9 @@ class HicEnrollment (CrfModelMixin):
 
     citizen_or_spouse = models.NullBooleanField(
         default=None,
-        help_text='From Subject Consent. Is participant a citizen, or married to citizen '
-                  'with a valid marriage certificate?',
+        help_text=(
+            'From Subject Consent. Is participant a citizen, or married to citizen '
+            'with a valid marriage certificate?'),
     )
 
     locator_information = models.NullBooleanField(
@@ -81,20 +78,11 @@ class HicEnrollment (CrfModelMixin):
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields')
         if not update_fields:
-            first_consent = SubjectConsent.consent.first_consent(self.subject_identifier)
-            self.dob, self.consent_datetime = first_consent.dob, first_consent.consent_datetime
+            first_consent = SubjectConsent.consent.first_consent(
+                self.subject_identifier)
+            self.dob, self.consent_datetime = first_consent.dob,
+            first_consent.consent_datetime
         super(HicEnrollment, self).save(*args, **kwargs)
-
-    def may_contact(self):
-        if self.hic_permission == YES:
-            return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
-        else:
-            return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
-    may_contact.allow_tags = True
-
-    def age(self):
-        return relativedelta(self.consent_datetime.date(), self.dob).years
-    age.allow_tags = True
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
