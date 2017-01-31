@@ -14,7 +14,8 @@ from django.core.exceptions import MultipleObjectsReturned
 class Command(BaseCommand):
 
     args = ''
-    help = 'replace registered subject for clinic with bcpp subject where is there is duplicate'
+    help = ('replace registered subject for clinic with bcpp subject where is'
+            ' there is duplicate')
 
     def handle(self, *args, **options):
         self.update_clinic_registered_subject()
@@ -22,7 +23,8 @@ class Command(BaseCommand):
     def find_duplicates(self):
         duplicates = RegisteredSubject.objects.raw(
             '''SELECT *, count(identity) as duplicate_count
-            from bhp_registration_registeredsubject GROUP BY identity having duplicate_count >1''')
+            from bhp_registration_registeredsubject GROUP BY identity having
+            duplicate_count >1''')
         return duplicates
 
     def determine_bcpp_registered_subject(self, identity):
@@ -38,7 +40,11 @@ class Command(BaseCommand):
 
     def get_all_clinic_models(self):
         clinic_models = [
-            ClinicHouseholdMember, ClinicConsent, Appointment, ScheduledEntryMetaData, ClinicOffStudy
+            ClinicHouseholdMember,
+            ClinicConsent,
+            Appointment,
+            ScheduledEntryMetaData,
+            ClinicOffStudy
         ]
         return clinic_models
 
@@ -207,7 +213,11 @@ class Command(BaseCommand):
             for clinic_model in self.get_all_clinic_models():
                 # app_label, model = clinic_model
                 # clinic_model = get_model(app_label, model)
-                self.replace_registered_subject_for_clinic_models(bcpp_registered_subject, clinic_model)
-                self.replace_registered_subject_for_clinic_models_audit(bcpp_registered_subject, clinic_model)
+                self.replace_registered_subject_for_clinic_models(
+                    bcpp_registered_subject,
+                    clinic_model)
+                self.replace_registered_subject_for_clinic_models_audit(
+                    bcpp_registered_subject,
+                    clinic_model)
                 # self.track_outgoing_transactions()
                 print ('{} updated'.format(clinic_model._meta.model_name))
