@@ -11,16 +11,8 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.subject_visit = self.make_subject_visit_for_consented_subject_male(
-            'T0', **self.consent_data)
-
         self.options = {
-            'subject_visit': self.subject_visit.id,
+            'subject_visit': self.subject_visit_male.id,
             'report_datetime': self.get_utcnow(),
             'ever_sex': YES,
             'lifetime_sex_partners': 3,
