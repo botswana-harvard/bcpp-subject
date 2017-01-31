@@ -192,11 +192,8 @@ list_data = {
         ('Other HIV-related illness', 'Other HIV-related illness'),
         ('Pregnancy-related care, including delivery', 'Pregnancy-related care, including delivery'),
         ('Injury or accident', 'Injury or accident'),
-        ('Medication toxicity (specify)', 'Medication toxicity (specify)'),
-        ('High blood pressure', 'High blood pressure'),
-        ('Diabetes', 'Diabetes'),
-        ('Cancer', 'Cancer'),
-        ('Mental illness (specify which)', 'Mental illness (specify which)'),
+        ('Medication toxicity', 'Medication toxicity'),
+        ('Chronic disease related care', 'Chronic disease related care')
         ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
         ('Other', 'Other (specify)'),
         ("Don't know", "Don't know"),
@@ -204,7 +201,7 @@ list_data = {
     'bcpp_subject.chronicdisease': [
         ('High blood pressure', 'High blood pressure'),
         ('Diabetes', 'Diabetes'),
-        ('Mental illness', 'Cancer'),
+        ('Mental illness', 'Mental illness'),
     ]
 }
 

@@ -13,16 +13,8 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow() + relativedelta(years=3)
-        }
-        self.bhs_subject_visit_female = self.make_subject_visit_for_consented_subject_female(
-            'E0', **self.consent_data)
-
         self.options = {
-            'subject_visit': self.bhs_subject_visit_female.id,
+            'subject_visit': self.subject_visit_female.id,
             'first_positive': (self.get_utcnow() - relativedelta(years=1)).date(),
             'medical_care': YES,
             'no_medical_care': None,
