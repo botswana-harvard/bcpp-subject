@@ -24,12 +24,14 @@ def is_minor(dob, reference_datetime):
 
 
 class AnonymousConsent(
-        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin, NonUniqueSubjectIdentifierModelMixin,
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
+        NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
         BaseUuidModel):
 
-    """ A model completed by the user that captures the ICF."""
+    """ A model completed by the user that captures the ICF.
+    """
 
     household_member = models.ForeignKey(
         HouseholdMember, on_delete=models.PROTECT)
@@ -48,7 +50,8 @@ class AnonymousConsent(
         blank=False,
         default='-',
         choices=YES_NO,
-        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+        help_text=('Subject is a minor if aged 16-17. A guardian must '
+                   'be present for consent. '
                    'HIV status may NOT be revealed in the household.'),
         editable=False)
 
