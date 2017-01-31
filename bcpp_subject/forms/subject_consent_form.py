@@ -54,7 +54,9 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                 SubjectConsent(**options), household_member, forms.ValidationError)
 
     def clean_consent_with_household_member(self):
-        """Validates subject consent values against household member values."""
+        """Validates subject consent values against household
+        member values.
+        """
         initials = self.cleaned_data.get("initials")
         first_name = self.cleaned_data.get("first_name")
         gender = self.cleaned_data.get("gender")
@@ -62,21 +64,27 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         if household_member:
             if initials != household_member.initials:
                 raise forms.ValidationError(
-                    'Initials do not match with household member. %(initials)s <> %(hm_initials)s',
+                    'Initials do not match with household member. '
+                    '%(initials)s <> %(hm_initials)s',
                     params={
-                        'hm_initials': household_member.initials, 'initials': initials},
+                        'hm_initials': household_member.initials,
+                        'initials': initials},
                     code='invalid')
             if household_member.first_name != first_name:
                 raise forms.ValidationError(
-                    'First name does not match with household member. Got %(first_name)s <> %(hm_first_name)s',
+                    'First name does not match with household member. '
+                    'Got %(first_name)s <> %(hm_first_name)s',
                     params={
-                        'hm_first_name': household_member.first_name, 'first_name': first_name},
+                        'hm_first_name': household_member.first_name,
+                        'first_name': first_name},
                     code='invalid')
             if household_member.gender != gender:
                 raise forms.ValidationError(
-                    'Gender does not match with household member. Got %(gender)s <> %(hm_gender)s',
+                    'Gender does not match with household member. '
+                    'Got %(gender)s <> %(hm_gender)s',
                     params={
-                        'hm_gender': household_member.gender, 'gender': gender},
+                        'hm_gender': household_member.gender,
+                        'gender': gender},
                     code='invalid')
 
     def clean_citizen_with_legally_married(self):
