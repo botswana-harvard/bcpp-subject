@@ -49,7 +49,7 @@ class ResidencyMobility (CrfModelMixin):
         verbose_name=(
             'In the past 12 months, in total how many nights did you spend away'
             ' from this community, including visits to cattle post and lands?'
-            '[If you don't know exactly, give your best guess]'),
+            '[If you don\'t know exactly, give your best guess]'),
         max_length=35,
         choices=NIGHTS_AWAY_CHOICE,
         help_text='',
