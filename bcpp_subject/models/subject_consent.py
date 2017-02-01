@@ -159,7 +159,7 @@ class SubjectConsent(
         if self.dob:
             # minor (do this before comparing DoB)
             if (is_minor(enrollment_checklist.dob,
-                         enrollment_checklist.report_datetime) and not
+                enrollment_checklist.report_datetime) and not
                     is_minor(self.dob, self.consent_datetime)):
                 if is_minor(enrollment_checklist.dob,
                             enrollment_checklist.report_datetime):
@@ -238,9 +238,9 @@ class SubjectConsent(
     def common_clean(self):
         self.common_clean_age_and_dob()
         enrollment_checklist = self.common_clean_completed_enrollment_checklist()
-        self.common_clean_initials()
-        self.common_clean_dob()
-        self.common_clean_gender()
+        self.common_clean_initials(enrollment_checklist)
+        self.common_clean_dob(enrollment_checklist)
+        self.common_clean_gender(enrollment_checklist)
         self.common_clean_minor(enrollment_checklist)
         self.common_clean_literacy(enrollment_checklist)
         self.common_clean_citizen(enrollment_checklist)
