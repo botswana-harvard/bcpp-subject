@@ -3,6 +3,11 @@ sudo: required
 language: python
 python:
 - 3.5.1
+addons:
+  apt:
+    packages:
+    - libcups2-dev
+    - python3-cups
 services:
 - mysql
 before_install:
