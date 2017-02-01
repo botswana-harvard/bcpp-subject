@@ -13,6 +13,7 @@ from ..choices import VISIT_UNSCHEDULED_REASON
 
 from .appointment import Appointment
 from .requires_consent_model_mixin import RequiresConsentMixin
+from edc_visit_tracking.model_mixins.previous_visit_model_mixin import PreviousVisitError
 
 
 class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
@@ -44,6 +45,10 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         self.info_source = 'subject'
         self.reason = SCHEDULED
         super().save(*args, **kwargs)
+
+    @property
+    def common_clean_exceptions(self):
+        return super().common_clean_exceptions + [PreviousVisitError]
 
     class Meta(VisitModelMixin.Meta, RequiresConsentMixin.Meta):
         app_label = "bcpp_subject"
