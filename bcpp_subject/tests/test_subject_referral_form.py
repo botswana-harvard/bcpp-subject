@@ -37,7 +37,8 @@ class TestSubjectReferralForm(SubjectMixin, TestCase):
         )
         mommy.make_recipe(
             'bcpp_subject.hivresult', subject_visit=self.bhs_male_visit,
-            report_datetime=report_datetime, hiv_result=POS, insufficient_vol=NO
+            report_datetime=report_datetime, hiv_result=POS,
+            insufficient_vol=NO
         )
 
         mommy.make_recipe(
@@ -54,7 +55,8 @@ class TestSubjectReferralForm(SubjectMixin, TestCase):
             recorded_hiv_result=POS)
 
         self.hivresultdocumentation = mommy.make_recipe(
-            'bcpp_subject.hivresultdocumentation', subject_visit=self.bhs_male_visit,
+            'bcpp_subject.hivresultdocumentation',
+            subject_visit=self.bhs_male_visit,
             report_datetime=report_datetime
         )
         mommy.make_recipe(
