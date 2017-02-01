@@ -15,7 +15,9 @@ class Command(BaseCommand):
             raise CommandError('Usage: <command> <source path> <destination path>')
         path = os.path.expanduser(args[0])
         new_path = os.path.expanduser(args[1])
-        file_list = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and f.endswith(".csv")]
+        file_list = [
+            f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))
+            and f.endswith(".csv")]
         for file_name in file_list:
             file_path = os.path.join(path, file_name)
             new_file_path = os.path.join(new_path, file_name)

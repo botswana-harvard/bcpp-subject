@@ -33,9 +33,9 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
             'hypertension_diagnosis': NOT_APPLICABLE,
             'medications_taken': [self.medication_taken.id,
                                   self.medication_taken_1.id],
-            'if_other_medications_taken': 'Some medication',
+            'other_medications_taken': 'Some medication',
             'medication_still_given': [self.medication_given.id],
-            'if_other_medication_still_given': None,
+            'other_medication_still_given': None,
             'health_care_facility': NOT_APPLICABLE,
             'salt_intake_counselling': NOT_APPLICABLE,
             'tobacco_smoking': NOT_APPLICABLE,
@@ -58,7 +58,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         """Test to verify whether validation will fire when
         'other' is selected in medications_taken but
         if_other_medications_taken is left empty"""
-        self.data.update(if_other_medications_taken=None)
+        self.data.update(other_medications_taken=None)
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
 
@@ -68,7 +68,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         if_other_medications_taken is filled"""
         self.data.update(
             medications_taken=[self.medication_taken.id],
-            if_other_medications_taken='Some medication')
+            other_medications_taken='Some medication')
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
 
@@ -87,6 +87,6 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         if_other_medications_taken is filled"""
         self.data.update(
             medications_taken=[self.medication_taken.id],
-            if_other_medications_taken='Some medication')
+            other_medications_taken='Some medication')
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())

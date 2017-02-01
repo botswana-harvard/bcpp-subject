@@ -35,6 +35,7 @@ class SubjectRequisitionForm(SubjectModelFormMixin):
                 and cleaned_data.get('reason_not_drawn')):
             raise forms.ValidationError(
                 'Cannot provide reasons not drawn for a drawn panel')
+
         return cleaned_data
 
     class Meta:
