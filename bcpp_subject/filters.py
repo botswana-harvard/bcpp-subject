@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.contrib.admin.filters import SimpleListFilter
+from django.utils.translation import gettext_lazy as _
 
 from edc_constants.constants import YES, NO
 
@@ -20,9 +21,11 @@ class HicEnrolledFilter(SimpleListFilter):
         enrolled = []
         if isinstance(queryset.all()[0], Household):
             for hs in queryset.all():
+                options = {
+                    'hic_permission': YES,
+                    'subject_visit__household_member__household_structure__household': hs}
                 if not HicEnrollment.objects.filter(
-                        hic_permission=YES,
-                        subject_visit__household_member__household_structure__household=hs).exists():
+                        **options).exists():
                     enrolled.append(hs)
                 else:
                     not_enrolled.append(hs)
@@ -32,9 +35,11 @@ class HicEnrolledFilter(SimpleListFilter):
                 return queryset.filter(household_identifier__in=not_enrolled)
         else:
             for hs in queryset.all():
+                options = {
+                    'hic_permission': YES,
+                    'subject_visit__household_member__household_structure__household__plot': hs}
                 if not HicEnrollment.objects.filter(
-                        hic_permission=YES,
-                        subject_visit__household_member__household_structure__household__plot=hs).exists():
+                        **options).exists():
                     enrolled.append(hs)
                 else:
                     not_enrolled.append(hs)

@@ -60,10 +60,8 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
     )
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj)
-                + audit_fields
-                + survey_schedule_fields
-                + visit_schedule_fields)
+        return (super().get_readonly_fields(request, obj=obj) + audit_fields +
+                survey_schedule_fields + visit_schedule_fields)
 
     def view_on_site(self, obj):
         try:

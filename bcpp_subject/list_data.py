@@ -1,8 +1,11 @@
+from django.apps import apps as django_apps
+
 list_data = {
     'bcpp_subject.circumcisionbenefits': [
         ('Improved hygiene ', 'Improved hygiene '),
         ('Reduced risk of HIV ', 'Reduced risk of HIV '),
-        ('Reduced risk of other sexually transmitted diseases', 'Reduced risk of other sexually transmitted diseases'),
+        ('Reduced risk of other sexually transmitted diseases',
+         'Reduced risk of other sexually transmitted diseases'),
         ('Reduced risk of cancer', 'Reduced risk of cancer'),
         ('Other', 'Other'),
         ('I am not sure', 'I am not sure'),
@@ -38,17 +41,20 @@ list_data = {
         ("Don't want to answer", 'dont want to answer'),
         ('Bazezuri/Shona', 'Bazezuri')],
     'bcpp_subject.familyplanning': [
-        ('Condoms, consistent use (male or female)', 'Condoms, consistent use (male or female)'),
+        ('Condoms, consistent use (male or female)',
+         'Condoms, consistent use (male or female)'),
         ('Injectable contraceptive', 'Injectable contraceptive'),
         ('Oral contraceptive', 'Oral contraceptive'),
         ('IUD', 'IUD'),
         ('Diaphragm or cervical cap', 'Diaphragm or cervical cap'),
-        ('Rhythm or menstrual cycle timing', 'Rhythm or menstrual cycle timing'),
+        ('Rhythm or menstrual cycle timing',
+         'Rhythm or menstrual cycle timing'),
         ('Withdrawal', 'Withdrawal'),
         ('Other, specify', 'Other, specify'),
         ("Don't want to answer", "Don't want to answer"),
         ('NOT APPLICABLE', 'NA'),
-        ('Condoms, in-consistent use (male or female)', 'Condoms, in-consistent use (male or female)')],
+        ('Condoms, in-consistent use (male or female)',
+         'Condoms, in-consistent use (male or female)')],
     'bcpp_subject.medicationtaken': [
         ("bisoprolol", "Bisoprolol"),
         ("carvedilol", "Carvedilol"),
@@ -84,9 +90,11 @@ list_data = {
         ("not_applicable", "Not Applicable"),
         ('OTHER', "Other")],
     'bcpp_subject.heartdisease': [
-        ('Myocardial infarction (heart attack)', 'Myocardial infarction (heart attack)'),
+        ('Myocardial infarction (heart attack)',
+         'Myocardial infarction (heart attack)'),
         ('Congestive cardiac failure', 'Congestive cardiac failure'),
-        ('Stroke (cerebrovascular accident, CVA)', 'Stroke (cerebrovascular accident, CVA)'),
+        ('Stroke (cerebrovascular accident, CVA)',
+         'Stroke (cerebrovascular accident, CVA)'),
         ('Other, specify', 'Other, specify'),
         ("Don't want to answer", "Don't want to answer")],
     'bcpp_subject.livewith': [
@@ -97,10 +105,13 @@ list_data = {
         ('Other', 'Other'),
         ("Don't want to answer", "Don't want to answer")],
     'bcpp_subject.medicalcareaccess': [
-        ('Traditional, faith, or religious healer/doctor', 'Traditional, faith, or religious healer/doctor'),
+        ('Traditional, faith, or religious healer/doctor',
+         'Traditional, faith, or religious healer/doctor'),
         ('Pharmacy', 'Pharmacy'),
-        ('Public or government health facility or clinic', 'Public or government health facility or clinic'),
-        ('Private health facility or clinic', 'Private health facility or clinic'),
+        ('Public or government health facility or clinic',
+         'Public or government health facility or clinic'),
+        ('Private health facility or clinic',
+         'Private health facility or clinic'),
         ('Community health worker', 'Community health worker'),
         ('Other, specify', 'Other, specify'),
         ("Don't want to answer", 'dont want to answer')],
@@ -138,7 +149,8 @@ list_data = {
         ('Other, specify', 'Other, specify'),
         ('No affiliation', 'no_affiliation')],
     'bcpp_subject.stiillnesses': [
-        ('Severe weight loss (wasting) - more than 10% of body weight', 'wasting'),
+        ('Severe weight loss (wasting) - more than 10% of body weight',
+         'wasting'),
         ('Unexplained diarrhoea for one month', 'diarrhoea'),
         ('Yeast infection of mouth or oesophagus', 'yeast_infection'),
         ('Severe pneumonia or meningitis or sepsis', 'pneumonia'),
@@ -147,7 +159,8 @@ list_data = {
         ('Other, specify', 'Other, specify'),
         ('None', 'None')],
     'member.transportmode': [
-        ('Motor vehicle (car,truck,taxi, etc)', 'Motor vehicle (car,truck,taxi, etc)'),
+        ('Motor vehicle (car,truck,taxi, etc)',
+         'Motor vehicle (car,truck,taxi, etc)'),
         ('Tractor', 'Tractor'),
         ('Bicycle', 'Bicycle'),
         ('Motorcycle/scooter', 'Motorcycle/scooter'),
@@ -188,9 +201,11 @@ list_data = {
         ('Tuberculosis (TB, MTB)', 'Tuberculosis (TB, MTB)'),
         ('Pneumonia', 'Pneumonia'),
         ('Cryptococcal meningitis', 'Cryptococcal meningitis'),
-        ('Immune Reconstitution Inflammatory Syndrome (IRIS)', 'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
+        ('Immune Reconstitution Inflammatory Syndrome (IRIS)',
+         'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
         ('Other HIV-related illness', 'Other HIV-related illness'),
-        ('Pregnancy-related care, including delivery', 'Pregnancy-related care, including delivery'),
+        ('Pregnancy-related care, including delivery',
+         'Pregnancy-related care, including delivery'),
         ('Injury or accident', 'Injury or accident'),
         ('Medication toxicity', 'Medication toxicity'),
         ('Chronic disease related care', 'Chronic disease related care')
@@ -206,11 +221,10 @@ list_data = {
 }
 
 
-from django.apps import apps as django_apps
-
 for list_obj in list_data.keys():
     try:
-        model = django_apps.get_app_config(list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
+        model = django_apps.get_app_config(
+            list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
         for ob in list_data.get(list_obj):
             a, b = ob
             if model.objects.filter(name=a).exists():

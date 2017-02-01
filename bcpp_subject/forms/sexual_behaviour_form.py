@@ -14,10 +14,13 @@ class SexualBehaviourForm (SubjectModelFormMixin):
     optional_attrs = {ANNUAL: {
         'label': {
             'last_year_partners': (
-                'Since we spoke with you at our last visit, how many different people have you had '
+                'Since we spoke with you at our last visit, '
+                'how many different people have you had '
                 'sex with? Please remember to include '
-                'casual and once-off partners (prostitutes and truck drivers) as well as long-term '
-                'partners (spouses, boyfriends/girlfriends)[If you can\'t recall the exact number, '
+                'casual and once-off partners (prostitutes and '
+                'truck drivers) as well as long-term '
+                'partners (spouses, boyfriends/girlfriends)[If you '
+                'can\'t recall the exact number, '
                 'please give a best guess]'),
             'more_sex': (
                 'Since we spoke with you at our last visit, did you have sex with '
@@ -35,10 +38,12 @@ class SexualBehaviourForm (SubjectModelFormMixin):
         self.validate_no_sex('condom', cleaned_data)
         self.validate_no_sex('alcohol_sex', cleaned_data)
 
-        # ensuring that the number of last year partners is not greater than lifetime partners
+        # ensuring that the number of last year partners is not greater than
+        # lifetime partners
         if cleaned_data.get('ever_sex') == YES:
             if not cleaned_data.get('lifetime_sex_partners'):
-                raise forms.ValidationError('If participant has ever had sex, CANNOT have 0 lifetime partners.')
+                raise forms.ValidationError(
+                    'If participant has ever had sex, CANNOT have 0 lifetime partners.')
 
         if cleaned_data.get('more_sex') == YES:
             if not cleaned_data.get('last_year_partners'):
@@ -67,12 +72,12 @@ class SexualBehaviourForm (SubjectModelFormMixin):
 
         if cleaned_data.get('first_sex_partner_age') == OTHER and not cleaned_data.get(
                 'first_sex_partner_age_other'):
-                raise forms.ValidationError(
-                    'If first sex partner age is 19 or older, please specify the age')
+            raise forms.ValidationError(
+                'If first sex partner age is 19 or older, please specify the age')
         if cleaned_data.get('first_sex_partner_age') != OTHER and cleaned_data.get(
                 'first_sex_partner_age_other'):
-                raise forms.ValidationError(
-                    'If first sex partner age is not less than 19 or not specified, cannot provide the age')
+            raise forms.ValidationError(
+                'If first sex partner age is not less than 19 or not specified, cannot provide the age')
 
         return cleaned_data
 

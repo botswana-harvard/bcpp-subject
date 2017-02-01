@@ -227,7 +227,8 @@ class ThirdPartnerAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     instructions = [(
         'Interviewer Note: If the respondent has only had '
         ' two partners, SKIP HIV adherence questions if HIV'
-        ' negative, if HIV positive, proceed. Else go to Reproductive health for women,'
+        ' negative, if HIV positive, proceed. Else go to '
+        'Reproductive health for women,'
         ' or circumcision for men. Ask the respondent to'
         ' answer the following questions about their second'
         ' most recent sexual partner. It may be helpful for'

@@ -9,6 +9,7 @@ from .circumcised import Circumcised
 from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement
+from .correct_consent import CorrectConsent
 from .demographics import Demographics
 from .disenrollment import (
     DisenrollmentBhs, DisenrollmentAhs, DisenrollmentEss, DisenrollmentAno)
@@ -21,6 +22,7 @@ from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
 from .hiv_care_adherence import HivCareAdherence
 from .hiv_health_care_costs import HivHealthCareCosts
+from .hiv_linkage_to_care import HivLinkageToCare
 from .hiv_medical_care import HivMedicalCare
 from .hiv_result import HivResult
 from .hiv_result_documentation import HivResultDocumentation
@@ -28,10 +30,15 @@ from .hiv_test_review import HivTestReview
 from .hiv_tested import HivTested
 from .hiv_testing_history import HivTestingHistory
 from .hiv_untested import HivUntested
-from .household_composition import HouseholdComposition
 from .hospital_admission import HospitalAdmission
+from .household_composition import HouseholdComposition
+from .hypertension_cardiovascular import HypertensionCardiovascular
 from .immigration_status import ImmigrationStatus
 from .labour_market_wages import LabourMarketWages
+from .list_models import (
+    Arv, CircumcisionBenefits, EthnicGroups, Diagnoses, HeartDisease,
+    FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
+    NeighbourhoodProblems, Religion, ResidentMostLikely)
 from .medical_diagnoses import MedicalDiagnoses
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
@@ -41,6 +48,7 @@ from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant
 from .pregnancy import Pregnancy
 from .quality_of_life import QualityOfLife
+from .rbd_demographics import RbdDemographics
 from .reproductive_health import ReproductiveHealth
 from .residency_mobility import ResidencyMobility
 from .resource_utilization import ResourceUtilization
@@ -59,13 +67,4 @@ from .substance_use import SubstanceUse
 from .tb_symptoms import TbSymptoms
 from .tuberculosis import Tuberculosis
 from .uncircumcised import Uncircumcised
-from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
-from .correct_consent import CorrectConsent
-from .hiv_linkage_to_care import HivLinkageToCare
-from .list_models import (
-    Arv, CircumcisionBenefits, EthnicGroups, Diagnoses, HeartDisease,
-    FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
-    NeighbourhoodProblems, Religion, ResidentMostLikely)
-from .hypertension_cardiovascular import (
-    HypertensionCardiovascular, WaistCircumferenceMeasurement, BPMeasurement)

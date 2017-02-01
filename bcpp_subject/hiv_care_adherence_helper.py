@@ -50,10 +50,13 @@ class HivCareAdherenceHelper(object):
         """ Known Positive from T0 and on ART """
         subject_helper = SubjectStatusHelper(self.func_baseline_visit_instance)
         if subject_helper.hiv_result == POS and subject_helper.on_art:
-            return [f for f in self.baseline_fields if f not in ["first_positive",
-                                                                 "medical_care", "no_medical_care",
-                                                                 "ever_recommended_arv", "ever_taken_arv",
-                                                                 "why_no_arv", "on_arv"]]
+            return [
+                f for f in self.baseline_fields if f not in [
+                    "first_positive",
+                    "medical_care", "no_medical_care",
+                    "ever_recommended_arv", "ever_taken_arv",
+                    "why_no_arv", "on_arv"]
+            ]
 
     @property
     def func_baseline_visit_instance(self):
@@ -62,4 +65,5 @@ class HivCareAdherenceHelper(object):
         baseline_appointment = Appointment.objects.filter(
             registered_subject=registered_subject, visit_definition__code='T0')[0]
         return SubjectVisit.objects.get(
-            household_member__registered_subject=registered_subject, appointment=baseline_appointment)
+            household_member__registered_subject=registered_subject,
+            appointment=baseline_appointment)

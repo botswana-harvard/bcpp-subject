@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from model_mommy import mommy
 
 from django.test import TestCase
@@ -13,6 +14,7 @@ from ..constants import ELISA, MICROTUBE
 from bcpp_subject.constants import T1, T2
 from member.models.household_member.household_member import HouseholdMember
 from ..models import Appointment
+from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 
 
 class TestReferral(SubjectMixin, TestCase):
@@ -26,6 +28,7 @@ class TestReferral(SubjectMixin, TestCase):
         self.survey_schedule = self.get_survey_schedule(index=0)
         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             'T0', survey_schedule=self.survey_schedule, **self.consent_data)
+        self.circumcision_benefits = mommy.make_recipe('bcpp_subject.circumcision_benefits')
 
     def ahs_y2_subject_visit(self):
         """Return an ahs subject visit."""
@@ -43,10 +46,16 @@ class TestReferral(SubjectMixin, TestCase):
         new_member.save()
 
         new_member = HouseholdMember.objects.get(pk=new_member.pk)
-        report_datetime = self.get_utcnow() + relativedelta(years=2)
+        report_datetime = self.get_utcnow() + relativedelta(years=1, months=6)
+        report = datetime(2010, 3, 4)
+        mommy.make_recipe(
+            'household.householdlogentry',
+            report_datetime=report,
+            household_log=new_member.household_structure.householdlog,
+            household_status=ELIGIBLE_REPRESENTATIVE_PRESENT)
         self.consent_data.update(report_datetime=report_datetime)
-        new_member = self.add_subject_consent(
-            new_member, survey_schedule=next_household_structure.survey_schedule, **self.consent_data)
+        self.add_subject_consent(
+            new_member, **self.consent_data)
         appointment = Appointment.objects.get(
             subject_identifier=new_member.subject_identifier,
             visit_code=T1)
@@ -90,8 +99,15 @@ class TestReferral(SubjectMixin, TestCase):
 
     @property
     def referral_smc1(self):
-        mommy.make_recipe('bcpp_subject.hivresult', subject_visit=self.bhs_subject_visit_male, hiv_result=NEG)
-        mommy.make_recipe('bcpp_subject.circumcision', subject_visit=self.bhs_subject_visit_male, circumcised=NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=self.bhs_subject_visit_male,
+            hiv_result=NEG)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=self.bhs_subject_visit_male,
+            circumcised=NO,
+            health_benefits_smc=[self.circumcision_benefits])
         subject_referral = mommy.make_recipe(
             'bcpp_subject.subjectreferral', subject_referred=YES,
             subject_visit=self.bhs_subject_visit_male,
@@ -100,15 +116,59 @@ class TestReferral(SubjectMixin, TestCase):
         self.assertIn('SMC-NEG', subject_referral.referral_code)
         subject_visit_t1 = self.ahs_y2_subject_visit()
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=subject_visit_t1, report_datetime=self.get_utcnow(),
+            'bcpp_subject.subjectrequisition',
+            subject_visit=subject_visit_t1,
+            report_datetime=subject_visit_t1.report_datetime,
             panel_name=MICROTUBE)
-        mommy.make_recipe('bcpp_subject.hivresult', subject_visit=subject_visit_t1, hiv_result=NEG)
-        mommy.make_recipe('bcpp_subject.circumcision', subject_visit=subject_visit_t1, circumcised=NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=subject_visit_t1,
+            hiv_result=NEG,
+            report_datetime=subject_visit_t1.report_datetime)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=subject_visit_t1,
+            circumcised=NO, report_datetime=subject_visit_t1.report_datetime,
+            health_benefits_smc=[self.circumcision_benefits])
         subject_referral = mommy.make_recipe(
             'bcpp_subject.subjectreferral', subject_referred=YES,
+            subject_visit=subject_visit_t1,
+            report_datetime=subject_visit_t1.report_datetime,
+            scheduled_appt_date=subject_visit_t1.report_datetime)
+        return subject_referral
+
+    @property
+    def referral_smc2(self):
+        mommy.make_recipe(
+            'bcpp_subject.subjectrequisition',
+            subject_visit=self.bhs_subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            panel_name='Microtube')
+        mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=self.bhs_subject_visit_male,
+            hiv_result=NEG)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=self.bhs_subject_visit_male,
+            circumcised=YES,
+            health_benefits_smc=[self.circumcision_benefits])
+        subject_referral = mommy.make_recipe(
+            'bcpp_subject.subjectreferral',
+            subject_referred=YES,
             subject_visit=self.bhs_subject_visit_male,
             report_datetime=self.get_utcnow(),
             scheduled_appt_date=self.get_utcnow())
+        self.assertNotIn('SMC', subject_referral.referral_code)
+
+        subject_visit_t1 = self.ahs_y2_subject_visit()
+
+        subject_referral = mommy.make_recipe(
+            'bcpp_subject.subjectreferral',
+            subject_referred=YES,
+            subject_visit=subject_visit_t1,
+            report_datetime=subject_visit_t1.report_datetime,
+            scheduled_appt_date=subject_visit_t1.report_datetime)
         return subject_referral
 
     def tests_referred_hiv(self):
@@ -142,46 +202,17 @@ class TestReferral(SubjectMixin, TestCase):
             self.assertIn('SMC-NEG', subject_referral.referral_code)
 
     def tests_referred_smc1a(self):
-        """if NEG and male and NOT circumcised, refer for SMC in Y1 non-intervention
-        and do not refer in Y2 non-intervention"""
+        """if NEG and male and NOT circumcised, refer for SMC
+        in Y1 non-intervention and do not refer in Y2 non-intervention"""
         if not is_intervention(site_mappers.current_map_area):
             subject_referral = self.referral_smc1
             self.assertEqual('', subject_referral.referral_code)
 
-    def referral_smc2(self):
-        mommy.make_recipe(
-            'bcpp_subject.subjectrequisition',
-            subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
-            panel_name='Microtube')
-        mommy.make_recipe(
-            'bcpp_subject.hivresult',
-            subject_visit=self.bhs_subject_visit_male,
-            hiv_result=NEG)
-        mommy.make_recipe(
-            'bcpp_subject.circumcision',
-            subject_visit=self.bhs_subject_visit_male,
-            circumcised=YES)
-        subject_referral = mommy.make_recipe(
-            'bcpp_subject.subjectreferral',
-            subject_referred=YES,
-            subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
-            scheduled_appt_date=self.get_utcnow())
-        self.assertNotIn('SMC', subject_referral.referral_code)
-
-        report_datetime = self.get_utcnow() + relativedelta(years=1)
-        subject_visit_t1 = self.add_subject_visit_followup(
-            self.bhs_subject_visit_male.household_member, T1, report_datetime)
-        subject_referral = mommy.make_recipe(
-            'bcpp_subject.subjectreferral', subject_referred=YES,
-            subject_visit=subject_visit_t1, report_datetime=self.get_utcnow(), scheduled_appt_date=self.get_utcnow())
-        return subject_referral
-
     def tests_referred_smc2(self):
-        """if NEG and male and circumcised, do not refer for SMC, both Y1 and Y2 intervention"""
+        """if NEG and male and circumcised, do not refer for SMC,
+            both Y1 and Y2 intervention"""
         if is_intervention(site_mappers.current_map_area):
-            subject_referral = self.referral_smc2()
+            subject_referral = self.referral_smc2
             self.assertNotIn('SMC', subject_referral.referral_code)
 
     def tests_circumsised_y2_not_smc(self):
@@ -192,32 +223,46 @@ class TestReferral(SubjectMixin, TestCase):
             subject_visit=self.bhs_subject_visit_male,
             report_datetime=self.get_utcnow(),
             panel_name='Microtube')
-        mommy.make_recipe('bcpp_subject.hivresult', subject_visit=self.bhs_subject_visit_male, hiv_result=NEG)
+        mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=self.bhs_subject_visit_male, hiv_result=NEG)
         mommy.make_recipe(
             'bcpp_subject.hivresultdocumentation',
-            subject_visit=self.bhs_subject_visit_female,
+            subject_visit=self.bhs_subject_visit_male,
             result_recorded=NEG,
             result_doc_type='Tebelopele')
         mommy.make_recipe(
-            'bcpp_subject.hivtestreview', subject_visit=self.bhs_subject_visit_male, recorded_hiv_result=NEG)
+            'bcpp_subject.hivtestreview',
+            subject_visit=self.bhs_subject_visit_male,
+            recorded_hiv_result=NEG)
         mommy.make_recipe(
-            'bcpp_subject.hivtestinghistory', subject_visit=self.bhs_subject_visit_male, has_tested=YES,
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.bhs_subject_visit_male,
+            has_tested=YES,
             verbal_hiv_result=NEG,)
-        mommy.make_recipe('bcpp_subject.circumcision', subject_visit=self.bhs_subject_visit_male, circumcised=NO)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=self.bhs_subject_visit_male,
+            circumcised=NO,
+            health_benefits_smc=[self.circumcision_benefits])
         subject_referral = mommy.make_recipe(
             'bcpp_subject.subjectreferral',
             subject_referred=YES,
-            subject_visit=self.bhs_subject_visit_female,
+            subject_visit=self.bhs_subject_visit_male,
             report_datetime=self.get_utcnow(),
             scheduled_appt_date=self.get_utcnow())
         self.assertIn('SMC', subject_referral.referral_code)
 
-        report_datetime = self.get_utcnow() + relativedelta(years=1)
-        subject_visit_t1 = self.add_subject_visit_followup(
-            self.bhs_subject_visit_male.household_member, T1, report_datetime)
+        subject_visit_t1 = self.ahs_y2_subject_visit()
 
-        mommy.make_recipe('bcpp_subject.circumcision', subject_visit=subject_visit_t1, circumcised=YES)
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            subject_visit=subject_visit_t1,
+            circumcised=YES)
         subject_referral = mommy.make_recipe(
-            'bcpp_subject.subjectreferral', subject_referred=YES,
-            subject_visit=subject_visit_t1, report_datetime=self.get_utcnow(), scheduled_appt_date=self.get_utcnow())
+            'bcpp_subject.subjectreferral',
+            subject_referred=YES,
+            subject_visit=subject_visit_t1,
+            report_datetime=self.get_utcnow(),
+            scheduled_appt_date=self.get_utcnow())
         self.assertNotIn('SMC', subject_referral.referral_code)

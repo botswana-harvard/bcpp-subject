@@ -195,7 +195,8 @@ CARE_REASON = (
     ('Pregnancy', _('Pregnancy-related care, including delivery')),
     ('Injuries', _('Injuries or accidents')),
     ('Chronic disease', _(
-        'Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
+        'Chronic disease related care, including high blood pressure, '
+        'diabetes, cancer, mental illness')),
     ('Other', _('Other')),
     (DWTA, _('Don\'t want to answer')),
     ('None', _('None')),
@@ -214,19 +215,25 @@ TRAVEL_HOURS = (
 
 
 NO_MEDICALCARE_REASON = (
-    ('not thinking about HIV care', _('I am not thinking about HIV related medical/clinical '
-                                      'care at this time')),
-    ('I am not ready to start', _('HIV related medical/clinical care for my HIV infection '
-                                  'is important to me but I am not ready to start it yet')),
-    ('not yet tried to find a doctor', _('I have thought about starting HIV related medical/'
-                                         'clinical care but have not yet tried to find a doctor or clinic')),
-    ('not yet tried to make an appointment', _('I have found a doctor or clinic for HIV related '
-                                               'medical/clinical care but have not yet tried to '
-                                               'make an appointment')),
-    ('no been successful yet', _('I have tried to obtain HIV related medical/clinical care from '
-                                 'a doctor or clinic but have not been successful yet')),
-    ('I have an appointment for HIV care', _('I have an appointment for HIV related medical/'
-                                             'clinical care for my HIV infection but have not been for it yet')),
+    ('not thinking about HIV care',
+     _('I am not thinking about HIV related medical/clinical '
+       'care at this time')),
+    ('I am not ready to start',
+     _('HIV related medical/clinical care for my HIV infection '
+       'is important to me but I am not ready to start it yet')),
+    ('not yet tried to find a doctor',
+     _('I have thought about starting HIV related medical/'
+       'clinical care but have not yet tried to find a doctor or clinic')),
+    ('not yet tried to make an appointment',
+     _('I have found a doctor or clinic for HIV related '
+       'medical/clinical care but have not yet tried to '
+       'make an appointment')),
+    ('no been successful yet',
+     _('I have tried to obtain HIV related medical/clinical care from '
+       'a doctor or clinic but have not been successful yet')),
+    ('I have an appointment for HIV care',
+     _('I have an appointment for HIV related medical/'
+       'clinical care for my HIV infection but have not been for it yet')),
     ('don\'t know where to go',
      _('I don\'t know where to go for HIV related medical/clinical care')),
     ('I do not have the money',
@@ -783,8 +790,9 @@ REASON_CIRC_CHOICE = (
     ('There might be a medical complication',
      _('There might be a medical complication')),
     ('The healing time is very long', _('The healing time is very long')),
-    ('It will be hard to not have sex or masturbate for 6 weeks', _('It will be hard to not have sex or masturbate '
-                                                                    'for 6 weeks')),
+    ('It will be hard to not have sex or masturbate for 6 weeks',
+     _('It will be hard to not have sex or masturbate '
+       'for 6 weeks')),
     ('Sex might not feel the same', _('Sex might not feel the same')),
     ('I may not like the way my penis looks',
      _('I may not like the way my penis looks')),
@@ -805,8 +813,9 @@ FUTURE_REASONS_SMC_CHOICE = (
      _('If circumcision could be done close to my home')),
     ('If the kgosi recommended circumcision for all men',
      _('If the kgosi recommended circumcision for all men')),
-    ('If I received time off work to recover from circumcision', _('If I received time off work to recover from '
-                                                                   'circumcision')),
+    ('If I received time off work to recover from circumcision',
+     _('If I received time off work to recover from '
+       'circumcision')),
     ('If my sexual partner encouraged me',
      _('If my sexual partner encouraged me')),
     ('If one or both of my parents encouraged me',
@@ -863,15 +872,17 @@ WHY_NO_ARV_CHOICE = (
     ('Did not feel sick', _('Did not feel sick')),
     ('Was afraid treatment would make me feel bad/sick',
      _('Was afraid treatment  would make me feel bad/sick')),
-    ('Difficulty finding someone to go with me for counseling (mopati)', _('Difficulty finding someone to go with '
-                                                                           'me for counseling (mopati)')),
+    ('Difficulty finding someone to go with me for counseling (mopati)',
+     _('Difficulty finding someone to go with '
+       'me for counseling (mopati)')),
     ('Hard due to work responsibilities',
      _('Hard due to work responsibilities')),
     ('Hard due to family/childcare responsibilities',
      _('Hard due to family/childcare responsibilities')),
     ('Transportation costs', _('Transportation costs')),
-    ('Was afraid of someone (friends/family) seeing me at the HIV clinic', _('Was afraid of someone (friends/family)'
-                                                                             ' seeing me at the HIV clinic')),
+    ('Was afraid of someone (friends/family) seeing me at the HIV clinic',
+     _('Was afraid of someone (friends/family)'
+       ' seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',
      _('Sexual partner advised against taking')),
     ('Family or friends advised against taking',
@@ -890,7 +901,8 @@ WHY_ARV_STOP_CHOICE = (
     ('Did not feel they were helping', _('Did not feel they were helping')),
     ('ARVs made me feel bad or sick', _('ARVs made me feel bad or sick')),
     ('Difficulty finding someone to go with me for counseling '
-     '(mopati)', _('Difficulty finding someone to go with me for counseling (mopati)')),
+     '(mopati)',
+     _('Difficulty finding someone to go with me for counseling (mopati)')),
     ('Hard due to work responsibilities',
      _('Hard due to work responsibilities')),
     ('Hard due to family/childcare responsibilities',
@@ -900,7 +912,8 @@ WHY_ARV_STOP_CHOICE = (
     ('Transportation costs', _('Transportation costs')),
     ('Cost/could not afford', _('Cost/could not afford')),
     ('Was afraid of someone (friends/family) seeing me at the HIV'
-     ' clinic', _('Was afraid of someone (friends/family) seeing me at the HIV clinic')),
+     ' clinic',
+     _('Was afraid of someone (friends/family) seeing me at the HIV clinic')),
     ('Sexual partner advised against taking',
      _('Sexual partner advised against taking')),
     ('Family or friends advised against taking',
@@ -938,11 +951,13 @@ NO_MEDICAL_CARE = (
      _('Did not know I should get HIV care')),
     ('Did not have time due to work responsibilities',
      _('Did not have time due to work responsibilities')),
-    ('Did not have time due to family/childcare responsibilities', _('Did not have time due to family/childcare '
-                                                                     'responsibilities')),
+    ('Did not have time due to family/childcare responsibilities',
+     _('Did not have time due to family/childcare '
+       'responsibilities')),
     ('Transportation costs', _('Transportation costs')),
-    ('Was afraid of someone (friends/family) seeing me at the HIV clinic', _('Was afraid of someone (friends/family) '
-                                                                             'seeing me at the HIV clinic')),
+    ('Was afraid of someone (friends/family) seeing me at the HIV clinic',
+     _('Was afraid of someone (friends/family) '
+       'seeing me at the HIV clinic')),
     ('Traditional healer advised against going',
      _('Traditional healer advised against going')),
     ('Religious beliefs', _('Religious beliefs')),
@@ -1005,8 +1020,9 @@ WHERE_HIV_TEST_CHOICE = (
     ('Tebelopele VCT center', _('Tebelopele VCT center')),
     ('Antenatal care at healthcare facility',
      _('Antenatal care at healthcare facility (including private clinics)')),
-    ('Other (not antenatal care) at healthcare facility', _('Other (not antenatal care) at healthcare '
-                                                            'facility (including private clinics)')),
+    ('Other (not antenatal care) at healthcare facility',
+     _('Other (not antenatal care) at healthcare '
+       'facility (including private clinics)')),
     ('In my house as part of door-to-door services',
      _('In my house as part of door-to-door services')),
     ('In a mobile tent or vehicle in my neighborhood',
@@ -1020,12 +1036,17 @@ WHY_HIV_TEST_CHOICE = (
     ('I was worried I might have HIV and wanted to know my '
      'status', _('I was worried I might have HIV and wanted to know my status')),
     ('I heard from someone I trust that it is important for me to get tested for '
-     'HIV ', _('I heard from someone I trust that it is important for me to get tested for HIV ')),
-    ('I was at a health facility where the doctor/nurse recommended I get tested for HIV during '
-     'the same visit', _('I was at a health facility where the doctor/nurse recommended I get '
+     'HIV ', _('I heard from someone I trust that it is important '
+               'for me to get tested for HIV ')),
+    ('I was at a health facility where the doctor/nurse recommended '
+     'I get tested for HIV during '
+     'the same visit', _('I was at a health facility where the doctor/nurse'
+                         ' recommended I get '
                          'tested for HIV during the same visit')),
-    ('I read information on a brochure/flier that it is important for me to get tested for '
-     'HIV', _('I read information on a brochure/flier that it is important for me to get tested for HIV')),
+    ('I read information on a brochure/flier that it is important for '
+     'me to get tested for '
+     'HIV', _('I read information on a brochure/flier that it is '
+              'important for me to get tested for HIV')),
     (OTHER, _('Other')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
@@ -1128,7 +1149,8 @@ PREG_ARV_CHOICE = (
     ('Yes, AZT (single drug, twice a day)',
      _('Yes, AZT (single drug, twice a day)')),
     ('Yes, HAART ', _(
-        'Yes, HAART [multiple drugs like Atripla, Truvada, or Combivir taken once or twice a day]')),
+        'Yes, HAART [multiple drugs like Atripla, Truvada, '
+        'or Combivir taken once or twice a day]')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
     (NO, _('No ARV\'s')),
@@ -1202,11 +1224,13 @@ FIRST_PARTNER_HIV_CHOICE = (
 KEPT_APPT = (
     ('Yes', 'Yes, kept appointment'),
     ('No_refered_other_clinic',
-     'No but attended a visit at the HIV care clinic to which they were referred on another date'),
+     'No but attended a visit at the HIV care clinic to which '
+     'they were referred on another date'),
     ('No_other_clinic', 'No but attended a visit at a different HIV clinic'),
     ('diff_clininc', 'I went to a different clinic'),
     ('No',
-     'No but tried to attend an HIV care clinic and left before I saw a healthcare provider'),
+     'No but tried to attend an HIV care clinic and left before '
+     'I saw a healthcare provider'),
     ('No', 'I have not been to any HIV care clinic [skip to #3]')
 )
 
@@ -1216,7 +1240,7 @@ PARTNER_AGE = (
     (DONT_KNOW, 'Not sure'),
     (DWTA, _('Don\'t want to answer')),
     (NOT_APPLICABLE, "Not applicable"),
-    
+
 )
 
 TYPE_OF_EVIDENCE = (
@@ -1273,7 +1297,8 @@ PANEL_CHOICE = (
 YES_NO_REGIMEN = (
     (YES, 'Yes, this is the first regimen'),
     (NO,
-     'I previously took at least 1 different ARV (and was switched to this regimen)')
+     'I previously took at least 1 different ARV (and was switched '
+     'to this regimen)')
 )
 
 WEEKS_MONTHS = (
@@ -1289,23 +1314,23 @@ SOURCE_EVIDENCE = (
 )
 
 COUNTRIES = (
-    ('Algeria' , 'Algeria') ,
-    ('Angola' , 'Angola') ,
-    ('Botswana' , 'Botswana') ,
-    ('Brazil' , 'Brazil') ,
-    ('Cameroon' , 'Cameroon') ,
-    ('Canada' , 'Canada') ,
-    ('China' , 'China') ,
-    ('Kenya' , 'Kenya') ,
-    ('Lesotho' , 'Lesotho') ,
-    ('Mauritius' , 'Mauritius') ,
-    ('Mozambique' , 'Mozambique') ,
-    ('Nigeria' , 'Nigeria') ,
-    ('South Africa' , 'South Africa') ,
-    ('Swaziland' , 'Swaziland') ,
-    ('Tanzania' , 'Tanzania') ,
-    ('United States' , 'United States') ,
-    ('Zambia' , 'Zambia') ,
-    ('Zimbabwe' , 'Zimbabwe'),
+    ('Algeria', 'Algeria'),
+    ('Angola', 'Angola'),
+    ('Botswana', 'Botswana'),
+    ('Brazil', 'Brazil'),
+    ('Cameroon', 'Cameroon'),
+    ('Canada', 'Canada'),
+    ('China', 'China'),
+    ('Kenya', 'Kenya'),
+    ('Lesotho', 'Lesotho'),
+    ('Mauritius', 'Mauritius'),
+    ('Mozambique', 'Mozambique'),
+    ('Nigeria', 'Nigeria'),
+    ('South Africa', 'South Africa'),
+    ('Swaziland', 'Swaziland'),
+    ('Tanzania', 'Tanzania'),
+    ('United States', 'United States'),
+    ('Zambia', 'Zambia'),
+    ('Zimbabwe', 'Zimbabwe'),
     (OTHER, 'OTHER'),
 )

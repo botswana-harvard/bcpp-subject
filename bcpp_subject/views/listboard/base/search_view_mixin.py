@@ -29,7 +29,10 @@ class SearchViewMixin(BaseSearchViewMixin):
             Q(initials__exact=search_term) |
             Q(first_name__exact=search_term) |
             Q(last_name__exact=search_term) |
-            Q(household_member__household_structure__household__household_identifier__icontains=search_term) |
-            Q(household_member__household_structure__household__plot__plot_identifier__icontains=search_term)
+            Q(**{'household_member__household_structure'
+                 '__household__household_identifier__icontains': search_term}) |
+            Q(**{'household_member__household_structure'
+                 '__household__plot__plot_identifier__icontains':
+                 search_term})
         )
         return q, options

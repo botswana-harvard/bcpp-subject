@@ -48,41 +48,50 @@ class ReproductiveHealth (CrfModelMixin):
     )
 
     when_pregnant = models.CharField(
-        verbose_name="Did you become pregnant since the last interview we had with you?",
+        verbose_name=("Did you become pregnant since "
+                      "the last interview we had with you?"),
         max_length=3,
         choices=YES_NO,
         help_text="",
     )
 
     gestational_weeks = models.IntegerField(
-        verbose_name="At about what gestational age (in weeks) did you start arv's during "
-        "this (or your last) pregnancy?",
+        verbose_name=("At about what gestational age (in weeks) "
+                      "did you start arv's during "
+                      "this (or your last) pregnancy?"),
         null=True,
         blank=True,
-        help_text="gestational age in WEEKS. Among HIV-infected women who took/started ARVs during their last"
-        " (or current pregnancy).",
+        help_text=("gestational age in WEEKS. Among HIV-infected women "
+                   "who took/started ARVs during their last"
+                   " (or current pregnancy)."),
     )
 
     pregnancy_hiv_tested = models.CharField(
-        verbose_name="Were you tested for HIV during your most recent (or this current) pregnancy?",
+        verbose_name=("Were you tested for HIV during your "
+                      "most recent (or this current) pregnancy?"),
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
         max_length=3,
-        help_text="Among women who were not known to be HIV-infected prior to the last (or current pregnancy).",
+        help_text=("Among women who were not known to be "
+                   "HIV-infected prior to the last (or current pregnancy)."),
     )
 
     pregnancy_hiv_retested = models.CharField(
-        verbose_name="If you tested HIV-negative during the most recent (or this current) pregnancy, were you"
-        " re-tested for HIV in the last 3 months of your pregnancy or at delivery? ",
+        verbose_name=("If you tested HIV-negative during the most "
+                      "recent (or this current) pregnancy, were you"
+                      " re-tested for HIV in the last 3 months of your "
+                      "pregnancy or at delivery? "),
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
         max_length=3,
-        help_text="if the respondent has reached that point by the time of the current interview.",
+        help_text=("if the respondent has reached that point "
+                   "by the time of the current interview."),
     )
 
     history = HistoricalRecords()
 
-    def validate_not_hiv_infected(self, enrollment_checklist, household_member, exception_cls=None):
+    def validate_not_hiv_infected(self, enrollment_checklist,
+                                  household_member, exception_cls=None):
         pass
 
     class Meta(CrfModelMixin.Meta):

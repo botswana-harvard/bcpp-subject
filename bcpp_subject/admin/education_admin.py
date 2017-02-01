@@ -46,8 +46,7 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
         "monthly_income": admin.VERTICAL,
-        'job_description': admin.VERTICAL,
-        "monthly_income": admin.VERTICAL, }
+    }
 
     instructions = [_("<H5>Read to Participant</H5> Next, I will ask you some "
                       "questions about what education and work you "

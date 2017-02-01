@@ -1,12 +1,10 @@
 from django.test import TestCase, tag
 
 from member.models.household_member import HouseholdMember
-
-from ..models import SubjectConsent, EnrollmentBhs, EnrollmentAhs, EnrollmentEss
-
-from .test_mixins import SubjectMixin
 from survey.site_surveys import site_surveys
-from bcpp_subject.models.enrollment import Enrollment
+
+from ..models import EnrollmentBhs, EnrollmentAhs, EnrollmentEss, Enrollment
+from .test_mixins import SubjectMixin
 
 
 class TestEnrollment(SubjectMixin, TestCase):

@@ -14,35 +14,38 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         self.validate_ever_taken_arv()
+        self.validate_choose_chronic_infection()
 
         if cleaned_data.get('ever_taken_arv') == NO:
             if cleaned_data.get('arv_stop'):
                 raise forms.ValidationError({
                     'arv_stop':
-                    'Participant has never taken ART. This field is not required.'})
+                    'Participant has never taken ART. '
+                    'This field is not required.'})
             if cleaned_data.get('on_arv') == YES:
                 raise forms.ValidationError({
                     'on_arv':
-                    'Participant has never taken ART. This field is not required.'})
+                    'Participant has never taken ART. '
+                    'This field is not required.'})
 
         self.validate_on_arv()
         self.validate_not_on_arv()
 
-        if (cleaned_data.get('medical_care') == NO
-                and not cleaned_data.get('no_medical_care')):
+        if (cleaned_data.get('medical_care') == NO and not
+                cleaned_data.get('no_medical_care')):
             raise forms.ValidationError(
                 {'no_medical_care':
                  ('If participant has not received any medical care, '
                   'please give reason why not')})
-        if (cleaned_data.get('ever_recommended_arv') == YES
-                and cleaned_data.get('ever_taken_arv') == NO
-                and not cleaned_data.get('why_no_arv')):
+        if (cleaned_data.get('ever_recommended_arv') == YES and
+                cleaned_data.get('ever_taken_arv') == NO and not
+                cleaned_data.get('why_no_arv')):
             raise forms.ValidationError({
                 'why_no_arv':
                 ('If participant has not taken any ARV\'s, '
                  'give the main reason why not')})
-        if (cleaned_data.get('arv_stop') == OTHER
-                and not cleaned_data.get('arv_stop_other')):
+        if (cleaned_data.get('arv_stop') == OTHER and not
+                cleaned_data.get('arv_stop_other')):
             raise forms.ValidationError({
                 'arv_stop_other':
                 'If participant reason for stopping ARV\'s is \'OTHER\', '
@@ -67,11 +70,12 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
     def validate_ever_taken_arv(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('ever_taken_arv') == YES:
-            if (cleaned_data.get('on_arv') == NO
-                    and not cleaned_data.get('arv_stop_date')):
+            if (cleaned_data.get('on_arv') == NO and not
+                    cleaned_data.get('arv_stop_date')):
                 raise forms.ValidationError({
                     'arv_stop_date':
-                    'Participant has taken ART but stopped. This field is required.'})
+                    'Participant has taken ART but stopped. '
+                    'This field is required.'})
             if not cleaned_data.get('first_arv'):
                 raise forms.ValidationError({
                     'first_arv':
@@ -140,6 +144,17 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                 raise forms.ValidationError({
                     'arv_stop':
                     'Participant is not on ART. This field is not required'})
+
+    def validate_choose_chronic_infection(self):
+        cleaned_data = self.cleaned_data
+        hospitalised_reasons = cleaned_data.get(
+            'hospitalized_art_start_reason')
+        if hospitalised_reasons.count() != 0:
+            if any(hospitalised_reason == 'Chronic disease related care'
+                   for hospitalised_reason in hospitalised_reasons):
+                raise forms.ValidationError({
+                    'hospitalized_art_start_reason':
+                    'Participant choose chronic disease. Ans next question'})
 
     class Meta:
         model = HivCareAdherence

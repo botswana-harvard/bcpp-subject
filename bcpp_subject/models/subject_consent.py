@@ -122,7 +122,7 @@ class SubjectConsent(
                 + self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
 
-    def common_clean(self):
+    def common_clean_age_and_dob(self):
         # confirm member is eligible
         if not (self.household_member.age_in_years >= 16
                 and self.household_member.age_in_years <= 64
@@ -141,6 +141,7 @@ class SubjectConsent(
         except HicEnrollment.DoesNotExist:
             pass
 
+    def common_clean_completed_enrollment_checklist(self):
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
                 household_member=self.household_member)
@@ -151,18 +152,16 @@ class SubjectConsent(
                     EnrollmentChecklist._meta.verbose_name))
         if not enrollment_checklist.is_eligible:
             raise ConsentValidationError('Member is not eligible.')
+        return enrollment_checklist
 
-        # other model/form validations
-        # match initials
-        if not self.household_member.personal_details_changed == YES:
-            if enrollment_checklist.initials != self.initials:
-                raise ConsentValidationError('Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'initials')
+    def common_clean_dob(self, enrollment_checklist):
         if self.dob:
             # minor (do this before comparing DoB)
-            if (is_minor(enrollment_checklist.dob, enrollment_checklist.report_datetime)
+            if (is_minor(enrollment_checklist.dob,
+                         enrollment_checklist.report_datetime)
                     and not is_minor(self.dob, self.consent_datetime)):
-                if is_minor(enrollment_checklist.dob, enrollment_checklist.report_datetime):
+                if is_minor(enrollment_checklist.dob,
+                            enrollment_checklist.report_datetime):
                     raise ConsentValidationError(
                         'Subject is a minor by the {}.'.format(
                             EnrollmentChecklist._meta.verbose_name), 'dob')
@@ -176,25 +175,8 @@ class SubjectConsent(
                     'Does not match \'{}\'. Expected {}.'.format(
                         EnrollmentChecklist._meta.verbose_name,
                         enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
-        # match gender
-        if enrollment_checklist.gender != self.gender:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'gender')
-        # minor and guardian name
-        if enrollment_checklist.guardian == YES and not self.guardian_name:
-            raise ConsentValidationError(
-                'Expected guardian name. See {}.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
-        elif enrollment_checklist.guardian in [NO, NOT_APPLICABLE] and self.guardian_name:
-            raise ConsentValidationError(
-                'Guardian name not expected. See {}.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
-        # match citizenship
-        if enrollment_checklist.citizen != self.citizen:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'citizen')
+
+    def common_clean_literacy(self, enrollment_checklist):
         # match literacy
         if enrollment_checklist.literacy == YES and self.is_literate != YES:
             raise ConsentValidationError(
@@ -209,7 +191,13 @@ class SubjectConsent(
                 and not self.witness_name):
             raise ConsentValidationError(
                 'Witness name is required', 'witness_name')
-        # match marriage if not citizen
+
+    def common_clean_citizen(self, enrollment_checklist):
+        # match citizenship
+        if enrollment_checklist.citizen != self.citizen:
+            raise ConsentValidationError(
+                'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name), 'citizen')
         if self.citizen == NO:
             if (enrollment_checklist.legal_marriage != self.legal_marriage
                     or enrollment_checklist.marriage_certificate != self.marriage_certificate):
@@ -219,6 +207,41 @@ class SubjectConsent(
                     'certificate. This does not match \'{}\''.format(
                         self._meta.verbose_name,
                         EnrollmentChecklist._meta.verbose_name))
+
+    def common_clean_minor(self, enrollment_checklist):
+        # minor and guardian name
+        if enrollment_checklist.guardian == YES and not self.guardian_name:
+            raise ConsentValidationError(
+                'Expected guardian name. See {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
+        elif enrollment_checklist.guardian in [NO, NOT_APPLICABLE] and self.guardian_name:
+            raise ConsentValidationError(
+                'Guardian name not expected. See {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
+
+    def common_clean_gender(self, enrollment_checklist):
+        # match gender
+        if enrollment_checklist.gender != self.gender:
+            raise ConsentValidationError(
+                'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name), 'gender')
+
+    def common_clean_initials(self, enrollment_checklist):
+        # match initials
+        if not self.household_member.personal_details_changed == YES:
+            if enrollment_checklist.initials != self.initials:
+                raise ConsentValidationError('Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name), 'initials')
+
+    def common_clean(self):
+        self.common_clean_age_and_dob()
+        enrollment_checklist = self.common_clean_enrollment_checklist()
+        self.common_clean_initials()
+        self.common_clean_dob()
+        self.common_clean_gender()
+        self.common_clean_minor(enrollment_checklist)
+        self.common_clean_literacy(enrollment_checklist)
+        self.common_clean_citizen(enrollment_checklist)
         super().common_clean()
 
     @property

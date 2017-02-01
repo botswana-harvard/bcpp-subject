@@ -18,7 +18,8 @@ class SubstanceUse(CrfModelMixin):
     )
 
     smoke = models.CharField(
-        verbose_name="Do you currently smoke any tobacco products, such as cigarettes, cigars, or pipes?",
+        verbose_name=("Do you currently smoke any tobacco products, "
+                      "such as cigarettes, cigars, or pipes?"),
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",

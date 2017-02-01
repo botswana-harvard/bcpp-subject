@@ -35,7 +35,8 @@ class CorrectConsentMixin:
                 new_value = getattr(instance, 'new_{}'.format(field.name.split('old_')[1]))
                 if (not old_value and new_value) or (old_value and not new_value):
                     raise exception_cls(
-                        'Both the old and new value must be provided. Got \'{}\' and \'{}\'. See {}'.format(
+                        'Both the old and new value must '
+                        'be provided. Got \'{}\' and \'{}\'. See {}'.format(
                             old_value, new_value, field.name))
                 elif old_value and new_value and old_value == new_value:
                     raise exception_cls(
@@ -63,16 +64,21 @@ class CorrectConsentMixin:
             self.subject_consent.household_member.user_modified = self.update_user_modified()
             enrollment_checklist.user_modified = self.update_user_modified()
             self.subject_consent.household_member.save(
-                update_fields=['first_name', 'initials', 'gender', 'age_in_years', 'user_modified'])
+                update_fields=[
+                    'first_name', 'initials', 'gender',
+                    'age_in_years', 'user_modified'])
             enrollment_checklist.save(
-                update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian', 'user_modified'])
+                update_fields=['initials', 'gender', 'dob',
+                               'literacy', 'guardian', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name',
-                'is_verified', 'is_verified_datetime', 'verified_by', 'user_modified'])
+                'is_verified', 'is_verified_datetime',
+                'verified_by', 'user_modified'])
         else:
             self.subject_consent.household_member.save(
-                update_fields=['first_name', 'initials', 'gender', 'age_in_years', 'user_modified'])
+                update_fields=['first_name', 'initials',
+                               'gender', 'age_in_years', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name',
@@ -81,11 +87,13 @@ class CorrectConsentMixin:
     def update_initials(self, first_name, last_name):
         initials = '{}{}'.format(first_name[0], last_name[0])
         if self.new_initials:
-            if self.new_initials.startswith(initials[0]) and self.new_initials.endswith(initials[-1]):
+            if (self.new_initials.startswith(initials[0]) and
+                    self.new_initials.endswith(initials[-1])):
                 initials = self.new_initials
             else:
                 raise ValidationError(
-                    'New initials do not match first and last name. Expected {}, Got {}'.format(
+                    'New initials do not match first and '
+                    'last name. Expected {}, Got {}'.format(
                         initials, self.new_initials))
         return initials
 
@@ -300,10 +308,12 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
         validators=[
             RegexValidator(
                 '^[A-Z]{1,50}\, [A-Z]{1,50}$',
-                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+                'Invalid format. Format '
+                'is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+        help_text=('Required only if subject is illiterate. '
+                   'Format is \'LASTNAME, FIRSTNAME\'. '
                    'All uppercase separated by a comma'),
     )
 
@@ -312,10 +322,12 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
         validators=[
             RegexValidator(
                 '^[A-Z]{1,50}\, [A-Z]{1,50}$',
-                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
+                'All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+        help_text=('Required only if subject is illiterate. '
+                   'Format is \'LASTNAME, FIRSTNAME\'. '
                    'All uppercase separated by a comma'),
     )
 
@@ -332,9 +344,10 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
 
     def dashboard(self):
         ret = None
+        dashboard_type = self.subject_consent.registered_subject.subject_type.lower()
         if self.appointment:
             url = reverse('subject_dashboard_url',
-                          kwargs={'dashboard_type': self.subject_consent.registered_subject.subject_type.lower(),
+                          kwargs={'dashboard_type': dashboard_type,
                                   'dashboard_model': 'appointment',
                                   'dashboard_id': self.appointment.pk,
                                   'show': 'appointments'})

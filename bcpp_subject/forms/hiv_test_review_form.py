@@ -1,7 +1,7 @@
 from django import forms
 from datetime import date
 
-from ..models import HivTestReview, HivTestingHistory
+from ..models import HivTestReview
 
 from .form_mixins import SubjectModelFormMixin
 
@@ -16,7 +16,9 @@ class HivTestReviewForm (SubjectModelFormMixin):
         hiv_test_date = self.cleaned_data.get('hiv_test_date')
         if hiv_test_date:
             if hiv_test_date == date.today():
-                raise forms.ValidationError('The HIV test date cannot be equal to today\'s date. Please correct.')
+                raise forms.ValidationError(
+                    'The HIV test date cannot be equal to today\'s date. '
+                    'Please correct.')
         return hiv_test_date
 
     class Meta:

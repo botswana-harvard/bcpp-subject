@@ -16,7 +16,8 @@ class AccessToCare (CrfModelMixin):
 
     access_care = models.CharField(
         verbose_name="In the past year, where do you MOST OFTEN get"
-                     " medical care or treatment when you or someone in your family is sick or hurt?",
+                     " medical care or treatment when you or someone "
+                     "in your family is sick or hurt?",
         max_length=50,
         choices=WHEREACCESS_CHOICE,
         null=True,

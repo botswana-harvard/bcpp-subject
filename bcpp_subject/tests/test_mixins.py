@@ -1,4 +1,3 @@
-from datetime import datetime
 from faker import Faker
 from model_mommy import mommy
 
@@ -26,7 +25,6 @@ from django.db.utils import IntegrityError
 from bcpp_subject.models.subject_consent import SubjectConsent
 from django.db import transaction
 from edc_registration.models import RegisteredSubject
-from pprint import pprint
 
 fake = Faker()
 
@@ -37,22 +35,16 @@ class SubjectTestMixin:
         super().setUp()
 
         self.consent_data_male = {
-            'identity': '317115158',
-            'confirm_identity': '317115158',
-        }
+            'identity': '317115158', 'confirm_identity': '317115158', }
 
         survey_schedule = self.get_survey_schedule(index=2)
-
         self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             E0,
             survey_schedule=survey_schedule,
             **self.consent_data_male)
 
         self.consent_data_male_t0 = {
-            'identity': '317115159',
-            'confirm_identity': '317115159',
-        }
-
+            'identity': '317115159', 'confirm_identity': '317115159', }
         self.subject_visit_male_t0 = self.make_subject_visit_for_consented_subject_male(
             T0,
             survey_schedule=self.get_survey_schedule(index=1),
@@ -60,11 +52,8 @@ class SubjectTestMixin:
 
         self.consent_data_female = {
             'identity': '317221515',
-            'confirm_identity': '317221515',
-        }
-
+            'confirm_identity': '317221515', }
         survey_schedule = self.get_survey_schedule(index=2)
-
         self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
             E0,
             survey_schedule=survey_schedule,
@@ -144,7 +133,6 @@ class SubjectTestMixin:
             confirm_identity = options.get(
                 'confirm_identity', registered_subject.identity)
             dob = options.get('dob', registered_subject.dob)
-
         consent_options = dict(
             first_name=household_member.first_name,
             last_name=last_name,

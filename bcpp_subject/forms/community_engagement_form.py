@@ -8,6 +8,7 @@ from .form_mixins import SubjectModelFormMixin
 
 
 class CommunityEngagementForm (SubjectModelFormMixin):
+
     def clean(self):
         cleaned_data = super().clean()
         answers = []
@@ -17,8 +18,9 @@ class CommunityEngagementForm (SubjectModelFormMixin):
             if len(answers) > 1 and DWTA in answers:
                 raise forms.ValidationError({
                     'problems_engagement': (
-                        'You cannot choose \'Don\'t want to answer\' and another '
-                        'problem at the same time. Please correct.')})
+                        'You cannot choose \'Don\'t want to answer\' '
+                        'and another problem at the same time. '
+                        'Please correct.')})
         return cleaned_data
 
     class Meta:

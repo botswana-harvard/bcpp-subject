@@ -33,7 +33,9 @@ class TbSymtomsManager(CrfModelManager):
 class TbSymptoms (CrfModelMixin):
 
     cough = models.CharField(
-        verbose_name="Does the participant currently have a COUGH that has lasted for more than 2 weeks?",
+        verbose_name=(
+            "Does the participant currently have a COUGH that "
+            "has lasted for more than 2 weeks?"),
         max_length=10,
         choices=YES_NO,
         help_text="",

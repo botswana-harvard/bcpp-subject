@@ -8,7 +8,8 @@ from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 from survey import SurveyViewMixin
 
 
-class ListboardView(ListboardViewMixin, SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
+class ListboardView(ListboardViewMixin, SurveyViewMixin,
+                    AppConfigViewMixin, EdcBaseViewMixin,
                     TemplateView, FormView):
 
     app_config_name = 'bcpp_subject'
@@ -19,5 +20,6 @@ class ListboardView(ListboardViewMixin, SurveyViewMixin, AppConfigViewMixin, Edc
             MALE=MALE,
             reference_datetime=get_utcnow(),
         )
-        context.update({k: v for k, v in self.url_names('anonymous_listboard_url_name')})
+        context.update(
+            {k: v for k, v in self.url_names('anonymous_listboard_url_name')})
         return context

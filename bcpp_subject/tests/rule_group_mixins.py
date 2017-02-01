@@ -8,18 +8,21 @@ from edc_constants.constants import NO, YES
 
 
 class RuleGroupMixin:
-    """
-        TODO: make reusable funcs to create male and female for different HIV STATUS.
+    """TODO: make reusable funcs to create male and female for
+
+        different HIV STATUS.
     """
 
-    def crf_metadata_obj(self, model, entry_status, visit_code, subject_identifier):
+    def crf_metadata_obj(
+            self, model, entry_status, visit_code, subject_identifier):
         return CrfMetadata.objects.filter(
             entry_status=entry_status,
             model=model,
             visit_code=visit_code,
             subject_identifier=subject_identifier)
 
-    def requisition_metadata_obj(self, entry_status, visit_code, panel_name, subject_identifier):
+    def requisition_metadata_obj(
+            self, entry_status, visit_code, panel_name, subject_identifier):
         return RequisitionMetadata.objects.filter(
             entry_status=entry_status,
             model='bcpp_subject.subjectrequisition',
@@ -27,7 +30,9 @@ class RuleGroupMixin:
             panel_name=panel_name,
             visit_code=visit_code)
 
-    def make_hivtest_review(self, subject_visit, hiv_status, report_datetime, hiv_test_date):
+    def make_hivtest_review(
+            self, subject_visit, hiv_status,
+            report_datetime, hiv_test_date):
         hiv_test_review = mommy.make_recipe(
             'bcpp_subject.hivtestreview',
             report_datetime=report_datetime,
@@ -43,7 +48,9 @@ class RuleGroupMixin:
             report_datetime=report_datetime)
         return subject_locator
 
-    def make_residency_mobility(self, subject_visit, permanent_resident, intend_residency, report_datetime):
+    def make_residency_mobility(
+            self, subject_visit, permanent_resident,
+            intend_residency, report_datetime):
         residency_mobility = mommy.make_recipe(
             'bcpp_subject.residencymobility',
             subject_visit=subject_visit,
@@ -54,18 +61,17 @@ class RuleGroupMixin:
 
     def make_requisition(self, subject_visit, panel, report_datetime):
         subject_requisition = mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=subject_visit, report_datetime=report_datetime,
-            panel_name=panel,
-            is_drawn=YES
-        )
+            'bcpp_subject.subjectrequisition', subject_visit=subject_visit,
+            report_datetime=report_datetime, panel_name=panel,
+            is_drawn=YES)
         return subject_requisition
 
     def make_hiv_result(self, status, subject_visit, report_datetime):
         self.make_requisition(subject_visit, MICROTUBE, report_datetime)
         hiv_result = mommy.make_recipe(
-            'bcpp_subject.hivresult', subject_visit=subject_visit, report_datetime=report_datetime,
-            hiv_result=status, insufficient_vol=NO
-        )
+            'bcpp_subject.hivresult', subject_visit=subject_visit,
+            report_datetime=report_datetime,
+            hiv_result=status, insufficient_vol=NO)
         return hiv_result
 
     def make_hiv_care_adherence(
@@ -81,12 +87,14 @@ class RuleGroupMixin:
             ever_taken_arv=ever_taken_arv,
             on_arv=on_arv,
             arv_evidence=arv_evidence,  # this is the rule field
-            first_regimen=NO  # this is the rule field
-        )
+            first_regimen=NO)
         return hiv_care_adherence
 
     def make_hivtesting_history(
-            self, subject_visit, report_datetime, has_tested, has_record, verbal_hiv_result, other_record):
+            self, subject_visit,
+            report_datetime, has_tested,
+            has_record, verbal_hiv_result,
+            other_record):
         hivtesting_history = mommy.make_recipe(
             'bcpp_subject.hivtestinghistory',
             subject_visit=subject_visit,

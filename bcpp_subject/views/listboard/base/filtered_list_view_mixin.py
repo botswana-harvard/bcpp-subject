@@ -1,7 +1,6 @@
 from edc_dashboard.view_mixins import FilteredListViewMixin as BaseFilteredListViewMixin
 
 from ....models import SubjectConsent
-
 from ...dashboard.default.wrappers import SubjectConsentModelWrapper
 
 

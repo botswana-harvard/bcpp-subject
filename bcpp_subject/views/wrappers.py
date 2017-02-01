@@ -31,15 +31,27 @@ class ModelWrapperMixin(ModelWrapper):
 
     @property
     def members(self):
-        return self._original_object.household_member.household_structure.householdmember_set.all()
+        return (self._original_object
+                .household_member
+                .household_structure
+                .householdmember_set.all())
 
     @property
     def plot_identifier(self):
-        return self._original_object.household_member.household_structure.household.plot.plot_identifier
+        return (self._original_object
+                .household_member
+                .household_structure
+                .household
+                .plot
+                .plot_identifier)
 
     @property
     def household_identifier(self):
-        return self._original_object.household_member.household_structure.household.household_identifier
+        return (self._original_object
+                .household_member
+                .household_structure
+                .household
+                .household_identifier)
 
     @property
     def community_name(self):
@@ -68,7 +80,9 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
     @property
     def visit(self):
-        """Returns a wrapped persistent or non-persistent visit instance."""
+        """Returns a wrapped persistent or non-persistent visit
+        instance.
+        """
         # FIXME: to much overriden from super class
         # only difference are the options for the visit model
         try:
@@ -86,9 +100,11 @@ class AppointmentModelWrapper(AppointmentModelWrapper, ModelWrapperMixin):
 
     @property
     def forms_url(self):
-        """Returns a reversed URL to show forms for this appointment/visit.
+        """Returns a reversed URL to show forms for this
+        appointment/visit.
 
-        This is standard for edc_dashboard"""
+        This is standard for edc_dashboard
+        """
         # FIXME: to much overriden from super class
         # only difference are the extra kwargs tp reverse
         kwargs = dict(
@@ -142,7 +158,12 @@ class CrfModelWrapper(ModelWrapper):
 
     @property
     def household_identifier(self):
-        return self._original_object.subject_visit.household_member.household_structure.household.household_identifier
+        return (self._original_object
+                .subject_visit
+                .household_member
+                .household_structure
+                .household
+                .household_identifier)
 
 
 class SubjectLocatorModelWrapper(ModelWrapper):
@@ -205,4 +226,7 @@ class RequisitionModelWrapper(ModelWrapper):
 
     @property
     def household_identifier(self):
-        return self.household_member.household_structure.household.household_identifier
+        return (self.household_member
+                .household_structure
+                .household
+                .household_identifier)
