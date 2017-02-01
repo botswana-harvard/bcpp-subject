@@ -19,7 +19,8 @@ class Command(BaseCommand):
             communities = args[0].split(',')
         except IndexError:
             raise CommandError('Expected at least one parameter for community')
-        print('Preparing list of subject_identifiers for communities {}'.format(', '.join(communities)))
+        print('Preparing list of subject_identifiers for communities {}'
+              .format(', '.join(communities)))
         n = 0
         filename = os.path.expanduser('~/subject_identifier_{}.csv')
         if args[0] == 'all':
@@ -28,7 +29,9 @@ class Command(BaseCommand):
             filename = filename.format('_'.join(communities))
         with open(filename, 'w') as f:
             writer = csv.writer(f)
-            writer.writerow(['subject_identifier', 'community', 'subject_identifier_aka', 'dm_reference'])
+            writer.writerow(
+                ['subject_identifier','community', 
+                 'subject_identifier_aka', 'dm_reference'])
             for hm in HouseholdMember.objects.filter(
                     Q(household_structure__survey__survey_slug=BASELINE_SURVEY),
                     Q(member_status='BHS'),
@@ -46,8 +49,9 @@ class Command(BaseCommand):
                         subject_identifier_aka=hm.registered_subject.subject_identifier_aka,
                     )
                 except SubjectConsent.DoesNotExist:
-                    raise CommandError('Inconsistent identifiers between SubjectConsent and '
-                                       'RegisteredSubject. Got {}.'.format(hm.registered_subject))
+                    raise CommandError('Inconsistent identifiers between '
+                                       'SubjectConsent and RegisteredSubject. '
+                                       'Got {}.'.format(hm.registered_subject))
                 writer.writerow(
                     [hm.registered_subject.subject_identifier,
                      hm.household_structure.household.plot.community,

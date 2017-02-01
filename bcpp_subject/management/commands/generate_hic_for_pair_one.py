@@ -66,7 +66,8 @@ def hic_for_consents(verbose, subject_consents, total_consents):
             enrolled += 1
             print('{}. already enrolled'.format(n))
         except HicEnrollment.DoesNotExist:
-            create_hic_enrollment(n, created, verbose, subject_consent, hic_enrollment)
+            create_hic_enrollment(
+                n, created, verbose, subject_consent, hic_enrollment)
         n += 1
     print('Reviewed {} consents from Pair 1. Created {} HIC Enrollment forms.'
           ' {} already enrolled'.format(total_consents, created, enrolled))
@@ -81,7 +82,8 @@ class Command(BaseCommand):
         if HicEnrollment.objects.filter(
                 subject_visit__household_member__household_structure__household__plot__map_area__in=[
                     'ranaka', 'digawana']).count() != 0:
-            raise CommandError('This command has already been run and cannot be run twice.')
+            raise CommandError(
+                'This command has already been run and cannot be run twice.')
         try:
             verbose = args[0]
         except IndexError:
