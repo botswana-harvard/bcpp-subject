@@ -10,6 +10,7 @@ def next_clinic_date(community_clinic_days, base_datetime=None,
 
     community_clinic_days format is a ClinicDaysTuple.
     See bcpp_household.mappers for format.
+
     """
     clinic_dates = []
     next_clinic_datetime = None
@@ -36,6 +37,7 @@ def next_clinic_date(community_clinic_days, base_datetime=None,
                 base_datetime.year,
                 base_datetime.month,
                 base_datetime.day, 7, 30, 0)
+
             next_clinic_datetime = base_datetime
             for DAY in days:
                 next_clinic_datetime = next_clinic_datetime + \
@@ -44,4 +46,5 @@ def next_clinic_date(community_clinic_days, base_datetime=None,
                     break
                 elif next_clinic_datetime < base_datetime:
                     break
+
     return next_clinic_datetime
