@@ -125,11 +125,10 @@ class SubjectConsent(
     # TODO: reconcile this with forms.py validations
     def common_clean_age_and_dob(self):
         # confirm member is eligible
-        if not (self.household_member.age_in_years >= 16 and
-                self.household_member.age_in_years <= 64 and
-                self.household_member.study_resident == YES and
-                self.household_member.inability_to_participate ==
-                NOT_APPLICABLE):
+        if not (self.household_member.age_in_years >= 16
+                and self.household_member.age_in_years <= 64
+                and self.household_member.study_resident == YES
+                and self.household_member.inability_to_participate == NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
         HicEnrollment = django_apps.get_model(
@@ -162,8 +161,8 @@ class SubjectConsent(
         if self.dob:
             # minor (do this before comparing DoB)
             if (is_minor(enrollment_checklist.dob,
-                enrollment_checklist.report_datetime) and not
-                    is_minor(self.dob, self.consent_datetime)):
+                         enrollment_checklist.report_datetime)
+                    and not is_minor(self.dob, self.consent_datetime)):
                 if is_minor(enrollment_checklist.dob,
                             enrollment_checklist.report_datetime):
                     raise ConsentValidationError(
@@ -191,9 +190,9 @@ class SubjectConsent(
             raise ConsentValidationError(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'is_literate')
-        elif (enrollment_checklist.literacy == NO and
-              self.is_literate == NO and not
-              self.witness_name):
+        elif (enrollment_checklist.literacy == NO
+              and self.is_literate == NO
+              and not self.witness_name):
             raise ConsentValidationError(
                 'Witness name is required', 'witness_name')
 
