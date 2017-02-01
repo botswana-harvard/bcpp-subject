@@ -73,21 +73,27 @@ class SubjectReferralHelper(object):
     @property
     def required_crfs(self):
         """ Returns crf that is required to be keyed before subject referral."""
-        crfs = ['bcpp_subject.subjectlocator', 'bcpp_subject.hivresult', 'bcpp_subject.elisahivresult',
-                'bcpp_subject.hivresultdocumentation', 'bcpp_subject.hivtestreview', 'bcpp_subject.pima',
+        crfs = ['bcpp_subject.subjectlocator', 'bcpp_subject.hivresult',
+                'bcpp_subject.elisahivresult', 'bcpp_subject.hivresultdocumentation',
+                'bcpp_subject.hivtestreview', 'bcpp_subject.pima',
                 'bcpp_subject.hivtestinghistory']
         for crf in crfs:
             try:
                 CrfMetadata.objects.get(
-                    model=crf, subject_identifier=self.subject_identifier, entry_status=REQUIRED,
+                    model=crf,
+                    subject_identifier=self.subject_identifier,
+                    entry_status=REQUIRED,
                     visit_code=self.visit_code())
-                return django_apps.get_app_config(crf.split('.')[0]).get_model(crf.split('.')[1])
+                return django_apps.get_app_config(
+                    crf.split('.')[0]).get_model(crf.split('.')[1])
             except CrfMetadata.DoesNotExist:
                 pass
 
     @property
     def timepoint_key(self):
-        """Returns a dictionary key of either baseline or annual base in the visit code."""
+        """Returns a dictionary key of either baseline or annual base
+         in the visit code.
+         """
         if self.subject_referral.subject_visit.appointment.visit_code in BASELINE_CODES:
             return BASELINE
         return ANNUAL
@@ -158,7 +164,9 @@ class SubjectReferralHelper(object):
 
     @property
     def on_art(self):
-        """Returns None if hiv_result==NEG otherwise True if hiv_result==POS and on ART or False if not."""
+        """Returns None if hiv_result==NEG otherwise True if
+        hiv_result==POS and on ART or False if not.
+        """
         return self.subject_status_helper.on_art
 
     @property
@@ -182,7 +190,8 @@ class SubjectReferralHelper(object):
         from this class that match, by name, field attributes in the
         SubjectReferral model."""
         Tpl = namedtuple(
-            'SubjectReferralTuple', 'subject_visit ' + '  '.join(self.subject_referral.keys()))
+            'SubjectReferralTuple', 'subject_visit ' +
+            '  '.join(self.subject_referral.keys()))
         self._subject_referral_tuple = Tpl(
             self.subject_visit, *self.subject_referral.values())
         return self._subject_referral_tuple
@@ -261,7 +270,9 @@ class SubjectReferralHelper(object):
 
     @property
     def referral_code_list(self):
-        """Returns a list of referral codes by reviewing the conditions for referral."""
+        """Returns a list of referral codes by reviewing the conditions
+         for referral.
+         """
         if not self._referral_code_list:
             is_declined = None
             try:
@@ -277,7 +288,8 @@ class SubjectReferralHelper(object):
                     self._referral_code_list.append('TST-HIV')
             else:
                 self.referral_code_list_with_hiv_result()
-            # refer if on art and known positive to get VL, and o get outsiders to transfer care
+            # refer if on art and known positive to get VL,
+            # and o get outsiders to transfer care
             # referal date is the next appointment date if on art
             if self._referral_code_list:
                 self._referral_code_list = list(
@@ -304,7 +316,8 @@ class SubjectReferralHelper(object):
         survey_schedule = self.subject_visit.household_member.household_structure.survey_schedule
         code = referral_code.replace(
             'SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
-        if (not self.intervention and survey_schedule != site_surveys.current_surveys[0]):
+        if (not self.intervention
+                and survey_schedule != site_surveys.current_surveys[0]):
             referral_code = code
         return referral_code
 
@@ -319,7 +332,8 @@ class SubjectReferralHelper(object):
     @property
     def arv_clinic(self):
         try:
-            clinic_receiving_from = self._subject_status_helper.hiv_care_adherence_instance.clinic_receiving_from
+            clinic_receiving_from = (
+                self._subject_status_helper.hiv_care_adherence_instance.clinic_receiving_from)
         except AttributeError:
             clinic_receiving_from = None
         return clinic_receiving_from
@@ -442,14 +456,19 @@ class SubjectReferralHelper(object):
         list and sets to true on a match.
         """
         URGENT_REFERRALS = [
-            'MASA-DF', 'POS!-LO', 'POS#-LO', 'POS!-HI', 'POS#-HI', 'POS#-PR', 'POS!-PR']
-        return True if [code for code in self.referral_code_list if code in URGENT_REFERRALS] else False
+            'MASA-DF', 'POS!-LO', 'POS#-LO',
+            'POS!-HI', 'POS#-HI',
+            'POS#-PR', 'POS!-PR']
+        return True if[
+            code for code in self.referral_code_list if code in URGENT_REFERRALS
+        ] else False
 
     @property
     def subject_consent_instance(self):
         if not self._subject_consent_instance:
-            self._subject_consent_instance = self.subject_referral.CONSENT_MODEL.consent.consent_for_period(
-                self.subject_identifier, self.subject_referral.report_datetime)
+            self._subject_consent_instance = (
+                self.subject_referral.CONSENT_MODEL.consent.consent_for_period(
+                    self.subject_identifier, self.subject_referral.report_datetime))
         return self._subject_consent_instance
 
     @property
