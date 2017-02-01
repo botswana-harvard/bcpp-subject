@@ -34,7 +34,8 @@ class SubjectReferralApptHelper(object):
 
         See also tests."""
 
-        self._base_date = base_date or datetime.today()  # should come from the user as today's date??
+        # should come from the user as today's date??
+        self._base_date = base_date or datetime.today()
         self._intervention_communities = intervention_communities
         self._referral_code = None
         self.hiv_care_adherence_next_appointment = hiv_care_adherence_next_appointment
@@ -113,7 +114,9 @@ class SubjectReferralApptHelper(object):
             clinic_type = 'VCT'
         elif 'TST-CD4' in self.referral_code:
             clinic_type = 'IDCC'
-        elif 'POS!-PR' in self.referral_code or 'POS#-PR' in self.referral_code or 'POS#-AN' in self.referral_code:
+        elif ('POS!-PR' in self.referral_code
+              or 'POS#-PR' in self.referral_code
+              or 'POS#-AN' in self.referral_code):
             clinic_type = 'IDCC'
         elif '-PR' in self.referral_code or '-AN' in self.referral_code:
             clinic_type = 'ANC'
@@ -148,7 +151,9 @@ class SubjectReferralApptHelper(object):
                 raise ValidationError('Expected future date for scheduled appointment, '
                                       'Got {0}'.format(self.original_scheduled_appt_date))
             rdelta = relativedelta(scheduled_appt_datetime, self.base_datetime)
-            if rdelta.years == 0 and ((rdelta.months == 1 and rdelta.days == 0) or (rdelta.months == 0)):
+            if rdelta.years == 0 and ((rdelta.months == 1
+                                       and rdelta.days == 0)
+                                      or (rdelta.months == 0)):
                 scheduled_appt_datetime = next_clinic_date(self.clinic_days,
                                                            scheduled_appt_datetime,
                                                            allow_same_day=True)

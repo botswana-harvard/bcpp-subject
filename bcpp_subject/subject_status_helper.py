@@ -87,7 +87,8 @@ class SubjectStatusHelper(object):
         self.use_baseline_visit = use_baseline_visit
         if visit_instance:
             self.subject_visit = visit_instance
-        SubjectRequisition = django_apps.get_model(*'bcpp_subject.subjectrequisition'.split('.'))
+        SubjectRequisition = django_apps.get_model(
+            *'bcpp_subject.subjectrequisition'.split('.'))
         self.models[self.BASELINE].update({
             'subject_requisition': SubjectRequisition})
         self.models[self.ANNUAL].update({
@@ -101,7 +102,9 @@ class SubjectStatusHelper(object):
 
     @property
     def timepoint_key(self):
-        """Returns a dictionary key of either baseline or annual base in the visit code."""
+        """Returns a dictionary key of either baseline or annual base
+           in the visit code.
+        """
         if self.subject_visit.visit_code in BASELINE_CODES:
             return self.BASELINE
         return self.ANNUAL
@@ -138,10 +141,12 @@ class SubjectStatusHelper(object):
         return self.subject_visit.visit_code
 
     def previous_value(self, value_if_pos=None, value_if_not_pos=None, attr_if_pos=None):
-        """Returns the value of an attribute from a previous instance if the hiv_result
-        of the previous instance is POS using a previous subject_visit. If the attribute
-        provided in attr_if_pos does not exist, then it will return the value of
-        \'value_if_pos\'. If there is no previous visit, returns the value of \'value_if_not_pos\'."""
+        """Returns the value of an attribute from a previous instance if the
+        hiv_result of the previous instance is POS using a previous subject_visit.
+        If the attribute provided in attr_if_pos does not exist, then it will
+        return the value of \'value_if_pos\'. If there is no previous visit,
+        returns the value of \'value_if_not_pos\'.
+        """
         value = value_if_not_pos
         if self.previous_subject_visits:
             current_subject_visit = copy(self.subject_visit)
@@ -160,7 +165,8 @@ class SubjectStatusHelper(object):
                                 pass
                     except TypeError:  # attr_if_pos is None, not iterable
                         value = value_if_pos
-#                     except AttributeError:# 'SubjectStatusHelper' object has no attribute 'date'
+#                     except AttributeError:# 'SubjectStatusHelper' object has
+#                        no attribute 'date'
 #                         value = value_if_pos
                     break  # got one!
             self.subject_visit = current_subject_visit
@@ -169,8 +175,9 @@ class SubjectStatusHelper(object):
     @property
     def hiv_result(self):
         """Returns the hiv status considering today\'s result, elisa hiv result,
-        the last documented result and a verbal result OR a positive result from a
-        previous survey."""
+        the last documented result and a verbal result OR a positive result
+        from a previous survey.
+        """
         if not self._hiv_result:
             self._hiv_result = self.calculated_hiv_result
         return self._hiv_result
@@ -182,7 +189,8 @@ class SubjectStatusHelper(object):
         return (
             (self.elisa_hiv_result or self.todays_hiv_result) or
             (self.last_hiv_result if self.last_hiv_result == POS else None) or
-            (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == POS else None) or
+            (self.documented_verbal_hiv_result
+             if self.documented_verbal_hiv_result == POS else None) or
             (self.verbal_hiv_result if (self.verbal_hiv_result == POS and
                                         (self.direct_hiv_pos_documentation or
                                          self.indirect_hiv_documentation)
@@ -211,7 +219,8 @@ class SubjectStatusHelper(object):
                 if self.last_hiv_result == POS:
                     self._hiv_result_datetime = last_hiv_result_datetime
                 else:
-                    # else it could be that of normal hiv_result or elisa hiv_result. The two are mutually exclusive.
+                    # else it could be that of normal hiv_result or elisa hiv_result.
+                    # The two are mutually exclusive.
                     self._hiv_result_datetime = (self.todays_hiv_result_datetime or
                                                  self.elisa_hiv_result_datetime)
             else:
@@ -251,7 +260,8 @@ class SubjectStatusHelper(object):
     def arv_documentation(self):
         """Returns True is there is arv documentation otherwise False or None."""
         try:
-            arv_documentation = convert_to_nullboolean(self.hiv_care_adherence_instance.arv_evidence)
+            arv_documentation = convert_to_nullboolean(
+                self.hiv_care_adherence_instance.arv_evidence)
         except AttributeError:
             arv_documentation = None
         return arv_documentation
@@ -263,24 +273,31 @@ class SubjectStatusHelper(object):
 
     @property
     def documented_verbal_hiv_result(self):
-        """Returns an hiv result based on the confirmation of the verbal result by documentation."""
+        """Returns an hiv result based on the confirmation of the verbal
+        result by documentation.
+        """
         if not self._documented_verbal_hiv_result:
             try:
-                # self._documented_verbal_hiv_result = self.hiv_result_documentation_instance.result_recorded
-                self._documented_verbal_hiv_result = (POS if (self.indirect_hiv_documentation or
-                                                              self.direct_hiv_pos_documentation) else None)
+                # self._documented_verbal_hiv_result =
+                # self.hiv_result_documentation_instance.result_recorded
+                self._documented_verbal_hiv_result = (
+                    POS if (self.indirect_hiv_documentation
+                            or self.direct_hiv_pos_documentation) else None)
             except AttributeError:
                 self._documented_verbal_hiv_result = None
         return self._documented_verbal_hiv_result
 
     @property
     def documented_verbal_hiv_result_date(self):
-        """Returns an hiv result based on the confirmation of the verbal result by documentation."""
+        """Returns an hiv result based on the confirmation of the verbal result
+        by documentation.
+        """
         if not self._documented_verbal_hiv_result_date:
             try:
-                self._documented_verbal_hiv_result_date = (self.hiv_result_documentation_instance.result_date if
-                                                           self.hiv_result_documentation_instance else
-                                                           self.hiv_care_adherence_instance.first_arv)
+                self._documented_verbal_hiv_result_date = (
+                    self.hiv_result_documentation_instance.result_date if
+                    self.hiv_result_documentation_instance else
+                    self.hiv_care_adherence_instance.first_arv)
             except AttributeError:
                 self._documented_verbal_hiv_result_date = None
         return self._documented_verbal_hiv_result_date
@@ -310,7 +327,8 @@ class SubjectStatusHelper(object):
     @property
     def direct_hiv_documentation(self):
         """Returns True if documentation of an HIV test was seen."""
-        direct_hiv_documentation = self.previous_value(value_if_pos=True, value_if_not_pos=False)
+        direct_hiv_documentation = self.previous_value(value_if_pos=True,
+                                                       value_if_not_pos=False)
         if not direct_hiv_documentation:
             direct_hiv_documentation = True if self.recorded_hiv_result in [POS, NEG] else False
         return direct_hiv_documentation
@@ -325,11 +343,12 @@ class SubjectStatusHelper(object):
         """Returns True if there is a verbal result and hiv_testing_history.other_record
         is Yes, otherwise None (not False).
 
-        hiv_testing_history.other_record or hiv_care_adherence.arv_evidence is indirect
-        evidence of a previous "POS result" only."""
+        hiv_testing_history.other_record or hiv_care_adherence.arv_evidence is
+        indirect evidence of a previous "POS result" only."""
         try:
             if self.verbal_hiv_result == POS:
-                if self.hiv_testing_history_instance.other_record == 'Yes' or self.arv_documentation:
+                if (self.hiv_testing_history_instance.other_record == 'Yes'
+                        or self.arv_documentation):
                     self._indirect_hiv_documentation = True
                 else:
                     self._indirect_hiv_documentation = False
@@ -344,11 +363,13 @@ class SubjectStatusHelper(object):
         if not self._last_hiv_result:
             last_hiv_result = None
             last_hiv_result = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
-            # If there is no POS from a previous visit instance result, then check the status of this
-            # visit instance. It could be that after you tested them, they tested POS later elsewhere
-            # and have documentation to prove it.
+            # If there is no POS from a previous visit instance result, then
+#             check the status of this visit instance. It could be that after you
+#             tested them, they tested POS later elsewhere and have documentation
+#             to prove it.
             if not last_hiv_result:
-                last_hiv_result = self.recorded_hiv_result or self.documented_verbal_hiv_result
+                last_hiv_result = (self.recorded_hiv_result
+                                   or self.documented_verbal_hiv_result)
             self._last_hiv_result = last_hiv_result
         return self._last_hiv_result
 
@@ -387,7 +408,8 @@ class SubjectStatusHelper(object):
         """Returns an hiv result based on the last documented result."""
         if not self._recorded_hiv_result:
             # a result from a previous survey is considered record of previous POS result
-            recorded_hiv_result = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
+            recorded_hiv_result = self.previous_value(value_if_pos=POS,
+                                                      value_if_not_pos=None)
             if not recorded_hiv_result:
                 try:
                     recorded_hiv_result = self.hiv_test_review_instance.recorded_hiv_result
@@ -477,9 +499,10 @@ class SubjectStatusHelper(object):
         """Returns the hiv result given verbally by the respondent from HivTestingHistory."""
         if not self._verbal_hiv_result:
             try:
-                self._verbal_hiv_result = (self.hiv_testing_history_instance.verbal_hiv_result
-                                           if self.hiv_testing_history_instance.verbal_hiv_result in [
-                                               POS, 'NEG', 'IND'] else None)
+                self._verbal_hiv_result = (
+                    self.hiv_testing_history_instance.verbal_hiv_result
+                    if self.hiv_testing_history_instance.verbal_hiv_result in [
+                        POS, 'NEG', 'IND'] else None)
             except AttributeError:
                 self._verbal_hiv_result = None
         return self._verbal_hiv_result
@@ -498,7 +521,9 @@ class SubjectStatusHelper(object):
 
     @property
     def vl_sample_drawn_datetime(self):
-        """Returns the viral load draw datetime from the SubjectRequisition for VL or None."""
+        """Returns the viral load draw datetime from the SubjectRequisition
+        for VL or None.
+        """
         if not self._vl_sample_drawn_datetime:
             vl_sample_drawn_datetime = self.previous_value(
                 attr_if_pos=('vl_sample_drawn_datetime', ),
@@ -529,7 +554,8 @@ class SubjectStatusHelper(object):
             try:
                 self._hiv_result_instance = self.models[self.timepoint_key].get(
                     'hiv_result').objects.get(
-                        subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG', 'IND', 'Declined'])
+                        subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG',
+                                                                          'IND', 'Declined'])
             except self.models[self.timepoint_key].get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
         return self._hiv_result_instance
@@ -562,7 +588,9 @@ class SubjectStatusHelper(object):
             try:
                 self._hiv_result_documentation_instance = self.models[self.timepoint_key].get(
                     'hiv_result_documentation').objects.get(
-                        subject_visit=self.subject_visit, result_recorded__in=[POS, 'NEG', 'IND'])
+                        subject_visit=self.subject_visit, result_recorded__in=[POS,
+                                                                               'NEG',
+                                                                               'IND'])
             except self.models[self.timepoint_key].get('hiv_result_documentation').DoesNotExist:
                 self._hiv_result_documentation_instance = None
         return self._hiv_result_documentation_instance
@@ -574,7 +602,9 @@ class SubjectStatusHelper(object):
             try:
                 self._hiv_test_review_instance = self.models[self.timepoint_key].get(
                     'hiv_test_review').objects.get(
-                        subject_visit=self.subject_visit, recorded_hiv_result__in=[POS, 'NEG', 'IND'])
+                        subject_visit=self.subject_visit, recorded_hiv_result__in=[POS,
+                                                                                   'NEG',
+                                                                                   'IND'])
             except self.models[self.timepoint_key].get('hiv_test_review').DoesNotExist:
                 self._hiv_test_review_instance = None
         return self._hiv_test_review_instance
@@ -585,7 +615,8 @@ class SubjectStatusHelper(object):
         if not self._pima_instance:
             try:
                 self._pima_instance = self.models[self.timepoint_key].get(
-                    'pima').objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
+                    'pima').objects.get(
+                        subject_visit=self.subject_visit, cd4_value__isnull=False)
             except self.models[self.timepoint_key].get('pima').DoesNotExist:
                 self._pima_instance = None
         return self._pima_instance
@@ -597,7 +628,9 @@ class SubjectStatusHelper(object):
             try:
                 self._vl_requisition_instance = self.models[self.timepoint_key].get(
                     'subject_requisition').objects.get(
-                        subject_visit=self.subject_visit, panel_name='Viral Load', is_drawn='Yes')
+                        subject_visit=self.subject_visit,
+                        panel_name='Viral Load',
+                        is_drawn='Yes')
             except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._vl_requisition_instance
@@ -609,7 +642,9 @@ class SubjectStatusHelper(object):
             try:
                 self._vl_requisition_instance = self.models[self.timepoint_key].get(
                     'subject_requisition').objects.get(
-                        subject_visit=self.subject_visit, panel_name='Research Blood Draw', is_drawn='Yes')
+                        subject_visit=self.subject_visit,
+                        panel_name='Research Blood Draw',
+                        is_drawn='Yes')
             except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._vl_requisition_instance
