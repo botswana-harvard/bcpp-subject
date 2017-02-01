@@ -31,7 +31,8 @@ class SubjectConsentManager(models.Manager):
             subject_identifier=subject_identifier, version=version,
             household_member__internal_identifier=internal_identifier,
             household_member__household_structure__survey_schedule=survey_schedule,
-            household_member__household_structure__household__household_identifier=household_identifier,
+            household_member__household_structure__household__household_identifier=(
+                household_identifier),
             household_member__household_structure__household__plot__plot_identifier=plot_identifier
         )
 
