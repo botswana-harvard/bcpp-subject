@@ -13,7 +13,6 @@ from survey.admin import survey_schedule_fieldset_tuple, survey_schedule_fields
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectVisitForm
 from ..models import SubjectVisit, SubjectRequisition
-
 from .modeladmin_mixins import ModelAdminMixin
 
 
