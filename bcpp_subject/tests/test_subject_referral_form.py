@@ -30,12 +30,14 @@ class TestSubjectReferralForm(SubjectMixin, TestCase):
             report_datetime=report_datetime)
 
         mommy.make_recipe(
-            'bcpp_subject.subjectrequisition', subject_visit=self.bhs_male_visit, report_datetime=report_datetime,
+            'bcpp_subject.subjectrequisition',
+            subject_visit=self.bhs_male_visit,
+            report_datetime=report_datetime,
             panel_name=MICROTUBE,
         )
         mommy.make_recipe(
-            'bcpp_subject.hivresult', subject_visit=self.bhs_male_visit, report_datetime=report_datetime,
-            hiv_result=POS, insufficient_vol=NO
+            'bcpp_subject.hivresult', subject_visit=self.bhs_male_visit,
+            report_datetime=report_datetime, hiv_result=POS, insufficient_vol=NO
         )
 
         mommy.make_recipe(

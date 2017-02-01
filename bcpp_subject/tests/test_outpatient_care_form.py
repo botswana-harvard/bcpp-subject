@@ -16,7 +16,8 @@ class TestOutpatientCareForm(SubjectMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('E0', **self.consent_data)
+        self.bhs_subject_visit_male = (
+            self.make_subject_visit_for_consented_subject_male('E0', **self.consent_data))
         self.options = {
             'subject_visit': self.bhs_subject_visit_male.id,
             'report_datetime': self.get_utcnow(),

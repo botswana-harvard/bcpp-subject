@@ -187,4 +187,4 @@ class TestHivCareAdherence(SubjectMixin, TestCase):
             chronic_diseases='Chronic disease related care'
         )
         form = HivCareAdherenceForm(data=self.options)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())

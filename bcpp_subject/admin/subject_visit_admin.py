@@ -64,6 +64,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
                 survey_schedule_fields + visit_schedule_fields)
 
     def view_on_site(self, obj):
+        print('hello')
         try:
             return reverse(
                 'bcpp-subject:dashboard_url', kwargs=dict(
@@ -71,10 +72,11 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
                         obj.household_member.household_structure.
                         household.household_identifier),
                     subject_identifier=obj.subject_identifier,
-                    appointment=str(obj.appointment.id),
-                    survey=obj.survey,
+                    appointment=str(self.appointment.id),
+                    survey=obj.survey_object.field_value,
                     survey_schedule=obj.survey_schedule_object.field_value))
-        except NoReverseMatch:
+        except NoReverseMatch as e:
+            print(e)
             return super().view_on_site(obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

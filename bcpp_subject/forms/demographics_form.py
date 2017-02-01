@@ -28,12 +28,12 @@ class DemographicsForm(SubjectModelFormMixin):
                             '\'Don\'t want to answer\' or \'Alone\' '
                             'options can only be selected singularly')
         # validating unmarried
-        if (cleaned_data.get('marital_status', None) != 'Married'
-                and cleaned_data.get('num_wives', None)):
+        if (cleaned_data.get('marital_status', None) != 'Married' and
+                cleaned_data.get('num_wives', None)):
             raise forms.ValidationError(
                 'If participant is not married, do not give number of wives')
-        if (cleaned_data.get('marital_status', None) != 'Married'
-                and cleaned_data.get('husband_wives', None)):
+        if (cleaned_data.get('marital_status', None) != 'Married' and
+                cleaned_data.get('husband_wives', None)):
             raise forms.ValidationError(
                 'If participant is not married, the number of wives '
                 'is not required')

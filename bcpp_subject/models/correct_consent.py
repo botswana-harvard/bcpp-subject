@@ -43,10 +43,12 @@ class CorrectConsentMixin:
                         'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
                             old_value, new_value, field.name))
                 elif old_value and new_value:
-                    subject_consent_value = getattr(instance.subject_consent, field.name.split('old_')[1])
+                    subject_consent_value = getattr(instance.subject_consent,
+                                                    field.name.split('old_')[1])
                     if old_value != subject_consent_value:
                         raise exception_cls(
-                            "Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
+                            "Consent \'{}\' does not match \'{}\'. Expected \'{}\'."
+                            "Got \'{}\'.".format(
                                 field.name.split('old_')[1],
                                 field.name,
                                 subject_consent_value,
@@ -257,7 +259,8 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
 
     old_guardian_name = LastnameField(
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is '
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                           'Invalid format. Format is '
                            '\'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
@@ -265,7 +268,8 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
 
     new_guardian_name = LastnameField(
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                           'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
                            'All uppercase separated by a comma')],
         blank=True,
         null=True,

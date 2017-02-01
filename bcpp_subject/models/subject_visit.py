@@ -4,7 +4,7 @@ from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_metadata.model_mixins.creates import CreatesMetadataModelMixin
 from edc_visit_tracking.constants import SCHEDULED
 from edc_visit_tracking.managers import VisitModelManager
-from edc_visit_tracking.model_mixins import VisitModelMixin
+from edc_visit_tracking.model_mixins import VisitModelMixin, PreviousVisitError
 
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
@@ -15,8 +15,8 @@ from .appointment import Appointment
 from .requires_consent_model_mixin import RequiresConsentMixin
 
 
-class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
-                   SurveyModelMixin, BaseUuidModel):
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin,
+                   RequiresConsentMixin, SurveyModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
@@ -44,6 +44,10 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         self.info_source = 'subject'
         self.reason = SCHEDULED
         super().save(*args, **kwargs)
+
+    @property
+    def common_clean_exceptions(self):
+        return super().common_clean_exceptions + [PreviousVisitError]
 
     class Meta(VisitModelMixin.Meta, RequiresConsentMixin.Meta):
         app_label = "bcpp_subject"

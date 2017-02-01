@@ -8,23 +8,29 @@ from edc_base_test.faker import EdcBaseProvider
 from edc_base_test.utils import get_utcnow
 from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
-from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised, Circumcision,
-                     ClinicQuestionnaire, CommunityEngagement, CorrectConsent, Demographics,
-                     Education, ElisaHivResult,
-                     Grant, HeartAttack, HicEnrollment, HivCareAdherence, HivHealthCareCosts,
-                     HivLinkageToCare, HivMedicalCare, HivResultDocumentation, HivResult,
-                     HivTestReview, HivTested, HivTestingHistory, HivUntested, HospitalAdmission,
-                     HouseholdComposition, LabourMarketWages, MedicalDiagnoses, ImmigrationStatus,
-                     NonPregnancy, OutpatientCare, Participation, PimaVl, Pima, PositiveParticipant,
-                     Pregnancy, QualityOfLife, RbdDemographics, ReproductiveHealth,
-                     ResidencyMobility, ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
-                     Stigma, SubjectConsent, SubjectLocator, SubjectReferral, SubjectVisit,
-                     SubstanceUse, TbSymptoms, ThirdPartner, Tuberculosis, Uncircumcised,
-                     ViralLoadResult, SexualBehaviour, AccessToCare, SubjectRequisition, HypertensionCardiovascular)
+from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
+                     Circumcision, ClinicQuestionnaire, CommunityEngagement,
+                     CorrectConsent, Demographics, Education, ElisaHivResult,
+                     Grant, HeartAttack, HicEnrollment, HivCareAdherence,
+                     HivHealthCareCosts, HivLinkageToCare, HivMedicalCare,
+                     HivResultDocumentation, HivResult, HivTestReview, HivTested,
+                     HivTestingHistory, HivUntested, HospitalAdmission,
+                     HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
+                     ImmigrationStatus, NonPregnancy, OutpatientCare, Participation,
+                     PimaVl, Pima, PositiveParticipant, Pregnancy, QualityOfLife,
+                     RbdDemographics, ReproductiveHealth, ResidencyMobility,
+                     ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
+                     Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
+                     SubjectVisit, SubstanceUse, TbSymptoms, ThirdPartner,
+                     Tuberculosis, Uncircumcised, ViralLoadResult, SexualBehaviour,
+                     AccessToCare, SubjectRequisition, HypertensionCardiovascular)
 
-from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion, EthnicGroups, LiveWith,
-                                             CircumcisionBenefits, FamilyPlanning, Diagnoses, HeartDisease,
-                                             StiIllnesses, PartnerResidency, MedicationGiven, MedicationTaken)
+from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion,
+                                             EthnicGroups, LiveWith,
+                                             CircumcisionBenefits, FamilyPlanning,
+                                             Diagnoses, HeartDisease,
+                                             StiIllnesses, PartnerResidency,
+                                             MedicationGiven, MedicationTaken)
 from bcpp_subject.models.sexual_partner import RecentPartner
 
 # from .models import Respondent, MostRecentPartner
@@ -86,7 +92,11 @@ ceaenrollmentchecklist = Recipe(
     date_signed=fake.last_year,
 )
 
-circumcision_benefits = Recipe(CircumcisionBenefits, name='Improved hygiene ', short_name='Improved hygiene ')
+circumcision_benefits = Recipe(
+    CircumcisionBenefits,
+    name='Improved hygiene ',
+    short_name='Improved hygiene '
+)
 
 circumcised = Recipe(
     Circumcised,
@@ -114,7 +124,12 @@ cliniquestionnaire = Recipe(
     arv_evidence=YES,
 )
 
-neighbourhood_problem = Recipe(NeighbourhoodProblems, name='Water', short_name="Water")
+neighbourhood_problem = Recipe(
+    NeighbourhoodProblems,
+    name='Water',
+    short_name="Water"
+)
+
 communityengagement = Recipe(
     CommunityEngagement,
     community_engagement='Very active',
@@ -140,8 +155,18 @@ correctconsent = Recipe(
 
 religion = Recipe(Religion, name='anglican', short_name='anglican')
 ethnicgroups = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
-livewith = Recipe(LiveWith, name='Partner or spouse', short_name='Partner or spouse')
-partnerresidency = Recipe(PartnerResidency, name='In this community', short_name='In this community')
+livewith = Recipe(
+    LiveWith,
+    name='Partner or spouse',
+    short_name='Partner or spouse'
+)
+
+partnerresidency = Recipe(
+    PartnerResidency,
+    name='In this community',
+    short_name='In this community'
+)
+
 demographics = Recipe(
     Demographics,
     religion=related(religion),
@@ -628,7 +653,9 @@ hypertensioncardiovascular = Recipe(
     HypertensionCardiovascular,
 )
 
-circumcision_benefits_hiv = Recipe(CircumcisionBenefits, name='Reduced risk of HIV ', short_name='Reduced risk of HIV ')
+circumcision_benefits_hiv = Recipe(CircumcisionBenefits,
+                                   name='Reduced risk of HIV ',
+                                   short_name='Reduced risk of HIV ')
 uncircumcised = Recipe(
     Uncircumcised,
     circumcised=YES,
