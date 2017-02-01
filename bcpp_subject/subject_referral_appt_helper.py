@@ -32,7 +32,8 @@ class SubjectReferralApptHelper(object):
                     scheduled_appt_date=subject_referral.scheduled_appt_date,
                     )
 
-        See also tests."""
+        See also tests.
+        """
 
         # should come from the user as today's date??
         self._base_date = base_date or datetime.today()
@@ -74,7 +75,8 @@ class SubjectReferralApptHelper(object):
     @property
     def referral_appt_datetime(self):
         """Returns a referral_appt_datetime which is conditionally
-        a given scheduled date or a calculated date."""
+        a given scheduled date or a calculated date.
+        """
         referral_appt_datetime = None
         if 'SMC' in self.referral_code:
             return self.smc_appt_datetime
@@ -104,7 +106,8 @@ class SubjectReferralApptHelper(object):
     @property
     def referral_clinic_type(self):
         """Returns the calculated referral appointment date based on
-        the referral code and a scheduled appointment date."""
+        the referral code and a scheduled appointment date.
+        """
         clinic_type = None
         if self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
             clinic_type = 'IDCC'
@@ -132,7 +135,8 @@ class SubjectReferralApptHelper(object):
     @referral_code.setter
     def referral_code(self, referral_code):
         """Sets the referral code after confirming the code is
-        valid or ''."""
+        valid or ''.
+        """
         if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
         self._referral_code = referral_code
@@ -140,7 +144,8 @@ class SubjectReferralApptHelper(object):
     @property
     def scheduled_appt_datetime(self):
         """Returns a datetime as long as the date is within 1 month
-        of today otherwise leaves the date as None."""
+        of today otherwise leaves the date as None.
+        """
     # TODO: use facility from edc_appointment
         scheduled_appt_datetime = None
         if self.original_scheduled_appt_date:
@@ -168,14 +173,16 @@ class SubjectReferralApptHelper(object):
     @property
     def masa_appt_datetime(self):
         """Returns a date as long as the date is within 1 month
-        of today otherwise returns two weeks from base."""
+        of today otherwise returns two weeks from base.
+        """
         return self.hiv_care_adherence_next_appointment
 
     @property
     def smc_appt_datetime(self):
         """Returns a datetime that is either the smc start date or the
         next smc clinic day depending on whether today is before or
-        after smc_start_date,"""
+        after smc_start_date.
+        """
         if site_mappers.current_mapper.intervention:
             smc_appt_datetime = self.next_workday()
         else:
@@ -183,7 +190,9 @@ class SubjectReferralApptHelper(object):
         return smc_appt_datetime
 
     def next_workday(self):
-        """This method returns the next week day that is not a holyday and is not a weekend."""
+        """This method returns the next week day that is not a holyday and
+        is not a weekend.
+        """
         holidays = []
         next_workday = datetime(
             (datetime.today() + timedelta(days=1)).year,

@@ -24,7 +24,8 @@ from bcpp_subject.constants import DECLINED
 class SubjectReferralHelper(object):
     """A class that calculates the referral code or returns a blank string.
 
-    See property :func:`referral_code`"""
+    See property :func:`referral_code`.
+    """
 
     def __init__(self, subject_referral=None):
         self._circumcised = None
@@ -173,7 +174,8 @@ class SubjectReferralHelper(object):
     def subject_referral_dict(self):
         """Returns a dictionary of the attributes {name: value, ...}
         from this class that match, by name, field attributes in the
-        SubjectReferral model."""
+        SubjectReferral model.
+        """
         if not self._subject_referral_dict:
             self._subject_referral_dict = {}
             for attr in self.subject_referral.__dict__:
@@ -188,7 +190,8 @@ class SubjectReferralHelper(object):
     def subject_referral_tuple(self):
         """Returns a dictionary of the attributes {name: value, ...}
         from this class that match, by name, field attributes in the
-        SubjectReferral model."""
+        SubjectReferral model.
+        """
         Tpl = namedtuple(
             'SubjectReferralTuple', 'subject_visit ' +
             '  '.join(self.subject_referral.keys()))
@@ -304,7 +307,8 @@ class SubjectReferralHelper(object):
     @property
     def referral_code(self):
         """Returns a string of referral codes as a join of the
-        list of referral codes delimited by ","."""
+        list of referral codes delimited by ",".
+        """
         if self._referral_code is None:
             self._referral_code = ','.join(self.referral_code_list)
             self._referral_code = self.remove_smc_in_annual_ecc(

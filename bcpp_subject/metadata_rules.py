@@ -363,8 +363,8 @@ class ReproductiveRuleGroup(RuleGroup):
 
 @register()
 class MedicalDiagnosesRuleGroup(RuleGroup):
-    """"Allows the heartattack, cancer, tb forms to be made available whether
-         or not the participant has a record. see redmine 314.
+    """Allows the heartattack, cancer, tb forms to be made available whether
+    or not the participant has a record. see redmine 314.
     """
     heart_attack_record = CrfRule(
         logic=Logic(
@@ -451,7 +451,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         target_panels=[elisa_panel, ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
-    volume in the capillary (microtube)."""
+    volume in the capillary (microtube).
+    """
     venous_for_vol = RequisitionRule(
         logic=Logic(
             predicate=PF(

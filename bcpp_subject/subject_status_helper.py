@@ -185,7 +185,8 @@ class SubjectStatusHelper(object):
     @property
     def calculated_hiv_result(self):
         """Returns the hiv status considering today\'s result, elisa hiv result,
-        the last documented result and a verbal result."""
+        the last documented result and a verbal result.
+        """
         return (
             (self.elisa_hiv_result or self.todays_hiv_result) or
             (self.last_hiv_result if self.last_hiv_result == POS else None) or
@@ -201,7 +202,8 @@ class SubjectStatusHelper(object):
     @property
     def hiv_result_datetime(self):
         """Returns the oldest hiv result datetime if POS, based on last,
-        today or elisa most recent if NEG."""
+        today or elisa most recent if NEG.
+        """
         if not self._hiv_result_datetime:
             last_hiv_result_datetime = None
             if self.last_hiv_result_date:
@@ -344,7 +346,8 @@ class SubjectStatusHelper(object):
         is Yes, otherwise None (not False).
 
         hiv_testing_history.other_record or hiv_care_adherence.arv_evidence is
-        indirect evidence of a previous "POS result" only."""
+        indirect evidence of a previous "POS result" only.
+        """
         try:
             if self.verbal_hiv_result == POS:
                 if (self.hiv_testing_history_instance.other_record == 'Yes'
@@ -359,7 +362,8 @@ class SubjectStatusHelper(object):
     @property
     def last_hiv_result(self):
         """Returns True the last HIV result which is either the recorded
-        result or a verbal result supported by direct or indirect documentation."""
+        result or a verbal result supported by direct or indirect documentation.
+        """
         if not self._last_hiv_result:
             last_hiv_result = None
             last_hiv_result = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
