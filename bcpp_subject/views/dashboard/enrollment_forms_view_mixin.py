@@ -15,8 +15,8 @@ class EnrollmentFormsViewMixin:
                 obj = schedule.enrollment_instance(
                     subject_identifier=self.subject_identifier)
                 if obj:
-                    if (obj.survey_schedule_object.field_value
-                            == self.survey_schedule_object.field_value):
+                    if (obj.survey_schedule_object.field_value ==
+                            self.survey_schedule_object.field_value):
                         obj.current = True
                     yield obj
                 else:

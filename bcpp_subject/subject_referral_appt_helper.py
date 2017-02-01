@@ -88,13 +88,14 @@ class SubjectReferralApptHelper(object):
         elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
             pass  # will be next clinic date and will ignore a scheduled_appt_date
         else:
-            try:
-                if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
-                    referral_appt_datetime = self.scheduled_appt_datetime
-            except TypeError as error_msg:
-                if "can't compare datetime.datetime to NoneType" not in error_msg:
-                    raise TypeError(error_msg)
-                pass
+            if self.scheduled_appt_datetime:
+                try:
+                    if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
+                        referral_appt_datetime = self.scheduled_appt_datetime
+                except TypeError as error_msg:
+                    if "can't compare datetime.datetime to NoneType" not in error_msg:
+                        raise TypeError(error_msg)
+                    pass
             if 'MASA-CC' == self.referral_code:
                 referral_appt_datetime = self.masa_appt_datetime
         return referral_appt_datetime or next_clinic_date(self.clinic_days,

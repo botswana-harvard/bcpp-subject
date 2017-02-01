@@ -172,8 +172,6 @@ class SubjectReferralHelper(object):
                 if attr in dir(self) and not attr.startswith('_'):
                     self._subject_referral_dict.update(
                         {attr: getattr(self, attr)})
-            self._subject_referral_dict.update(
-                {'subject_identifier': getattr(self, 'subject_identifier')})
         return self._subject_referral_dict
 
     @property
