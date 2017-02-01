@@ -51,8 +51,8 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                 'Identity may not be changed. Expected {}. Got {}'.format(
                     registered_subject.identity,
                     self.identity))
-        if (registered_subject.registration_identifier
-                != self.household_member.internal_identifier):
+        if (registered_subject.registration_identifier !=
+                self.household_member.internal_identifier):
             raise RegisteredSubjectError(
                 'Internal Identifier may not be changed. Expected {}. '
                 'Got {}'.format(
@@ -118,16 +118,17 @@ class SubjectConsent(
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return ((self.subject_identifier, self.version, )
-                + self.household_member.natural_key())
+        return ((self.subject_identifier, self.version, ) +
+                self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
 
     def common_clean_age_and_dob(self):
         # confirm member is eligible
-        if not (self.household_member.age_in_years >= 16
-                and self.household_member.age_in_years <= 64
-                and self.household_member.study_resident == YES
-                and self.household_member.inability_to_participate == NOT_APPLICABLE):
+        if not (self.household_member.age_in_years >= 16 and
+                self.household_member.age_in_years <= 64 and
+                self.household_member.study_resident == YES and
+                self.household_member.inability_to_participate ==
+                NOT_APPLICABLE):
             raise ConsentValidationError('Member is not eligible for consent')
         # validate dob with HicEnrollment, if it exists
         HicEnrollment = django_apps.get_model(
@@ -158,8 +159,8 @@ class SubjectConsent(
         if self.dob:
             # minor (do this before comparing DoB)
             if (is_minor(enrollment_checklist.dob,
-                         enrollment_checklist.report_datetime)
-                    and not is_minor(self.dob, self.consent_datetime)):
+                enrollment_checklist.report_datetime) and not
+                    is_minor(self.dob, self.consent_datetime)):
                 if is_minor(enrollment_checklist.dob,
                             enrollment_checklist.report_datetime):
                     raise ConsentValidationError(
@@ -186,9 +187,9 @@ class SubjectConsent(
             raise ConsentValidationError(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'is_literate')
-        elif (enrollment_checklist.literacy == NO
-                and self.is_literate == NO
-                and not self.witness_name):
+        elif (enrollment_checklist.literacy == NO and
+              self.is_literate == NO and not
+              self.witness_name):
             raise ConsentValidationError(
                 'Witness name is required', 'witness_name')
 
@@ -199,8 +200,9 @@ class SubjectConsent(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'citizen')
         if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage
-                    or enrollment_checklist.marriage_certificate != self.marriage_certificate):
+            if (enrollment_checklist.legal_marriage != self.legal_marriage or
+                enrollment_checklist.marriage_certificate !=
+                    self.marriage_certificate):
                 raise ConsentValidationError(
                     'Citizenship by marriage mismatch. {} reports subject '
                     'is married to a citizen with a valid marriage '
