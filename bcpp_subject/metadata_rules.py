@@ -111,7 +111,8 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = CrfRule(
         logic=Logic(
-            # TODO: add back this PF('out_patient', lambda x: True if (x == NO or x == REFUSE) else False)
+            # TODO: add back this PF('out_patient',
+            # lambda x: True if (x == NO or x == REFUSE) else False)
             predicate=P('out_patient', 'eq', NO),
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
@@ -182,7 +183,8 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=P('verbal_hiv_result', 'eq', POS),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
+        target_models=['hivcareadherence', 'positiveparticipant',
+                       'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = CrfRule(
         logic=Logic(
@@ -196,7 +198,8 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 #             predicate=func_no_verbal_hiv_result,
 #             consequence=REQUIRED,
 #             alternative='do_nothing'),
-#         target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+#         target_models=['hivcareadherence', 'hivmedicalcare',
+#                         'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     def method_result(self):
         return True
@@ -360,8 +363,9 @@ class ReproductiveRuleGroup(RuleGroup):
 
 @register()
 class MedicalDiagnosesRuleGroup(RuleGroup):
-    """"Allows the heartattack, cancer, tb forms to be made available whether or not the participant
-    has a record. see redmine 314."""
+    """Allows the heartattack, cancer, tb forms to be made available whether
+    or not the participant has a record. see redmine 314.
+    """
     heart_attack_record = CrfRule(
         logic=Logic(
             predicate=P('heart_attack_record', 'eq', YES),
@@ -447,7 +451,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         target_panels=[elisa_panel, ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
-    volume in the capillary (microtube)."""
+    volume in the capillary (microtube).
+    """
     venous_for_vol = RequisitionRule(
         logic=Logic(
             predicate=PF(
