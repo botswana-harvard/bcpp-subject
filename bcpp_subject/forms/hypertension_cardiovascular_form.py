@@ -15,7 +15,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         self.validate_not_available_fields()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
-        self.validate_not_available_fields()
+        self.validate_blank_fields()
         return self.cleaned_data
 
     def validate_if_other_medication_taken(self):
