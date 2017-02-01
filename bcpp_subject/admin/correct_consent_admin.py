@@ -63,4 +63,5 @@ class CorrectConsentAdmin(admin.ModelAdmin):
         if db_field.name == "subject_consent":
             kwargs["queryset"] = SubjectConsent.objects.filter(
                 id__exact=request.GET.get('subject_consent'))
-        return super(CorrectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(
+            CorrectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
