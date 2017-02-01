@@ -19,33 +19,33 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def validate_if_other_medication_taken(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('if_other_medications_taken'):
+        if cleaned_data.get('other_medications_taken'):
             if not any(medication_list.name == OTHER
                        for medication_list in cleaned_data.get('medications_taken')):
                 raise forms.ValidationError({
-                    'if_other_medications_taken': [
+                    'other_medications_taken': [
                         'Cannot fill this field unless Other is selected above']})
         else:
             if any(medication_list.name == OTHER
                    for medication_list in cleaned_data.get('medications_taken')):
                 raise forms.ValidationError({
-                    'if_other_medications_taken': [
+                    'other_medications_taken': [
                         'This field is mandatory since other was selected above']})
         return cleaned_data
 
     def validate_if_other_medication_still_given(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('if_other_medication_still_given'):
+        if cleaned_data.get('other_medication_still_given'):
             if not any(medication_list.name == OTHER
                        for medication_list in cleaned_data.get('medication_still_given')):
                 raise forms.ValidationError({
-                    'if_other_medication_still_given': [
+                    'other_medication_still_given': [
                         'Cannot fill this field unless Other is selected above']})
         else:
             if any(medication_list.name == OTHER
                    for medication_list in cleaned_data.get('medication_still_given')):
                 raise forms.ValidationError({
-                    'if_other_medication_still_given': [
+                    'other_medication_still_given': [
                         'This field is mandatory since other was selected above']})
         return cleaned_data
 
@@ -60,8 +60,8 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                                                    'medications_taken',
                                                    'medication_still_given',
                                                    'consent_version',
-                                                   'if_other_medications_taken',
-                                                   'if_other_medication_still_given']
+                                                   'other_medications_taken',
+                                                   'other_medication_still_given']
 
         for field in HypertensionCardiovascular._meta.get_fields():
             if field.name not in fields_to_exclude:
