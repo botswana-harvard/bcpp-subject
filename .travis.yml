@@ -7,7 +7,6 @@ addons:
   apt:
     packages:
     - libcups2-dev
-    - python3-cups
 services:
 - mysql
 before_install:
