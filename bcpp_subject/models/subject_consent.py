@@ -159,8 +159,8 @@ class SubjectConsent(
         if self.dob:
             # minor (do this before comparing DoB)
             if (is_minor(enrollment_checklist.dob,
-                         enrollment_checklist.report_datetime)
-                    and not is_minor(self.dob, self.consent_datetime)):
+                enrollment_checklist.report_datetime) and not
+                    is_minor(self.dob, self.consent_datetime)):
                 if is_minor(enrollment_checklist.dob,
                             enrollment_checklist.report_datetime):
                     raise ConsentValidationError(
