@@ -4,7 +4,8 @@ from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
 
 from ..choices import (
-    COMMUNITY_NA, KEPT_APPT, TYPE_OF_EVIDENCE, RECOMMENDED_THERAPY, REASON_RECOMMENDED, STARTERED_THERAPY)
+    COMMUNITY_NA, KEPT_APPT, TYPE_OF_EVIDENCE,
+    RECOMMENDED_THERAPY, REASON_RECOMMENDED, STARTERED_THERAPY)
 
 from .model_mixins import CrfModelMixin
 
