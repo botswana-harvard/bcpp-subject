@@ -16,7 +16,8 @@ class TestResidencyMobilityForm(SubjectMixin, TestCase):
             'confirm_identity': '31721515',
             'report_datetime': self.get_utcnow(),
         }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
+        self.bhs_subject_visit_male = (
+            self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data))
 
         self.options = {
             'permanent_resident': NO,

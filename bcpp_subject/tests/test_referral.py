@@ -70,7 +70,8 @@ class TestReferral(SubjectMixin, TestCase):
         """Return an ahs  year 3 subject visit."""
 
         household_structure = household_member.household_structure
-        next_household_structure = self.get_next_household_structure_ready(household_structure, make_hoh=None)
+        next_household_structure = (
+            self.get_next_household_structure_ready(household_structure, make_hoh=None))
 
         new_household_member = household_member.clone(
             household_structure=next_household_structure,

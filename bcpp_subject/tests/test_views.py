@@ -19,7 +19,8 @@ class TestDashboard(SubjectMixin, TestCase):
             'T0', report_datetime=self.get_utcnow())
         self.appointment = self.visit.appointment
         self.subject_identifier = self.appointment.subject_identifier
-        self.subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
+        self.subject_consent = (
+            SubjectConsent.objects.get(subject_identifier=self.subject_identifier))
         self.household_member = self.visit.household_member
         self.appointments = self.visit.appointment.__class__.objects.filter(
             subject_identifier=self.subject_identifier)

@@ -65,9 +65,11 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_is_permanent_resident(self):
-        """ IF residency mobility record exists then hic enrollment expects permanent_resident to be YES.
+        """ IF residency mobility record exists then hic enrollment expects
+            permanent_resident to be YES.
         """
-        residencymobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit_female)
+        residencymobility = ResidencyMobility.objects.get(
+            subject_visit=self.subject_visit_female)
         residencymobility.permanent_resident = NO
         residencymobility.save()
         form = HicEnrollmentForm(data=self.options)
@@ -79,9 +81,11 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_if_subject_will_relocate(self):
-        """ IF residency mobility record exists then hic enrollment expects intend_residency to be NO.
+        """ IF residency mobility record exists then hic
+            enrollment expects intend_residency to be NO.
         """
-        residencymobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit_female)
+        residencymobility = ResidencyMobility.objects.get(
+            subject_visit=self.subject_visit_female)
         residencymobility.intend_residency = YES
         residencymobility.save()
         form = HicEnrollmentForm(data=self.options)
@@ -100,7 +104,8 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         enrollment_checklist.marriage_certificate = NO
         enrollment_checklist.save_base()
 
-        subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_visit_female.subject_identifier)
+        subject_consent = SubjectConsent.objects.get(
+            subject_identifier=self.subject_visit_female.subject_identifier)
         subject_consent.citizen = NO
         subject_consent.legal_marriage = NO
         subject_consent.marriage_certificate = NO
@@ -110,10 +115,12 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         self.assertFalse(form.is_valid())
 
     def test_is_locator_information(self):
-        fields = ['subject_cell', 'subject_cell_alt', 'subject_phone', 'mail_address', 'physical_address',
-                  'subject_phone_alt', 'subject_work_place', 'subject_work_phone', 'contact_physical_address',
+        fields = ['subject_cell', 'subject_cell_alt', 'subject_phone', 'mail_address',
+                  'physical_address', 'subject_phone_alt', 'subject_work_place',
+                  'subject_work_phone', 'contact_physical_address',
                   'contact_cell', 'contact_phone']
-        subject_locator = SubjectLocator.objects.get(subject_identifier=self.subject_visit_female.subject_identifier)
+        subject_locator = SubjectLocator.objects.get(
+            subject_identifier=self.subject_visit_female.subject_identifier)
         for field in fields:
             setattr(subject_locator, field, None)
         subject_locator.save()

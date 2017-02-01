@@ -46,7 +46,8 @@ class TestHivTestedForm(SubjectMixin, TestCase):
         self.assertFalse(hiv_tested_form.is_valid())
 
     def test_not_sure_hiv_pills_none_arvs_hiv_test(self):
-        """Assert information about ARV was not provided without being sure of having heard of ARV's."""
+        """Assert information about ARV was not provided without being sure of
+           having heard of ARV's."""
         self.options.update(hiv_pills=NOT_SURE, arvs_hiv_test=None)
         hiv_tested_form = HivTestedForm(data=self.options)
         self.assertFalse(hiv_tested_form.is_valid())
