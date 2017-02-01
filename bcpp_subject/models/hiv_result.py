@@ -40,7 +40,8 @@ class HivResult(CrfModelMixin):
         max_length=15,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
-        help_text='Note: if capillary blood and less than 350uL, an additional venous blood draw is required'
+        help_text=("Note: if capillary blood and less than 350uL,"
+                   " an additional venous blood draw is required"),
     )
 
     why_not_tested = models.CharField(

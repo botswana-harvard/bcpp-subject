@@ -33,7 +33,8 @@ class RbdDemographics (CrfModelMixin):
     )
 
     num_wives = models.IntegerField(
-        verbose_name="WOMEN: How many wives does your husband have (including traditional marriage),"
+        verbose_name="WOMEN: 'How many wives does your husband have"
+                     "(including traditional marriage),"
                      " including yourself?",
         null=True,
         blank=True,

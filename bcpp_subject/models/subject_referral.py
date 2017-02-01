@@ -365,7 +365,8 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
 
     def dashboard(self):
         url = reverse('subject_dashboard_url',
-                      kwargs={'dashboard_type': self.subject_visit.appointment.registered_subject.subject_type.lower(),
+                      kwargs={'dashboard_type':
+                              self.subject_visit.appointment.registered_subject.subject_type.lower(),
                               'dashboard_model': 'appointment',
                               'dashboard_id': self.subject_visit.appointment.pk,
                               'show': 'appointments'})

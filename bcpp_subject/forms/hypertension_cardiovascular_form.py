@@ -15,53 +15,85 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
         self.validate_not_available_fields()
         self.validate_if_other_medication_taken()
         self.validate_if_other_medication_still_given()
+        self.validate_blank_fields()
         return self.cleaned_data
 
     def validate_if_other_medication_taken(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('other_medications_taken'):
+        if cleaned_data.get('other_medication_taken'):
             if not any(medication_list.name == OTHER
-                       for medication_list in cleaned_data.get('medications_taken')):
+                       for medication_list in cleaned_data.get('medication_taken')):
                 raise forms.ValidationError({
-                    'other_medications_taken': [
-                        'Cannot fill this field unless Other is selected above']})
+                    'other_medication_taken': [
+                        'Cannot fill this field unless Other is ',
+                        'selected above']})
         else:
             if any(medication_list.name == OTHER
-                   for medication_list in cleaned_data.get('medications_taken')):
+                   for medication_list in cleaned_data.get('medication_taken')):
                 raise forms.ValidationError({
-                    'other_medications_taken': [
-                        'This field is mandatory since other was selected above']})
+                    'other_medication_taken': [
+                        'This field is mandatory since other was '
+                        'selected above']})
         return cleaned_data
 
     def validate_if_other_medication_still_given(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('other_medication_still_given'):
+        if cleaned_data.get('other_medication_given'):
             if not any(medication_list.name == OTHER
-                       for medication_list in cleaned_data.get('medication_still_given')):
+                       for medication_list in cleaned_data.get('medication_given')):
                 raise forms.ValidationError({
-                    'other_medication_still_given': [
-                        'Cannot fill this field unless Other is selected above']})
+                    'other_medication_given': [
+                        'Cannot fill this field unless Other is '
+                        'selected above']})
         else:
             if any(medication_list.name == OTHER
-                   for medication_list in cleaned_data.get('medication_still_given')):
+                   for medication_list in cleaned_data.get('medication_given')):
                 raise forms.ValidationError({
-                    'other_medication_still_given': [
-                        'This field is mandatory since other was selected above']})
+                    'other_medication_given': [
+                        'This field is mandatory since other was '
+                        'selected above']})
         return cleaned_data
+
+    def validate_blank_fields(self):
+        cleaned_data = super().clean()
+
+        blank_fields = ['right_arm_one',
+                        'left_arm_one',
+                        'right_arm_two',
+                        'left_arm_two',
+                        'waist_reading_one',
+                        'waist_reading_two',
+                        'hip_reading_one',
+                        'hip_reading_two']
+
+        if cleaned_data.get('may_take_blood_pressure') == NO:
+            for field in blank_fields:
+                if not cleaned_data.get(field):
+                    raise forms.ValidationError({
+                        field: [
+                            'This field should be left empty as the '
+                            'participant does not agree to have their blood '
+                            'pressure and waist/hip measured.']})
 
     def validate_not_available_fields(self):
         cleaned_data = super().clean()
         all_na_fields = []
         fields_to_exclude = DEFAULT_BASE_FIELDS + ['may_take_blood_pressure',
                                                    'subject_visit',
-                                                   'waistcircumferencemeasurement',
                                                    'report_datetime',
-                                                   'bpmeasurement',
-                                                   'medications_taken',
-                                                   'medication_still_given',
+                                                   'medication_taken',
+                                                   'medication_given',
                                                    'consent_version',
-                                                   'other_medications_taken',
-                                                   'other_medication_still_given']
+                                                   'other_medication_taken',
+                                                   'other_medication_given',
+                                                   'right_arm_one',
+                                                   'left_arm_one',
+                                                   'right_arm_two',
+                                                   'left_arm_two',
+                                                   'waist_reading_one',
+                                                   'waist_reading_two',
+                                                   'hip_reading_one',
+                                                   'hip_reading_two']
 
         for field in HypertensionCardiovascular._meta.get_fields():
             if field.name not in fields_to_exclude:
