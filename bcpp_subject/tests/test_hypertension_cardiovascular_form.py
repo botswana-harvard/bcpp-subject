@@ -31,11 +31,11 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         self.data = {
             'may_take_blood_pressure': NO,
             'hypertension_diagnosis': NOT_APPLICABLE,
-            'medications_taken': [self.medication_taken.id,
-                                  self.medication_taken_1.id],
-            'other_medications_taken': 'Some medication',
-            'medication_still_given': [self.medication_given.id],
-            'other_medication_still_given': None,
+            'medication_taken': [self.medication_taken.id,
+                                 self.medication_taken_1.id],
+            'other_medication_taken': 'Some medication',
+            'medication_given': [self.medication_given.id],
+            'other_medication_given': None,
             'health_care_facility': NOT_APPLICABLE,
             'salt_intake_counselling': NOT_APPLICABLE,
             'tobacco_smoking': NOT_APPLICABLE,
@@ -47,6 +47,10 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
             'blood_test_for_cholesterol': NOT_APPLICABLE,
             'blood_test_for_diabetes': NOT_APPLICABLE,
             'subject_visit': self.subject_visit_male.id,
+            'right_arm_one': None,
+            'right_arm_two': None,
+            'left_arm_one': None,
+            'left_arm_two': None,
             'report_datetime': self.get_utcnow()}
 
     def test_valid_form(self):
@@ -58,7 +62,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         """Test to verify whether validation will fire when
         'other' is selected in medications_taken but
         if_other_medications_taken is left empty"""
-        self.data.update(other_medications_taken=None)
+        self.data.update(other_medication_taken=None)
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
 
@@ -67,8 +71,8 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         'other' is not selected in medications_taken but
         if_other_medications_taken is filled"""
         self.data.update(
-            medications_taken=[self.medication_taken.id],
-            other_medications_taken='Some medication')
+            medication_taken=[self.medication_taken.id],
+            other_medication_taken='Some medication')
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
 
@@ -77,7 +81,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         'other' is selected in medications_given but
         if_other_medications_still_given is left empty."""
         self.data.update(
-            medication_still_given=[self.medication_given_1.id])
+            other_medication_given=[self.medication_given_1.id])
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
 
@@ -86,7 +90,7 @@ class TestHypertensionCardiovascular(SubjectMixin, TestCase):
         'other' is not selected in medications_taken but
         if_other_medications_taken is filled"""
         self.data.update(
-            medications_taken=[self.medication_taken.id],
-            other_medications_taken='Some medication')
+            medication_taken=[self.medication_taken.id],
+            other_medication_taken='Some medication')
         form = HypertensionCardiovascularForm(data=self.data)
         self.assertFalse(form.is_valid())
