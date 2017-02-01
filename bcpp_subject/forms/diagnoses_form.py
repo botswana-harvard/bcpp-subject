@@ -44,41 +44,42 @@ class StiForm (SubjectModelFormMixin):
         # wasting
         sti_dx = 'Severe weight loss (wasting) - more than 10% of body weight'
         if cleaned_data.get('sti_dx'):
-            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not cleaned_data.get('wasting_date')):
+            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not
+                    cleaned_data.get('wasting_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with wasting, '
                     'what is the date of diagnosis?')
             # diarrhoea
             sti_dx = 'Unexplained diarrhoea for one month'
-            if (cleaned_data.get('sti_dx')[0].name == sti_dx
-                    and not cleaned_data.get('diarrhoea_date')):
+            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not
+                    cleaned_data.get('diarrhoea_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with diarrhoea, '
                     'what is the diagnosis date?')
             # yesat_infection
             sti_dx = 'Yeast infection of mouth or oesophagus'
-            if (cleaned_data.get('sti_dx')[0].name == sti_dx
-                    and not cleaned_data.get('yeast_infection_date')):
+            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not
+                    cleaned_data.get('yeast_infection_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with yeast '
                     'infection, what is the diagnosis date?')
             # pneumonia
             sti_dx = 'Severe pneumonia or meningitis or sepsis'
-            if (cleaned_data.get('sti_dx')[0].name == sti_dx
-                    and not cleaned_data.get('pneumonia_date')):
+            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not
+                    cleaned_data.get('pneumonia_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with '
                     'pneumonia_date, what is the date of diagnosis?')
             # pcp
-            if (cleaned_data.get('sti_dx')[0].name == 'PCP (Pneumocystis pneumonia)'
-                    and not cleaned_data.get('pcp_date')):
+            if (cleaned_data.get('sti_dx')[0].name == 'PCP (Pneumocystis pneumonia)' and not
+                    cleaned_data.get('pcp_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with PCP, '
                     'what is the date of diagnosis?')
             # herpes
             sti_dx = 'Herpes infection for more than one month'
-            if (cleaned_data.get('sti_dx')[0].name == sti_dx
-                    and not cleaned_data.get('herpes_date')):
+            if (cleaned_data.get('sti_dx')[0].name == sti_dx and not
+                    cleaned_data.get('herpes_date')):
                 raise forms.ValidationError(
                     'If participant has ever been diagnosed with '
                     'Herpes for more than a month, '

@@ -60,7 +60,8 @@ class SexualBehaviourForm (SubjectModelFormMixin):
                     'had sex with anyone outside community in the past 12months?')
             if cleaned_data.get('last_year_partners') > cleaned_data.get('lifetime_sex_partners'):
                 raise forms.ValidationError(
-                    'Number of partners in the past 12months CANNOT exceed number of life time partners')
+                    'Number of partners in the past 12months CANNOT exceed number'
+                    'of life time partners')
         if cleaned_data.get('ever_sex') == YES and not cleaned_data.get('condom'):
             raise forms.ValidationError(
                 'If participant has had sex at some point in their life, did participant '
@@ -77,12 +78,14 @@ class SexualBehaviourForm (SubjectModelFormMixin):
         if cleaned_data.get('first_sex_partner_age') != OTHER and cleaned_data.get(
                 'first_sex_partner_age_other'):
             raise forms.ValidationError(
-                'If first sex partner age is not less than 19 or not specified, cannot provide the age')
+                'If first sex partner age is not less than 19 or not specified'
+                'cannot provide the age')
 
         return cleaned_data
 
     def validate_no_sex(self, field, cleaned_data):
-        msg = 'If participant has NEVER had sex, DO NOT provide any other sexual intercourse related questions'
+        msg = ('If participant has NEVER had sex, DO NOT provide any other'
+               'sexual intercourse related questions')
         self.validate_dependent_fields('ever_sex', field, cleaned_data, msg)
 
     def validate_dependent_fields(self, master_field, sub_field, cleaned_data, msg):

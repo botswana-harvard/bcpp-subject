@@ -16,7 +16,8 @@ class PimaForm (SubjectModelFormMixin):
 
         # If no PIMA CD4 performed, do not provide any CD4 related information
         if cleaned_data.get('pima_today') == NO and cleaned_data.get('pima_id'):
-            raise forms.ValidationError('Do not provide the PIMA machine id if the PIMA CD4 was not performed')
+            raise forms.ValidationError('Do not provide the PIMA machine id if the'
+                                        'PIMA CD4 was not performed')
         if cleaned_data.get('pima_today') == NO and cleaned_data.get('cd4_value'):
             raise forms.ValidationError('PIMA CD4 was not performed, do not provide the CD4 value')
 
