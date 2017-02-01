@@ -24,51 +24,44 @@ class SubjectLocatorForm (SubjectModelFormMixin):
         except (SiteConsentError, NotConsentedError) as e:
             raise forms.ValidationError(str(e))
         # validating home_visits
-        if (
-            cleaned_data.get('home_visit_permission', None) == 'No' and
-            cleaned_data.get('physical_address', None)):
-                raise forms.ValidationError(
-                    'If participant has not given permission to make'
-                    ' home_visits, do not give physical(home) address details')
+        if (cleaned_data.get('home_visit_permission', None) == 'No'
+                and cleaned_data.get('physical_address', None)):
+            raise forms.ValidationError(
+                'If participant has not given permission to make'
+                ' home_visits, do not give physical(home) address details')
         # requiring info to be keyed
         # home_visit permission
-        if (
-            cleaned_data.get('home_visit_permission', None) == 'Yes' and not
-            cleaned_data.get('physical_address', None)):
-                raise forms.ValidationError(
-                    'If participant has allowed you to make home visits, what is' 
-                    ' their physical address?')
+        if (cleaned_data.get('home_visit_permission', None) == 'Yes'
+                and not cleaned_data.get('physical_address', None)):
+            raise forms.ValidationError(
+                'If participant has allowed you to make home visits, what is'
+                ' their physical address?')
         # permission to followup
-        if (
-            cleaned_data.get('may_follow_up', None) == 'Yes' and not
-            cleaned_data.get('subject_cell', None)):
-                raise forms.ValidationError('If participant has allowed you to '
-                                            'follow them up, what is their cell number?')
+        if (cleaned_data.get('may_follow_up', None) == 'Yes'
+                and not cleaned_data.get('subject_cell', None)):
+            raise forms.ValidationError('If participant has allowed you to '
+                                        'follow them up, what is their cell number?')
         # permission to sms
-        if (
-            cleaned_data.get('may_sms_follow_up', None) == 'Yes' and not 
-            cleaned_data.get('subject_cell', None)):
-                raise forms.ValidationError(
-                    'If participant has allowed you to sms her on followup, '
-                    'what is their cell number?')
+        if (cleaned_data.get('may_sms_follow_up', None) == 'Yes'
+                and not cleaned_data.get('subject_cell', None)):
+            raise forms.ValidationError(
+                'If participant has allowed you to sms her on followup, '
+                'what is their cell number?')
         # may call work
         self.validate_may_call_work_yes()
         # Contact next-of-kin
-        if(
-           cleaned_data.get('may_contact_someone', None) == 'No' and not
-           cleaned_data.get('has_alt_contact', None) == NOT_APPLICABLE):
-                raise forms.ValidationError(
-                    'If participant has answered No to question 12 then question'
-                    ' 19 is Not Applicable')
-        if (
-            cleaned_data.get('has_alt_contact', None) == 'Yes' and not
-            cleaned_data.get('alt_contact_name', None)):
+        if(cleaned_data.get('may_contact_someone', None) == 'No'
+           and not cleaned_data.get('has_alt_contact', None) == NOT_APPLICABLE):
+            raise forms.ValidationError(
+                'If participant has answered No to question 12 then question'
+                ' 19 is Not Applicable')
+        if (cleaned_data.get('has_alt_contact', None) == 'Yes'
+                and not cleaned_data.get('alt_contact_name', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to contact next-of-kin, what '
                 'is their full name?')
-        if (
-            cleaned_data.get('has_alt_contact', None) == 'Yes' and not
-            cleaned_data.get('alt_contact_rel', None)):
+        if (cleaned_data.get('has_alt_contact', None) == 'Yes'
+                and not cleaned_data.get('alt_contact_rel', None)):
             raise forms.ValidationError('If participant has allowed you to '
                                         'contact next-of-kin, how are they related?')
         # may contact someone else
@@ -98,36 +91,31 @@ class SubjectLocatorForm (SubjectModelFormMixin):
 
     def validate_may_call_work_yes(self):
         cleaned_data = self.cleaned_data
-        if (
-            cleaned_data.get('may_call_work', None) == 'Yes' and not
-            cleaned_data.get('subject_work_place', None)):
+        if (cleaned_data.get('may_call_work', None) == 'Yes'
+                and not cleaned_data.get('subject_work_place', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to call them at work, name '
                 'work place location?')
-        if (
-            cleaned_data.get('may_call_work', None) == 'Yes' and not
-            cleaned_data.get('subject_work_phone', None)):
+        if (cleaned_data.get('may_call_work', None) == 'Yes'
+                and not cleaned_data.get('subject_work_phone', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to call them at work, give the'
                 ' work phone number?')
 
     def validate_may_contact_someone_yes(self):
         cleaned_data = self.cleaned_data
-        if (
-            cleaned_data.get('may_contact_someone', None) == 'Yes' and not
-            cleaned_data.get('contact_name', None)):
+        if (cleaned_data.get('may_contact_someone', None) == 'Yes'
+                and not cleaned_data.get('contact_name', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to contact someone else, what '
                 'is the contact name?')
-        if (
-            cleaned_data.get('may_contact_someone', None) == 'Yes' and not
-            cleaned_data.get('contact_rel', None)):
+        if (cleaned_data.get('may_contact_someone', None) == 'Yes'
+                and not cleaned_data.get('contact_rel', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to contact someone else, how '
                 'are they related to this person?')
-        if(
-           cleaned_data.get('may_contact_someone', None) == 'Yes' and not
-           cleaned_data.get('contact_physical_address', None)):
+        if(cleaned_data.get('may_contact_someone', None) == 'Yes'
+                and not cleaned_data.get('contact_physical_address', None)):
             raise forms.ValidationError(
                 'If participant has allowed you to contact someone else, what '
                 'is this persons physical address?')
@@ -136,7 +124,7 @@ class SubjectLocatorForm (SubjectModelFormMixin):
         msg = ('If participant has not given permission for follow-up, do not '
                'give follow-up details')
         self.validate_dependent_fields(
-            ['may_follow_up','may_sms_follow_up'],
+            ['may_follow_up', 'may_sms_follow_up'],
             field,
             cleaned_data,
             msg)
@@ -165,7 +153,7 @@ class SubjectLocatorForm (SubjectModelFormMixin):
         self.validate_dependent_fields(['may_contact_someone'],
                                        field, cleaned_data, msg)
 
-    def validate_dependent_fields(self, master_fields, sub_field,cleaned_data, msg):
+    def validate_dependent_fields(self, master_fields, sub_field, cleaned_data, msg):
         permitted = False
         for field in master_fields:
             if cleaned_data.get(field, None) == 'Yes':
