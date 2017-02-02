@@ -1032,6 +1032,7 @@ WHERE_HIV_TEST_CHOICE = (
      _('In my house as part of door-to-door services')),
     ('In a mobile tent or vehicle in my neighborhood',
      _('In a mobile tent or vehicle in my neighborhood')),
+    ('Ya_Tsie HIV Test Campaign', _('Ya Tsie HIV Test Campaign')),
     (OTHER, _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
@@ -1052,6 +1053,10 @@ WHY_HIV_TEST_CHOICE = (
      'me to get tested for '
      'HIV', _('I read information on a brochure/flier that it is '
               'important for me to get tested for HIV')),
+    ('I had information from the Ya_Tsie study [or someone from'
+     'Ya_Tsie told me] that it was important to get tested for'
+     'HIV', _('I had information from the Ya_Tsie study [or someone from'
+              'Ya_Tsie told me] that it was important to get tested for HIV')),
     (OTHER, _('Other')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
