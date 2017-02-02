@@ -14,7 +14,7 @@ from member.models.household_member.household_member import HouseholdMember
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
 
 from .test_mixins import SubjectMixin
-from bcpp_subject.models.appointment import Appointment
+from ..models.appointment import Appointment
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
