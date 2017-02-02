@@ -17,7 +17,7 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
                      HivTestingHistory, HivUntested, HospitalAdmission,
                      HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
                      ImmigrationStatus, NonPregnancy, OutpatientCare, Participation,
-                     PimaVl, Pima, PositiveParticipant, Pregnancy, QualityOfLife,
+                     PimaVl, PimaCd4, PositiveParticipant, Pregnancy, QualityOfLife,
                      RbdDemographics, ReproductiveHealth, ResidencyMobility,
                      ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
@@ -427,8 +427,8 @@ pimavl = Recipe(
     stability=None,
 )
 
-pima = Recipe(
-    Pima,
+pimacd4 = Recipe(
+    PimaCd4,
     pima_today=YES,
     pima_today_other='Failed Blood Collection',
     pima_id=12345,
