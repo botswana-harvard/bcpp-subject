@@ -1,13 +1,13 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
 from edc_registration.models import RegisteredSubject
 
-from .models import (
-    Circumcised, HicEnrollment, HivTestingHistory, HivResult)
-from .subject_status_helper import SubjectStatusHelper
-from bcpp_subject.constants import T1, T2, T3, DECLINED, E0, T0
-from bcpp_subject.models.subject_visit import SubjectVisit
-from bcpp_subject.models.sexual_behaviour import SexualBehaviour
 from member.models.household_member.household_member import HouseholdMember
+
+from .constants import T1, T2, DECLINED, E0, T0
+from .models import (
+    Circumcised, HicEnrollment, HivTestingHistory, HivResult,
+    SubjectVisit, SexualBehaviour)
+from .subject_status_helper import SubjectStatusHelper
 
 
 def func_show_recent_partner(visit_instance, *args):
