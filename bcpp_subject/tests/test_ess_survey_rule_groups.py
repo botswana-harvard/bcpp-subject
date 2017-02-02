@@ -16,6 +16,7 @@ from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
 
 
+@tag('ESSRULE')
 class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
     def setUp(self):
@@ -41,10 +42,16 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
     def test_partner_forms_know_pos(self):
         """HIV Positive not on ART at T0, Should offer POC CD4, RBD and VL.
         """
-        self.subject_identifier = self.subject_visit_male.subject_identifier
-        # make
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO)
+
         # Known POS in T0
         mommy.make_recipe(
             'bcpp_subject.sexualbehaviour',

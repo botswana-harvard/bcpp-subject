@@ -13,23 +13,25 @@ from .labs import (
     microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
 from .models import ResourceUtilization, SubjectVisit
 from .metadata_rules_funcs import (
-    func_art_naive_at_annual_or_defaulter,
-    func_hiv_indeterminate_today,
-    func_hiv_positive_today,
-    func_requires_hivuntested,
-    known_positive,
-    func_requires_rbd,
-    func_requires_pima_cd4,
+    func_anonymous_member,
+    func_hiv_indeterminate,
+    func_hiv_positive,
+    func_known_hiv_pos,
     func_requires_circumcision,
     func_requires_hic_enrollment,
-    func_show_microtube,
-    func_todays_hiv_result_required,
+    func_requires_hivuntested,
+    func_requires_microtube,
+    func_requires_pima_cd4,
+    func_requires_rbd,
+    func_requires_recent_partner,
+    func_requires_second_partner_forms,
+    func_requires_third_partner_forms,
+    func_requires_todays_hiv_result,
     func_requires_vl,
     is_female,
-    func_show_recent_partner,
-    func_show_second_partner_forms,
-    func_show_third_partner_forms,
-    func_anonymous_member)
+)
+from bcpp_subject.metadata_rules_funcs import (
+    func_art_naive, func_art_defaulter)
 
 
 @register()
@@ -51,7 +53,7 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     known_pos_in_y1 = CrfRule(
         logic=Logic(
-            predicate=known_positive,
+            predicate=func_known_hiv_pos,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['hivtestreview', 'hivtested', 'hivtestinghistory',
@@ -73,14 +75,14 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
-            predicate=func_art_naive_at_annual_or_defaulter,
+            predicate=(func_art_naive or func_art_defaulter),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
-            predicate=func_show_microtube,
+            predicate=func_requires_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -174,7 +176,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_show_microtube,
+            predicate=func_requires_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
@@ -215,7 +217,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     recorded_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_requires_todays_hiv_result,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
@@ -229,7 +231,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_show_microtube,
+            predicate=func_requires_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
@@ -265,7 +267,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_show_microtube,
+            predicate=func_requires_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
@@ -280,21 +282,21 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     partners = CrfRule(
         logic=Logic(
-            predicate=func_show_recent_partner,
+            predicate=func_requires_recent_partner,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['recentpartner'])
 
     last_year_partners = CrfRule(
         logic=Logic(
-            predicate=func_show_second_partner_forms,
+            predicate=func_requires_second_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['secondpartner'])
 
     more_partners = CrfRule(
         logic=Logic(
-            predicate=func_show_third_partner_forms,
+            predicate=func_requires_third_partner_forms,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['thirdpartner'])
@@ -415,7 +417,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures a Microtube is not required for POS."""
     microtube_for_neg = RequisitionRule(
         logic=Logic(
-            predicate=func_show_microtube,
+            predicate=func_requires_microtube,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -445,7 +447,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
     elisa_for_ind = RequisitionRule(
         logic=Logic(
-            predicate=func_hiv_indeterminate_today,
+            predicate=func_hiv_indeterminate,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -466,14 +468,14 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     serve_sti_form = CrfRule(
         logic=Logic(
-            predicate=func_hiv_positive_today,
+            predicate=func_hiv_positive,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.sti'])
 
     elisa_result = CrfRule(
         logic=Logic(
-            predicate=func_hiv_indeterminate_today,
+            predicate=func_hiv_indeterminate,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.elisahivresult'])

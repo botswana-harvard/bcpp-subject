@@ -354,7 +354,6 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
-
             hivcareadherence.on_arv = NO
             hivcareadherence.save()
             self.assertEqual(self.crf_metadata_obj(
@@ -368,7 +367,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         for subject_visit in [
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
-            self.make_hivtesting_history(subject_visit, self.get_utcnow(), YES, NO, POS, NO)
+            self.make_hivtesting_history(
+                subject_visit, self.get_utcnow(), YES, NO, POS, NO)
 
             self.assertEqual(
                 self.crf_metadata_obj(
@@ -537,7 +537,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
             self.make_hiv_result(NEG, subject_visit, self.get_utcnow())
 
-            # Enforce that entering an HivResult does not affect Circumcition Meta Data.
+            # Enforce that entering an HivResult does not affect Circumcition
+            # Meta Data.
             assert_circumsition(KEYED, NOT_REQUIRED, REQUIRED)
 
             circumcition.circumcised = NO
@@ -575,16 +576,19 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
             # Known POS in subject_visit.visit_code
 
-            self.make_hivtesting_history(subject_visit, self.get_utcnow(), YES, YES, POS, NO)
+            self.make_hivtesting_history(
+                subject_visit, self.get_utcnow(), YES, YES, POS, NO)
 
-            self.make_hivtest_review(subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
+            self.make_hivtest_review(
+                subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
 
             self.assertEqual(self.requisition_metadata_obj(
                 'bcpp_subject.subjectrequisition',
                 REQUIRED, subject_visit.visit_code,
                 RESEARCH_BLOOD_DRAW, subject_visit.subject_identifier).count(), 1)
 
-            self.make_requisition(subject_visit, RESEARCH_BLOOD_DRAW, self.get_utcnow())
+            self.make_requisition(
+                subject_visit, RESEARCH_BLOOD_DRAW, self.get_utcnow())
 
             # add HivCarAdherence,
             self.make_hiv_care_adherence(
@@ -608,12 +612,15 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         for subject_visit in [
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
             # Known POS in subject_visit.visit_code
-            self.make_hivtesting_history(subject_visit, self.get_utcnow(), YES, YES, POS, NO)
+            self.make_hivtesting_history(
+                subject_visit, self.get_utcnow(), YES, YES, POS, NO)
 
-            self.make_hivtest_review(subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
+            self.make_hivtest_review(
+                subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
 
             # add HivCarAdherence,
-            self.make_hiv_care_adherence(subject_visit, self.get_utcnow(), NO, NO, NO, NO, NO)
+            self.make_hiv_care_adherence(
+                subject_visit, self.get_utcnow(), NO, NO, NO, NO, NO)
 
             self.assertEqual(self.crf_metadata_obj(
                 'bcpp_subject.pima', REQUIRED,
