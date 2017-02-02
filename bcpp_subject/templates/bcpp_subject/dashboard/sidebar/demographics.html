@@ -16,7 +16,7 @@
         <a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
             {% if navbar_name != 'anonymous' %}
                 {{ consent.dob|date:"Y-m-d" }}
-            {% endif%}
+            {% endif %}
             {% age_in_years consent.dob %} yrs
        </a>
        {% if navbar_name != 'anonymous' %}
@@ -24,4 +24,24 @@
             {{ consent.identity|default:'?? identity' }}
         </a>
         {% endif%}
+        {% if subject_helper.final_hiv_status and subject_helper.final_hiv_status != UNK %}
+            <a class="list-group-item"><i class="fa fa-square fa-fw"></i>
+               HIV Status
+            </a>
+	        <a class="list-group-item">
+	           <span class="text small text-muted">Final: {{ subject_helper.final_hiv_status|default:'' }} {{ subject_helper.final_hiv_status_date|date:"Y-m-d" }}</span>
+	        </a>
+	        <a class="list-group-item">
+	           <span class="text small text-muted">Previous: {{ subject_helper.prev_result|default:'' }} {{ subject_helper.prev_result_date|date:"Y-m-d" }}</span>
+	        </a>
+	        <a class="list-group-item">
+	           <span class="text small text-muted">Known: {{ subject_helper.prev_result_known|default:"" }}</span>
+	        </a>
+            <a class="list-group-item"><i class="fa fa-square fa-fw"></i>
+               ART Status
+            </a>
+	        <a class="list-group-item">
+	           <span class="text small text-muted">{{ subject_helper.final_arv_status|default:'' }} {{ subject_helper.final_arv_status_date|date:"Y-m-d" }}</span>
+	        </a>
+	    {% endif %}
     </div>
