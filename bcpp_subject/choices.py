@@ -414,6 +414,7 @@ HIV_DOC_TYPE = (
     ('ART Prescription', 'ART Prescription'),
     ('PMTCT Prescription', 'PMTCT Prescription'),
     ('Record of CD4 count', 'Record of CD4 count'),
+    ('Ya Tsie Test Card', 'Ya Tsie Test Card'),
     (OTHER, 'Other OPD card or ANC card documentation'),
 )
 
