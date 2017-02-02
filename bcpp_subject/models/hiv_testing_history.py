@@ -10,7 +10,8 @@ from .model_mixins import CrfModelMixin
 
 class HivTestingHistory (CrfModelMixin):
 
-    """A model completed by the user of the particiapn's history of testing for HIV."""
+    """A model completed by the user of the participant's history
+    of testing for HIV."""
 
     has_tested = models.CharField(
         verbose_name="Have you ever been tested for HIV before?",

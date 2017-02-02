@@ -989,6 +989,7 @@ WHY_NO_HIV_TESTING_CHOICE = (
     ('I recently tested', _('I recently tested (I know my status)')),
     ('I didn\'t believe I was at risk of getting HIV',
      _('I didn\'t believe I was at risk of getting HIV')),
+    
     ('I am afraid to find out the result',
      _('I am afraid to find out the result')),
     ('I am afraid of what others would think of me',
@@ -1053,10 +1054,10 @@ WHY_HIV_TEST_CHOICE = (
      'me to get tested for '
      'HIV', _('I read information on a brochure/flier that it is '
               'important for me to get tested for HIV')),
-    ('I had information from the Ya_Tsie study [or someone from'
-     'Ya_Tsie told me] that it was important to get tested for'
-     'HIV', _('I had information from the Ya_Tsie study [or someone from'
-              'Ya_Tsie told me] that it was important to get tested for HIV')),
+    ('I had information from the Ya_Tsie study that it was important'
+     'to get tested for '
+     'HIV', _('I had information from the Ya_Tsie study'
+              'that it was important to get tested for HIV')),
     (OTHER, _('Other')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),

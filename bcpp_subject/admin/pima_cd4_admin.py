@@ -4,16 +4,16 @@ from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..filters import Cd4ThreshHoldFilter
-from ..forms import PimaForm
-from ..models import Pima
+from ..forms import PimaCd4Form
+from ..models import PimaCd4
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(Pima, site=bcpp_subject_admin)
-class PimaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+@admin.register(PimaCd4, site=bcpp_subject_admin)
+class PimaCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
 
-    form = PimaForm
+    form = PimaCd4Form
 
     fieldsets = (
         (None, {

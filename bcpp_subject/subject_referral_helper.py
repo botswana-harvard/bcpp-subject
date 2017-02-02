@@ -4,44 +4,64 @@ from collections import namedtuple
 from django.apps import apps as django_apps
 
 from edc_map.site_mappers import site_mappers
-from edc_constants.constants import POS, NEG, MALE, IND, FEMALE, YES
+from edc_constants.constants import POS, NEG, MALE, IND, FEMALE, YES, NO
+from edc_metadata.models import CrfMetadata
+from edc_metadata.constants import REQUIRED
 from survey.site_surveys import site_surveys
 
 from .choices import REFERRAL_CODES
-from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
+from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL, DECLINED
 from .models import (
     SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator,
     HivCareAdherence)
-from .utils import convert_to_nullboolean
-
-from .subject_status_helper import SubjectStatusHelper
+from .subject_helper import SubjectHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
-from edc_metadata.models import CrfMetadata
-from edc_metadata.constants import REQUIRED
-from bcpp_subject.constants import DECLINED
+from .utils import convert_to_nullboolean
 
 
 class SubjectReferralHelper(object):
-    """A class that calculates the referral code or returns a blank string.
-
-    See property :func:`referral_code`.
+    """A class that calculates the referral code or returns
+    a blank string.
     """
 
-    def __init__(self, subject_referral=None):
+    def __init__(self, subject_referral):
         self._circumcised = None
-        # self._enrollment_checklist_instance = None
         self._pregnant = None
         self._referral_clinic = None
         self._referral_code = None
         self._referral_code_list = []
-        self._subject_consent_instance = None
-        self._subject_referral = None
+        self._consent = None
         self._subject_referral_dict = {}
-        self._subject_status_helper = None
+
+        self.subject_referral = subject_referral
+        self.subject_helper = SubjectHelper(subject_referral.subject_visit)
+        self.gender = subject_referral.subject_visit.household_member.gender
+        self.subject_identifier = subject_referral.subject_visit.appointment.subject_identifier
+        self.subject_visit = subject_referral.subject_visit
+        self.visit_code = subject_referral.subject_visit.appointment.visit_code
+        self.hiv_result = self.subject_helper.hiv_result
+        self.on_art = self.subject_helper.on_art
+        self.part_time_resident = self.subject_referral.household_member.study_resident
+        self.tb_symptoms = subject_referral.tb_symptoms
+        self.citizen = (self.consent.citizen == YES and self.consent.identity)
+        self.citizen_spouse = (self.consent.citizen == NO
+                               and self.consent.legal_marriage == YES
+                               and self.consent.identity)
+
+        try:
+            self.arv_clinic = (
+                self.subject_helper
+                .hiv_care_adherence_instance
+                .clinic_receiving_from)
+        except AttributeError:
+            self.arv_clinic = None
+
+        self.intervention = site_mappers.get_mapper(
+            site_mappers.current_map_area).intervention
         self.community_code = site_mappers.get_mapper(
             site_mappers.current_map_area).map_code
         # self.models dict is also used in the signal
-        self.models = copy(SubjectStatusHelper.models)
+        self.models = copy(self.subject_helper.models)
         self.models[BASELINE].update({
             'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
@@ -61,22 +81,39 @@ class SubjectReferralHelper(object):
         self.models[BASELINE].update(
             {'subject_requisition': SubjectRequisition})
         self.models[ANNUAL].update({'subject_requisition': SubjectRequisition})
-        self.previous_subject_referrals = []
-        if subject_referral:
-            self.subject_referral = subject_referral
-
-    def __repr__(self):
-        return 'SubjectStatusHelper({0.subject_referral!r})'.format(self)
+        # prepare a queryset of visits previous to visit_instance
+        SubjectReferral = django_apps.get_model(
+            *'bcpp_subject.subjectreferral'.split('.'))
+        internal_identifier = subject_referral.subject_visit.household_member.internal_identifier
+        self.previous_subject_referrals = SubjectReferral.objects.filter(
+            subject_visit__household_member__internal_identifier=internal_identifier,
+            report_datetime__lt=subject_referral.report_datetime).order_by('report_datetime')
+        self.valid_referral_codes = [
+            code for code, _ in REFERRAL_CODES if not code == 'pending']
 
     def __str__(self):
         return '({0.subject_referral!r})'.format(self)
 
     @property
+    def consent(self):
+        # FIXME:
+        if not self._consent:
+            self._consent = (
+                self.subject_referral.CONSENT_MODEL.consent.consent_for_period(
+                    self.subject_identifier, self.subject_referral.report_datetime))
+        return self._consent
+
+    @property
     def required_crfs(self):
-        """ Returns crf that is required to be keyed before subject referral."""
-        crfs = ['bcpp_subject.subjectlocator', 'bcpp_subject.hivresult',
-                'bcpp_subject.elisahivresult', 'bcpp_subject.hivresultdocumentation',
-                'bcpp_subject.hivtestreview', 'bcpp_subject.pima',
+        """ Returns crf that are required to be keyed before subject
+        referral.
+        """
+        crfs = ['bcpp_subject.subjectlocator',
+                'bcpp_subject.hivresult',
+                'bcpp_subject.elisahivresult',
+                'bcpp_subject.hivresultdocumentation',
+                'bcpp_subject.hivtestreview',
+                'bcpp_subject.pimacd4',
                 'bcpp_subject.hivtestinghistory']
         for crf in crfs:
             try:
@@ -84,7 +121,7 @@ class SubjectReferralHelper(object):
                     model=crf,
                     subject_identifier=self.subject_identifier,
                     entry_status=REQUIRED,
-                    visit_code=self.visit_code())
+                    visit_code=self.visit_code)
                 return django_apps.get_app_config(
                     crf.split('.')[0]).get_model(crf.split('.')[1])
             except CrfMetadata.DoesNotExist:
@@ -95,80 +132,9 @@ class SubjectReferralHelper(object):
         """Returns a dictionary key of either baseline or annual base
          in the visit code.
          """
-        if self.subject_referral.subject_visit.appointment.visit_code in BASELINE_CODES:
+        if self.visit_code in BASELINE_CODES:
             return BASELINE
         return ANNUAL
-
-    @property
-    def subject_referral(self):
-        return self._subject_referral
-
-    @subject_referral.setter
-    def subject_referral(self, subject_referral):
-        SubjectReferral = django_apps.get_model(
-            'bcpp_subject', 'SubjectReferral')
-        if self._subject_referral:
-            # reset every attribute
-            self._subject_referral = None
-            self.__init__()
-        self._subject_referral = subject_referral
-        # prepare a queryset of visits previous to visit_instance
-        internal_identifier = subject_referral.subject_visit.household_member.internal_identifier
-        self.previous_subject_referrals = SubjectReferral.objects.filter(
-            subject_visit__household_member__internal_identifier=internal_identifier,
-            report_datetime__lt=subject_referral.report_datetime).order_by('report_datetime')
-
-    @property
-    def subject_status_helper(self):
-        if not self._subject_status_helper:
-            self._subject_status_helper = SubjectStatusHelper(
-                copy(self.subject_visit))
-        return self._subject_status_helper
-
-    @property
-    def gender(self):
-        return self.subject_referral.subject_visit.household_member.gender
-
-    @property
-    def household_member(self):
-        return self.subject_referral.subject_visit.household_member
-
-    @property
-    def subject_identifier(self):
-        return self.subject_referral.subject_visit.appointment.subject_identifier
-
-    @property
-    def subject_visit(self):
-        return self.subject_referral.subject_visit
-
-    def visit_code(self):
-        return self.subject_referral.subject_visit.appointment.visit_code
-
-    @property
-    def survey(self):
-        return self.subject_referral.subject_visit.household_member.household_structure.survey
-
-    @property
-    def hiv_result(self):
-        return self.subject_status_helper.hiv_result
-
-    @property
-    def hiv_care_adherence_next_appointment(self):
-        """Return the next appoint date from the HIV care and adherence."""
-        try:
-            hiv_care_adherence = HivCareAdherence.objects.get(
-                subject_visit=self.subject_visit)
-            next_appointment_date = hiv_care_adherence.next_appointment_date
-        except HivCareAdherence.DoesNotExist:
-            next_appointment_date = None
-        return next_appointment_date
-
-    @property
-    def on_art(self):
-        """Returns None if hiv_result==NEG otherwise True if
-        hiv_result==POS and on ART or False if not.
-        """
-        return self.subject_status_helper.on_art
 
     @property
     def subject_referral_dict(self):
@@ -211,13 +177,13 @@ class SubjectReferralHelper(object):
                 self._referral_code_list.append('SMC?UNK')
 
     def referral_code_neg(self):
-        if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
+        if self.gender == FEMALE and self.pregnant:  # only refer F if pregnant
             self._referral_code_list.append('NEG!-PR')
         # only refer M if not circumcised
-        elif self.gender == 'M' and self.circumcised is False:
+        elif self.gender == MALE and self.circumcised is False:
             self._referral_code_list.append('SMC-NEG')
         # only refer M if not circumcised
-        elif self.gender == 'M' and self.circumcised is None:
+        elif self.gender == MALE and self.circumcised is None:
             self._referral_code_list.append('SMC?NEG')
 
     def referral_code_pos_not_on_art(self):
@@ -248,9 +214,9 @@ class SubjectReferralHelper(object):
 
     def referral_code_pos(self):
         """ Docstring is required"""
-        if self.gender == 'F' and self.pregnant and self.on_art:
+        if self.gender == FEMALE and self.pregnant and self.on_art:
             self._referral_code_list.append('POS#-AN')
-        elif self.gender == 'F' and self.pregnant and not self.on_art:
+        elif self.gender == FEMALE and self.pregnant and not self.on_art:
             self._referral_code_list.append(
                 'POS!-PR') if self.new_pos else self._referral_code_list.append('POS#-PR')
         elif not self.on_art:
@@ -324,27 +290,10 @@ class SubjectReferralHelper(object):
         return referral_code
 
     @property
-    def valid_referral_codes(self):
-        return [code for code, _ in REFERRAL_CODES if not code == 'pending']
-
-    @property
-    def intervention(self):
-        return site_mappers.get_mapper(site_mappers.current_map_area).intervention
-
-    @property
-    def arv_clinic(self):
-        try:
-            clinic_receiving_from = (
-                self._subject_status_helper.hiv_care_adherence_instance.clinic_receiving_from)
-        except AttributeError:
-            clinic_receiving_from = None
-        return clinic_receiving_from
-
-    @property
     def circumcised(self):
         """Returns None if female otherwise True if circumcised or False if not."""
         if self._circumcised is None:
-            if self.gender == 'M':
+            if self.gender == MALE:
                 circumcised = None
                 if self.previous_subject_referrals:
                     # save current visit
@@ -365,51 +314,6 @@ class SubjectReferralHelper(object):
                         circumcised = None
                 self._circumcised = circumcised
         return self._circumcised
-
-    @property
-    def citizen(self):
-        citizen = None
-        try:
-            citizen = (
-                self.subject_consent_instance.citizen == YES and
-                self.subject_consent_instance.identity is not None)
-        except AttributeError:
-            citizen = None
-        return citizen
-
-    @property
-    def citizen_spouse(self):
-        citizen_spouse = None
-        try:
-            citizen_spouse = (
-                self.subject_consent_instance.legal_marriage == YES and
-                self.subject_consent_instance.identity is not None)
-        except AttributeError:
-            citizen_spouse = None
-        return citizen_spouse
-
-    @property
-    def next_arv_clinic_appointment_date(self):
-        next_appointment_date = None
-        try:
-            next_appointment_date = (
-                self._subject_status_helper.
-                hiv_care_adherence_instance.next_appointment_date)
-        except AttributeError:
-            pass
-        return next_appointment_date
-
-    @property
-    def part_time_resident(self):
-        """Returns True if part_time_resident as stated on
-        enrollment_checklist.
-        """
-        try:
-            part_time_resident = not convert_to_nullboolean(
-                self.subject_referral.household_member.study_resident)
-        except AttributeError:
-            part_time_resident = None
-        return part_time_resident
 
     @property
     def permanent_resident(self):
@@ -445,14 +349,6 @@ class SubjectReferralHelper(object):
         return self._pregnant
 
     @property
-    def tb_symptoms(self):
-        """Returns the tb_symptoms list as a convenience.
-
-        Not necessary for determining the referral code.
-        """
-        return self.subject_referral.tb_symptoms
-
-    @property
     def urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals
         list and sets to true on a match.
@@ -466,20 +362,19 @@ class SubjectReferralHelper(object):
         ] else False
 
     @property
-    def subject_consent_instance(self):
-        if not self._subject_consent_instance:
-            self._subject_consent_instance = (
-                self.subject_referral.CONSENT_MODEL.consent.consent_for_period(
-                    self.subject_identifier, self.subject_referral.report_datetime))
-        return self._subject_consent_instance
-
-    @property
     def subject_referral_appt_helper(self):
+        try:
+            hiv_care_adherence = HivCareAdherence.objects.get(
+                subject_visit=self.subject_visit)
+        except HivCareAdherence.DoesNotExist:
+            next_appointment = None
+        else:
+            next_appointment = hiv_care_adherence.next_appointment_date
         return SubjectReferralApptHelper(
             self.referral_code,
             base_date=self.subject_referral.report_datetime,
             scheduled_appt_date=self.subject_referral.scheduled_appt_date,
-            hiv_care_adherence_next_appointment=self.hiv_care_adherence_next_appointment
+            hiv_care_adherence_next_appointment=next_appointment
         )
 
     @property
@@ -500,56 +395,56 @@ class SubjectReferralHelper(object):
 
     @property
     def new_pos(self):
-        return self.subject_status_helper.new_pos
+        return self.subject_helper.new_pos
 
     @property
     def todays_hiv_result(self):
-        return self.subject_status_helper.todays_hiv_result
+        return self.subject_helper.todays_hiv_result
 
     @property
     def hiv_result_datetime(self):
-        return self.subject_status_helper.hiv_result_datetime
+        return self.subject_helper.hiv_result_datetime
 
     @property
     def last_hiv_result_date(self):
-        return self.subject_status_helper.last_hiv_result_date
+        return self.subject_helper.last_hiv_result_date
 
     @property
     def verbal_hiv_result(self):
-        return self.subject_status_helper.verbal_hiv_result
+        return self.subject_helper.verbal_hiv_result
 
     @property
     def last_hiv_result(self):
-        return self.subject_status_helper.last_hiv_result
+        return self.subject_helper.last_hiv_result
 
     @property
     def indirect_hiv_documentation(self):
-        return self.subject_status_helper.indirect_hiv_documentation
+        return self.subject_helper.indirect_hiv_documentation
 
     @property
     def direct_hiv_documentation(self):
-        return self.subject_status_helper.direct_hiv_documentation
+        return self.subject_helper.direct_hiv_documentation
 
     @property
     def defaulter(self):
-        return self.subject_status_helper.defaulter
+        return self.subject_helper.defaulter
 
     @property
     def cd4_result(self):
-        return self.subject_status_helper.cd4_result
+        return self.subject_helper.cd4_result
 
     @property
     def vl_sample_drawn(self):
-        return self.subject_status_helper.vl_sample_drawn
+        return self.subject_helper.vl_sample_drawn
 
     @property
     def vl_sample_drawn_datetime(self):
-        return self.subject_status_helper.vl_sample_drawn_datetime
+        return self.subject_helper.vl_sample_drawn_datetime
 
     @property
     def arv_documentation(self):
-        return self.subject_status_helper.arv_documentation
+        return self.subject_helper.arv_documentation
 
     @property
     def cd4_result_datetime(self):
-        return self.subject_status_helper.cd4_result_datetime
+        return self.subject_helper.cd4_result_datetime

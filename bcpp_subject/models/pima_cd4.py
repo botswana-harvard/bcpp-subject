@@ -10,7 +10,7 @@ from edc_constants.choices import YES_NO, PIMA
 from .model_mixins import CrfModelMixin
 
 
-class Pima (CrfModelMixin):
+class PimaCd4 (CrfModelMixin):
 
     pima_today = models.CharField(
         verbose_name="Was a PIMA CD4 done today?",
@@ -32,7 +32,8 @@ class Pima (CrfModelMixin):
     pima_id = models.CharField(
         verbose_name="PIMA CD4 machine ID?",
         max_length=9,
-        validators=[RegexValidator(regex='\d+', message='PIMA ID must be a two digit number.')],
+        validators=[
+            RegexValidator(regex='\d+', message='PIMA ID must be a two digit number.')],
         null=True,
         blank=True,
         help_text="type this id directly from the machine as labeled")

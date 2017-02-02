@@ -43,7 +43,7 @@ from .medical_diagnoses import MedicalDiagnoses
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
 from .participation import Participation
-from .pima import Pima
+from .pima_cd4 import PimaCd4
 from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant
 from .pregnancy import Pregnancy

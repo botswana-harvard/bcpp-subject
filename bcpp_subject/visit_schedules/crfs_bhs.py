@@ -41,7 +41,7 @@ _crfs_bhs = (
     Crf(show_order=370, model='bcpp_subject.hivresult', required=True),
     Crf(show_order=380, model='bcpp_subject.elisahivresult',
         required=False, additional=True),
-    Crf(show_order=390, model='bcpp_subject.pima',
+    Crf(show_order=390, model='bcpp_subject.pimacd4',
         required=False, additional=True),
     Crf(show_order=400, model='bcpp_subject.subjectreferral', required=True),
     Crf(show_order=410, model='bcpp_subject.hicenrollment',

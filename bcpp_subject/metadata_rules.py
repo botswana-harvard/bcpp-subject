@@ -9,22 +9,23 @@ from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_constants.constants import NO, YES, POS, NEG, FEMALE
 
 from .constants import VENOUS
-from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
+from .labs import (
+    microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
 from .models import ResourceUtilization, SubjectVisit
 from .metadata_rules_funcs import (
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
     func_hiv_positive_today,
-    func_hiv_untested,
+    func_requires_hivuntested,
     known_positive,
-    func_rbd,
-    requires_pima_vl,
-    circumcised,
-    func_show_hic_enrollment,
+    func_requires_rbd,
+    func_requires_pima_cd4,
+    func_requires_circumcision,
+    func_requires_hic_enrollment,
     func_show_microtube,
     func_todays_hiv_result_required,
-    func_vl,
-    female,
+    func_requires_vl,
+    is_female,
     func_show_recent_partner,
     func_show_second_partner_forms,
     func_show_third_partner_forms,
@@ -34,16 +35,16 @@ from .metadata_rules_funcs import (
 @register()
 class SubjectVisitRuleGroup(RuleGroup):
 
-    gender_circumsion = CrfRule(
+    circumcision = CrfRule(
         logic=Logic(
-            predicate=circumcised,
+            predicate=func_requires_circumcision,
             consequence=NOT_REQUIRED,
             alternative=REQUIRED),
         target_models=['circumcision', 'circumcised', 'uncircumcised'])
 
     gender_menopause = CrfRule(
         logic=Logic(
-            predicate=female,
+            predicate=is_female,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
@@ -56,12 +57,12 @@ class SubjectVisitRuleGroup(RuleGroup):
         target_models=['hivtestreview', 'hivtested', 'hivtestinghistory',
                        'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
-    pima_art_naive_enrollment_req_ahs = CrfRule(
+    pima_cd4 = CrfRule(
         logic=Logic(
-            predicate=requires_pima_vl,
+            predicate=func_requires_pima_cd4,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['pima'])
+        target_models=['pimacd4'])
 
     immigration_status = CrfRule(
         logic=Logic(
@@ -87,15 +88,15 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     vl_for_pos = RequisitionRule(
         logic=Logic(
-            predicate=func_vl,
+            predicate=func_requires_vl,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
         target_panels=[viral_load_panel], )
 
-    rbd_for_pos = RequisitionRule(
+    rbd = RequisitionRule(
         logic=Logic(
-            predicate=func_rbd,
+            predicate=func_requires_rbd,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -150,7 +151,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     hiv_untested = CrfRule(
         logic=Logic(
-            predicate=func_hiv_untested,
+            predicate=func_requires_hivuntested,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivuntested'])
@@ -248,12 +249,12 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['hivmedicalcare'])
 
-    pima_for_art_naive = CrfRule(
+    pima_cd4 = CrfRule(
         logic=Logic(
-            predicate=requires_pima_vl,
+            predicate=func_requires_pima_cd4,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['pima'])
+        target_models=['pimacd4'])
 
     first_regimen_no = CrfRule(
         logic=Logic(
@@ -395,9 +396,9 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
 class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures an RBD requisition if HIV result is POS."""
-    rbd_for_pos = RequisitionRule(
+    rbd = RequisitionRule(
         logic=Logic(
-            predicate=func_rbd,
+            predicate=func_requires_rbd,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -405,7 +406,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     vl_for_pos = RequisitionRule(
         logic=Logic(
-            predicate=func_vl,
+            predicate=func_requires_vl,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -420,16 +421,16 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model='bcpp_subject.subjectrequisition',
         target_panels=[microtube_panel], )
 
-    pima_for_art_naive = CrfRule(
+    pima_cd4 = CrfRule(
         logic=Logic(
-            predicate=requires_pima_vl,
+            predicate=func_requires_pima_cd4,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['pima'])
+        target_models=['pimacd4'])
 
-    hic = CrfRule(
+    hic_enrollment = CrfRule(
         logic=Logic(
-            predicate=func_show_hic_enrollment,
+            predicate=func_requires_hic_enrollment,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hicenrollment'])

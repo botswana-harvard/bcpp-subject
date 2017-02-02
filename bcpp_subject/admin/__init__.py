@@ -35,7 +35,7 @@ from .medical_diagnoses_admin import MedicalDiagnosesAdmin
 from .non_pregnancy_admin import NonPregnancyAdmin
 from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
-from .pima_admin import PimaAdmin
+from .pima_cd4_admin import PimaCd4Admin
 from .pima_vl_admin import PimaVlAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin

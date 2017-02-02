@@ -1,7 +1,7 @@
 import datetime
 
 from datetime import timedelta
-from django.test import TestCase
+from django.test import TestCase, tag
 from model_mommy import mommy
 
 from django.db import transaction
@@ -13,11 +13,12 @@ from survey.site_surveys import site_surveys
 from ..constants import (
     T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD, ELISA)
 from ..models import Appointment
-from ..subject_status_helper import SubjectStatusHelper
+from ..subject_helper import SubjectHelper
 from .rule_group_mixins import RuleGroupMixin
 
 
-class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
+@tag('TT')
+class TestSubjectHelper(RuleGroupMixin, TestCase):
 
     def setUp(self):
         super().setUp()
@@ -44,11 +45,11 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             report_datetime=report_datetime)
 
     def tests_hiv_result(self):
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
 
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.ahs_y2_subject_visit())
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
@@ -59,7 +60,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
 
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
@@ -68,7 +69,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.ahs_y2_subject_visit(), report_datetime, YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.ahs_y2_subject_visit(), report_datetime, NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.subject_visit_male_annual)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
@@ -79,7 +80,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
 
@@ -88,7 +89,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             ahs_y2_subject_visit, report_datetime, YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             ahs_y2_subject_visit, report_datetime, NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(ahs_y2_subject_visit)
+        subject_status_helper = SubjectHelper(ahs_y2_subject_visit)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
 
@@ -99,7 +100,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, POS, self.get_utcnow(), self.hiv_test_date)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, POS)
         self.assertFalse(subject_status_helper.new_pos)
 
@@ -108,7 +109,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             ahs_y2_subject_visit, self.get_utcnow(), NO, YES, NO, YES, NO)
         self.make_hiv_care_adherence(
             ahs_y2_subject_visit, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.subject_visit_male_annual)
         self.assertEquals(subject_status_helper.hiv_result, POS)
         self.assertFalse(subject_status_helper.new_pos)
@@ -118,13 +119,13 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, POS)
 
         ahs_y2_subject_visit = self.ahs_y2_subject_visit()
         self.make_hiv_care_adherence(
             ahs_y2_subject_visit, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(ahs_y2_subject_visit)
+        subject_status_helper = SubjectHelper(ahs_y2_subject_visit)
         self.assertEquals(subject_status_helper.hiv_result, POS)
 
     def tests_hiv_result4a(self):
@@ -136,12 +137,12 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
 
         self.make_hiv_result(POS, self.subject_visit_male, self.get_utcnow())
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, POS)
 
         self.make_hiv_care_adherence(
             self.ahs_y2_subject_visit(), self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.subject_visit_male_annual)
         self.assertEquals(subject_status_helper.hiv_result, POS)
 
@@ -158,7 +159,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, NO)
         self.make_hiv_result(POS, self.subject_visit_male, self.get_utcnow())
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, POS)
         self.assertEquals(
             subject_status_helper.hiv_result_datetime.date(),
@@ -167,7 +168,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
 
         self.make_hiv_care_adherence(
             self.ahs_y2_subject_visit(), self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.subject_visit_male_annual)
         self.assertEquals(subject_status_helper.hiv_result, POS)
         self.assertEquals(
@@ -184,7 +185,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, NO)
         self.make_hiv_result(NEG, self.subject_visit_male, self.get_utcnow())
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
 
         self.assertEquals(subject_status_helper.hiv_result, NEG)
         self.assertEquals(
@@ -201,7 +202,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.ahs_y2_subject_visit(), self.get_utcnow(), NO, YES, NO, YES, NO)
 
         self.make_hiv_result(POS, ahs_y2_subject_visit, report_datetime)
-        subject_status_helper = SubjectStatusHelper(ahs_y2_subject_visit)
+        subject_status_helper = SubjectHelper(ahs_y2_subject_visit)
         self.assertEquals(subject_status_helper.hiv_result, POS)
         self.assertEquals(
             subject_status_helper.hiv_result_datetime,
@@ -214,10 +215,10 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
         self.make_hivtest_review(
             self.subject_visit_male, NEG, self.get_utcnow(), result_date)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
 
-        subject_status_helper = SubjectStatusHelper(
+        subject_status_helper = SubjectHelper(
             self.subject_visit_male_annual)
         self.assertIsNone(subject_status_helper.hiv_result)
 
@@ -226,7 +227,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, YES)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, POS)
 
     def tests_on_arv1(self):
@@ -235,7 +236,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
                 self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
             self.make_hiv_care_adherence(
                 self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, YES)
-            subject_status_helper = SubjectStatusHelper(
+            subject_status_helper = SubjectHelper(
                 self.subject_visit_male)
             self.assertEquals(subject_status_helper.on_art, True)
 
@@ -244,7 +245,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, YES)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.on_art, True)
 
     def tests_on_arv3(self):
@@ -252,7 +253,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.on_art, True)
 
     def tests_on_arv4(self):
@@ -261,7 +262,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, NO)
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_status_helper = SubjectHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.on_art, False)
 
     def tests_hiv_result8(self):
@@ -300,14 +301,14 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertEqual(False, subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art is None)
 
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, NO, NO)
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertFalse(subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art is False)
@@ -315,7 +316,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
         hiv_result_documentation = mommy.make_recipe(
             'bcpp_subject.hivresultdocumentation', subject_visit=self.subject_visit_male)
 
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertFalse(subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art is False)
@@ -366,14 +367,14 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertEqual(False, subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art is None)
 
         self.make_hiv_care_adherence(
             self.subject_visit_male, self.get_utcnow(), NO, YES, NO, YES, YES)
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertFalse(subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art)
@@ -385,7 +386,7 @@ class TestSubjectStatusHelper(RuleGroupMixin, TestCase):
             result_date=self.hiv_test_date,
             result_doc_type='ART Prescription'
         )
-        subject_referral_helper = SubjectStatusHelper(self.subject_visit_male)
+        subject_referral_helper = SubjectHelper(self.subject_visit_male)
         self.assertEqual(POS, subject_referral_helper.hiv_result)
         self.assertFalse(subject_referral_helper.new_pos)
         self.assertTrue(subject_referral_helper.on_art)
