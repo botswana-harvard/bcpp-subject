@@ -95,7 +95,7 @@ class SubjectHelper(object):
             'subject_requisition': SubjectRequisition})
 
     def __repr__(self):
-        return 'SubjectStatusHelper({0.subject_visit!r})'.format(self)
+        return 'SubjectHelper({0.subject_visit!r})'.format(self)
 
     def __str__(self):
         return '({0.subject_visit!r})'.format(self)
@@ -165,7 +165,7 @@ class SubjectHelper(object):
                                 pass
                     except TypeError:  # attr_if_pos is None, not iterable
                         value = value_if_pos
-#                     except AttributeError:# 'SubjectStatusHelper' object has
+#                     except AttributeError:# 'SubjectHelper' object has
 #                        no attribute 'date'
 #                         value = value_if_pos
                     break  # got one!

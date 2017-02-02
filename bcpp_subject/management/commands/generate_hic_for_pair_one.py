@@ -4,7 +4,7 @@ from edc_constants.constants import NEG, YES, NO
 
 from household.constants import BASELINE_SURVEY
 from bcpp_subject.models import SubjectVisit, SubjectLocator, ResidencyMobility, HicEnrollment, SubjectConsent
-from bcpp_subject.subject_status_helper import SubjectStatusHelper
+from bcpp_subject.subject_status_helper import SubjectHelper
 
 
 def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enrollment):
@@ -29,7 +29,7 @@ def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enroll
             subject_visit=subject_visit)
     except SubjectLocator.DoesNotExist:
         print('{}.   missing SubjectLocator'.format(n))
-    if (SubjectStatusHelper(subject_visit).hiv_result == NEG and
+    if (SubjectHelper(subject_visit).hiv_result == NEG and
             residency_and_mobility.permanent_resident == YES and
             residency_and_mobility.intend_residency == NO and
             subject_locator.may_follow_up == YES):
@@ -49,7 +49,7 @@ def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enroll
             print('{}. created {}'.format(n, hic_enrollment))
     else:
         print('    not eligible hiv={}, resident={}, moving={}, follow={}'.format(
-            SubjectStatusHelper(subject_visit).hiv_result,
+            SubjectHelper(subject_visit).hiv_result,
             residency_and_mobility.permanent_resident,
             residency_and_mobility.intend_residency,
             subject_locator.may_follow_up))
