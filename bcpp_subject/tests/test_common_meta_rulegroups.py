@@ -11,42 +11,36 @@ from ..constants import NOT_SURE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
-from ..constants import T0, E0
+from ..constants import E0
 
 
 class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data_female = {
-            'identity': '31722515',
-            'confirm_identity': '31722515', }
         self.consent_data_male = {
             'identity': '31721515',
             'confirm_identity': '31721515', }
-        self.subject_visit_male_T0 = self.make_subject_visit_for_consented_subject_male(
-            T0,
-            survey_schedule=self.get_survey_schedule(index=1),
-            **self.consent_data_male_t0)
-
+        survey_schedule = self.get_survey_schedule(index=2)
         self.subject_visit_male_E0 = self.make_subject_visit_for_consented_subject_male(
             E0,
-            survey_schedule=self.get_survey_schedule(index=2),
+            survey_schedule=survey_schedule,
             **self.consent_data_male)
-        self.hiv_test_date = timezone.now() - timedelta(days=50)
+        self.hiv_test_date = self.subject_visit_male_E0.report_datetime
 
     @tag('shared_rule')
     def test_hiv_car_adherence_and_pima1(self):
         """ HIV Positive took arv in the past but now defaulting, Should NOT offer POC CD4.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.assertCrfrule(
                 'bcpp_subject.hivcareadherence', REQUIRED,
                 subject_visit.visit_code)
-            self.assertCrfrule(
-                'bcpp_subject.pima', REQUIRED,
-                subject_visit.visit_code)
+            self.assertEqual(
+                self.crf_metadata_obj('bcpp_subject.pima',
+                                      NOT_REQUIRED, subject_visit.visit_code,
+                                      subject_visit.subject_identifier).count(), 1)
             # suggest this is a defaulter
             mommy.make_recipe(
                 'bcpp_subject.hivcareadherence',
@@ -59,10 +53,12 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 on_arv=NO,
                 arv_evidence=NO)
 
-            self.assertCrfrule(
-                'bcpp_subject.pima', NOT_REQUIRED, subject_visit.visit_code)
+            self.assertEqual(
+                self.crf_metadata_obj('bcpp_subject.pima',
+                                      NOT_REQUIRED, subject_visit.visit_code,
+                                      subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('shared_rule1')
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required, not a defaulter.
 
@@ -71,7 +67,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             * HivResult
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.assertEqual(
                 self.crf_metadata_obj('bcpp_subject.hivcareadherence',
                                       REQUIRED, subject_visit.visit_code,
@@ -82,7 +78,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.subject_identifier).count(), 1)
             # add HivCarAdherence,
             self.make_hiv_care_adherence(
-                self.subject_visit_female, self.get_utcnow(), NO, NO, NO, YES, YES)
+                subject_visit, self.get_utcnow(), NO, NO, NO, YES, YES)
 
             # on art so no need for CD4
             self.assertEqual(
@@ -100,7 +96,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             * HivResult
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.assertEqual(
                 self.crf_metadata_obj('bcpp_subject.hivcareadherence',
                                       REQUIRED, subject_visit,
@@ -125,7 +121,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """Newly HIV Positive not on ART at subject_visit.visit_code, Should offer POC CD4.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.make_hiv_result(POS, subject_visit, self.get_utcnow())
 
             # add HivCarAdherence,
@@ -141,7 +137,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """If not a known POS, requires HIV and CD4 (until today's result is known).
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add hivtestreview,
             hiv_test_review = self.make_hivtest_review(
                 subject_visit, NEG, self.get_utcnow(), self.hiv_test_date)
@@ -173,7 +169,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
     def test_known_pos_completes_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add hivtestreview
             self.make_hivtest_review(
                 subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
@@ -192,7 +188,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """If known POS (not including today's test), requires hiv_care_adherence.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestHistory,
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, YES, POS, NO)
@@ -227,7 +223,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         See rule_groups.ReviewNotPositiveRuleGroup
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestReview
             self.make_hivtest_review(
                 subject_visit, NEG, self.get_utcnow(), self.hiv_test_date)
@@ -246,7 +242,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         See rule_groups.ReviewNotPositiveRuleGroup
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add hivtestreview
             self.make_hivtest_review(
                 subject_visit, POS, self.get_utcnow(),
@@ -267,7 +263,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """If known posetive, test stigma forms
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             #  self.check_male_registered_subject_rule_groups(self.subject_visit_female_subject_visit.visit_code)
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, YES, NEG, NO)
@@ -290,7 +286,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """If known posetive, test hivtested forms
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             mommy.make_recipe(
                 'bcpp_subject.hivtestinghistory',
                 report_datetime=self.get_utcnow(),
@@ -324,7 +320,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestReview,
             self.make_hivtest_review(subject_visit, POS,
                                      self.get_utcnow(), self.hiv_test_date)
@@ -366,7 +362,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             not considering availability or lack thereof documentation.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, NO, POS, NO)
 
@@ -384,7 +380,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestReview,
             self.make_hivtest_review(
                 subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
@@ -423,7 +419,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestReview,
             self.make_hivtest_review(
                 subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
@@ -460,7 +456,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             being REQUIRED just like Today's HivResult
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # add HivTestReview,
             self.make_hivtest_review(
                 subject_visit, NEG, self.get_utcnow(), self.hiv_test_date)
@@ -524,7 +520,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                     subject_visit.subject_identifier).count(), 1)
 
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
 
             assert_circumsition(REQUIRED, REQUIRED, REQUIRED)
 
@@ -554,7 +550,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
     @tag('shared_rule')
     def test_Known_hiv_pos_y1_require_no_testing(self):
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, YES, POS, NO)
 
@@ -573,7 +569,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
            Pima, RBD and VL required. Then Key RBD for later use in Annual survey.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # Known POS in subject_visit.visit_code
 
             self.make_hivtesting_history(
@@ -610,7 +606,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """HIV Positive not on ART at subject_visit.visit_code, Should offer POC CD4, RBD and VL.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # Known POS in subject_visit.visit_code
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, YES, POS, NO)
@@ -639,7 +635,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """HIV Positive not on ART at subject_visit.visit_code, Should offer POC CD4, RBD and VL.
         """
         for subject_visit in [
-                self.subject_visit_male_T0, self.subject_visit_male_E0]:
+                self.subject_visit_male_t0, self.subject_visit_male_E0]:
             # make
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, NO, POS, NO)
