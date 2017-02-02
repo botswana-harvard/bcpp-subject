@@ -57,27 +57,44 @@ class ModelValues:
                 self.elisa_hiv_result_date = qs.last().hiv_result_date
 
         # HivTestingHistory
-        obj = HivTestingHistory.objects.filter(
-            **options).order_by('report_datetime').last()
-        if obj:
-            self.has_tested = obj.has_tested
-            self.other_record = obj.other_record
-            self.self_reported_result = obj.verbal_hiv_result
+        qs = HivTestingHistory.objects.filter(
+            **options).order_by('report_datetime')
+        if qs:
+            obj = self.get_first_positive_or_none(qs, 'verbal_hiv_result')
+            if obj:
+                self.has_tested = obj.has_tested
+                self.other_record = obj.other_record
+                self.self_reported_result = obj.verbal_hiv_result
+            else:
+                self.has_tested = qs.last().has_tested
+                self.other_record = qs.last().other_record
+                self.self_reported_result = qs.last().verbal_hiv_result
 
         # HivTestReview
-        obj = HivTestReview.objects.filter(
-            **options).order_by('report_datetime').last()
-        if obj:
-            self.recorded_hiv_result = obj.recorded_hiv_result
-            self.recorded_hiv_result_date = obj.hiv_test_date
+        qs = HivTestReview.objects.filter(
+            **options).order_by('report_datetime')
+        if qs:
+            obj = self.get_first_positive_or_none(qs, 'recorded_hiv_result')
+            if obj:
+                self.recorded_hiv_result = obj.recorded_hiv_result
+                self.recorded_hiv_result_date = obj.hiv_test_date
+            else:
+                self.recorded_hiv_result = qs.last().recorded_hiv_result
+                self.recorded_hiv_result_date = qs.last().hiv_test_date
 
         # HivResultDocumentation
-        obj = HivResultDocumentation.objects.filter(
-            **options).order_by('report_datetime').last()
-        if obj:
-            self.result_recorded = obj.result_recorded
-            self.result_recorded_date = obj.result_date
-            self.result_recorded_document = obj.result_doc_type
+        qs = HivResultDocumentation.objects.filter(
+            **options).order_by('report_datetime')
+        if qs:
+            obj = self.get_first_positive_or_none(qs, 'result_recorded')
+            if obj:
+                self.result_recorded = obj.result_recorded
+                self.result_recorded_date = obj.result_date
+                self.result_recorded_document = obj.result_doc_type
+            else:
+                self.result_recorded = qs.last().result_recorded
+                self.result_recorded_date = qs.last().result_date
+                self.result_recorded_document = qs.last().result_doc_type
 
         # HivResult
         qs = HivResult.objects.filter(
