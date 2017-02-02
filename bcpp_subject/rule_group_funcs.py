@@ -52,13 +52,6 @@ def func_is_baseline_or_ess(visit_instance, *args):
     return False
 
 
-def func_is_annual(visit_instance, *args):
-    # FIXME: THIS IS too simple,  in context of having ESS
-    if visit_instance.visit_code != T1:
-        return True
-    return False
-
-
 def func_previous_visit(visit_instance, *args):
     visit_codes = [E0, T0, T1, T2]
     desc_visit_codes = visit_codes[

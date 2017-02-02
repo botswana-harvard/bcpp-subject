@@ -4,7 +4,6 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..subject_referral_helper import SubjectReferralHelper
@@ -20,7 +19,7 @@ REFERRAL_CLINIC_TYPES = (
 )
 
 
-class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
+class SubjectReferral(CrfModelMixin):
     """A model completed by the user to indicate a referral to care."""
 
     subject_referred = models.CharField(
@@ -343,7 +342,6 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
                                          self.referral_clinic)
 
     def save(self, *args, **kwargs):
-        self.subject_identifier = self.subject_visit.household_member.subject_identifier
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
 #         if subject_referral_helper.required_crfs:
@@ -365,7 +363,8 @@ class SubjectReferral(NonUniqueSubjectIdentifierFieldMixin, CrfModelMixin):
 
     def dashboard(self):
         url = reverse('subject_dashboard_url',
-                      kwargs={'dashboard_type': self.subject_visit.appointment.registered_subject.subject_type.lower(),
+                      kwargs={'dashboard_type':
+                              self.subject_visit.appointment.registered_subject.subject_type.lower(),
                               'dashboard_model': 'appointment',
                               'dashboard_id': self.subject_visit.appointment.pk,
                               'show': 'appointments'})

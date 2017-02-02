@@ -1,3 +1,3 @@
 from .appointment_view_mixin import AppointmentViewMixin
 from .consent_view_mixin import ConsentViewMixin
-from .enrollment_forms_view_mixin import EnrollmentFormsViewMixin
+from .visit_schedule_view_mixin import VisitScheduleViewMixin

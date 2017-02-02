@@ -83,8 +83,9 @@ class ResidencyMobility (CrfModelMixin):
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
-                raise exception_cls('An HicEnrollment form exists for this subject. Values for '
-                                    '\'permanent_resident\' and \'intend_residency\' cannot be changed.')
+                raise exception_cls('An HicEnrollment form exists for this '
+                                    'subject. Values for \'permanent_resident\''
+                                    ' and \'intend_residency\' cannot be changed.')
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

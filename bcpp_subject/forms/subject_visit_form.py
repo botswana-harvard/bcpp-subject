@@ -5,9 +5,15 @@ from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
 from ..models import SubjectVisit
 from edc_consent.site_consents import site_consents
 from bcpp.consents import ANONYMOUS_CONSENT_GROUP
+from edc_base.modelform_mixins import CommonCleanModelFormMixin
+from edc_visit_tracking.form_mixins import VisitFormMixin
 
 
-class SubjectVisitForm (RequiresConsentModelFormMixin, forms.ModelForm):
+class SubjectVisitForm (VisitFormMixin, RequiresConsentModelFormMixin,
+                        CommonCleanModelFormMixin, forms.ModelForm):
+
+    def validate_reason_and_info_source(self):
+        pass
 
     def get_consent(self, subject_identifier, report_datetime):
         """Return an instance of the consent model.

@@ -53,13 +53,6 @@ class CommunityEngagement (CrfModelMixin):
 
     history = HistoricalRecords()
 
-#     def common_clean(self):
-#         # TODO: repeat validation ...see form
-#         if self.community_engagement == DWTA and len.get('problems_engagement') > 1:
-#             raise CommunityEngagementError(
-#                 'You cannot choose Don\'t want to answer and another problem at the same time. Please correct.')
-#         super().common_clean()
-
     @property
     def common_clean_exceptions(self):
         return super().common_clean_exceptions + [CommunityEngagementError]

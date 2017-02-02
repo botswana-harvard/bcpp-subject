@@ -15,8 +15,10 @@ class AppConfig(DjangoApponfig):
 
     def ready(self):
         from bcpp_subject.models.signals import (
-            subject_consent_on_post_save,
+            consent_on_post_save,
             subject_consent_on_post_delete,
             enrollment_checklist_anonymous_on_post_save,
             enrollment_checklist_anonymous_on_post_delete,
+            enrollment_checklist_on_post_delete,
+            enrollment_checklist_on_post_save,
         )

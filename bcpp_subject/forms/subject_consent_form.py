@@ -23,10 +23,8 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         cleaned_data = super().clean()
 
         self.clean_consent_with_household_member()
-        self.clean_citizen()
-        self.clean_not_citizen()
-        self.limit_edit_to_current_community()
-        self.limit_edit_to_current_survey()
+        self.clean_citizen_is_citizen()
+        self.clean_citizen_is_not_citizen()
         self.household_info()
         return cleaned_data
 
@@ -69,7 +67,7 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                     'Got %(gender)s <> %(hm_gender)s'.format(
                         household_member.gender, gender)})
 
-    def clean_citizen(self):
+    def clean_citizen_is_not_citizen(self):
         citizen = self.cleaned_data.get('citizen')
         legal_marriage = self.cleaned_data.get('legal_marriage')
         marriage_certificate = self.cleaned_data.get('marriage_certificate')
@@ -98,7 +96,7 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                         'You wrote subject is NOT a citizen and has marriage '
                         'certificate. Please provide certificate number.'})
 
-    def clean_citizen_not_citizen(self):
+    def clean_citizen_is_citizen(self):
         cleaned_data = self.cleaned_data
         citizen = cleaned_data.get('citizen')
         legal_marriage = cleaned_data.get('legal_marriage')

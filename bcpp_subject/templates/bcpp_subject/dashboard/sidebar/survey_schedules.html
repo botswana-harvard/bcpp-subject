@@ -1,0 +1,17 @@
+
+<div class="list-group">
+
+{% for enrollment_model in enrollment_models %}
+
+    <a class="list-group-item">
+      {{ enrollment_model.schedule.title }}
+      {% if enrollment_model.current %}
+          <i class="fa fa-check fa-fw"></i>
+      {% endif %}
+      <br><span class="text small">{{ enrollment_model.survey_schedule_object.name }}
+      {{ enrollment_model.report_datetime|date:"Y-m-d" }}</span>
+    </a>
+
+{% endfor %}
+
+</div>

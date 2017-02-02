@@ -15,12 +15,6 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
         self.options = {
             'created': get_utcnow(),
@@ -30,7 +24,7 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
             'circ_date': arrow.utcnow().date(),
             'report_datetime': self.get_utcnow(),
             'when_circ': 18,
-            'subject_visit': self.bhs_subject_visit_male.id,
+            'subject_visit': self.subject_visit_male.id,
             'age_unit_circ': 'Years',
             'where_circ': 'Government clinic or hospital',
             'why_circ': 'Improved hygiene',
@@ -55,12 +49,6 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.consent_data = {
-            'identity': '31721515',
-            'confirm_identity': '31721515',
-            'report_datetime': self.get_utcnow(),
-        }
-        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male('T0', **self.consent_data)
         health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
 
         self.options = {
@@ -69,7 +57,7 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
             'hostname_created': 'testuser',
             'circumcised': YES,
             'report_datetime': self.get_utcnow(),
-            'subject_visit': self.bhs_subject_visit_male.id,
+            'subject_visit': self.subject_visit_male.id,
             'reason_circ': 'Circumcision never offered to me',
             'future_circ': YES,
             'future_reasons_smc': 'More information about benefits',

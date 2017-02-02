@@ -3,6 +3,10 @@ sudo: required
 language: python
 python:
 - 3.5.1
+addons:
+  apt:
+    packages:
+    - libcups2-dev
 services:
 - mysql
 before_install:
@@ -20,8 +24,6 @@ install:
 before_script:
 - flake8 bcpp_subject
 - mysql -e 'create database edc character set utf8;'
-- python manage.py makemigrations
-- python manage.py migrate
 script:
 - coverage run --source=edc_bcpp_subject manage.py test
 after_success:

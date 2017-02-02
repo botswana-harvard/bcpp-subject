@@ -59,7 +59,8 @@ class AnonymousConsentAdmin(ModelAdminMixin):
         try:
             return reverse(
                 'bcpp-subject:dashboard_url', kwargs=dict(
-                    household_identifier=obj.household_member.household_structure.household.household_identifier,
+                    household_identifier=(
+                        obj.household_member.household_structure.household.household_identifier),
                     subject_identifier=obj.subject_identifier,
                     survey=obj.survey,
                     survey_schedule=obj.survey_schedule_object.field_value))
@@ -69,5 +70,6 @@ class AnonymousConsentAdmin(ModelAdminMixin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
             HouseholdMember = django_apps.get_model('member', 'householdmember')
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member'))
+            kwargs["queryset"] = (
+                HouseholdMember.objects.filter(id__exact=request.GET.get('household_member')))
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

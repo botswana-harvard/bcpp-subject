@@ -49,7 +49,8 @@ class MedicalDiagnoses (CrfModelMixin):
         null=True,
         blank=True,
         choices=YES_NO_DWTA,
-        help_text="Please review the available OPD card or other medical records, for all participants",
+        help_text=("Please review the available OPD card or other medical records,"
+                   "for all participants"),
     )
 
     history = HistoricalRecords()

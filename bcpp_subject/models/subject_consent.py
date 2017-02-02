@@ -52,12 +52,13 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                     registered_subject.identity,
                     self.identity))
         if (registered_subject.registration_identifier
-                != self.household_member.internal_identifier):
+            and registered_subject.registration_identifier !=
+                self.household_member.internal_identifier):
             raise RegisteredSubjectError(
                 'Internal Identifier may not be changed. Expected {}. '
                 'Got {}'.format(
                     registered_subject.registration_identifier,
-                    self.internal_identifier))
+                    self.household_member.internal_identifier))
         if registered_subject.dob != self.dob:
             raise RegisteredSubjectError(
                 'DoB may not be changed. Expected {}. Got {}'.format(
@@ -118,10 +119,11 @@ class SubjectConsent(
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return ((self.subject_identifier, self.version, )
-                + self.household_member.natural_key())
+        return ((self.subject_identifier, self.version, ) +
+                self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_age_and_dob(self):
         # confirm member is eligible
         if not (self.household_member.age_in_years >= 16
@@ -141,6 +143,7 @@ class SubjectConsent(
         except HicEnrollment.DoesNotExist:
             pass
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_completed_enrollment_checklist(self):
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
@@ -154,6 +157,7 @@ class SubjectConsent(
             raise ConsentValidationError('Member is not eligible.')
         return enrollment_checklist
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_dob(self, enrollment_checklist):
         if self.dob:
             # minor (do this before comparing DoB)
@@ -176,6 +180,7 @@ class SubjectConsent(
                         EnrollmentChecklist._meta.verbose_name,
                         enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_literacy(self, enrollment_checklist):
         # match literacy
         if enrollment_checklist.literacy == YES and self.is_literate != YES:
@@ -187,11 +192,12 @@ class SubjectConsent(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'is_literate')
         elif (enrollment_checklist.literacy == NO
-                and self.is_literate == NO
-                and not self.witness_name):
+              and self.is_literate == NO
+              and not self.witness_name):
             raise ConsentValidationError(
                 'Witness name is required', 'witness_name')
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_citizen(self, enrollment_checklist):
         # match citizenship
         if enrollment_checklist.citizen != self.citizen:
@@ -199,8 +205,9 @@ class SubjectConsent(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'citizen')
         if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage
-                    or enrollment_checklist.marriage_certificate != self.marriage_certificate):
+            if (enrollment_checklist.legal_marriage != self.legal_marriage or
+                enrollment_checklist.marriage_certificate !=
+                    self.marriage_certificate):
                 raise ConsentValidationError(
                     'Citizenship by marriage mismatch. {} reports subject '
                     'is married to a citizen with a valid marriage '
@@ -208,6 +215,7 @@ class SubjectConsent(
                         self._meta.verbose_name,
                         EnrollmentChecklist._meta.verbose_name))
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_minor(self, enrollment_checklist):
         # minor and guardian name
         if enrollment_checklist.guardian == YES and not self.guardian_name:
@@ -219,6 +227,7 @@ class SubjectConsent(
                 'Guardian name not expected. See {}.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'guardian_name')
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_gender(self, enrollment_checklist):
         # match gender
         if enrollment_checklist.gender != self.gender:
@@ -226,6 +235,7 @@ class SubjectConsent(
                 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'gender')
 
+    # TODO: reconcile this with forms.py validations
     def common_clean_initials(self, enrollment_checklist):
         # match initials
         if not self.household_member.personal_details_changed == YES:
@@ -233,15 +243,16 @@ class SubjectConsent(
                 raise ConsentValidationError('Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name), 'initials')
 
+    # TODO: reconcile this with forms.py validations
     def common_clean(self):
         self.common_clean_age_and_dob()
-        #enrollment_checklist = self.common_clean_enrollment_checklist()
-        #self.common_clean_initials()
-        #self.common_clean_dob()
-        #self.common_clean_gender()
-        #self.common_clean_minor(enrollment_checklist)
-        #self.common_clean_literacy(enrollment_checklist)
-        #self.common_clean_citizen(enrollment_checklist)
+        enrollment_checklist = self.common_clean_completed_enrollment_checklist()
+        self.common_clean_initials(enrollment_checklist)
+        self.common_clean_dob(enrollment_checklist)
+        self.common_clean_gender(enrollment_checklist)
+        self.common_clean_minor(enrollment_checklist)
+        self.common_clean_literacy(enrollment_checklist)
+        self.common_clean_citizen(enrollment_checklist)
         super().common_clean()
 
     @property

@@ -74,7 +74,8 @@ class TestReferral(SubjectMixin, TestCase):
         """Return an ahs  year 3 subject visit."""
 
         household_structure = household_member.household_structure
-        next_household_structure = self.get_next_household_structure_ready(household_structure, make_hoh=None)
+        next_household_structure = (
+            self.get_next_household_structure_ready(household_structure, make_hoh=None))
 
         new_household_member = household_member.clone(
             household_structure=next_household_structure,
@@ -262,11 +263,13 @@ class TestReferral(SubjectMixin, TestCase):
         mommy.make_recipe(
             'bcpp_subject.circumcision',
             subject_visit=subject_visit_t1,
-            circumcised=YES)
+            report_datetime=subject_visit_t1.report_datetime,
+            circumcised=YES,
+            health_benefits_smc=[self.circumcision_benefits])
         subject_referral = mommy.make_recipe(
             'bcpp_subject.subjectreferral',
             subject_referred=YES,
             subject_visit=subject_visit_t1,
-            report_datetime=self.get_utcnow(),
-            scheduled_appt_date=self.get_utcnow())
+            report_datetime=subject_visit_t1.report_datetime,
+            scheduled_appt_date=subject_visit_t1.report_datetime)
         self.assertNotIn('SMC', subject_referral.referral_code)
