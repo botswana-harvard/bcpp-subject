@@ -414,6 +414,7 @@ HIV_DOC_TYPE = (
     ('ART Prescription', 'ART Prescription'),
     ('PMTCT Prescription', 'PMTCT Prescription'),
     ('Record of CD4 count', 'Record of CD4 count'),
+    ('Ya Tsie Test Card', 'Ya Tsie Test Card'),
     (OTHER, 'Other OPD card or ANC card documentation'),
 )
 
@@ -831,6 +832,7 @@ AWARE_FREE_CHOICE = (
     ('Friend told me', _('Friend told me')),
     ('Family told me', _('Family told me')),
     ('Health worker told me', _('Health worker told me')),
+    ('Ya Tsie staff told me', _('Ya Tsie staff told me')),
     ('Kgosi told us', _('Kgosi told us')),
     ('I heard it at the kgotla', _('I heard it at the kgotla')),
     ('I read a brochure delivered to my home',
@@ -892,6 +894,7 @@ WHY_NO_ARV_CHOICE = (
     ('Religious beliefs', _('Religious beliefs')),
     ('Cultural beliefs', _('Cultural beliefs')),
     ('High CD4', _('High CD4')),
+    ('Cost', _('Cost')),
     (OTHER, _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
@@ -962,6 +965,8 @@ NO_MEDICAL_CARE = (
      _('Traditional healer advised against going')),
     ('Religious beliefs', _('Religious beliefs')),
     ('Cultural beliefs', _('Cultural beliefs')),
+    ('Not provided free of charge for non-citizens',
+     _('Not provided free of charge for non-citizens')),
     (OTHER, _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
@@ -984,6 +989,7 @@ WHY_NO_HIV_TESTING_CHOICE = (
     ('I recently tested', _('I recently tested (I know my status)')),
     ('I didn\'t believe I was at risk of getting HIV',
      _('I didn\'t believe I was at risk of getting HIV')),
+    
     ('I am afraid to find out the result',
      _('I am afraid to find out the result')),
     ('I am afraid of what others would think of me',
@@ -1027,6 +1033,7 @@ WHERE_HIV_TEST_CHOICE = (
      _('In my house as part of door-to-door services')),
     ('In a mobile tent or vehicle in my neighborhood',
      _('In a mobile tent or vehicle in my neighborhood')),
+    ('Ya_Tsie HIV Test Campaign', _('Ya Tsie HIV Test Campaign')),
     (OTHER, _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
@@ -1047,6 +1054,10 @@ WHY_HIV_TEST_CHOICE = (
      'me to get tested for '
      'HIV', _('I read information on a brochure/flier that it is '
               'important for me to get tested for HIV')),
+    ('I had information from the Ya_Tsie study that it was important'
+     'to get tested for '
+     'HIV', _('I had information from the Ya_Tsie study'
+              'that it was important to get tested for HIV')),
     (OTHER, _('Other')),
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),

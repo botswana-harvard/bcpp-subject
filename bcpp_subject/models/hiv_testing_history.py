@@ -32,7 +32,7 @@ class HivTestingHistory (CrfModelMixin):
 
     # this field triggers HivTestReview
     has_record = models.CharField(
-        verbose_name="Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
+        verbose_name="Is a record of last [most recent] HIV test [OPD card, Tebelopele,Ya Tsie"
                      " other] available to review?",
         max_length=45,
         null=True,
