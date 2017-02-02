@@ -11,7 +11,7 @@ from edc_constants.constants import NO, YES, POS, NEG, FEMALE
 from .constants import VENOUS
 from .labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
 from .models import ResourceUtilization, SubjectVisit
-from .rule_group_funcs import (
+from .metadata_rules_funcs import (
     func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
     func_hiv_positive_today,
