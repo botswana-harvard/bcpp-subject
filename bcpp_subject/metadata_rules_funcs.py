@@ -3,7 +3,7 @@ from edc_registration.models import RegisteredSubject
 
 from member.models.household_member.household_member import HouseholdMember
 
-from .constants import T1, T2, DECLINED, E0, T0
+from .constants import T1, T2, T3, DECLINED, E0, T0
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult,
     SubjectVisit, SexualBehaviour)
@@ -53,16 +53,13 @@ def func_is_baseline_or_ess(visit_instance, *args):
 
 
 def func_previous_visit(visit_instance, *args):
-    visit_codes = [E0, T0, T1, T2]
-    desc_visit_codes = visit_codes[
-        :visit_codes.index(visit_instance.visit_code)].reverse() or []
-    for code in desc_visit_codes:
-        try:
-            return SubjectVisit.objects.get(
-                visit_code=code,
-                subject_identifier=visit_instance.subject_identifier)
-        except SubjectVisit.DoesNotExist:
-            pass
+    if visit_instance.visit_code in [E0, T0]:
+        return None
+    visit_codes = [T0, T1, T2, T3]
+    index = visit_codes.index(visit_instance.visit_code)
+    return SubjectVisit.objects.get(
+        visit_code=visit_codes[:index][0],
+        subject_identifier=visit_instance.subject_identifier)
 
 
 def func_is_defaulter(visit_instance, *args):
