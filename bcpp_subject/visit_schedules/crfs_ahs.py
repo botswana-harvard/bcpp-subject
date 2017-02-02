@@ -46,7 +46,7 @@ _crfs_ahs = (
     Crf(show_order=340, model='bcpp_subject.hivresult', required=True),
     Crf(show_order=350, model='bcpp_subject.elisahivresult',
         required=False, additional=True),
-    Crf(show_order=360, model='bcpp_subject.pima',
+    Crf(show_order=360, model='bcpp_subject.pimacd4',
         required=False, additional=True),
     Crf(show_order=370, model='bcpp_subject.subjectreferral', required=True),
     Crf(show_order=380,

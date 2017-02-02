@@ -8,13 +8,13 @@ from edc_constants.constants import POS, NEG, YES
 
 from .constants import BASELINE_CODES
 from .models import (
-    HivResult, Pima, HivTestReview, HivCareAdherence,
+    HivResult, PimaCd4, HivTestReview, HivCareAdherence,
     HivTestingHistory, HivResultDocumentation, ElisaHivResult)
 from .utils import convert_to_nullboolean
 from bcpp_subject.constants import E0, T0
 
 
-class SubjectStatusHelper(object):
+class SubjectHelper(object):
     """A helper class to consistently and conveniently return the
     HIV status of a subject.
 
@@ -38,7 +38,7 @@ class SubjectStatusHelper(object):
             'hiv_result_documentation': HivResultDocumentation,
             'hiv_test_review': HivTestReview,
             'hiv_testing_history': HivTestingHistory,
-            'pima': Pima},
+            'pima': PimaCd4},
         ANNUAL: {
             'hiv_care_adherence': HivCareAdherence,
             'hiv_result': HivResult,
@@ -46,7 +46,7 @@ class SubjectStatusHelper(object):
             'hiv_result_documentation': HivResultDocumentation,
             'hiv_test_review': HivTestReview,
             'hiv_testing_history': HivTestingHistory,
-            'pima': Pima},
+            'pima': PimaCd4},
     }
 
     def __init__(self, visit_instance=None, use_baseline_visit=False):
@@ -128,8 +128,8 @@ class SubjectStatusHelper(object):
             try:
                 self._subject_visit = SubjectVisit.objects.get(
                     subject_identifier=visit_instance.subject_identifier,
-                    visit_code__=[T0, E0])
-            except (SubjectVisit.DoesNotExist, IndexError):
+                    visit_code__in=[T0, E0])
+            except SubjectVisit.DoesNotExist:
                 self._subject_visit = None
         else:
             # prepare a queryset of visits previous to visit_instance
@@ -236,9 +236,11 @@ class SubjectStatusHelper(object):
         """Returns True if combination of documents and test history show POS."""
         if self._new_pos is None:
             previous_pos = None
-            previous_pos = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
+            previous_pos = self.previous_value(
+                value_if_pos=POS, value_if_not_pos=None)
             if previous_pos:
-                # This takes care of previous enrollees, those now doing annual survey.
+                # This takes care of previous enrollees, those now doing annual
+                # survey.
                 new_pos = False
             else:
                 new_pos = False
@@ -247,7 +249,8 @@ class SubjectStatusHelper(object):
                 if (not (self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
                         (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                     pass
-                # You only have today's result and possibly an undocumented verbal_hiv_result
+                # You only have today's result and possibly an undocumented
+                # verbal_hiv_result
                 elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not
                         (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                     new_pos = True
@@ -332,7 +335,8 @@ class SubjectStatusHelper(object):
         direct_hiv_documentation = self.previous_value(value_if_pos=True,
                                                        value_if_not_pos=False)
         if not direct_hiv_documentation:
-            direct_hiv_documentation = True if self.recorded_hiv_result in [POS, NEG] else False
+            direct_hiv_documentation = True if self.recorded_hiv_result in [
+                POS, NEG] else False
         return direct_hiv_documentation
 
     @property
@@ -366,7 +370,8 @@ class SubjectStatusHelper(object):
         """
         if not self._last_hiv_result:
             last_hiv_result = None
-            last_hiv_result = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
+            last_hiv_result = self.previous_value(
+                value_if_pos=POS, value_if_not_pos=None)
             # If there is no POS from a previous visit instance result, then
 #             check the status of this visit instance. It could be that after you
 #             tested them, they tested POS later elsewhere and have documentation
@@ -411,7 +416,8 @@ class SubjectStatusHelper(object):
     def recorded_hiv_result(self):
         """Returns an hiv result based on the last documented result."""
         if not self._recorded_hiv_result:
-            # a result from a previous survey is considered record of previous POS result
+            # a result from a previous survey is considered record of previous
+            # POS result
             recorded_hiv_result = self.previous_value(value_if_pos=POS,
                                                       value_if_not_pos=None)
             if not recorded_hiv_result:

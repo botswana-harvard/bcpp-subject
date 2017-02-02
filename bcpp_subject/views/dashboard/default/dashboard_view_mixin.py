@@ -14,9 +14,10 @@ from .subject_locator_view_mixin import SubjectLocatorViewMixin
 
 
 class DashboardViewMixin(
-        SubjectIdentifierViewMixin, AppointmentViewMixin, MetaDataViewMixin,
-        VisitScheduleViewMixin,
-        SubjectLocatorViewMixin, HouseholdViewMixin,
-        HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
-        HouseholdMemberViewMixin, ConsentViewMixin, ShowHideViewMixin):
+        SubjectIdentifierViewMixin, AppointmentViewMixin,
+        MetaDataViewMixin, VisitScheduleViewMixin,
+        SubjectLocatorViewMixin,
+        HouseholdViewMixin, HouseholdStructureViewMixin,
+        HouseholdLogEntryViewMixin, HouseholdMemberViewMixin,
+        ConsentViewMixin, ShowHideViewMixin):
     pass

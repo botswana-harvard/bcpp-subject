@@ -30,7 +30,7 @@ from .partner_form import ThirdPartnerForm, SecondPartnerForm, RecentPartnerForm
 from .non_pregnancy_form import NonPregnancyForm
 from .outpatient_care_form import OutpatientCareForm
 from .participation_form import ParticipationForm
-from .pima_form import PimaForm
+from .pima_cd4_form import PimaCd4Form
 from .pima_vl_form import PimaVlForm
 from .pregnancy_form import PregnancyForm
 from .rbd_demographics_form import RbdDemographicsForm
