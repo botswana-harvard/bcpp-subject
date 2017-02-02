@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from model_mommy import mommy
@@ -14,59 +14,21 @@ from member.models.household_member.household_member import HouseholdMember
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
 
 from .test_mixins import SubjectMixin
-from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from bcpp_subject.models.appointment import Appointment
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
-    @tag("setup")
-    def test_setup(self):
-        print(self.subject_visit_male_t0)
-        print(self.ahs_y2_subject_visit())
-
     def setUp(self):
         super().setUp()
-
-    def ahs_y2_subject_visit(self):
-        """Return an ahs subject visit.
-        """
-        # Create an ahs member
-        self.consent_data_male = {
-            'identity': '317115158', 'confirm_identity': '317115158', }
-        household_member = self.subject_visit_male_t0.household_member
-        next_household_structure = self.get_next_household_structure_ready(
-            self.subject_visit_male_t0.household_member.household_structure,
-            make_hoh=None)
-        new_household_member = household_member.clone(
-            household_structure=next_household_structure,
-            report_datetime=next_household_structure.enumerated_datetime)
-        new_household_member.save()
-        new_household_member.inability_to_participate = NOT_APPLICABLE
-        new_household_member.study_resident = YES
-        new_household_member.save()
-        new_household_member = HouseholdMember.objects.get(
-            pk=new_household_member.pk)
-        report_datetime = self.get_utcnow() + relativedelta(years=1, months=6)
-        report = datetime(2010, 3, 4)
-        mommy.make_recipe(
-            'household.householdlogentry',
-            report_datetime=report,
-            household_log=new_household_member.household_structure.householdlog,
-            household_status=ELIGIBLE_REPRESENTATIVE_PRESENT)
-
-        self.consent_data_male.update(report_datetime=report_datetime)
-        self.add_subject_consent(
-            new_household_member, **self.consent_data_male)
-        print(new_household_member.__dict__)
-        appointment = Appointment.objects.get(
-            subject_identifier=new_household_member.subject_identifier, visit_code=T1)
-        return mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=new_household_member,
-            subject_identifier=new_household_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=report_datetime)
+        self.consent_data = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        self.survey_schedule = self.get_survey_schedule(index=0)
+        self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
+            T0, survey_schedule=self.survey_schedule, **self.consent_data)
+        self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
 
     def crf_metadata_obj(self, model, entry_status, visit_code):
         return CrfMetadata.objects.filter(
@@ -124,8 +86,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         residency_mobility = mommy.make_recipe(
             'bcpp_subject.residencymobility',
             subject_visit=subject_visit,
-            report_datetime=self.get_utcnow() +
-            datetime.timedelta(3 * 365 / 12),
+            report_datetime=self.get_utcnow(),
             permanent_resident=permanent_resident,
             intend_residency=permanent_resident)
         return residency_mobility
@@ -248,40 +209,6 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', KEYED,
             T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-#     def ahs_y2_subject_visit(self):
-#         """Return an ahs subject visit."""
-#         # Create an ahs member
-#         y1_member = self.bhs_subject_visit_male.household_member
-#         next_household_structure = self.get_next_household_structure_ready(
-#             y1_member.household_structure, make_hoh=None)
-#
-#         new_member = y1_member.clone(
-#             household_structure=next_household_structure,
-#             report_datetime=next_household_structure.enumerated_datetime)
-#         new_member.save()
-#
-#         self.assertEqual(
-#             'bcpp-survey.bcpp-year-2.test_community',
-#             new_member.survey_schedule)
-#
-#         new_member.inability_to_participate = NOT_APPLICABLE
-#         new_member.study_resident = YES
-#         new_member.save()
-#
-#         new_member = HouseholdMember.objects.get(pk=new_member.pk)
-#         report_datetime = self.get_utcnow() + relativedelta(years=1)
-#         self.consent_data.update(report_datetime=report_datetime)
-#         new_member = self.add_subject_consent(new_member, **self.consent_data)
-#         appointment = Appointment.objects.get(
-#             subject_identifier=new_member.subject_identifier,
-#             visit_code=T1)
-#         return mommy.make_recipe(
-#             'bcpp_subject.subjectvisit',
-#             household_member=new_member,
-#             subject_identifier=new_member.subject_identifier,
-#             appointment=appointment,
-#             report_datetime=report_datetime)
-
     def ahs_y3_subject_visit(self, household_member):
         """Return an ahs  year 3 subject visit."""
 
@@ -316,7 +243,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             appointment=appointment,
             report_datetime=report_datetime)
 
-    @tag('WW')
+    @tag('reviewed')
     def test_no_circumsition_in_y2(self):
         """Assert circumcision forms not required at ahs if filled at bhs."""
         mommy.make_recipe(
@@ -334,18 +261,20 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         )
 
         # Create a year 2 subject visit.
-        self.ahs_y2_subject_visit()
+        self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.circumcision', NOT_REQUIRED,
-            self.visit_code_T1).count(), 1)
+            T1).count(), 1)
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.circumcised', NOT_REQUIRED,
-            self.visit_code_T1).count(), 1)
+            T1).count(), 1)
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.uncircumcised', NOT_REQUIRED,
-            self.visit_code_T1).count(), 1)
+            T1).count(), 1)
 
+    @tag('reviewed')
     def test_pos_in_y1_no_hiv_forms(self):
         """Assert that is a participant is positive in year 1
         hiv forms are not required the following year.
@@ -355,7 +284,8 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male.report_datetime)
 
         # Create a year 2 subject visit.
-        self.ahs_y2_subject_visit()
+        self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivtestreview', NOT_REQUIRED, T1).count(), 1)
@@ -375,6 +305,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', NOT_REQUIRED,
             T1, MICROTUBE).count(), 1)
 
+    @tag('reviewed')
     def test_hic_filled_in_y1_not_required_in_annual(self):
         """Assert that hic will not be required at year 1 if filled at bhs."""
         self.make_subject_locator(
@@ -395,15 +326,16 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             YES,
             self.bhs_subject_visit_male.report_datetime)
 
-        subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
         self.hiv_result(
             NEG, subject_visit_male_y2, subject_visit_male_y2.report_datetime)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hicenrollment', NOT_REQUIRED, T1).count(), 1)
 
-        subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            subject_visit_male_y2.household_member)
+        subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member, T2)
 
         self.hiv_result(
             NEG, subject_visit_male_y3, subject_visit_male_y3.report_datetime)
@@ -411,6 +343,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hicenrollment', NOT_REQUIRED, T2).count(), 1)
 
+    @tag('reviewed')
     def test_microtube_always_required_for_hic_without_pos_hivresult(self):
         """ Tests an HIC enrollee who sero-converted,
             POS result not tested by BHP, will be tested by BHP at next visit.
@@ -428,7 +361,9 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.make_hic_enrolment(
             self.bhs_subject_visit_male, YES, self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        # Create a year 2 subject visit.
+        ahs_subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1, **self.consent_data)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -453,6 +388,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.hivresult',
                 REQUIRED, T1).count(), 1)
 
+    @tag('reviewed')
     def test_microtube_not_required_for_hic_with_pos_hivresult(self):
         """ Tests an HIC enrollee who sero-converted, tested by BHP,
             will not be tested again in next visit."""
@@ -470,14 +406,21 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, YES,
             self.bhs_subject_visit_male.report_datetime)
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
-        self.hiv_result(POS, self.ahs_subject_visit_male_y2, report_datetime)
+        report_datetime = subject_visit_male_y2.report_datetime
+        self.hiv_result(POS, subject_visit_male_y2, report_datetime)
 
         # We are now in year 3 in which the participant is a known POS.
-        self.ahs_y3_subject_visit(
-            self.ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(self.requisition_metadata_obj(
             'bcpp_subject.subjectrequisition', NOT_REQUIRED,
@@ -487,6 +430,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.hivresult',
                 NOT_REQUIRED, T2).count(), 1)
 
+    @tag('reviewed')
     def test_hiv_pos_requisitions_y2(self):
         """ HIV Negative and in HIC at T0 and Tests Positive during home
             visits at T1 and is Not on ART at T1. Sero Converter,
@@ -506,7 +450,8 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, YES,
             self.bhs_subject_visit_male.report_datetime)
 
-        subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.hiv_result(
             POS, subject_visit_male_y2, subject_visit_male_y2.report_datetime)
@@ -521,6 +466,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', REQUIRED,
             T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag('reviewed')
     def test_Known_hiv_pos_y2_not_hic_require_no_testing(self):
 
         # They were NEG in year 1
@@ -528,26 +474,34 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             POS, self.bhs_subject_visit_male,
             self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.make_hivtesting_history(
-            ahs_subject_visit_male_y2, YES, YES,
-            POS, NO, ahs_subject_visit_male_y2.report_datetime)
+            subject_visit_male_y2, YES, YES,
+            POS, NO, subject_visit_male_y2.report_datetime)
 
         self.hivtest_review(
-            ahs_subject_visit_male_y2, POS, ahs_subject_visit_male_y2.report_datetime)
+            subject_visit_male_y2, POS, subject_visit_male_y2.report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivresult', NOT_REQUIRED, T1).count(), 1)
 
-        self.ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivresult', NOT_REQUIRED, T2).count(), 1)
 
+    @tag('reviewed')
     def test_Known_hiv_pos_y3_not_hic_require_no_testing_missed_y2(self):
 
         # Known POS in T0
@@ -559,16 +513,24 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, POS,
             self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         # Misses T1, and is seen again at T2. They should not be Tested.
-        self.ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivresult', NOT_REQUIRED, T2).count(), 1)
 
+    @tag("reviewed")
     def test_hic_enrolled_at_bhs(self):
         """ If there is an hic record at bhs then at ahs inspect the record
             then check for hic status if not enrolled then Hic_enrollment
@@ -590,16 +552,25 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, YES,
             self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hicenrollment', NOT_REQUIRED, T1).count(), 1)
 
-        self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hicenrollment', NOT_REQUIRED, T2).count(), 1)
 
+    @tag("reviewed")
     def test_hic_not_enrolled_at_bhs(self):
         """ Assert if is an hic record inspect the record then check for hic
             status if not enrolled then Hic_enrollment
@@ -621,11 +592,12 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, NO,
             self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.hiv_result(
-            NEG, ahs_subject_visit_male_y2,
-            ahs_subject_visit_male_y2.report_datetime)
+            NEG, subject_visit_male_y2,
+            subject_visit_male_y2.report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -635,9 +607,6 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         """New enrollees at T0 (i.e doing BHS procedures)
             who are HIV-positive and ART naive, then PIMA required.
         """
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = ahs_subject_visit_male_y2.report_datetime
-
         # Known POS in T0
         self.make_hivtesting_history(
             self.bhs_subject_visit_male, YES, YES,
@@ -646,14 +615,19 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.hivtest_review(
             self.bhs_subject_visit_male, POS, report_datetime=self.get_utcnow())
 
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
+
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            ahs_subject_visit_male_y2, NO, NO, NO, NO, NO, report_datetime)
+            subject_visit_male_y2, NO, NO, NO, NO, NO, report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.pima', REQUIRED, T1).count(), 1)
 
+    @tag("reviewed")
     def test_hiv_pos_nd_art_naive_at_ahs(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART,
             (i.e arv_naive) at the time of enrollment. Still arv_naive at AHS.
@@ -692,12 +666,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', KEYED,
             T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            self.ahs_subject_visit_male_y2, NO, YES,
+            subject_visit_male_y2, NO, YES,
             NO, NO, NO, report_datetime)
 
         self.assertEqual(
@@ -708,6 +683,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', NOT_REQUIRED,
             T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag("reviewed")
     def test_hiv_pos_nd_on_art_at_ahs(self):
         """Assert that previously enrollees at t0 who are HIV-positive but were
             not on ART (i.e arv_naive) at the time of enrollment. But now on
@@ -736,12 +712,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, RESEARCH_BLOOD_DRAW,
             self.bhs_subject_visit_male.report_datetime)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            ahs_subject_visit_male_y2, YES, YES, YES,
+            subject_visit_male_y2, YES, YES, YES,
             YES, YES, report_datetime=report_datetime)
 
         self.assertEqual(
@@ -754,8 +731,14 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
                 T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        ahs_subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
         report_datetime = ahs_subject_visit_male_y3.report_datetime
 
         # add HivCarAdherence,
@@ -774,6 +757,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
                 T2, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag("reviewed")
     def test_hiv_pos_nd_on_art_at_y3_missed_y2(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART
             (i.e arv_naive) at the time of enrollment. Misses T1. But now on
@@ -819,9 +803,17 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             panel_name=RESEARCH_BLOOD_DRAW,
         )
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            ahs_subject_visit_male_y2.household_member)
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        ahs_subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
@@ -844,6 +836,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', NOT_REQUIRED,
             T2, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag("reviewed")
     def test_hiv_pos_nd_not_on_art_at_ahs(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART
             (i.e art_naive) at the time of enrollment. Pima required.
@@ -892,7 +885,8 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
         # Move on to the first annual visit.
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T1).count(), 1)
@@ -902,10 +896,16 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.requisition_metadata_obj(
             'bcpp_subject.subjectrequisition', NOT_REQUIRED,
             T1, RESEARCH_BLOOD_DRAW).count(), 1)
-
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
         # Move on to the second annual visit.
-        self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
+    @tag("reviewed_hic")
     def test_hiv_pos_nd_not_on_art_at_y3_missed_y2(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART
             (i.e art_naive) at the time of enrollment. Pima required. Misses
@@ -949,10 +949,17 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             'bcpp_subject.subjectrequisition', KEYED,
             T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
-        ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
         # JUMP first annual visit. Move on to the second annual visit.
-        self.ahs_y3_subject_visit(ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+        # Move on to the second annual visit.
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T2).count(), 1)
@@ -984,11 +991,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             NO, NO, report_datetime=report_datetime)
 
         # self.annual_subject_visit_y2
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+
+        report_datetime = subject_visit_male_y2.report_datetime
 
         self.make_hiv_care_adherence(
-            self.ahs_subject_visit_male_y2, YES, YES,
+            subject_visit_male_y2, YES, YES,
             YES, YES, YES, report_datetime)
 
         self.assertEqual(
@@ -998,9 +1007,15 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', REQUIRED,
                 T1, VIRAL_LOAD).count(), 1)
 
-        self.ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            self.ahs_subject_visit_male_y2.household_member)
-        report_datetime = self.ahs_subject_visit_male_y3.report_datetime
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        ahs_subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
+        report_datetime = ahs_subject_visit_male_y3.report_datetime
 
         self.make_hiv_care_adherence(
             self.ahs_subject_visit_male_y3, YES, YES,
@@ -1013,6 +1028,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', REQUIRED,
                 T1, VIRAL_LOAD).count(), 1)
 
+    @tag("reviewed2")
     def test_hiv_pos_nd_not_art_at_y1_misses_y2(self):
         """Previously enrollees at t0 who are HIV-positive but were ART naive
             at the time of enrollment. Pima required. Misses T2. HIV Positive
@@ -1026,14 +1042,22 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.make_hiv_care_adherence(
             self.bhs_subject_visit_male, NO, NO, NO, NO, NO, self.get_utcnow())
 
-        subject_visit = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
-        self.ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            subject_visit.household_member)
-        report_datetime = self.ahs_subject_visit_male_y3.report_datetime
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        ahs_subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
+
+        report_datetime = ahs_subject_visit_male_y3.report_datetime
 
         self.make_hiv_care_adherence(
-            self.ahs_subject_visit_male_y3, YES, YES,
+            ahs_subject_visit_male_y3, YES, YES,
             YES, YES, YES, report_datetime)
 
         self.assertEqual(
@@ -1068,13 +1092,15 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', REQUIRED,
                 T0, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag("reviewed")
     def hiv_pos_nd_on_art_ahs(self):
         """Previously enrollees at t0 who are HIV-positive on ART at the time
             of enrollment. Pima and POC VL NOT required. RBD, VL required.
         """
         self.hiv_pos_nd_on_art_bhs()
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -1084,8 +1110,14 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
                 T1, VIRAL_LOAD).count(), 1)
 
-        self.ahs_subject_visit_male_y3 = self.ahs_subject_visit_male_y3(
-            self.ahs_subject_visit_male_y2.household_member)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -1095,6 +1127,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
                 T2, VIRAL_LOAD).count(), 1)
 
+    @tag("reviewed")
     def test_hiv_neg_bhs_and_pos_at_ahs(self):
         """ HIV Negative and in HIC at T0 and now HIV POS not on ART at T1,
             should Offer POC CD4, RBD and VL and PIMA VL.
@@ -1109,10 +1142,11 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, YES, self.get_utcnow())
 
         # self.annual_subject_visit_y2
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
-        self.hiv_result(POS, self.ahs_subject_visit_male_y2, report_datetime)
+        self.hiv_result(POS, subject_visit_male_y2, report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T1).count(), 1)
@@ -1131,11 +1165,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         """
         self.hiv_result(POS, self.bhs_subject_visit_male, self.get_utcnow())
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
+        self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivcareadherence', REQUIRED, T1).count(), 1)
 
+    @tag('reviewed2')
     def test_not_known_pos_runs_hiv_and_cd4_ahs(self):
         """If not a known POS, requires HIV and CD4 (until
         today's result is known).
@@ -1146,10 +1182,11 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.hiv_result(
             DECLINED, self.bhs_subject_visit_male, self.get_utcnow())
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
-        self.hiv_result(POS, self.ahs_subject_visit_male_y2, report_datetime)
+        self.hiv_result(POS, subject_visit_male_y2, report_datetime)
 
         self.assertEqual(
             self.requisition_metadata_obj(
@@ -1160,6 +1197,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
                 'bcpp_subject.subjectrequisition', REQUIRED,
                 T1, RESEARCH_BLOOD_DRAW).count(), 1)
 
+    @tag('reviewed2')
     def test_not_known_neg_runs_hiv_and_cd4_ahs_1(self):
         """Assert If not a known POS, HIV and CD4 required."""
 
@@ -1167,11 +1205,12 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         self.hiv_result(NEG, self.bhs_subject_visit_male)
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            DECLINED, self.ahs_subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
         self.assertEqual(
             self.requisition_metadata_obj(
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
@@ -1188,11 +1227,12 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         self.hiv_result(POS, self.bhs_subject_visit_male, self.get_utcnow())
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            DECLINED, self.ahs_subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T1).count(), 1)
@@ -1214,25 +1254,32 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male,
             "DWTA", "Don't want to answer", "not_answering", NO)
 
-        self.ahs_subject_visit_male_y2 = self.ahs_y2_subject_visit()
-        report_datetime = self.ahs_subject_visit_male_y2.report_datetime
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+        report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            DECLINED, self.ahs_subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
 
         self.make_hivtesting_history(
-            self.ahs_subject_visit_male_y2,
+            subject_visit_male_y2,
             "DWTA", "Don't want to answer", "not_answering", NO,
             report_datetime)
 
-        self.ahs_subject_visit_male_y3 = self.ahs_y3_subject_visit(
-            self.ahs_subject_visit_male_y2.household_member)
-        report_datetime = self.ahs_subject_visit_male_y3.report_datetime
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
+
+        subject_visit_male_y3 = self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
+        report_datetime = subject_visit_male_y3.report_datetime
 
         self.make_hivtesting_history(
-            self.ahs_subject_visit_male_y3, YES, YES, POS, NO, report_datetime)
+            subject_visit_male_y3, YES, YES, POS, NO, report_datetime)
 
-        self.hiv_result(POS, self.ahs_subject_visit_male_y3, report_datetime)
+        self.hiv_result(POS, subject_visit_male_y3, report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pima', REQUIRED, T2).count(), 1)
@@ -1280,6 +1327,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivlinkagetocare', REQUIRED, T1).count(), 1)
 
+    @tag('reviewed_naive')
     def test_art_naive_at_previous_visit_and_ahs_require_linkage_to_care1(self):
         """Previously enrollees at t0, t1 who are HIV-positive
         but were not on ART, (i.e arv_naive) at the time of enrollment.
@@ -1287,14 +1335,13 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         """
         self.hiv_pos_nd_art_naive_at_bhs()
 
-        report_datetime = self.get_utcnow() + relativedelta(years=1)
-        previous_member = self.bhs_subject_visit_male.household_member
         subject_visit_y2 = self.add_subject_visit_followup(
-            previous_member, T1, report_datetime)
+            self.bhs_subject_visit_male.household_member, T1)
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            subject_visit_y2, NO, NO, NO, NO, NO, report_datetime)
+            subject_visit_y2, NO, NO, NO, NO, NO, 
+            subject_visit_y2.report_datetime)
 
         report_datetime = self.get_utcnow() + relativedelta(years=2)
         previous_member = subject_visit_y2.household_member
@@ -1304,6 +1351,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivlinkagetocare', REQUIRED, T2).count(), 1)
 
+    @tag('reviewed')
     def test_art_naive_at_previous_visit_and_ahs_require_linkage_to_care2(self):
         """Previously enrollees at t0, t1 who are HIV-positive but
         were not on ART, (i.e arv_naive) at the time of enrollment.
@@ -1328,6 +1376,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivlinkagetocare', REQUIRED, T2).count(), 1)
 
+    @tag('reviewed')
     def test_on_art_at_previous_visit_and_ahs_require_linkage_to_care(self):
         """Previously enrollees at t0, t1 who are HIV-positive
         but were on ART, (i.e not arv_naive) at the time of enrollment.
@@ -1356,19 +1405,21 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male,
             YES, YES, YES, YES, YES, self.get_utcnow())
 
-        report_datetime = self.get_utcnow() + relativedelta(years=1)
-        previous_member = self.bhs_subject_visit_male.household_member
-        subject_visit_y2 = self.add_subject_visit_followup(
-            previous_member, T1, report_datetime)
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            subject_visit_y2, NO, NO, NO, NO, NO, report_datetime)
+            subject_visit_male_y2, NO, NO, NO, NO, NO,
+            subject_visit_male_y2.report_datetime)
+        report_datetime = self.get_utcnow() + relativedelta(years=3, months=6)
+        self.consent_data.update(
+            report_datetime=self.get_utcnow() + relativedelta(years=3, months=6))
 
-        report_datetime = self.get_utcnow() + relativedelta(years=2)
-        previous_member = subject_visit_y2.household_member
-        subject_visit_y2 = self.add_subject_visit_followup(
-            previous_member, T2, report_datetime)
+        self.add_subject_visit_followup(
+            subject_visit_male_y2.household_member,
+            T2, household_log_report_date=report_datetime,
+            **self.consent_data)
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivlinkagetocare', NOT_REQUIRED, T2).count(), 1)

@@ -80,8 +80,8 @@ class HicEnrollment (CrfModelMixin):
         if not update_fields:
             first_consent = SubjectConsent.consent.first_consent(
                 self.subject_identifier)
-            self.dob, self.consent_datetime = first_consent.dob,
-            first_consent.consent_datetime
+            self.dob = first_consent.dob
+            self.consent_datetime = first_consent.consent_datetime
         super(HicEnrollment, self).save(*args, **kwargs)
 
     class Meta(CrfModelMixin.Meta):

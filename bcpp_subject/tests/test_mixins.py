@@ -1,3 +1,6 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from faker import Faker
 from model_mommy import mommy
 
@@ -9,6 +12,7 @@ from edc_constants.constants import NO, YES, NOT_APPLICABLE, MALE
 from edc_metadata.models import CrfMetadata
 
 from household.tests.household_test_mixin import HouseholdTestMixin
+from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import HEAD_OF_HOUSEHOLD
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
@@ -25,6 +29,7 @@ from django.db.utils import IntegrityError
 from bcpp_subject.models.subject_consent import SubjectConsent
 from django.db import transaction
 from edc_registration.models import RegisteredSubject
+from bcpp_subject.constants import T2
 
 fake = Faker()
 
@@ -227,31 +232,45 @@ class SubjectTestMixin:
             report_datetime=report_datetime or self.get_utcnow())
 
     def add_subject_visit_followup(self, previous_member, visit_code,
-                                   report_datetime=None):
+                                   household_log_report_date=None, create_consent=None, **options):
 
         next_household_structure = self.get_next_household_structure_ready(
             previous_member.household_structure, make_hoh=None)
-        report_datetime = report_datetime or next_household_structure.enumerated_datetime
-        new_member = previous_member.clone(
+        report_datetime = options.get(
+            'report_datetime') or next_household_structure.enumerated_datetime
+        new_household_member = previous_member.clone(
             household_structure=next_household_structure,
             report_datetime=next_household_structure.enumerated_datetime)
-        new_member.save()
+        new_household_member.save()
 
-        new_member.inability_to_participate = NOT_APPLICABLE
-        new_member.study_resident = YES
-        new_member.save()
+        new_household_member.inability_to_participate = NOT_APPLICABLE
+        new_household_member.study_resident = YES
+        new_household_member.save()
 
-        new_member = HouseholdMember.objects.get(pk=new_member.pk)
-        self.consent_data.update(report_datetime=report_datetime)
-        new_member = self.add_subject_consent(
-            new_member, **self.consent_data)
+        new_household_member = HouseholdMember.objects.get(pk=new_household_member.pk)
+        report_datetime = report_datetime or self.get_utcnow() + relativedelta(years=1, months=6)
+        household_log_report_date = household_log_report_date or datetime(2010, 3, 5)
+        mommy.make_recipe(
+            'household.householdlogentry',
+            report_datetime=household_log_report_date,
+            household_log=new_household_member.household_structure.householdlog,
+            household_status=ELIGIBLE_REPRESENTATIVE_PRESENT)
+        if not visit_code == T2:
+            self.consent_data.update(report_datetime=report_datetime)
+            self.add_subject_consent(
+                new_household_member, **self.consent_data)
+        else:
+            consent = SubjectConsent.objects.filter(
+                subject_identifier=new_household_member.subject_identifier).last()
+            report_datetime = consent.report_datetime
         appointment = Appointment.objects.get(
-            subject_identifier=new_member.subject_identifier,
+            subject_identifier=new_household_member.subject_identifier,
             visit_code=visit_code)
+
         return mommy.make_recipe(
             'bcpp_subject.subjectvisit',
-            household_member=new_member,
-            subject_identifier=new_member.subject_identifier,
+            household_member=new_household_member,
+            subject_identifier=new_household_member.subject_identifier,
             appointment=appointment,
             report_datetime=report_datetime)
 

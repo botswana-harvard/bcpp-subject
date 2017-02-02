@@ -4,7 +4,7 @@ from edc_registration.models import RegisteredSubject
 from .models import (
     Circumcised, HicEnrollment, HivTestingHistory, HivResult)
 from .subject_status_helper import SubjectStatusHelper
-from bcpp_subject.constants import T1, T2, T3, DECLINED, E0
+from bcpp_subject.constants import T1, T2, T3, DECLINED, E0, T0
 from bcpp_subject.models.subject_visit import SubjectVisit
 from bcpp_subject.models.sexual_behaviour import SexualBehaviour
 from member.models.household_member.household_member import HouseholdMember
@@ -47,7 +47,7 @@ def male(visit_instance, *args):
 
 
 def func_is_baseline_or_ess(visit_instance, *args):
-    if visit_instance and visit_instance.visit_code in [E0, T1]:
+    if visit_instance and visit_instance.visit_code in [E0, T0]:
         return True
     return False
 
@@ -60,20 +60,16 @@ def func_is_annual(visit_instance, *args):
 
 
 def func_previous_visit(visit_instance, *args):
-    if visit_instance.visit_code == T2:
+    visit_codes = [E0, T0, T1, T2]
+    desc_visit_codes = visit_codes[
+        :visit_codes.index(visit_instance.visit_code)].reverse() or []
+    for code in desc_visit_codes:
         try:
             return SubjectVisit.objects.get(
-                visit_code__in=[T1, E0],
+                visit_code=code,
                 subject_identifier=visit_instance.subject_identifier)
         except SubjectVisit.DoesNotExist:
-            return False
-    elif visit_instance.visit_code == T3:
-        try:
-            return SubjectVisit.objects.get(
-                visit_code=T2,
-                subject_identifier=visit_instance.subject_identifier)
-        except SubjectVisit.DoesNotExist:
-            return False
+            pass
 
 
 def func_is_defaulter(visit_instance, *args):
@@ -398,7 +394,9 @@ def first_enrolled(visit_instance, *args):
 
 def art_naive_at_enrollment(visit_instance, *args):
     previous_visit = func_previous_visit(visit_instance)
+    print("visit_instance", visit_instance.visit_code, previous_visit)
     while previous_visit:
+        print("first_enrolled(previous_visit)", first_enrolled(previous_visit))
         if first_enrolled(previous_visit) and func_art_naive(previous_visit):
             return True
         previous_visit = func_previous_visit(previous_visit)

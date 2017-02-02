@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from model_mommy import mommy
 
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from edc_constants.constants import YES, NO, NEG, IND, NOT_APPLICABLE
 from edc_map.site_mappers import site_mappers
@@ -18,6 +18,10 @@ from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 
 
 class TestReferral(SubjectMixin, TestCase):
+
+    @tag("test_refferal")
+    def test_setup(self):
+        self.ahs_y2_subject_visit()
 
     def setUp(self):
         super().setUp()
