@@ -12,9 +12,8 @@ from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from member.models.household_member.household_member import HouseholdMember
 
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW, DECLINED
-
+from ..models import Appointment
 from .test_mixins import SubjectMixin
-from bcpp_subject.models.appointment import Appointment
 
 
 class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
@@ -173,8 +172,6 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         Pima, RBD and VL required. Then Key RBD for later use in
         Annual survey.
         """
-
-        # Known POS in T0
         self.make_hivtesting_history(
             self.bhs_subject_visit_male,
             YES, YES, POS, NO,
@@ -1340,7 +1337,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         # add HivCarAdherence,
         self.make_hiv_care_adherence(
-            subject_visit_y2, NO, NO, NO, NO, NO, 
+            subject_visit_y2, NO, NO, NO, NO, NO,
             subject_visit_y2.report_datetime)
 
         report_datetime = self.get_utcnow() + relativedelta(years=2)

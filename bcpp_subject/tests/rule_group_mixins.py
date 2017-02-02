@@ -90,11 +90,9 @@ class RuleGroupMixin:
             first_regimen=NO)
         return hiv_care_adherence
 
-    def make_hivtesting_history(
-            self, subject_visit,
-            report_datetime, has_tested,
-            has_record, verbal_hiv_result,
-            other_record):
+    def make_hivtesting_history(self, subject_visit, report_datetime,
+                                has_tested, has_record, verbal_hiv_result,
+                                other_record):
         hivtesting_history = mommy.make_recipe(
             'bcpp_subject.hivtestinghistory',
             subject_visit=subject_visit,

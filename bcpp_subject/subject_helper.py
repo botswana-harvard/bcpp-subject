@@ -136,7 +136,7 @@ class SubjectHelper:
 
     @property
     def final_hiv_status_date(self):
-        """Return the oldest POS result date or the most recent
+        """Returns the oldest POS result date or the most recent
         NEG result date.
         """
         final_hiv_status_date = self._final_hiv_status_date_if_pos
@@ -152,7 +152,7 @@ class SubjectHelper:
 
     @property
     def best_prev_result_date(self):
-        """Return best date after changing result based on ARV status.
+        """Returns best date after changing result based on ARV status.
         """
         if self.recorded_hiv_result == POS:
             best_prev_result_date = self.recorded_hiv_result_date
@@ -163,10 +163,11 @@ class SubjectHelper:
         return best_prev_result_date
 
     def _prepare_previous_status_date_and_awareness(self):
-        """Prepare prev_result, prev_result_date, and prev_result_known.
+        """Prepares prev_result, prev_result_date, and prev_result_known.
+
         * Get the POS prev_result or the NEG result.
-        * If final and prev are discordant and prev_results_discordant, select the
-          prev_result that equals the final result
+        * If final and prev are discordant and prev_results_discordant,
+          select the prev_result that equals the final result
         """
         self._update_prev_result_if(POS)
         if not self.prev_result:
@@ -178,7 +179,7 @@ class SubjectHelper:
         self._previous_status_date_and_awareness_exceptions()
 
     def _update_prev_result_if(self, result=None):
-        """Update the prev_result attributes based on the value of `result`.
+        """Updates the prev_result attributes based on the value of `result`.
 
         The caller is responsible for handling recorded_hiv_result
         and result_recorded being discordant.
@@ -197,7 +198,7 @@ class SubjectHelper:
             self.prev_result_known = None
 
     def _previous_status_date_and_awareness_exceptions(self):
-        """Overwrite invalid result sequence and/or derive from
+        """Overwrites invalid result sequence and/or derives from
         arv status if possible.
         """
         # evidence of ARV's implies POS previous result
@@ -266,7 +267,7 @@ class SubjectHelper:
 
     @property
     def _final_hiv_status_date_if_pos(self):
-        """Return oldest date if final result is POS.
+        """Returns oldest date if final result is POS.
         """
         final_hiv_status_date = None
         if self.final_hiv_status == POS:
@@ -280,7 +281,7 @@ class SubjectHelper:
 
     @property
     def _final_hiv_status_date_if_neg(self):
-        """Return most recent date if final result is NEG.
+        """Returns most recent date if final result is NEG.
         """
         final_hiv_status_date = None
         if self.final_hiv_status == NEG:
