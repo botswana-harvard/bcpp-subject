@@ -208,7 +208,7 @@ list_data = {
          'Pregnancy-related care, including delivery'),
         ('Injury or accident', 'Injury or accident'),
         ('Medication toxicity', 'Medication toxicity'),
-        ('Chronic disease related care', 'Chronic disease related care')
+        ('Chronic disease related care', 'Chronic disease related care'),
         ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
         ('Other', 'Other (specify)'),
         ("Don't know", "Don't know"),
