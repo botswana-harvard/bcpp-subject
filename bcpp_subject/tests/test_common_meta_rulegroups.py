@@ -25,12 +25,13 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             'identity': '31721515',
             'confirm_identity': '31721515', }
         self.subject_visit_male_T0 = self.make_subject_visit_for_consented_subject_male(
-            T0, **self.consent_data_male)
+            T0,
+            survey_schedule=self.get_survey_schedule(index=1),
+            **self.consent_data_male_t0)
 
-        survey_schedule = self.get_survey_schedule(index=2)
         self.subject_visit_male_E0 = self.make_subject_visit_for_consented_subject_male(
             E0,
-            survey_schedule=survey_schedule,
+            survey_schedule=self.get_survey_schedule(index=2),
             **self.consent_data_male)
         self.hiv_test_date = timezone.now() - timedelta(days=50)
 
@@ -227,13 +228,12 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         for subject_visit in [
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
-            subject_visit.subject_identifier = subject_visit.subject_identifier
-            subject_visit.visit_code = subject_visit.visit_code
             # add HivTestReview
             self.make_hivtest_review(
                 subject_visit, NEG, self.get_utcnow(), self.hiv_test_date)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj('bcpp_subject.hivresult', REQUIRED, subject_visit.visit_code,
@@ -249,11 +249,13 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
             # add hivtestreview
             self.make_hivtest_review(
-                subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
+                subject_visit, POS, self.get_utcnow(),
+                self.hiv_test_date)
 
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivtestreview', KEYED, subject_visit.visit_code,
+                    'bcpp_subject.hivtestreview', KEYED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj(
@@ -295,17 +297,21 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit=subject_visit,
             )
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtested', REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivtested', REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivuntested', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivuntested', NOT_REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivuntested', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivuntested', NOT_REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj('bcpp_subject.hivtested', REQUIRED, subject_visit.visit_code,
@@ -320,10 +326,12 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         for subject_visit in [
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
             # add HivTestReview,
-            self.make_hivtest_review(subject_visit, POS, self.get_utcnow(), self.hiv_test_date)
+            self.make_hivtest_review(subject_visit, POS,
+                                     self.get_utcnow(), self.hiv_test_date)
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivcareadherence', REQUIRED, subject_visit.visit_code,
+                    'bcpp_subject.hivcareadherence', REQUIRED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
             # add HivCareAdherence,
@@ -331,16 +339,20 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, self.get_utcnow(), NO, NO, NO, YES, NO)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivtestreview', KEYED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivcareadherence', KEYED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivcareadherence', KEYED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivresult', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivresult', NOT_REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
             hivcareadherence.on_arv = NO
@@ -542,9 +554,6 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
     def test_Known_hiv_pos_y1_require_no_testing(self):
         for subject_visit in [
                 self.subject_visit_male_T0, self.subject_visit_male_E0]:
-            subject_visit.subject_identifier = subject_visit.subject_identifier
-            subject_visit.visit_code = subject_visit.visit_code
-
             self.make_hivtesting_history(
                 subject_visit, self.get_utcnow(), YES, YES, POS, NO)
 
