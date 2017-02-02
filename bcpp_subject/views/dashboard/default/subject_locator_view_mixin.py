@@ -22,5 +22,4 @@ class SubjectLocatorViewMixin:
             household_identifier=self.household_identifier,
             survey_schedule=self.survey_schedule_object.field_value)
         kwargs['subject_locator'] = self.subject_locator
-        print(self.subject_locator._original_object)
         return super().get(request, *args, **kwargs)

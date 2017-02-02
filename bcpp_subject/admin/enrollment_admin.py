@@ -9,7 +9,9 @@ from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 
 from ..admin_site import bcpp_subject_admin
-from ..models import Enrollment
+from ..models import (
+    Enrollment, EnrollmentBhs, EnrollmentAhs,
+    EnrollmentEss, EnrollmentAno)
 from .modeladmin_mixins import ModelAdminMixin
 
 
@@ -47,3 +49,23 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     survey_schedule=obj.survey_object.survey_schedule.field_value))
         except NoReverseMatch:
             return super().view_on_site(obj)
+
+
+@admin.register(EnrollmentBhs, site=bcpp_subject_admin)
+class EnrollmentBhsAdmin(EnrollmentAdmin):
+    pass
+
+
+@admin.register(EnrollmentAhs, site=bcpp_subject_admin)
+class EnrollmentAhsAdmin(EnrollmentAdmin):
+    pass
+
+
+@admin.register(EnrollmentEss, site=bcpp_subject_admin)
+class EnrollmentEssAdmin(EnrollmentAdmin):
+    pass
+
+
+@admin.register(EnrollmentAno, site=bcpp_subject_admin)
+class EnrollmentAnoAdmin(EnrollmentAdmin):
+    pass

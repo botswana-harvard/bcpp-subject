@@ -14,10 +14,10 @@ class AppointmentViewMixin(BaseAppointmentMixin):
     @property
     def appointments(self):
         appointments = super().appointments
-        return (
+        return [
             obj for obj in appointments
             if obj.survey_schedule_object.field_value
-            == self.survey_schedule_object.field_value)
+            == self.survey_schedule_object.field_value]
 
     def empty_appointment(self, **kwargs):
         household_member = HouseholdMember(

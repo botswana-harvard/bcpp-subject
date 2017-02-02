@@ -7,14 +7,14 @@ from django.dispatch import receiver
 
 from edc_base.utils import get_utcnow
 
-from member.models import EnrollmentChecklistAnonymous
+from member.models import (
+    EnrollmentChecklistAnonymous, EnrollmentChecklist,
+    EnrollmentLoss, HouseholdMember)
 
 from ..models.anonymous import AnonymousConsent
 from ..models.utils import is_minor
-
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
-from member.models.enrollment_checklist import EnrollmentChecklist
 
 fake = Faker()
 
@@ -27,8 +27,8 @@ def subject_consent_on_post_delete(sender, instance, using, **kwargs):
     enrollment.delete()
 
 
-@receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
-def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid='consent_on_post_save')
+def consent_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if issubclass(sender, (SubjectConsent, AnonymousConsent)):
             # update household member field attrs
@@ -84,6 +84,65 @@ def enrollment_checklist_anonymous_on_post_save(
 
 @receiver(post_delete, weak=False, sender=EnrollmentChecklistAnonymous,
           dispatch_uid="enrollment_checklist_anonymous_on_post_delete")
-def enrollment_checklist_anonymous_on_post_delete(sender, instance, raw, created, using, **kwargs):
+def enrollment_checklist_anonymous_on_post_delete(
+        sender, instance, raw, created, using, **kwargs):
     instance.household_member.anonymousconsent.delete()
     instance.household_member.delete()
+
+
+@receiver(post_save, weak=False, sender=EnrollmentChecklist,
+          dispatch_uid="enrollment_checklist_on_post_save")
+def enrollment_checklist_on_post_save(
+        sender, instance, raw, created, using, **kwargs):
+    """Updates adds or removes the Loss form and updates
+    household_member.
+    """
+    if not raw:
+        if not instance.is_eligible:
+            try:
+                enrollment_loss = EnrollmentLoss.objects.using(using).get(
+                    household_member=instance.household_member)
+                enrollment_loss.report_datetime = instance.report_datetime
+                enrollment_loss.reason = instance.loss_reason
+                enrollment_loss.save()
+            except EnrollmentLoss.DoesNotExist:
+                enrollment_loss = EnrollmentLoss(
+                    household_member=instance.household_member,
+                    report_datetime=instance.report_datetime,
+                    reason=instance.loss_reason)
+                enrollment_loss.save()
+            instance.household_member.eligible_subject = False
+        else:
+            enrollment_loss = EnrollmentLoss.objects.filter(
+                household_member=instance.household_member).delete()
+            instance.household_member.eligible_subject = True
+        instance.household_member.enrollment_checklist_completed = True
+
+        if created:
+            instance.household_member.visit_attempts += 1
+        instance.household_member.non_citizen = instance.non_citizen
+        instance.household_member.save()
+
+        if created:
+            household_member = HouseholdMember.objects.get(
+                pk=instance.household_member.pk)
+            if household_member.consent:
+                Enrollment.objects.enroll_to_next_survey(
+                    subject_identifier=household_member.subject_identifier,
+                    household_member=household_member,
+                    consent_identifier=household_member.consent.consent_identifier,
+                    report_datetime=instance.report_datetime)
+
+
+@receiver(post_delete, weak=False, sender=EnrollmentChecklist,
+          dispatch_uid="enrollment_checklist_on_post_delete")
+def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
+    EnrollmentLoss.objects.filter(
+        household_member=instance.household_member).delete()
+    instance.household_member.enrollment_checklist_completed = False
+    instance.household_member.eligible_subject = False
+    instance.household_member.visit_attempts -= 1
+    if instance.household_member.visit_attempts < 0:
+        instance.household_member.visit_attempts = 0
+    instance.household_member.appointment_set.all().delete()
+    instance.household_member.save()

@@ -1,6 +1,6 @@
 from edc_dashboard.view_mixins import (
     ShowHideViewMixin, SubjectIdentifierViewMixin,
-    VisitScheduleViewMixin, MetaDataViewMixin)
+    MetaDataViewMixin)
 
 from household.views.mixins import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
@@ -9,14 +9,13 @@ from member.views import HouseholdMemberViewMixin
 
 from ..appointment_view_mixin import AppointmentViewMixin
 from ..consent_view_mixin import ConsentViewMixin
-from ..enrollment_forms_view_mixin import EnrollmentFormsViewMixin
-
+from ..visit_schedule_view_mixin import VisitScheduleViewMixin
 from .subject_locator_view_mixin import SubjectLocatorViewMixin
 
 
 class DashboardViewMixin(
         SubjectIdentifierViewMixin, AppointmentViewMixin, MetaDataViewMixin,
-        VisitScheduleViewMixin, EnrollmentFormsViewMixin,
+        VisitScheduleViewMixin,
         SubjectLocatorViewMixin, HouseholdViewMixin,
         HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
         HouseholdMemberViewMixin, ConsentViewMixin, ShowHideViewMixin):
