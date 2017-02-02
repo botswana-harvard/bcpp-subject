@@ -831,6 +831,7 @@ AWARE_FREE_CHOICE = (
     ('Friend told me', _('Friend told me')),
     ('Family told me', _('Family told me')),
     ('Health worker told me', _('Health worker told me')),
+    ('Ya Tsie staff told me', _('Ya Tsie staff told me')),
     ('Kgosi told us', _('Kgosi told us')),
     ('I heard it at the kgotla', _('I heard it at the kgotla')),
     ('I read a brochure delivered to my home',
