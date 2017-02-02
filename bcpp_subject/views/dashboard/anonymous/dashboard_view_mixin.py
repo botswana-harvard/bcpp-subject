@@ -14,8 +14,7 @@ from .household_view_mixin import HouseholdViewMixin
 
 class DashboardViewMixin(
         SubjectIdentifierViewMixin, AppointmentViewMixin, MetaDataViewMixin,
-        VisitScheduleViewMixin,
-        HouseholdLogEntryViewMixin, HouseholdViewMixin,
-        HouseholdStructureViewMixin, HouseholdMemberViewMixin,
-        ConsentViewMixin, ShowHideViewMixin):
+        VisitScheduleViewMixin, HouseholdViewMixin,
+        HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
+        HouseholdMemberViewMixin, ConsentViewMixin, ShowHideViewMixin):
     pass
