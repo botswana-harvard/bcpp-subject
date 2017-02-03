@@ -6,7 +6,7 @@ from edc_metadata.rules.rule_group import RuleGroup
 from edc_metadata.rules.predicate import P, PF
 
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND
 
 from .constants import VENOUS
 from .labs import (
@@ -40,8 +40,8 @@ class SubjectVisitRuleGroup(RuleGroup):
     circumcision = CrfRule(
         logic=Logic(
             predicate=func_requires_circumcision,
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['circumcision', 'circumcised', 'uncircumcised'])
 
     gender_menopause = CrfRule(
@@ -475,7 +475,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     elisa_result = CrfRule(
         logic=Logic(
-            predicate=func_hiv_indeterminate,
+            P('hiv_result', 'eq', IND),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.elisahivresult'])

@@ -51,10 +51,10 @@ class ModelValues:
             obj = self.get_first_positive_or_none(qs, 'hiv_result')
             if obj:
                 self.elisa_hiv_result = obj.hiv_result
-                self.elisa_hiv_result_date = obj.hiv_result_date
+                self.elisa_hiv_result_date = obj.hiv_result_datetime
             else:
                 self.elisa_hiv_result = qs.last().hiv_result
-                self.elisa_hiv_result_date = qs.last().hiv_result_date
+                self.elisa_hiv_result_date = qs.last().hiv_result_datetime
 
         # HivTestingHistory
         qs = HivTestingHistory.objects.filter(
