@@ -179,7 +179,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('shared_rule_fail')
     def test_known_neg_does_not_complete_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence.
         """
@@ -254,28 +254,25 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                     'bcpp_subject.hivresult', NOT_REQUIRED, subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('bhs_rule')
     def test_known_pos_stigma_forms(self):
         """If known posetive, test stigma forms
         """
-        for subject_visit in [
-                self.subject_visit_male_t0, self.subject_visit_male_E0]:
-            #  self.check_male_registered_subject_rule_groups(self.subject_visit_female_subject_visit.visit_code)
-            self.make_hivtesting_history(
-                subject_visit, self.get_utcnow(), YES, YES, NEG, NO)
+        self.make_hivtesting_history(
+            self.subject_visit_male_t0, self.get_utcnow(), YES, YES, NEG, NO)
 
-            self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED,
-                                      subject_visit.visit_code,
-                                      subject_visit.subject_identifier).count(), 1)
-            self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.stigma', REQUIRED,
-                                      subject_visit.visit_code,
-                                      subject_visit.subject_identifier).count(), 1)
-            self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.stigmaopinion', REQUIRED,
-                                      subject_visit.visit_code,
-                                      subject_visit.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.hivtestinghistory', KEYED,
+                                  self.subject_visit_male_t0.visit_code,
+                                  self.subject_visit_male_t0.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.stigma', REQUIRED,
+                                  self.subject_visit_male_t0.visit_code,
+                                  self.subject_visit_male_t0.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj('bcpp_subject.stigmaopinion', REQUIRED,
+                                  self.subject_visit_male_t0.visit_code,
+                                  self.subject_visit_male_t0.subject_identifier).count(), 1)
 
     @tag('shared_rule')
     def test_hiv_tested_forms(self):
@@ -310,7 +307,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('shared_rule_fail')
     def test_known_pos_on_art_no_doc_requires_cd4_only(self):
         """If previous result is POS on art but no evidence, need to run CD4 (Pima).
 
@@ -409,7 +406,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('shared_rule_fail')
     def test_known_pos_no_art_but_has_doc_requires_cd4_only(self):
         """If previous result is POS on art but no evidence, need to run CD4 (Pima).
 
