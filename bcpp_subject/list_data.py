@@ -1,4 +1,9 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
+
+from edc_constants.constants import (
+    NOT_APPLICABLE, OTHER, DWTA, NONE, DONT_KNOW)
+
 
 list_data = {
     'bcpp_subject.circumcisionbenefits': [
@@ -7,16 +12,16 @@ list_data = {
         ('Reduced risk of other sexually transmitted diseases',
          'Reduced risk of other sexually transmitted diseases'),
         ('Reduced risk of cancer', 'Reduced risk of cancer'),
-        ('Other', 'Other'),
+        (OTHER, ' Other'),
         ('I am not sure', 'I am not sure'),
-        ("Don't want to answer", "Don't want to answer")],
+        (DWTA, "Don't want to answer")],
     'bcpp_subject.diagnoses': [
-        ('Heart Disease or Stroke', 'Heart Disease'),
+        ('Heart Disease', 'Heart Disease or Stroke'),
         ('Cancer', 'Cancer'),
-        ('Tubercolosis', 'tb'),
-        ('Other serious infection', 'Other'),
-        ('None', 'none'),
-        ('STI (Sexually Transmitted Infection)', 'sti')],
+        ('tb', 'Tubercolosis'),
+        (OTHER, ' Other serious infection'),
+        (NONE, ' None'),
+        ('sti', 'STI (Sexually Transmitted Infection)')],
     'bcpp_subject.ethnicgroups': [
         ('Babirwa', 'Babirwa'),
         ('Bahambukushu', 'Bahambukushu'),
@@ -38,7 +43,7 @@ list_data = {
         ('Indian African', 'Indian African'),
         ('Asian', 'Asian'),
         ('Other, specify', 'Other, specify'),
-        ("Don't want to answer", 'dont want to answer'),
+        (DWTA, 'dont want to answer'),
         ('Bazezuri/Shona', 'Bazezuri')],
     'bcpp_subject.familyplanning': [
         ('Condoms, consistent use (male or female)',
@@ -50,9 +55,9 @@ list_data = {
         ('Rhythm or menstrual cycle timing',
          'Rhythm or menstrual cycle timing'),
         ('Withdrawal', 'Withdrawal'),
-        ('Other, specify', 'Other, specify'),
-        ("Don't want to answer", "Don't want to answer"),
-        ('NOT APPLICABLE', 'NA'),
+        (OTHER, ' OTHER, specify'),
+        (DWTA, " Don't want to answer"),
+        (NOT_APPLICABLE, ' NOT APPLICABLE'),
         ('Condoms, in-consistent use (male or female)',
          'Condoms, in-consistent use (male or female)')],
     'bcpp_subject.medicationtaken': [
@@ -88,22 +93,22 @@ list_data = {
         ("doxazosin", "Doxazosin"),
         ("hydralazine", "Hydralazine"),
         ("not_applicable", "Not Applicable"),
-        ('OTHER', "Other")],
+        (OTHER, " OTHER")],
     'bcpp_subject.heartdisease': [
         ('Myocardial infarction (heart attack)',
          'Myocardial infarction (heart attack)'),
         ('Congestive cardiac failure', 'Congestive cardiac failure'),
         ('Stroke (cerebrovascular accident, CVA)',
          'Stroke (cerebrovascular accident, CVA)'),
-        ('Other, specify', 'Other, specify'),
-        ("Don't want to answer", "Don't want to answer")],
+        (OTHER, ' OTHER, specify'),
+        (DWTA, " Don't want to answer")],
     'bcpp_subject.livewith': [
         ('Partner or spouse', 'Partner or spouse'),
         ('Siblings', 'Siblings'),
         ('Alone', 'Alone'),
         ('Extended family', 'Extended family'),
-        ('Other', 'Other'),
-        ("Don't want to answer", "Don't want to answer")],
+        (OTHER, ' Other'),
+        (DWTA, " Don't want to answer")],
     'bcpp_subject.medicalcareaccess': [
         ('Traditional, faith, or religious healer/doctor',
          'Traditional, faith, or religious healer/doctor'),
@@ -113,8 +118,8 @@ list_data = {
         ('Private health facility or clinic',
          'Private health facility or clinic'),
         ('Community health worker', 'Community health worker'),
-        ('Other, specify', 'Other, specify'),
-        ("Don't want to answer", 'dont want to answer')],
+        (OTHER, ' OTHER, specify'),
+        (DWTA, " Don't want to answer")],
     'bcpp_subject.neighbourhoodproblems': [
         ('Water', 'Water'),
         ('Sewer (sanitation)', 'Sewer (sanitation)'),
@@ -124,40 +129,40 @@ list_data = {
         ('HIV/AIDS', 'HIV/AIDS'),
         ('Schools', 'Schools'),
         ('Unemployment', 'Unemployment'),
-        ('Other, specify', 'Other, specify'),
-        ("Don't want to answer", "Don't want to answer")],
+        (OTHER, ' OTHER, specify'),
+        (DWTA, " Don't want to answer")],
     'bcpp_subject.partnerresidency': [
-        ('In this community', 'in this community'),
-        ('Outside community', 'outside community'),
-        ('Farm within this community', 'farm within'),
-        ('Farm outside this community', 'farm outside this community'),
-        ('Cattle post within this community', 'cattelepost within'),
-        ('Cattle post outside this community', 'cattlepost outside')],
+        ('in this community', 'In this community'),
+        ('outside community', 'Outside community'),
+        ('farm within', 'Farm within this community'),
+        ('farm outside this community', 'Farm outside this community'),
+        ('cattelepost within', 'Cattle post within this community'),
+        ('cattlepost outside', 'Cattle post outside this community')],
     'bcpp_subject.religion': [
-        ('Anglican', 'anglican'),
-        ('Apostolic', 'apostolic'),
-        ('Baptist', 'baptist'),
-        ('Catholic', 'catholic'),
-        ('Evangelical', 'evangelical'),
-        ('Methodist', 'methodist'),
-        ('Pentecostal', 'pentecostal'),
-        ('Traditionalist', 'traditionalist'),
-        ('ZCC', 'zcc'),
-        ('Islam', 'muslim'),
-        ('HInduism', 'hindu'),
-        ('Buddhism', 'buddhist'),
-        ('Other, specify', 'Other, specify'),
+        ('anglican', 'Anglican'),
+        ('apostolic', 'Apostolic'),
+        ('baptist', 'Baptist'),
+        ('catholic', 'Catholic'),
+        ('evangelical', 'Evangelical'),
+        ('methodist', 'Methodist'),
+        ('pentecostal', 'Pentecostal'),
+        ('traditionalist', 'Traditionalist'),
+        ('zcc', 'ZCC'),
+        ('muslim', 'Islam'),
+        ('hindu', 'HInduism'),
+        ('buddhist', 'Buddhism'),
+        (OTHER, ' OTHER, specify'),
         ('No affiliation', 'no_affiliation')],
     'bcpp_subject.stiillnesses': [
-        ('Severe weight loss (wasting) - more than 10% of body weight',
-         'wasting'),
-        ('Unexplained diarrhoea for one month', 'diarrhoea'),
-        ('Yeast infection of mouth or oesophagus', 'yeast_infection'),
-        ('Severe pneumonia or meningitis or sepsis', 'pneumonia'),
-        ('PCP (Pneumocystis pneumonia)', 'PCP'),
-        ('Herpes infection for more than one month', 'herpes'),
-        ('Other, specify', 'Other, specify'),
-        ('None', 'None')],
+        ('wasting',
+         'Severe weight loss (wasting) - more than 10% of body weight'),
+        ('diarrhoea', 'Unexplained diarrhoea for one month'),
+        ('yeast_infection', 'Yeast infection of mouth or oesophagus'),
+        ('pneumonia', 'Severe pneumonia or meningitis or sepsis'),
+        ('PCP', 'PCP (Pneumocystis pneumonia)'),
+        ('herpes', 'Herpes infection for more than one month'),
+        (OTHER, ' OTHER, specify'),
+        (NONE, ' None')],
     'member.transportmode': [
         ('Motor vehicle (car,truck,taxi, etc)',
          'Motor vehicle (car,truck,taxi, etc)'),
@@ -166,18 +171,20 @@ list_data = {
         ('Motorcycle/scooter', 'Motorcycle/scooter'),
         ('Donkey or cow cart', 'Donkey or cow cart'),
         ('Donkey/horses', 'Donkey/horses'),
-        ("Don't want to answer", "Other, specify"),
-        ('None', 'None')],
+        (OTHER, " OTHER, specify"),
+        (NONE, ' None')],
     'member.electricalappliances': [
-        ('Radio', 'Radio'),
-        ('TV', 'TV'),
-        ('Landline telephone', 'Landline telephone'),
-        ('Cell phone', 'Cell phone'),
-        ('Computer', 'Computer'),
-        ('Access to internet', 'Access to internet'),
-        ('Refrigerator', 'Refrigerator'),
-        ("Don't want to answer", "Don't want to answer"), ],
+        ('radio', 'Radio'),
+        ('tv', 'TV'),
+        ('landline_telephone', 'Landline telephone'),
+        ('cellphone', 'Cell phone'),
+        ('computer', 'Computer'),
+        ('access_to_internet', 'Access to internet'),
+        ('refrigerator', 'Refrigerator'),
+        (DWTA, " Don't want to answer"), ],
     'bcpp_subject.arv': [
+        (NOT_APPLICABLE, ' NOT APPLICABLE'),
+        (OTHER, ' OTHER drug not listed: specify below ...'),
         ('Efavirenz', 'EFV (Stocrin, Sustiva)'),
         ('Dolutegravir', 'DTG (Tivicay)'),
         ('Tenofovir/emtricitabine', 'TDF/FTC (Truvada)'),
@@ -195,23 +202,22 @@ list_data = {
         ('Tenofovir', 'TDF (Viread)'),
         ('Darunavir', 'DRV (Prezista)'),
         ('Saquinavir', 'SQV (Invirase)'),
-        ('Ritonavir', 'RTV or r (Norvir)'),
-        ('OTHER', 'Other: Specify')],
+        ('Ritonavir', 'RTV or r (Norvir)')],
     'bcpp_subject.hospitalizationreason': [
         ('Tuberculosis (TB, MTB)', 'Tuberculosis (TB, MTB)'),
         ('Pneumonia', 'Pneumonia'),
         ('Cryptococcal meningitis', 'Cryptococcal meningitis'),
         ('Immune Reconstitution Inflammatory Syndrome (IRIS)',
          'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
-        ('Other HIV-related illness', 'Other HIV-related illness'),
+        ('OTHER HIV-related illness', 'Other HIV-related illness'),
         ('Pregnancy-related care, including delivery',
          'Pregnancy-related care, including delivery'),
         ('Injury or accident', 'Injury or accident'),
         ('Medication toxicity', 'Medication toxicity'),
         ('Chronic disease related care', 'Chronic disease related care'),
         ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
-        ('Other', 'Other (specify)'),
-        ("Don't know", "Don't know"),
+        (OTHER, ' OTHER (specify)'),
+        (DONT_KNOW, " Don't know"),
     ],
     'bcpp_subject.chronicdisease': [
         ('High blood pressure', 'High blood pressure'),
@@ -225,10 +231,14 @@ for list_obj in list_data.keys():
     try:
         model = django_apps.get_app_config(
             list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
-        for ob in list_data.get(list_obj):
-            a, b = ob
-            if model.objects.filter(name=a).exists():
-                continue
-            created_model = model.objects.create(name=a)
+        for tpl in list_data.get(list_obj):
+            a, b = tpl
+            try:
+                obj = model.objects.get(short_name=a)
+            except ObjectDoesNotExist:
+                model.objects.create(short_name=a, name=b)
+            else:
+                obj.name = b
+                obj.save()
     except Exception as e:
         print(e)

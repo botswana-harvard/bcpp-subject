@@ -871,6 +871,7 @@ EDUCATION_CHOICE = (
 )
 
 WHY_NO_ARV_CHOICE = (
+    (NOT_APPLICABLE, _('Not applicable')),
     ('Did not feel sick', _('Did not feel sick')),
     ('Was afraid treatment would make me feel bad/sick',
      _('Was afraid treatment  would make me feel bad/sick')),
@@ -901,6 +902,7 @@ WHY_NO_ARV_CHOICE = (
 )
 
 WHY_ARV_STOP_CHOICE = (
+    (NOT_APPLICABLE, _('Not applicable')),
     ('Did not feel they were helping', _('Did not feel they were helping')),
     ('ARVs made me feel bad or sick', _('ARVs made me feel bad or sick')),
     ('Difficulty finding someone to go with me for counseling '
@@ -931,6 +933,7 @@ WHY_ARV_STOP_CHOICE = (
 )
 
 ADHERENCE_4DAY_CHOICE = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('Zero', _('Zero days')),
     ('One day', _('One day')),
     ('Two days', _('Two days')),
@@ -940,6 +943,7 @@ ADHERENCE_4DAY_CHOICE = (
 )
 
 ADHERENCE_4WK_CHOICE = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('Very poor', _('Very poor')),
     ('Poor', _('Poor')),
     ('Fair', _('Fair')),
@@ -949,6 +953,7 @@ ADHERENCE_4WK_CHOICE = (
 )
 
 NO_MEDICAL_CARE = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('Did not feel sick', _('Did not feel sick')),
     ('Did not know I should get HIV care',
      _('Did not know I should get HIV care')),
@@ -989,7 +994,7 @@ WHY_NO_HIV_TESTING_CHOICE = (
     ('I recently tested', _('I recently tested (I know my status)')),
     ('I didn\'t believe I was at risk of getting HIV',
      _('I didn\'t believe I was at risk of getting HIV')),
-    
+
     ('I am afraid to find out the result',
      _('I am afraid to find out the result')),
     ('I am afraid of what others would think of me',
