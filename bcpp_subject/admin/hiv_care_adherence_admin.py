@@ -11,63 +11,53 @@ from ..models import HivCareAdherence
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-hospitalization_fieldset = Fieldset(
-    'hospitalized_art_start',
-    'hospitalized_art_start_duration',
-    'hospitalized_art_start_reason',
-    'hospitalized_reason_evidence',
-    'hospitalized_reason_evidence_other',
-    section='Hospitalization')
-
-insert_regimen_fields = Insert(
-    ('regimen_currently_prescribed',
-     'first_regimen',
-     'hospitalized_art_start_reason',
-     'hospitalized_art_start_reason_other',
-     'chronic_diseases',
-     'medication_toxicity',
-     ),
-    after='arv_evidence')
-
-
 @admin.register(HivCareAdherence, site=bcpp_subject_admin)
 class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-
-    conditional_fieldsets = {
-        E0: hospitalization_fieldset
-    }
-
-    conditional_fieldlists = {
-        T1: insert_regimen_fields,
-        T2: insert_regimen_fields,
-        T3: insert_regimen_fields,
-        E0: insert_regimen_fields,
-    }
-
-    filter_horizontal = ('hospitalization_reason', 'hospitalization_reason')
 
     fieldsets = (
         (None, {
             'fields': (
                 "subject_visit",
-                "first_positive",
+                "first_positive")}),
+        ('Care', {
+            'fields': (
                 "medical_care",
                 "no_medical_care",
                 "no_medical_care_other",
                 'ever_recommended_arv',
                 'ever_taken_arv',
                 'why_no_arv',
-                'why_no_arv_other',
-                'first_arv',
+                'why_no_arv_other')}),
+        ('Antiretiroviral Therapy', {
+            'fields': (
                 'on_arv',
                 'arv_evidence',
-                'clinic_receiving_from',
-                'next_appointment_date',
+                'first_arv',
                 'arv_stop_date',
                 'arv_stop',
                 'arv_stop_other',
+                'regimen_currently_prescribed',
+                'first_regimen',
+            )}),
+        ('Adherence', {
+            'fields': (
                 'adherence_4_day',
-                'adherence_4_wk')}),
+                'adherence_4_wk'
+            )}),
+        ('Hospitalization', {
+            'fields': (
+                'hospitalized_art_start',
+                'hospitalized_art_start_duration',
+                'hospitalized_art_start_reason',
+                'hospitalized_art_start_reason_other',
+                'hospitalized_reason_evidence',
+                'hospitalized_reason_evidence_other',
+                'chronic_diseases',
+                'medication_toxicity')}),
+        ('Clinic', {
+            'fields': (
+                'clinic_receiving_from',
+                'next_appointment_date')}),
         audit_fieldset_tuple,
     )
 
@@ -92,6 +82,7 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     filter_horizontal = (
         'regimen_currently_prescribed',
         'hospitalized_art_start_reason',
+        'chronic_diseases',
     )
 
     instructions = [("Note to Interviewer: This section is only to be"

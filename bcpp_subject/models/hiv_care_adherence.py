@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
-from edc_constants.choices import YES_NO_DWTA, YES_NO
+from edc_constants.choices import YES_NO_DWTA, YES_NO_NA, NOT_APPLICABLE
 
 from ..choices import (
     WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE,
@@ -12,6 +12,7 @@ from ..choices import (
     YES_NO_REGIMEN, SOURCE_EVIDENCE)
 from ..models.list_models import Arv, HospitalizationReason, ChronicDisease
 from .model_mixins import CrfModelMixin
+from django.utils.safestring import mark_safe
 
 
 class HivCareAdherence (CrfModelMixin):
@@ -26,8 +27,8 @@ class HivCareAdherence (CrfModelMixin):
         null=True,
         blank=True,
         help_text=(
-            'Note: If participant does not want to answer, leave blank. '
-            'If participant is unable to estimate date, leave blank.'),
+            'Note: If participant does not want to answer or is '
+            'unable to estimate date, leave blank.'),
     )
 
     # longitudinal, terminal value = YES
@@ -39,17 +40,18 @@ class HivCareAdherence (CrfModelMixin):
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
-        blank=True,
+        blank=False,
         help_text='if \'YES\', answer HIV medical care section',
     )
 
     # longitudinal, always BLANK
     no_medical_care = models.CharField(
-        verbose_name=('What is the main reason you have not received '
+        verbose_name=('If \'No\', what is the main reason you have not received '
                       'HIV-related medical or clinical care?'),
         max_length=70,
         null=True,
-        blank=True,
+        blank=False,
+        default=NOT_APPLICABLE,
         choices=NO_MEDICAL_CARE,
         help_text='',
     )
@@ -60,34 +62,36 @@ class HivCareAdherence (CrfModelMixin):
         verbose_name=(
             'Have you ever been recommended by a doctor/nurse or other '
             'healthcare worker to start antiretroviral therapy (ARVs), a '
-            'combination of medicines to treat your HIV infection? [common '
-            'medicines include: combivir, truvada, atripla, nevirapine]'),
+            'combination of medicines to treat your HIV infection? '),
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
-        blank=True,
-        help_text='',
+        blank=False,
+        help_text='Common '
+        'medicines include: combivir, truvada, atripla, nevirapine',
     )
 
     # longitudinal, YES if terminal value of first_arv  = YES
     ever_taken_arv = models.CharField(
         verbose_name=(
             'Have you ever taken any antiretroviral therapy (ARVs) for '
-            'your HIV infection? [For women: Do not include treatment that '
-            'you took during pregnancy to protect your baby from HIV]'),
+            'your HIV infection?'),
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
         blank=False,
-        help_text='',  # Q7
+        help_text=(
+            'For women, do not include treatment that '
+            'you took during pregnancy to protect your baby from HIV'),  # Q7
     )
 
     # longitudinal, BLANK if terminal value of first_arv  = YES
     why_no_arv = models.CharField(
-        verbose_name='What was the main reason why you have not started ARVs?',
+        verbose_name='If \'No\', What was the main reason why you have not started ARVs?',
         max_length=75,
         null=True,
-        blank=True,
+        blank=False,
+        default=NOT_APPLICABLE,
         choices=WHY_NO_ARV_CHOICE,
         help_text='',
     )
@@ -102,8 +106,8 @@ class HivCareAdherence (CrfModelMixin):
         null=True,
         blank=True,
         help_text=(
-            'Note: If participant does not want to answer,leave blank.  '
-            'If participant is unable to estimate date, leave blank.'),
+            'Note: If participant does not want to answer or is '
+            'unable to estimate date, leave blank.'),
     )
 
     on_arv = models.CharField(
@@ -140,9 +144,10 @@ class HivCareAdherence (CrfModelMixin):
             'Were you admitted to the hospital during the ~6 months following '
             'the date on which you started ART'),
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         null=True,
-        blank=False
+        blank=False,
+        help_text='If not applicable, skip to next section.'
     )
 
     hospitalized_art_start_duration = models.CharField(
@@ -156,6 +161,7 @@ class HivCareAdherence (CrfModelMixin):
                 '^[1-9][0-9]* (weeks|months)$',
                 'Invalid format. Expected \'NN weeks\' or \'NN months\'')],
         help_text=(
+            'If yes to question about hospital admission. '
             'Format is phrase \'NN weeks\' or \'NN months\', '
             'e.g \'5 months\' or \'13 weeks\', etc.')
     )
@@ -165,7 +171,7 @@ class HivCareAdherence (CrfModelMixin):
         max_length=100,
         verbose_name=(
             'What was the primary reason for the hospitalization?'),
-        help_text='Required if hospitalized after starting ART.'
+        help_text='If yes to question about hospital admission.'
     )
 
     hospitalized_art_start_reason_other = OtherCharField()
@@ -184,11 +190,11 @@ class HivCareAdherence (CrfModelMixin):
 
     hospitalized_reason_evidence = models.CharField(
         verbose_name=(
-            'Is this the first regimen that you were prescribed for your '
-            'HIV infection?'),
+            'What is the source of evidence for reason for the hospitalization?'),
         max_length=25,
         choices=SOURCE_EVIDENCE,
         null=True,
+        help_text='If yes to question about hospital admission',
     )
 
     hospitalized_reason_evidence_other = OtherCharField()
@@ -215,15 +221,16 @@ class HivCareAdherence (CrfModelMixin):
         validators=[date_not_future],  # Q15
         null=True,
         blank=True,
-        help_text='',
+        help_text='If not applicable, leave blank.',
     )
 
     arv_stop = models.CharField(
-        verbose_name='What was the main reason why you stopped taking ARVs?',
+        verbose_name='If \'stopped\', what was the main reason why you stopped taking ARVs?',
         max_length=80,
         choices=WHY_ARV_STOP_CHOICE,
         null=True,
-        blank=True,
+        blank=False,
+        default=NOT_APPLICABLE,
         help_text='',
     )
 
@@ -236,7 +243,8 @@ class HivCareAdherence (CrfModelMixin):
         max_length=25,
         choices=ADHERENCE_4DAY_CHOICE,
         null=True,
-        blank=True,
+        blank=False,
+        default=NOT_APPLICABLE,
         help_text='',
     )
 
@@ -246,24 +254,26 @@ class HivCareAdherence (CrfModelMixin):
             'rate your ability to take all your medications as prescribed?'),
         max_length=25,
         null=True,
-        blank=True,
+        blank=False,
+        default=NOT_APPLICABLE,
         choices=ADHERENCE_4WK_CHOICE,
         help_text='',
     )
 
     arv_evidence = models.CharField(
-        verbose_name=(
-            'Is there evidence [OPD card, tablets, masa number] that the '
+        verbose_name=mark_safe(
+            '<span style="color:orange;">Interviewer: </span> Is there evidence that the '
             'participant is on therapy?'),
-        choices=YES_NO,  # Q17
+        choices=YES_NO_NA,  # Q17
         null=True,
-        blank=True,
+        default=NOT_APPLICABLE,
         max_length=3,
+        help_text='Examples of evidence might be OPD card, tablets, masa number, etc.'
     )
 
     history = HistoricalRecords()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
-        verbose_name = 'HIV care & Adherence'
-        verbose_name_plural = 'HIV care & Adherence'
+        verbose_name = 'HIV care and adherence'
+        verbose_name_plural = 'HIV care and adherence'

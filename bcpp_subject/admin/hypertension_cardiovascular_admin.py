@@ -27,6 +27,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'salt_intake_counselling',
                 'tobacco_smoking',
                 'tobacco_counselling',
+                'weight_history'
                 'weight_counselling',
                 'physical_activity_counselling',
                 'alcohol_counselling',
@@ -65,7 +66,8 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
         'physical_activity_counselling': admin.VERTICAL,
         'alcohol_counselling': admin.VERTICAL,
         'blood_test_for_cholesterol': admin.VERTICAL,
-        'blood_test_for_diabetes': admin.VERTICAL}
+        'blood_test_for_diabetes': admin.VERTICAL,
+        'weight_history': admin.VERTICAL}
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
