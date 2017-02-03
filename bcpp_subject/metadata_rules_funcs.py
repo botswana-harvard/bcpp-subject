@@ -126,11 +126,11 @@ def func_hiv_positive(visit_instance, *args):
     """Returns True if the participant is known or newly
     diagnosed HIV positive.
     """
-    return SubjectHelper(visit_instance).final_hiv_result == POS
+    return SubjectHelper(visit_instance).final_hiv_status == POS
 
 
 def func_hiv_indeterminate(visit_instance, *args):
-    return SubjectHelper(visit_instance).final_hiv_result == IND
+    return SubjectHelper(visit_instance).final_hiv_status == IND
 
 
 def func_hic_enrolled(visit_instance, *args):
