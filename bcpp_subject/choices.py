@@ -27,14 +27,39 @@ APPT_GRADING = (
     ('guess', 'Estimated by RA'),
 )
 
+CHRONIC_DISEASES = (
+    ('diabetes', 'Diabetes'),
+    ('high_bp', 'High blood pressure'),
+    ('mental_illness', 'Mental Illness'),
+    (OTHER, 'Other'),
+)
+
 CONTACT_TYPE = (
     ('direct', 'Direct contact with participant'),
     ('indirect', 'Contact with person other than participant'),
     ('no_contact', 'No contact made'),
 )
 
+HOSPITALIZATION_REASONS = (
+    (NOT_APPLICABLE, "Not applicable"),
+    ('tb', 'Tuberculosis (TB, MTB)'),
+    ('pneumonia', 'Pneumonia'),
+    ('crypto_meningitis', 'Cryptococcal meningitis'),
+    ('IRIS', 'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
+    ('OTHER_hiv_related', 'Other HIV-related illness'),
+    ('pregnancy_related', 'Pregnancy-related care, including delivery'),
+    ('injury_accident', 'Injury or accident'),
+    ('chronic_disease',
+     'Chronic disease related care, including high blood pressure, diabetes, '
+     'cancer, mental illness (specify which)'),
+    ('stroke', 'Stroke (or suspected stroke)'),
+    ('medication_toxicity', 'Medication toxicity (specify)'),
+    (OTHER, 'Other (specify)'),
+    (DONT_KNOW, 'Don\'t know'),
+)
+
 REFERRAL_APPT_COMMENTS = (
-    ("N/A", "not applicable"),
+    (NOT_APPLICABLE, "Not applicable"),
     ("conflict", "have another commitment"),
     ("prefer_other_facility",
      "prefer another health facility than the local clinic"),
@@ -1312,9 +1337,8 @@ PANEL_CHOICE = (
 
 YES_NO_REGIMEN = (
     (YES, 'Yes, this is the first regimen'),
-    (NO,
-     'I previously took at least 1 different ARV (and was switched '
-     'to this regimen)')
+    (NO, 'No, I previously took at least 1 different ARV (and was switched '
+         'to this regimen)')
 )
 
 WEEKS_MONTHS = (
@@ -1322,7 +1346,7 @@ WEEKS_MONTHS = (
     ('Months', 'months')
 )
 
-SOURCE_EVIDENCE = (
+HOSPITALIZED_EVIDENCE = (
     ('Self-report', 'Self report'),
     ('Medical-card', 'Medical Card'),
     ('Both', 'Both'),

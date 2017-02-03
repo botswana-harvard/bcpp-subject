@@ -183,7 +183,6 @@ list_data = {
         ('refrigerator', 'Refrigerator'),
         (DWTA, " Don't want to answer"), ],
     'bcpp_subject.arv': [
-        (NOT_APPLICABLE, ' NOT APPLICABLE'),
         (OTHER, ' OTHER drug not listed: specify below ...'),
         ('Efavirenz', 'EFV (Stocrin, Sustiva)'),
         ('Dolutegravir', 'DTG (Tivicay)'),
@@ -226,6 +225,11 @@ list_data = {
     ]
 }
 
+
+for list_obj in list_data.keys():
+    model = django_apps.get_app_config(
+        list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
+    model.objects.all().delete()
 
 for list_obj in list_data.keys():
     try:

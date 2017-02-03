@@ -36,8 +36,12 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'arv_stop_date',
                 'arv_stop',
                 'arv_stop_other',
-                'regimen_currently_prescribed',
-                'first_regimen',
+                'arvs',
+                'arv_other',
+                'is_first_regimen',
+                'prev_switch_date',
+                'prev_arvs',
+                'prev_arv_other',
             )}),
         ('Adherence', {
             'fields': (
@@ -50,10 +54,10 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'hospitalized_art_start_duration',
                 'hospitalized_art_start_reason',
                 'hospitalized_art_start_reason_other',
-                'hospitalized_reason_evidence',
-                'hospitalized_reason_evidence_other',
-                'chronic_diseases',
-                'medication_toxicity')}),
+                'chronic_disease',
+                'medication_toxicity',
+                'hospitalized_evidence',
+                'hospitalized_evidence_other')}),
         ('Clinic', {
             'fields': (
                 'clinic_receiving_from',
@@ -74,16 +78,13 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "adherence_4_day": admin.VERTICAL,
         "adherence_4_wk": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL,
-        "first_regimen": admin.VERTICAL,
+        "is_first_regimen": admin.VERTICAL,
         "hospitalized_art_start": admin.VERTICAL,
-        "hospitalized_reason_evidence": admin.VERTICAL,
+        "hospitalized_art_start_reason": admin.VERTICAL,
+        "hospitalized_evidence": admin.VERTICAL,
     }
 
-    filter_horizontal = (
-        'regimen_currently_prescribed',
-        'hospitalized_art_start_reason',
-        'chronic_diseases',
-    )
+    filter_horizontal = ('arvs', 'prev_arvs')
 
     instructions = [("Note to Interviewer: This section is only to be"
                      " completed by HIV-positive participants who knew"
