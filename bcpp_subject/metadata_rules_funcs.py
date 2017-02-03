@@ -62,7 +62,6 @@ def is_male(visit_instance, *args):
 #         visit_code=visit_codes[:index][0],
 #         subject_identifier=visit_instance.subject_identifier)
 
-
 def func_art_defaulter(visit_instance, *args):
     """Returns True is a participant is a defaulter.
     """
