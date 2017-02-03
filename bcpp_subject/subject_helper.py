@@ -98,7 +98,7 @@ class ModelValues:
 
         # HivResult
         qs = HivResult.objects.filter(
-            **options).order_by('report_datetime').last()
+            **options).order_by('report_datetime')
         if qs:
             obj = self.get_first_positive_or_none(qs, 'hiv_result')
             if obj:
