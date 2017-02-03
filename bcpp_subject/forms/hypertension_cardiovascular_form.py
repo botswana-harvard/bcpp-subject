@@ -68,7 +68,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
         if cleaned_data.get('may_take_blood_pressure') == NO:
             for field in blank_fields:
-                if not cleaned_data.get(field):
+                if cleaned_data.get(field):
                     raise forms.ValidationError({
                         field: [
                             'This field should be left empty as the '
