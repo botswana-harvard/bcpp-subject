@@ -1,6 +1,4 @@
 from model_mommy import mommy
-from datetime import timedelta
-from django.utils import timezone
 
 from django.test import TestCase, tag
 
@@ -34,12 +32,9 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
         """
         for subject_visit in [
                 self.subject_visit_male_t0, self.subject_visit_male_E0]:
-            self.assertCrfrule(
-                'bcpp_subject.hivcareadherence', REQUIRED,
-                subject_visit.visit_code)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima',
-                                      NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivcareadherence',
+                                      REQUIRED, subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             # suggest this is a defaulter
             mommy.make_recipe(
@@ -54,11 +49,11 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 arv_evidence=NO)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima',
+                self.crf_metadata_obj('bcpp_subject.pimacd4',
                                       NOT_REQUIRED, subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule1')
+    @tag('shared_rule')
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required, not a defaulter.
 
@@ -74,7 +69,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.subject_identifier).count(), 1)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED, subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             # add HivCarAdherence,
             self.make_hiv_care_adherence(
@@ -82,7 +77,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
             # on art so no need for CD4
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima',
+                self.crf_metadata_obj('bcpp_subject.pimacd4',
                                       NOT_REQUIRED,
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
@@ -99,11 +94,12 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 self.subject_visit_male_t0, self.subject_visit_male_E0]:
             self.assertEqual(
                 self.crf_metadata_obj('bcpp_subject.hivcareadherence',
-                                      REQUIRED, subject_visit,
+                                      REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
+                self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED,
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
@@ -112,7 +108,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, self.get_utcnow(), NO, NO, NO, YES, NO)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
+                self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED,
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
@@ -129,7 +125,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, self.get_utcnow(), NO, NO, NO, NO, NO)
 
             self.assertEqual(self.crf_metadata_obj(
-                'bcpp_subject.pima', REQUIRED,
+                'bcpp_subject.pimacd4', REQUIRED,
                 subject_visit.visit_code, subject_visit.subject_identifier).count(), 1)
 
     @tag('shared_rule')
@@ -152,7 +148,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                           subject_visit.visit_code,
                                           subject_visit.subject_identifier).count(), 1)
                 self.assertEqual(
-                    self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
+                    self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED,
                                           subject_visit.visit_code,
                                           subject_visit.subject_identifier).count(), 1)
 
@@ -310,7 +306,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivtested', REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivtested', REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
     @tag('shared_rule')
@@ -347,7 +344,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED,
+                self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED,
                                       subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
             hivcareadherence.on_arv = NO
@@ -387,7 +384,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivcareadherence', REQUIRED, subject_visit.visit_code,
+                    'bcpp_subject.hivcareadherence', REQUIRED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
             # add HivCareAdherence,
@@ -407,7 +405,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                     'bcpp_subject.hivresult', NOT_REQUIRED, subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.pima', NOT_REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.pimacd4', NOT_REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
     @tag('shared_rule')
@@ -426,7 +425,8 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivcareadherence', REQUIRED, subject_visit.visit_code,
+                    'bcpp_subject.hivcareadherence', REQUIRED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
             # add HivCareAdherence,
@@ -435,22 +435,25 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivtestreview', KEYED, subject_visit.visit_code,
+                    'bcpp_subject.hivtestreview', KEYED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivcareadherence', KEYED, subject_visit.visit_code,
+                    'bcpp_subject.hivcareadherence', KEYED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.hivresult', NOT_REQUIRED, subject_visit.visit_code,
+                    'bcpp_subject.hivresult', NOT_REQUIRED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.crf_metadata_obj(
                     'bcpp_subject.pima', NOT_REQUIRED, subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
-    @tag('shared_rule')
+    @tag('shared_rule_more_than_one')
     def test_elisaresult_behaves_like_todayhivresult(self):
         """when an elisa result is keyed in, a +ve result should result in RBD and VL
             being REQUIRED just like Today's HivResult
@@ -462,12 +465,14 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, NEG, self.get_utcnow(), self.hiv_test_date)
 
             self.assertEqual(
-                self.crf_metadata_obj('bcpp_subject.hivresult', REQUIRED, subject_visit.visit_code,
+                self.crf_metadata_obj('bcpp_subject.hivresult', REQUIRED,
+                                      subject_visit.visit_code,
                                       subject_visit.subject_identifier).count(), 1)
 
             self.assertEqual(
                 self.crf_metadata_obj(
-                    'bcpp_subject.elisahivresult', NOT_REQUIRED, subject_visit.visit_code,
+                    'bcpp_subject.elisahivresult', NOT_REQUIRED,
+                    subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
             self.make_hiv_result(IND, subject_visit, self.get_utcnow())
@@ -519,10 +524,10 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                     'bcpp_subject.circumcised', circumcised_entry_status, subject_visit.visit_code,
                     subject_visit.subject_identifier).count(), 1)
 
+        assert_circumsition(REQUIRED, REQUIRED, REQUIRED)
+
         for subject_visit in [
                 self.subject_visit_male_t0, self.subject_visit_male_E0]:
-
-            assert_circumsition(REQUIRED, REQUIRED, REQUIRED)
 
             circumcition = mommy.make_recipe(
                 'bcpp_subject.circumcision',
@@ -591,7 +596,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, self.get_utcnow(), NO, NO, NO, NO, NO)
 
             self.assertEqual(self.crf_metadata_obj(
-                'bcpp_subject.pima', REQUIRED, subject_visit.visit_code,
+                'bcpp_subject.pimacd4', REQUIRED, subject_visit.visit_code,
                 subject_visit.subject_identifier).count(), 1)
             self.assertEqual(self.requisition_metadata_obj(
                 REQUIRED, subject_visit.visit_code, VIRAL_LOAD,
@@ -619,7 +624,7 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 subject_visit, self.get_utcnow(), NO, NO, NO, NO, NO)
 
             self.assertEqual(self.crf_metadata_obj(
-                'bcpp_subject.pima', REQUIRED,
+                'bcpp_subject.pimacd4', REQUIRED,
                 subject_visit.visit_code, subject_visit.subject_identifier).count(), 1)
             self.assertEqual(
                 self.requisition_metadata_obj(REQUIRED, subject_visit.visit_code,
