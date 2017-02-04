@@ -40,7 +40,6 @@ from .pima_vl_admin import PimaVlAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin
 from .quality_of_life_admin import QualityOfLifeAdmin
-from .rbd_demographics_admin import RbdDemographicsAdmin
 from .reproductive_health_admin import ReproductiveHealthAdmin
 from .residency_mobility_admin import ResidencyMobilityAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin

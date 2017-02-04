@@ -1,78 +1,85 @@
 from django import forms
 
-from edc_constants.constants import MALE, FEMALE, DWTA
+from edc_constants.constants import MALE, FEMALE, DWTA, OTHER
 
 from ..models import Demographics
-
+from ..constants import MARRIED, ALONE
 from .form_mixins import SubjectModelFormMixin
-from edc_registration.models import RegisteredSubject
 
 
 class DemographicsForm(SubjectModelFormMixin):
 
+    def validate_other(self, field, field_other):
+        cleaned_data = self.cleaned_data
+        if (cleaned_data.get(field)
+                and cleaned_data.get(field) == OTHER
+                and not cleaned_data.get(field_other)):
+            raise forms.ValidationError(
+                {field_other:
+                 'This field is required.'})
+        elif (cleaned_data.get(field)
+                and cleaned_data.get(field) != OTHER
+                and cleaned_data.get(field_other)):
+            raise forms.ValidationError(
+                {field_other:
+                 'This field is not required.'})
+
     def clean(self):
         cleaned_data = super().clean()
-        # validating ethnic group
-        if cleaned_data.get('ethnic') and cleaned_data.get('religion'):
-            ethnic_count = cleaned_data.get('ethnic').count()
-            religion_count = cleaned_data.get('religion').count()
-            if ethnic_count > 1 or religion_count > 1:
-                raise forms.ValidationError(
-                    'Can only belong to one religion or ethnic group')
-        # validating living with
-        if cleaned_data.get('live_with'):
-            if cleaned_data.get('live_with').count() > 1:
-                for item in cleaned_data.get('live_with'):
-                    if item == "Alone" or item == DWTA:
-                        raise forms.ValidationError(
-                            '\'Don\'t want to answer\' or \'Alone\' '
-                            'options can only be selected singularly')
-        # validating unmarried
-        if (cleaned_data.get('marital_status', None) != 'Married' and
-                cleaned_data.get('num_wives', None)):
-            raise forms.ValidationError(
-                'If participant is not married, do not give number of wives')
-        if (cleaned_data.get('marital_status', None) != 'Married' and
-                cleaned_data.get('husband_wives', None)):
-            raise forms.ValidationError(
-                'If participant is not married, the number of wives '
-                'is not required')
-        self.marital_status_married()
-
+        self.validate_marriage()
+        print(cleaned_data.get('live_with'))
+        if (cleaned_data.get('live_with')
+                and cleaned_data.get('live_with').count() > 1):
+            for item in cleaned_data.get('live_with'):
+                if item == ALONE or item == DWTA:
+                    raise forms.ValidationError({
+                        'live_with':
+                        '\'Don\'t want to answer\' or \'Alone\' '
+                        'options can only be selected singularly'})
+        self.validate_other('religion', 'religion_other')
+        self.validate_other('ethnic', 'ethnic_other')
         return cleaned_data
 
-    def marital_status_married(self):
+    def validate_marriage(self):
         cleaned_data = self.cleaned_data
         # validating if married
-        if cleaned_data.get('marital_status') == 'Married':
-            husband_wives = cleaned_data.get('husband_wives', 0)
-            num_wives = cleaned_data.get('num_wives', 0)
+        if cleaned_data.get('marital_status') == MARRIED:
             subject_visit = cleaned_data.get('subject_visit')
-            subject_identifier = subject_visit.subject_identifier
-            registered_subject = RegisteredSubject.objects.get(
-                subject_identifier=subject_identifier)
-
-            if not num_wives or num_wives <= 0:
-                if registered_subject.gender == FEMALE:
-                    raise forms.ValidationError(
-                        {'num_wives':
-                         'The number of wives should not be '
-                         'empty and should be greater than 0.'})
-            if not husband_wives or husband_wives <= 0:
-                if registered_subject.gender == MALE:
-                    raise forms.ValidationError(
-                        {'husband_wives':
-                         'The number of wives should not be empty '
-                         'and should be greater than 0.'})
-
-            if registered_subject.gender == FEMALE and husband_wives:
+            gender = subject_visit.household_member.gender
+            if gender == FEMALE and cleaned_data.get('husband_wives') is not None:
                 raise forms.ValidationError(
                     {'husband_wives':
-                     'Married Female cannot have a wife'})
-            if registered_subject.gender == MALE and num_wives:
+                     'This field is not required for female'})
+            elif gender == MALE and cleaned_data.get('num_wives') is not None:
                 raise forms.ValidationError(
                     {'num_wives':
-                     'Married Male cannot have a husband with wives'})
+                     'This field is not required for male'})
+            elif cleaned_data.get('num_wives') is None and gender == FEMALE:
+                raise forms.ValidationError(
+                    {'num_wives':
+                     'Expected a number greater than 0.'})
+            elif cleaned_data.get('husband_wives') is None and gender == MALE:
+                raise forms.ValidationError(
+                    {'husband_wives':
+                     'Expected a number greater than 0.'})
+            elif gender == FEMALE and cleaned_data.get('num_wives') <= 0:
+                raise forms.ValidationError(
+                    {'num_wives':
+                     'Expected a number greater than 0.'})
+            elif gender == MALE and cleaned_data.get('husband_wives') <= 0:
+                raise forms.ValidationError(
+                    {'husband_wives':
+                     'Expected a number greater than 0.'})
+        elif cleaned_data.get('marital_status') != MARRIED:
+            if cleaned_data.get('num_wives') is not None:
+                raise forms.ValidationError({
+                    'num_wives':
+                    'This field is not required'})
+            elif cleaned_data.get('husband_wives') is not None:
+                raise forms.ValidationError({
+                    'husband_wives':
+                    'This field is not required'})
+
         return cleaned_data
 
     class Meta:

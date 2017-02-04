@@ -2,6 +2,7 @@ from django.utils.translation import ugettext as _
 
 from edc_constants.constants import (
     OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK, DONT_KNOW)
+from bcpp_subject.constants import MARRIED, ALONE
 
 
 AGREE_STRONGLY = (
@@ -622,7 +623,7 @@ CHOICES_FROM_BCPPLIST = (
      _('Stroke (cerebrovascular accident, CVA)')),
     ('Partner or spouse', _('Partner or spouse')),
     ('Siblings', _('Siblings')),
-    ('Alone', _('Alone')),
+    (ALONE, _('Alone')),
     ('Extended family', _('Extended family')),
     ('Traditional, faith, or religious healer/doctor',
      _('Traditional, faith, or religious healer/doctor')),
@@ -1213,7 +1214,7 @@ ANC_REG_CHOICE = (
 
 MARITAL_STATUS_CHOICE = (
     ('Single/never married', _('Single/never married')),
-    ('Married', _('Married (common law/civil or customary/traditional)')),
+    (MARRIED, _('Married (common law/civil or customary/traditional)')),
     ('Divorced/separated', _('Divorced or formally separated')),
     ('Widowed', _('Widowed')),
     (DWTA, _('Don\'t want to answer')),
@@ -1373,4 +1374,47 @@ COUNTRIES = (
     ('Zambia', 'Zambia'),
     ('Zimbabwe', 'Zimbabwe'),
     (OTHER, 'OTHER'),
+)
+
+RELIGION = (
+    ('anglican', 'Anglican'),
+    ('apostolic', 'Apostolic'),
+    ('baptist', 'Baptist'),
+    ('catholic', 'Catholic'),
+    ('evangelical', 'Evangelical'),
+    ('methodist', 'Methodist'),
+    ('pentecostal', 'Pentecostal'),
+    ('traditionalist', 'Traditionalist'),
+    ('zcc', 'ZCC'),
+    ('muslim', 'Islam'),
+    ('hindu', 'Hinduism'),
+    ('buddhist', 'Buddhism'),
+    (OTHER, 'Other, specify'),
+    ('No affiliation', 'No affiliation'),
+)
+
+
+ETHNIC_GROUP = (
+    ('Babirwa', 'Babirwa'),
+    ('Bahambukushu', 'Bahambukushu'),
+    ('Baherero', 'Baherero'),
+    ('Bahurutshe', 'Bahurutshe'),
+    ('Bakalaka', 'Bakalaka'),
+    ('Bakgatla', 'Bakgatla'),
+    ('Bakwena', 'Bakwena'),
+    ('Balete', 'Balete'),
+    ('Bangwaketse', 'Bangwaketse'),
+    ('Bangwato', 'Bangwato'),
+    ('Bakgalagadi', 'Bakgalagadi'),
+    ('Basarwa', 'Basarwa'),
+    ('Basobea', 'Basobea'),
+    ('Batawana', 'Batawana'),
+    ('Batlokwa', 'Batlokwa'),
+    ('Batswapong', 'Batswapong'),
+    ('Bazezuri/Shona', 'Bazezuri'),
+    ('Indian African', 'Indian African'),
+    ('Asian', 'Asian'),
+    ('White African', 'White African'),
+    (OTHER, 'Other, specify'),
+    (DWTA, 'Don\'t want to answer'),
 )

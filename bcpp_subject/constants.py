@@ -1,4 +1,5 @@
 ABBOTT_VIRAL_LOAD = 'Viral Load (Abbott)'
+ALONE = 'Alone'
 ANNUAL = 'annual'
 ANNUAL_CODES = ['T1', 'T2', 'T3']
 BASELINE = 'baseline'

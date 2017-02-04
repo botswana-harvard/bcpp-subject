@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_constants.constants import (
-    NOT_APPLICABLE, OTHER, DWTA, NONE, DONT_KNOW)
+    NOT_APPLICABLE, OTHER, DWTA, NONE)
 
 
 list_data = {
@@ -22,29 +22,6 @@ list_data = {
         (OTHER, ' Other serious infection'),
         (NONE, ' None'),
         ('sti', 'STI (Sexually Transmitted Infection)')],
-    'bcpp_subject.ethnicgroups': [
-        ('Babirwa', 'Babirwa'),
-        ('Bahambukushu', 'Bahambukushu'),
-        ('Baherero', 'Baherero'),
-        ('Bahurutshe', 'Bahurutshe'),
-        ('Bakalaka', 'Bakalaka'),
-        ('Bakgatla', 'Bakgatla'),
-        ('Bakwena', 'Bakwena'),
-        ('Balete', 'Balete'),
-        ('Bangwaketse', 'Bangwaketse'),
-        ('Bangwato', 'Bangwato'),
-        ('Bakgalagadi', 'Bakgalagadi'),
-        ('Basarwa', 'Basarwa'),
-        ('Basobea', 'Basobea'),
-        ('Batawana', 'Batawana'),
-        ('Batlokwa', 'Batlokwa'),
-        ('Batswapong', 'Batswapong'),
-        ('White African', 'White African'),
-        ('Indian African', 'Indian African'),
-        ('Asian', 'Asian'),
-        ('Other, specify', 'Other, specify'),
-        (DWTA, 'dont want to answer'),
-        ('Bazezuri/Shona', 'Bazezuri')],
     'bcpp_subject.familyplanning': [
         ('Condoms, consistent use (male or female)',
          'Condoms, consistent use (male or female)'),
@@ -60,7 +37,7 @@ list_data = {
         (NOT_APPLICABLE, ' NOT APPLICABLE'),
         ('Condoms, in-consistent use (male or female)',
          'Condoms, in-consistent use (male or female)')],
-    'bcpp_subject.medicationtaken': [
+    'bcpp_subject.medication': [
         ("bisoprolol", "Bisoprolol"),
         ("carvedilol", "Carvedilol"),
         ("propranolol", "Propranolol"),
@@ -75,24 +52,7 @@ list_data = {
         ("furosemide", "Furosemide"),
         ("doxazosin", "Doxazosin"),
         ("hydralazine", "Hydralazine"),
-        ("not_applicable", "Not Applicable"),
-        ("OTHER", "Other")],
-    'bcpp_subject.medicationgiven': [
-        ("bisoprolol", "Bisoprolol"),
-        ("carvedilol", "Carvedilol"),
-        ("propranolol", "Propranolol"),
-        ("atenolol", "Atenolol"),
-        ("enalapril", "Enalapril"),
-        ("captopril", "Captopril"),
-        ("co_micardis", "Co-Micardis"),
-        ("spirinolactone", "Spirinolactone "),
-        ("hydrochlrothiazide", "Hydrochlrothiazide "),
-        ("nifedipine", "Nifedipine"),
-        ("amlodipine", "Amlodipine"),
-        ("furosemide", "Furosemide"),
-        ("doxazosin", "Doxazosin"),
-        ("hydralazine", "Hydralazine"),
-        ("not_applicable", "Not Applicable"),
+        (NOT_APPLICABLE, "Not Applicable"),
         (OTHER, " OTHER")],
     'bcpp_subject.heartdisease': [
         ('Myocardial infarction (heart attack)',
@@ -138,21 +98,6 @@ list_data = {
         ('farm outside this community', 'Farm outside this community'),
         ('cattelepost within', 'Cattle post within this community'),
         ('cattlepost outside', 'Cattle post outside this community')],
-    'bcpp_subject.religion': [
-        ('anglican', 'Anglican'),
-        ('apostolic', 'Apostolic'),
-        ('baptist', 'Baptist'),
-        ('catholic', 'Catholic'),
-        ('evangelical', 'Evangelical'),
-        ('methodist', 'Methodist'),
-        ('pentecostal', 'Pentecostal'),
-        ('traditionalist', 'Traditionalist'),
-        ('zcc', 'ZCC'),
-        ('muslim', 'Islam'),
-        ('hindu', 'HInduism'),
-        ('buddhist', 'Buddhism'),
-        (OTHER, ' OTHER, specify'),
-        ('No affiliation', 'no_affiliation')],
     'bcpp_subject.stiillnesses': [
         ('wasting',
          'Severe weight loss (wasting) - more than 10% of body weight'),
@@ -202,27 +147,6 @@ list_data = {
         ('Darunavir', 'DRV (Prezista)'),
         ('Saquinavir', 'SQV (Invirase)'),
         ('Ritonavir', 'RTV or r (Norvir)')],
-    'bcpp_subject.hospitalizationreason': [
-        ('Tuberculosis (TB, MTB)', 'Tuberculosis (TB, MTB)'),
-        ('Pneumonia', 'Pneumonia'),
-        ('Cryptococcal meningitis', 'Cryptococcal meningitis'),
-        ('Immune Reconstitution Inflammatory Syndrome (IRIS)',
-         'Immune Reconstitution Inflammatory Syndrome (IRIS)'),
-        ('OTHER HIV-related illness', 'Other HIV-related illness'),
-        ('Pregnancy-related care, including delivery',
-         'Pregnancy-related care, including delivery'),
-        ('Injury or accident', 'Injury or accident'),
-        ('Medication toxicity', 'Medication toxicity'),
-        ('Chronic disease related care', 'Chronic disease related care'),
-        ('Stroke (or suspected stroke)', 'Stroke (or suspected stroke)'),
-        (OTHER, ' OTHER (specify)'),
-        (DONT_KNOW, " Don't know"),
-    ],
-    'bcpp_subject.chronicdisease': [
-        ('High blood pressure', 'High blood pressure'),
-        ('Diabetes', 'Diabetes'),
-        ('Mental illness', 'Mental illness'),
-    ]
 }
 
 

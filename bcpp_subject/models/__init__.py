@@ -36,9 +36,9 @@ from .hypertension_cardiovascular import HypertensionCardiovascular
 from .immigration_status import ImmigrationStatus
 from .labour_market_wages import LabourMarketWages
 from .list_models import (
-    Arv, CircumcisionBenefits, EthnicGroups, Diagnoses, HeartDisease,
+    Arv, CircumcisionBenefits, Diagnoses, HeartDisease,
     FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
-    NeighbourhoodProblems, Religion, ResidentMostLikely)
+    NeighbourhoodProblems, ResidentMostLikely)
 from .medical_diagnoses import MedicalDiagnoses
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
@@ -48,7 +48,6 @@ from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant
 from .pregnancy import Pregnancy
 from .quality_of_life import QualityOfLife
-from .rbd_demographics import RbdDemographics
 from .reproductive_health import ReproductiveHealth
 from .residency_mobility import ResidencyMobility
 from .resource_utilization import ResourceUtilization

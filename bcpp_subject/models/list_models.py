@@ -22,13 +22,6 @@ class Diagnoses (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Diagnoses"
 
 
-class EthnicGroups (ListModelMixin, BaseUuidModel):
-
-    class Meta(ListModelMixin.Meta):
-        app_label = "bcpp_subject"
-        verbose_name_plural = "Ethnic groups"
-
-
 class FamilyPlanning (ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):
@@ -57,32 +50,11 @@ class MedicalCareAccess (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Medical care access"
 
 
-class MedicationTaken (ListModelMixin, BaseUuidModel):
+class Medication (ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name_plural = "Medical taken"
-
-
-class HospitalizationReason (ListModelMixin, BaseUuidModel):
-
-    class Meta(ListModelMixin.Meta):
-        app_label = "bcpp_subject"
-        verbose_name_plural = "Hospitalization Reasons"
-
-
-class ChronicDisease (ListModelMixin, BaseUuidModel):
-
-    class Meta(ListModelMixin.Meta):
-        app_label = "bcpp_subject"
-        verbose_name_plural = "Chronic Diseases"
-
-
-class MedicationGiven(ListModelMixin, BaseUuidModel):
-
-    class Meta(ListModelMixin.Meta):
-        app_label = "bcpp_subject"
-        verbose_name_plural = "Medical given"
+        verbose_name_plural = "Medication"
 
 
 class NeighbourhoodProblems (ListModelMixin, BaseUuidModel):
@@ -97,13 +69,6 @@ class PartnerResidency (ListModelMixin, BaseUuidModel):
     class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name_plural = "Partner residency"
-
-
-class Religion (ListModelMixin, BaseUuidModel):
-
-    class Meta(ListModelMixin.Meta):
-        app_label = "bcpp_subject"
-        verbose_name = "Religion"
 
 
 class ResidentMostLikely (ListModelMixin, BaseUuidModel):

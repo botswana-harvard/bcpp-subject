@@ -3,7 +3,7 @@ from django.db import models
 from edc_constants.choices import YES_NO_NA, YES_NO
 
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
-from .list_models import MedicationGiven, MedicationTaken
+from .list_models import Medication
 from .model_mixins import CrfModelMixin
 
 
@@ -27,7 +27,8 @@ class HypertensionCardiovascular(CrfModelMixin):
         max_length=20)
 
     medication_taken = models.ManyToManyField(
-        MedicationTaken,
+        Medication,
+        related_name='medication_taken',
         verbose_name=(
             'Have you ever taken any of these medications? '
             'Tick all that apply'))
@@ -39,7 +40,8 @@ class HypertensionCardiovascular(CrfModelMixin):
         max_length=100)
 
     medication_given = models.ManyToManyField(
-        MedicationGiven,
+        Medication,
+        related_name='medication_given',
         verbose_name=('If yes: Are you still being given this '
                       'medication (respond for each one ticked)'))
 
