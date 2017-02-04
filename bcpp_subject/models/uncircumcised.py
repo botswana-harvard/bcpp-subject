@@ -3,12 +3,12 @@ from django.db import models
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
 from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE
-from edc_constants.constants import YES
 
-from ..choices import REASON_CIRC_CHOICE, FUTURE_REASONS_SMC_CHOICE, AWARE_FREE_CHOICE
-from ..exceptions import CircumcisionError
+from ..choices import (
+    REASON_CIRC_CHOICE, FUTURE_REASONS_SMC_CHOICE, AWARE_FREE_CHOICE)
 
 from .model_mixins import CircumcisionModelMixin, CrfModelMixin
+from edc_constants.constants import NOT_APPLICABLE
 
 
 class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
@@ -54,8 +54,8 @@ class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
                      "available free at most health facilities?",
         max_length=85,
         null=True,
-        blank=True,
         choices=AWARE_FREE_CHOICE,
+        default=NOT_APPLICABLE,
         help_text="",
     )
 

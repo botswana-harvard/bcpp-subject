@@ -43,9 +43,9 @@ _crfs_bhs = (
         required=False, additional=True),
     Crf(show_order=390, model='bcpp_subject.pimacd4',
         required=False, additional=True),
-    Crf(show_order=400, model='bcpp_subject.subjectreferral', required=True),
-    Crf(show_order=410, model='bcpp_subject.hicenrollment',
+    Crf(show_order=400, model='bcpp_subject.hicenrollment',
         required=False, additional=True),
+    Crf(show_order=410, model='bcpp_subject.subjectreferral', required=True),
 )
 
 # space to modify on some condition

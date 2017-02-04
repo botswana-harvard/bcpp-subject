@@ -14,7 +14,6 @@ class MockVisit:
         self.subject_identifier = '111111111'
 
 
-@tag('SS')
 class TestSubjectHelper(TestCase):
 
     def setUp(self):
@@ -101,7 +100,6 @@ class TestSubjectHelper(TestCase):
         self.assertIsNone(obj.final_hiv_status_date)
         self.assertIsNone(obj.prev_result_date)
 
-    @tag('xx')
     def test_prev_result1(self):
         """Assert prev_result is empty when there are no previous
         results recorded.

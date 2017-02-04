@@ -2,120 +2,9 @@ import sys
 
 from edc_constants.constants import (
     POS, YES, NEG, NO, NAIVE, DWTA, UNK)
-from .models import (
-    HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
-    HivResultDocumentation, HivResult)
 
-DEFAULTER = 'defaulter'
-ON_ART = 'on_art'
-ART_PRESCRIPTION = 'ART Prescription'
-
-
-class ModelValues:
-
-    """A class that fetches raw model values for the status
-    helper class."""
-
-    def __init__(self, visit):
-        self.arv_evidence = None
-        self.elisa_hiv_result = None
-        self.elisa_hiv_result_date = None
-        self.ever_taken_arv = None
-        self.has_tested = None
-        self.on_arv = None
-        self.other_record = None
-        self.recorded_hiv_result = None
-        self.recorded_hiv_result_date = None
-        self.result_recorded = None
-        self.result_recorded_document = None
-        self.self_reported_result = None
-        self.today_hiv_result = None
-        self.today_hiv_result_date = None
-
-        options = dict(
-            subject_visit__subject_identifier=visit.subject_identifier,
-            subject_visit__report_datetime__lte=visit.report_datetime)
-
-        # HivCareAdherence
-        obj = HivCareAdherence.objects.filter(
-            **options).order_by('report_datetime').last()
-        if obj:
-            self.arv_evidence = obj.arv_evidence
-            self.ever_taken_arv = obj.ever_taken_arv
-            self.on_arv = obj.on_arv
-
-        # ElisaHivResult
-        qs = ElisaHivResult.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'hiv_result')
-            if obj:
-                self.elisa_hiv_result = obj.hiv_result
-                self.elisa_hiv_result_date = obj.hiv_result_datetime
-            else:
-                self.elisa_hiv_result = qs.last().hiv_result
-                self.elisa_hiv_result_date = qs.last().hiv_result_datetime
-
-        # HivTestingHistory
-        qs = HivTestingHistory.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'verbal_hiv_result')
-            if obj:
-                self.has_tested = obj.has_tested
-                self.other_record = obj.other_record
-                self.self_reported_result = obj.verbal_hiv_result
-            else:
-                self.has_tested = qs.last().has_tested
-                self.other_record = qs.last().other_record
-                self.self_reported_result = qs.last().verbal_hiv_result
-
-        # HivTestReview
-        qs = HivTestReview.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'recorded_hiv_result')
-            if obj:
-                self.recorded_hiv_result = obj.recorded_hiv_result
-                self.recorded_hiv_result_date = obj.hiv_test_date
-            else:
-                self.recorded_hiv_result = qs.last().recorded_hiv_result
-                self.recorded_hiv_result_date = qs.last().hiv_test_date
-
-        # HivResultDocumentation
-        qs = HivResultDocumentation.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'result_recorded')
-            if obj:
-                self.result_recorded = obj.result_recorded
-                self.result_recorded_date = obj.result_date
-                self.result_recorded_document = obj.result_doc_type
-            else:
-                self.result_recorded = qs.last().result_recorded
-                self.result_recorded_date = qs.last().result_date
-                self.result_recorded_document = qs.last().result_doc_type
-
-        # HivResult
-        qs = HivResult.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'hiv_result')
-            if obj:
-                self.today_hiv_result = obj.hiv_result
-                self.today_hiv_result_date = obj.hiv_result_datetime.date()
-            else:
-                self.today_hiv_result = qs.last().hiv_result
-                self.today_hiv_result_date = (
-                    qs.last().hiv_result_datetime.date())
-
-    def get_first_positive_or_none(self, qs, field_name):
-        """Returns the first model instance that is POS or None.
-        """
-        for obj in qs:
-            if getattr(obj, field_name) == POS:
-                return obj
-        return None
+from .model_values import ModelValues
+from .constants import ART_PRESCRIPTION, DEFAULTER, ON_ART
 
 
 class SubjectHelper:
@@ -131,17 +20,20 @@ class SubjectHelper:
         self.prev_result = None
         self.prev_result_date = None
         self.prev_result_known = None
+        self.newly_diagnosed = None
 
         self.subject_visit = visit
         self.subject_identifier = visit.subject_identifier
 
         if model_values:
             for attr, value in model_values.items():
-                setattr(self, attr, value)
+                if not hasattr(self, attr):
+                    setattr(self, attr, value)
         else:
-            model_values = model_values or ModelValues(visit)
+            model_values = ModelValues(visit)
             for attr, value in model_values.__dict__.items():
-                setattr(self, attr, value)
+                if not hasattr(self, attr):
+                    setattr(self, attr, value)
 
         if self.result_recorded_document == ART_PRESCRIPTION:
             self.arv_evidence = YES
@@ -150,6 +42,8 @@ class SubjectHelper:
         self._prepare_final_hiv_status()
         self._prepare_final_arv_status()
         self._prepare_previous_status_date_and_awareness()
+        self.newly_diagnosed = (
+            not self.prev_result and self.prev_result_known != YES)
 
     @property
     def final_hiv_status_date(self):

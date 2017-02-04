@@ -1,10 +1,8 @@
 from django.test import TestCase
 
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, NOT_SURE
 
-from ..constants import NOT_SURE
 from ..forms import HivUntestedForm
-
 from .test_mixins import SubjectMixin
 
 

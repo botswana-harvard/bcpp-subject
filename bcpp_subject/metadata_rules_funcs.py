@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE
+from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE
 from edc_registration.models import RegisteredSubject
 
 from member.models import HouseholdMember
@@ -6,9 +6,9 @@ from member.models import HouseholdMember
 # from .constants import T1, T2, T3, E0, T0
 from .labs import rdb_panel
 from .models import (
-    Circumcised, HicEnrollment, HivTestingHistory,
-    SexualBehaviour, SubjectRequisition)
-from .subject_helper import SubjectHelper, DEFAULTER, NAIVE, ON_ART
+    HicEnrollment, HivTestingHistory,
+    SexualBehaviour, SubjectRequisition, is_circumcised)
+from .subject_helper import SubjectHelper, DEFAULTER, ON_ART
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -145,13 +145,7 @@ def func_hic_enrolled(visit_instance, *args):
 def func_requires_circumcision(visit_instance, *args):
     """Return True if male is not reported as circumcised.
     """
-    if is_female(visit_instance):
-        return False
-    elif (Circumcised.objects
-          .filter(subject_visit__subject_identifier=visit_instance.subject_identifier)
-          .exists()):
-        return False
-    return True
+    return not is_circumcised(visit_instance)
 
 
 def func_requires_rbd(visit_instance, *args):

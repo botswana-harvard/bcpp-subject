@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_constants.constants import (
-    NOT_APPLICABLE, OTHER, DWTA, NONE)
+    NOT_APPLICABLE, OTHER, DWTA, NONE, NOT_SURE)
 
 
 list_data = {
@@ -13,7 +13,7 @@ list_data = {
          'Reduced risk of other sexually transmitted diseases'),
         ('Reduced risk of cancer', 'Reduced risk of cancer'),
         (OTHER, ' Other'),
-        ('I am not sure', 'I am not sure'),
+        (NOT_SURE, 'I am not sure'),
         (DWTA, "Don't want to answer")],
     'bcpp_subject.diagnoses': [
         ('Heart Disease', 'Heart Disease or Stroke'),
@@ -150,10 +150,10 @@ list_data = {
 }
 
 
-for list_obj in list_data.keys():
-    model = django_apps.get_app_config(
-        list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
-    model.objects.all().delete()
+# for list_obj in list_data.keys():
+#     model = django_apps.get_app_config(
+#         list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
+#     model.objects.all().delete()
 
 for list_obj in list_data.keys():
     try:

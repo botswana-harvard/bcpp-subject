@@ -17,7 +17,6 @@ from ..subject_helper import SubjectHelper
 from .rule_group_mixins import RuleGroupMixin
 
 
-@tag('TT')
 class TestSubjectHelper(RuleGroupMixin, TestCase):
 
     def setUp(self):

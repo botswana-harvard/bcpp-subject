@@ -1,6 +1,6 @@
 from edc_constants.constants import UNK
 
-from bcpp_subject.subject_helper import SubjectHelper
+from ...subject_helper import SubjectHelper
 
 
 class SubjectHelperViewMixin:
@@ -12,8 +12,7 @@ class SubjectHelperViewMixin:
     def get(self, request, *args, **kwargs):
         try:
             subject_visit = self.appointment.visit._original_object
-        except AttributeError as e:
-            print(e)
+        except AttributeError:
             self.subject_helper = None
         else:
             self.subject_helper = SubjectHelper(subject_visit)

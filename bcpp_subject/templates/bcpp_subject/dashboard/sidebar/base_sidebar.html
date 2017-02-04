@@ -13,6 +13,35 @@
           {% block demographics %}{% endblock demographics %}           
       </div>           
     </div>
+
+    {% if subject_helper.final_hiv_status and subject_helper.final_hiv_status != UNK %}
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	          <h6 class="panel-title">
+	              <a data-toggle="collapse" data-parent="#accordion" href="#hiv_status">
+	              HIV Status</a>
+	          </h6>
+	      </div>
+	      <div id="hiv_status" class="panel-collapse collapse in">
+	          {% block hiv_status %}{% endblock hiv_status %}           
+	      </div>           
+	    </div>
+    {% endif %}
+
+    {% if referral %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+              <h6 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#referral">
+                  Referral</a>
+              </h6>
+          </div>
+          <div id="referral" class="panel-collapse collapse in">
+              {% block referral %}{% endblock referral %}           
+          </div>           
+        </div>
+    {% endif %}
+
     <div class="panel panel-default">
       <div class="panel-heading">
           <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i> 

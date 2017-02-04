@@ -35,13 +35,10 @@ class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     list_display = [
         'subject_visit',
         'report_datetime',
-        'dashboard',
         'subject_referred',
         'referral_code',
         'referral_clinic_type',
         'referral_appt_date',
-        # 'exported',
-        # 'exported_datetime',
         'in_clinic_flag',
     ]
 
@@ -51,7 +48,6 @@ class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         SubjectReferralIsReferredListFilter,
         SubjectCommunityListFilter,
         'referral_code', 'report_datetime', 'referral_appt_date',
-        # 'exported_datetime',
         'hostname_created']
 
     radio_fields = {

@@ -1,8 +1,10 @@
 from django.utils.translation import ugettext as _
 
 from edc_constants.constants import (
-    OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK, DONT_KNOW)
-from bcpp_subject.constants import MARRIED, ALONE
+    OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK,
+    DONT_KNOW, NONE, NOT_SURE)
+
+from .constants import MARRIED, ALONE, REFUSED
 
 
 AGREE_STRONGLY = (
@@ -72,26 +74,6 @@ REFERRAL_APPT_COMMENTS = (
     ("personal_reasons", "personal reasons"),
 )
 
-REFERRAL_CODES = (
-    ('pending', '<data collection in progress>'),
-    ('TST-CD4', 'POS any, need CD4 testing'),
-    ('TST-HIV', 'HIV test'),
-    ('MASA-CC', 'Known POS, MASA continued care'),
-    ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
-    ('SMC-NEG', 'SMC (uncircumcised, hiv neg)'),
-    ('SMC?NEG', 'SMC (Unknown circumcision status, hiv neg'),
-    ('SMC-UNK', 'SMC (uncircumcised, hiv result not known)'),
-    ('SMC?UNK', 'SMC (Unknown circumcision status, hiv result not known)'),
-    ('NEG!-PR', 'NEG today, Pregnant'),
-    ('POS!-PR', 'POS today, Pregnant'),
-    ('UNK?-PR', 'HIV UNKNOWN, Pregnant'),
-    ('POS#-AN', 'Known POS, Pregnant, on ART (ANC)'),
-    ('POS#-PR', 'Known POS, Pregnant, not on ART'),
-    ('POS!-HI', 'POS today, not on ART, high CD4)'),
-    ('POS!-LO', 'POS today, not on ART, low CD4)'),
-    ('POS#-HI', 'Known POS, not on ART, high CD4)'),
-    ('POS#-LO', 'Known POS, not on ART, low CD4)'),
-)
 
 VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
@@ -223,14 +205,14 @@ CARE_REASON = (
     ('Chronic disease', _(
         'Chronic disease related care, including high blood pressure, '
         'diabetes, cancer, mental illness')),
-    ('Other', _('Other')),
+    (OTHER, _('Other')),
     (DWTA, _('Don\'t want to answer')),
-    ('None', _('None')),
+    (NONE, _('None')),
 )
 
 
 TRAVEL_HOURS = (
-    ('None', _('None')),
+    (NONE, _('None')),
     ('Under 0.5 hour', _('Under 0.5 hour')),
     ('0.5 to under 1 hour', _('0.5 to under 1 hour')),
     ('1 to under 2 hours', _('1 to under 2 hours')),
@@ -269,7 +251,7 @@ NO_MEDICALCARE_REASON = (
 
 
 HEALTH_CARE_PLACE = (
-    ('None', _('None')),
+    (NONE, _('None')),
     ('Government dispensary', _('Government dispensary')),
     ('Government health center', _('Government health center')),
     ('Government hospital', _('Government hospital')),
@@ -384,7 +366,7 @@ JOB_DESCRIPTION = (
     ('govt worker', _('Government worker')),
     ('teacher', _('Teacher')),
     ('hcw', _('Health care worker')),
-    ('Other', _('Other professional')),
+    ('other_professional', _('Other professional')),
     (OTHER, _('Other')),
 )
 
@@ -415,7 +397,7 @@ HOUSEHOLD_INCOME = (
     ('5000-10,000 pula', _('5000-10,000 pula')),
     ('10,0000-20,000 pula', _('10,0000-20,000 pula')),
     ('More than 20,000 pula', _('More than 20,000 pula')),
-    ('I am not sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -578,7 +560,7 @@ YES_NO_RECORD_REFUSAL = (
 YES_NO_UNSURE = (
     (YES, _(YES)),
     (NO, _(NO)),
-    ('Not Sure', _('Not Sure')),
+    (NOT_SURE, _('Not Sure')),
 )
 
 STI_DX = (
@@ -669,7 +651,7 @@ PLACE_CIRC = (
     ('Outreach site (mobile or temporary center)',
      _('Outreach site (mobile or temporary center)')),
     ('Private practitioner', _('Private practitioner')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (OTHER, _('Other, specify:')),
     (DWTA, _('Don\'t want to answer')),
 )
@@ -684,7 +666,7 @@ WHYCIRC_CHOICE = (
     ('Acceptance by sexual partner(s)', _('Acceptance by sexual partner(s)')),
     ('Acceptance by family, friends, and/or community',
      _('Acceptance by family, friends, and/or community')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (OTHER, _('Other, specify:')),
     (DWTA, _('Don\'t want to answer')),
 )
@@ -827,7 +809,7 @@ REASON_CIRC_CHOICE = (
      _('I may not like the way my penis feels')),
     ('I could die from the procedure', _('I could die from the procedure')),
     (OTHER, _('Other, specify:')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -848,11 +830,12 @@ FUTURE_REASONS_SMC_CHOICE = (
     ('If one or both of my parents encouraged me',
      _('If one or both of my parents encouraged me')),
     ('If my friends encouraged me', _('If my friends encouraged me')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
 AWARE_FREE_CHOICE = (
+    (NOT_APPLICABLE, _('Not applicable')),
     ('Radio', _('Radio')),
     ('Television', _('Television')),
     ('Friend told me', _('Friend told me')),
@@ -865,7 +848,7 @@ AWARE_FREE_CHOICE = (
      _('I read a brochure delivered to my home')),
     ('I read it in the newspaper', _('I read it in the newspaper')),
     ('Heard it at a community event', _('Heard it at a community event')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -873,7 +856,7 @@ DX_TB_CHOICE = (
     ('Pulmonary tuberculosis', 'Pulmonary tuberculosis'),
     ('Extrapulmonary (outside the lungs) tuberculosis',
      'Extrapulmonary (outside the lungs) tuberculosis'),
-    ('Other', 'Other, specify:'),
+    (OTHER, 'Other, specify:'),
     (DWTA, 'Don\'t want to answer'),
 )
 
@@ -923,7 +906,7 @@ WHY_NO_ARV_CHOICE = (
     ('High CD4', _('High CD4')),
     ('Cost', _('Cost')),
     (OTHER, _('Other, specify:')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -954,7 +937,7 @@ WHY_ARV_STOP_CHOICE = (
     ('Religious beliefs', _('Religious beliefs')),
     ('Cultural beliefs', _('Cultural beliefs')),
     (OTHER, _('Other, specify:')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -999,7 +982,7 @@ NO_MEDICAL_CARE = (
     ('Not provided free of charge for non-citizens',
      _('Not provided free of charge for non-citizens')),
     (OTHER, _('Other, specify:')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1010,7 +993,7 @@ LOWEST_CD4_CHOICE = (
     ('200-349', _('200-349')),
     ('350-499', _('350-499')),
     ('500 or more', _('500 or more')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1032,7 +1015,7 @@ WHY_NO_HIV_TESTING_CHOICE = (
      _('I didn\'t have time due to family obligations')),
     ('My sexual partner did not want me to get an HIV test',
      _('My sexual partner did not want me to get an HIV test')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1041,7 +1024,7 @@ WHEN_HIV_TEST_CHOICE = (
     ('1 to 5 months ago', _('1 to 5 months ago')),
     ('6 to 12 months ago', _('6 to 12 months ago')),
     ('more than 12 months ago', _('more than 12 months ago')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1066,7 +1049,7 @@ WHERE_HIV_TEST_CHOICE = (
      _('In a mobile tent or vehicle in my neighborhood')),
     ('Ya_Tsie HIV Test Campaign', _('Ya Tsie HIV Test Campaign')),
     (OTHER, _('Other, specify:')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1090,7 +1073,7 @@ WHY_HIV_TEST_CHOICE = (
      'HIV', _('I had information from the Ya_Tsie study'
               'that it was important to get tested for HIV')),
     (OTHER, _('Other')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1148,7 +1131,7 @@ FIRSTRELATIONSHIP_CHOICE = (
 FIRST_PARTNER_HIV_CHOICE = (
     (POS, _('HIV positive')),
     (NEG, _('HIV negative')),
-    ('not_sure', _('I am not sure HIV status')),
+    (NOT_SURE, _('I am not sure HIV status')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1183,7 +1166,7 @@ AGE_RANGES = (
     (('50-59'), _('50-59 years old')),
     (('50-59'), _('50-59 years old')),
     (('60 or older'), _('60 year or older')),
-    (('Not sure'), _('Not sure')),
+    (NOT_SURE, _('Not sure')),
     (DWTA, 'Don\'t want to answer'),
 )
 
@@ -1193,13 +1176,13 @@ PREG_ARV_CHOICE = (
     ('Yes, HAART ', _(
         'Yes, HAART [multiple drugs like Atripla, Truvada, '
         'or Combivir taken once or twice a day]')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
     (NO, _('No ARV\'s')),
 )
 
 PARTIAL_PARTICIPATION_TYPE = (
-    ('Not Applicable', _('Not Applicable')),
+    (NOT_APPLICABLE, _('Not Applicable')),
     ('Changed mind midway', _('Participant changed mind')),
 )
 
@@ -1236,7 +1219,7 @@ NIGHTS_AWAY_CHOICE = (
     ('1-3 months', _('1-3 months')),
     ('4-6 months', _('4-6 months')),
     ('more than 6 months', _('more than 6 months')),
-    ('not_sure', _('I am not sure')),
+    (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1259,12 +1242,13 @@ ALCOHOL_SEX = (
 FIRST_PARTNER_HIV_CHOICE = (
     (POS, _('HIV-positive')),
     (NEG, _('HIV-negative')),
-    ('not_sure', _('I am not sure HIV status')),
+    (NOT_SURE, _('I am not sure HIV status')),
     (DWTA, _('Don\'t want to answer')),
 )
 
+# FIXME: responses are not unique
 KEPT_APPT = (
-    ('Yes', 'Yes, kept appointment'),
+    (YES, 'Yes, kept appointment'),
     ('No_refered_other_clinic',
      'No but attended a visit at the HIV care clinic to which '
      'they were referred on another date'),
@@ -1289,12 +1273,12 @@ TYPE_OF_EVIDENCE = (
     ("self_report_only", "Self-Report Only"),
     ("opr_card", "OPD Card"),
     ("clinic_paperwork", "Clinic paperwork"),
-    ("other", "Other ")
+    (OTHER, "Other ")
 )
 
 RECOMMENDED_THERAPY = (
-    ("Yes", "Yes"),
-    ("No", "No")
+    (YES, "Yes"),
+    (NO, "No")
 )
 
 STARTERED_THERAPY = (
@@ -1418,3 +1402,8 @@ ETHNIC_GROUP = (
     (OTHER, 'Other, specify'),
     (DWTA, 'Don\'t want to answer'),
 )
+
+REFERRAL_LETTER_YES_NO_REFUSED = (
+    (YES, 'Yes, subject has been handed a referral letter'),
+    (NO, 'No, subject has not been handed a referral letter'),
+    (REFUSED, 'Subject refused referral the referral letter'))

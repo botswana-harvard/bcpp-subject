@@ -7,6 +7,20 @@ from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 from ..exceptions import CircumcisionError
 
 from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
+from edc_constants.constants import FEMALE
+
+
+def is_circumcised(visit_instance):
+    """Returns True if circumcised before or at visit
+    report datetime.
+    """
+    if visit_instance.household_member.gender == FEMALE:
+        return False
+    return (
+        Circumcised.objects.filter(
+            subject_visit__subject_identifier=visit_instance.subject_identifier,
+            subject_visit__report_datetime__lte=visit_instance.report_datetime)
+        .exists())
 
 
 class Circumcised (CircumcisionModelMixin, CrfModelMixin):

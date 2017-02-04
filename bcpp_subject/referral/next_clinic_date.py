@@ -1,7 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from .split_weekdays import split_weekdays
+from ..utils import split_weekdays
 
 
 def next_clinic_date(community_clinic_days, base_datetime=None,

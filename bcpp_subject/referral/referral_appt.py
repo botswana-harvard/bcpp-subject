@@ -4,14 +4,14 @@ from collections import namedtuple
 
 from django.core.exceptions import ValidationError
 
+from edc_appointment.models import Holiday
 from edc_map.site_mappers import site_mappers
 
 from .choices import REFERRAL_CODES
-from .utils import next_clinic_date
-from edc_appointment.models import Holiday
+from .next_clinic_date import next_clinic_date
 
 
-class SubjectReferralApptHelper(object):
+class ReferralAppt(object):
     """A class to determine the referral appointment date.
 
     The referral code will determine the correct clinic,
@@ -20,7 +20,8 @@ class SubjectReferralApptHelper(object):
     """
 
     def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
-                 community_code=None, community_clinic_days=None, intervention_communities=None,
+                 community_code=None, community_clinic_days=None,
+                 intervention_communities=None,
                  hiv_care_adherence_next_appointment=None):
         """This class and its needed attribute values are wrapped by
         the SubjectReferralHelper.
@@ -47,7 +48,8 @@ class SubjectReferralApptHelper(object):
         ClinicDaysTuple = namedtuple('ClinicDaysTuple', 'days start_date')
 
         try:
-            self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = community_clinic_days.get(
+                self.referral_clinic_type)
         except AttributeError:
             # TODO: use facility from edc_appointment
             self.clinic_days = ClinicDaysTuple((MO, TU, WE, TH, FR), None)
@@ -81,15 +83,20 @@ class SubjectReferralApptHelper(object):
         if 'SMC' in self.referral_code:
             return self.smc_appt_datetime
         elif self.referral_code == 'MASA-DF':
-            pass  # will be next clinic date and will ignore a scheduled_appt_date
+            # will be next clinic date and will ignore a scheduled_appt_date
+            pass
         elif self.referral_code == 'POS!-PR':
-            pass  # will be next clinic date and will ignore a scheduled_appt_date
+            # will be next clinic date and will ignore a scheduled_appt_date
+            pass
         elif self.referral_code == 'POS#-PR':
-            pass  # will be next clinic date and will ignore a scheduled_appt_date
+            # will be next clinic date and will ignore a scheduled_appt_date
+            pass
         elif self.referral_code == 'POS#-AN':
-            pass  # will be next clinic date and will ignore a scheduled_appt_date
+            # will be next clinic date and will ignore a scheduled_appt_date
+            pass
         elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
-            pass  # will be next clinic date and will ignore a scheduled_appt_date
+            # will be next clinic date and will ignore a scheduled_appt_date
+            pass
         else:
             if self.scheduled_appt_datetime:
                 try:
@@ -139,7 +146,8 @@ class SubjectReferralApptHelper(object):
         valid or ''.
         """
         if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
-            raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
+            raise TypeError(
+                'Invalid referral code. Got {0}'.format(referral_code))
         self._referral_code = referral_code
 
     @property

@@ -4,7 +4,7 @@ from edc_constants.constants import NEG, YES, NO
 
 from household.constants import BASELINE_SURVEY
 from bcpp_subject.models import SubjectVisit, SubjectLocator, ResidencyMobility, HicEnrollment, SubjectConsent
-from bcpp_subject.subject_status_helper import SubjectHelper
+from bcpp_subject.subject_helper import SubjectHelper
 
 
 def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enrollment):
@@ -89,7 +89,8 @@ class Command(BaseCommand):
         except IndexError:
             verbose = False
         subject_consents = SubjectConsent.objects.filter(
-            household_member__household_structure__household__plot__map_area__in=['ranaka', 'digawana'],
+            household_member__household_structure__household__plot__map_area__in=[
+                'ranaka', 'digawana'],
             household_member__household_structure__survey__survey_slug=BASELINE_SURVEY)
         total_consents = subject_consents.count()
         hic_for_consents(verbose, subject_consents, total_consents)

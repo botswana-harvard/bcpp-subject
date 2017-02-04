@@ -6,6 +6,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from edc_base.utils import get_utcnow
+from edc_constants.constants import NO, YES
 
 from member.models import (
     EnrollmentChecklistAnonymous, EnrollmentChecklist,
@@ -13,10 +14,28 @@ from member.models import (
 
 from ..models.anonymous import AnonymousConsent
 from ..models.utils import is_minor
+from ..referral.referral import Referral
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
+from .subject_referral import SubjectReferral
 
 fake = Faker()
+
+
+@receiver(post_save, weak=False, sender=SubjectReferral,
+          dispatch_uid='subject_referral_on_post_save')
+def subject_referral_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        referral = Referral(instance)
+        for field in sender._meta.get_fields():
+            try:
+                value = getattr(referral, field.name)
+            except AttributeError:
+                pass
+            else:
+                setattr(instance, field.name, value)
+        instance.referral_appt_date = referral.referral_appt_datetime
+        instance.scheduled_appt_date = referral.original_scheduled_appt_date
 
 
 @receiver(post_delete, weak=False, sender=SubjectConsent,
@@ -121,6 +140,11 @@ def enrollment_checklist_on_post_save(
         if created:
             instance.household_member.visit_attempts += 1
         instance.household_member.non_citizen = instance.non_citizen
+        instance.household_member.citizen = instance.citizen == YES
+        instance.household_member.spouse_of_citizen = (
+            instance.citizen == NO
+            and instance.legal_marriage == YES
+            and instance.marriage_certificate == YES)
         instance.household_member.save()
 
         if created:

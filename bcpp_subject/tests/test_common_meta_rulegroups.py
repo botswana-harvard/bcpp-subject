@@ -2,10 +2,10 @@ from model_mommy import mommy
 
 from django.test import TestCase, tag
 
-from edc_constants.constants import NO, YES, POS, NEG, IND, UNK
+from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, NOT_SURE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
-from ..constants import NOT_SURE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
+from ..constants import VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
@@ -556,25 +556,26 @@ class TestCommonMetaRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             circumcition.circumcised = NOT_SURE
             circumcition.save()
 
-            assert_circumsition(KEYED, NOT_REQUIRED, NOT_REQUIRED, subject_visit)
+            assert_circumsition(
+                KEYED, NOT_REQUIRED, NOT_REQUIRED, subject_visit)
 
     @tag('share_rule')
     def test_normal_circumsition_in_y1_female(self):
-            self.assertEqual(
-                self.crf_metadata_obj(
-                    'bcpp_subject.circumcision', NOT_REQUIRED,
-                    self.subject_visit_female.visit_code,
-                    self.subject_visit_female.subject_identifier).count(), 1)
-            self.assertEqual(
-                self.crf_metadata_obj(
-                    'bcpp_subject.uncircumcised', NOT_REQUIRED,
-                    self.subject_visit_female.visit_code,
-                    self.subject_visit_female.subject_identifier).count(), 1)
-            self.assertEqual(
-                self.crf_metadata_obj(
-                    'bcpp_subject.circumcised', NOT_REQUIRED,
-                    self.subject_visit_female.visit_code,
-                    self.subject_visit_female.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.circumcision', NOT_REQUIRED,
+                self.subject_visit_female.visit_code,
+                self.subject_visit_female.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.uncircumcised', NOT_REQUIRED,
+                self.subject_visit_female.visit_code,
+                self.subject_visit_female.subject_identifier).count(), 1)
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.circumcised', NOT_REQUIRED,
+                self.subject_visit_female.visit_code,
+                self.subject_visit_female.subject_identifier).count(), 1)
 
     @tag('shared_rule')
     def test_Known_hiv_pos_y1_require_no_testing(self):

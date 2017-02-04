@@ -40,7 +40,7 @@ class Circumcision (CircumcisionModelMixin, CrfModelMixin):
         max_length=25,
         choices=COMMUNITY_NA,
         null=True,
-        blank=True,
+        blank=False,
         help_text="")
 
     circumcised_location_other = OtherCharField()

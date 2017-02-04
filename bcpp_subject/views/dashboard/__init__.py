@@ -1,3 +1,5 @@
 from .appointment_view_mixin import AppointmentViewMixin
 from .consent_view_mixin import ConsentViewMixin
 from .visit_schedule_view_mixin import VisitScheduleViewMixin
+from .subject_helper_view_mixin import SubjectHelperViewMixin
+from .referral_view_mixin import ReferralViewMixin

@@ -4,7 +4,7 @@ from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
-from .circumcised import Circumcised
+from .circumcised import Circumcised, is_circumcised
 from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
 from .community_engagement import CommunityEngagement

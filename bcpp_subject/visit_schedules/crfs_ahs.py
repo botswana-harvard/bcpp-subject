@@ -28,6 +28,8 @@ _crfs_ahs = (
     Crf(show_order=190, model='bcpp_subject.pregnancy', required=True),
     Crf(show_order=200, model='bcpp_subject.nonpregnancy', required=True),
     Crf(show_order=210, model='bcpp_subject.medicaldiagnoses', required=True),
+    Crf(show_order=215,
+        model='bcpp_subject.hypertensioncardiovascular', required=True),
     Crf(show_order=220, model='bcpp_subject.heartattack', required=True),
     Crf(show_order=230, model='bcpp_subject.cancer', required=True),
     Crf(show_order=240, model='bcpp_subject.sti', required=True),
@@ -47,11 +49,9 @@ _crfs_ahs = (
         required=False, additional=True),
     Crf(show_order=360, model='bcpp_subject.pimacd4',
         required=False, additional=True),
-    Crf(show_order=370, model='bcpp_subject.subjectreferral', required=True),
-    Crf(show_order=380,
-        model='bcpp_subject.hypertensioncardiovascular', required=True),
-    Crf(show_order=390, model='bcpp_subject.hicenrollment',
+    Crf(show_order=370, model='bcpp_subject.hicenrollment',
         required=False, additional=True),
+    Crf(show_order=380, model='bcpp_subject.subjectreferral', required=True),
 )
 
 
