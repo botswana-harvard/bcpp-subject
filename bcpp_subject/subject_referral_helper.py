@@ -17,6 +17,7 @@ from .models import (
 from .subject_helper import SubjectHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
 from .utils import convert_to_nullboolean
+from bcpp_subject.subject_helper import ON_ART
 
 
 class SubjectReferralHelper(object):
@@ -39,14 +40,17 @@ class SubjectReferralHelper(object):
         self.subject_identifier = subject_referral.subject_visit.appointment.subject_identifier
         self.subject_visit = subject_referral.subject_visit
         self.visit_code = subject_referral.subject_visit.appointment.visit_code
-        self.hiv_result = self.subject_helper.hiv_result
-        self.on_art = self.subject_helper.on_art
+        self.hiv_result = self.subject_helper.final_hiv_status
+        self.on_art = None
+        if self.subject_helper.final_hiv_status == ON_ART:
+            self.on_art = self.subject_helper.final_hiv_status
         self.part_time_resident = self.subject_referral.household_member.study_resident
         self.tb_symptoms = subject_referral.tb_symptoms
         self.citizen = (self.consent.citizen == YES and self.consent.identity)
-        self.citizen_spouse = (self.consent.citizen == NO
-                               and self.consent.legal_marriage == YES
-                               and self.consent.identity)
+        self.citizen_spouse = (
+            self.consent.citizen == NO and
+            self.consent.legal_marriage == YES and
+            self.consent.identity)
 
         try:
             self.arv_clinic = (

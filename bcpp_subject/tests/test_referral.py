@@ -1,3 +1,4 @@
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from model_mommy import mommy
@@ -33,6 +34,24 @@ class TestReferral(SubjectMixin, TestCase):
         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             'T0', survey_schedule=self.survey_schedule, **self.consent_data)
         self.circumcision_benefits = mommy.make_recipe('bcpp_subject.circumcision_benefits')
+
+    def hiv_result(self, status, subject_visit, report_datetime=None):
+        """ Create HivResult for a particular survey.
+        """
+        report_datetime = report_datetime or self.get_utcnow()
+        mommy.make_recipe(
+            'bcpp_subject.subjectrequisition',
+            subject_visit=subject_visit,
+            report_datetime=report_datetime,
+            panel_name=MICROTUBE,
+        )
+        hiv_result = mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=subject_visit,
+            report_datetime=report_datetime,
+            hiv_result=status, insufficient_vol=NO
+        )
+        return hiv_result
 
     def ahs_y2_subject_visit(self):
         """Return an ahs subject visit."""
@@ -176,6 +195,16 @@ class TestReferral(SubjectMixin, TestCase):
             scheduled_appt_date=subject_visit_t1.report_datetime)
         return subject_referral
 
+    def hivtest_review(self, subject_visit, hiv_status, report_datetime=None):
+        report_datetime = report_datetime or self.get_utcnow()
+        hiv_test_review = mommy.make_recipe(
+            'bcpp_subject.hivtestreview',
+            report_datetime=report_datetime,
+            subject_visit=subject_visit,
+            hiv_test_date=self.get_utcnow() - timedelta(days=50),
+            recorded_hiv_result=hiv_status)
+        return hiv_test_review
+
     def tests_referred_hiv(self):
         """if IND refer for HIV testing"""
         mommy.make_recipe(
@@ -223,23 +252,13 @@ class TestReferral(SubjectMixin, TestCase):
     def tests_circumsised_y2_not_smc(self):
         """if NEG and male and not circumcised in Y1, then refer for SMC in Y1.
             Then if male circumsised in Y2 then do not refer for SMC in Y2."""
-        mommy.make_recipe(
-            'bcpp_subject.subjectrequisition',
-            subject_visit=self.bhs_subject_visit_male,
-            report_datetime=self.get_utcnow(),
-            panel_name='Microtube')
-        mommy.make_recipe(
-            'bcpp_subject.hivresult',
-            subject_visit=self.bhs_subject_visit_male, hiv_result=NEG)
+        self.hiv_result(NEG, self.bhs_subject_visit_male, self.get_utcnow())
         mommy.make_recipe(
             'bcpp_subject.hivresultdocumentation',
             subject_visit=self.bhs_subject_visit_male,
             result_recorded=NEG,
             result_doc_type='Tebelopele')
-        mommy.make_recipe(
-            'bcpp_subject.hivtestreview',
-            subject_visit=self.bhs_subject_visit_male,
-            recorded_hiv_result=NEG)
+        self.hivtest_review(self.bhs_subject_visit_male, NEG)
         mommy.make_recipe(
             'bcpp_subject.hivtestinghistory',
             subject_visit=self.bhs_subject_visit_male,
