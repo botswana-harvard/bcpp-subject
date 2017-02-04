@@ -1,9 +1,8 @@
-from django import forms
-
 from ..models import ViralLoadResult
+from .form_mixins import SubjectModelFormMixin
 
 
-class ViralLoadResultForm (forms.ModelForm):
+class ViralLoadResultForm (SubjectModelFormMixin):
 
     class Meta:
         model = ViralLoadResult

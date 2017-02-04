@@ -1,7 +1,7 @@
 from django import forms
 
 from edc_base.model.constants import DEFAULT_BASE_FIELDS
-from edc_constants.constants import NO, OTHER
+from edc_constants.constants import NO
 
 from ..models import HypertensionCardiovascular
 
@@ -13,43 +13,43 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
     def clean(self):
         self.validate_tobacco_smoking()
         self.validate_not_available_fields()
-        self.validate_if_other_medication_taken()
+        self.validate_if_medication_taken_other()
         self.validate_if_other_medication_still_given()
         self.validate_blank_fields()
         return self.cleaned_data
 
-    def validate_if_other_medication_taken(self):
+    def validate_if_medication_taken_other(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('other_medication_taken'):
+        if cleaned_data.get('medication_taken_other'):
             if not any(medication_list.name == OTHER
                        for medication_list in cleaned_data.get('medication_taken')):
                 raise forms.ValidationError({
-                    'other_medication_taken': [
+                    'medication_taken_other': [
                         'Cannot fill this field unless Other is ',
                         'selected above']})
         else:
             if any(medication_list.name == OTHER
                    for medication_list in cleaned_data.get('medication_taken')):
                 raise forms.ValidationError({
-                    'other_medication_taken': [
+                    'medication_taken_other': [
                         'This field is mandatory since other was '
                         'selected above']})
         return cleaned_data
 
     def validate_if_other_medication_still_given(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('other_medication_given'):
+        if cleaned_data.get('medication_given_other'):
             if not any(medication_list.name == OTHER
                        for medication_list in cleaned_data.get('medication_given')):
                 raise forms.ValidationError({
-                    'other_medication_given': [
+                    'medication_given_other': [
                         'Cannot fill this field unless Other is '
                         'selected above']})
         else:
             if any(medication_list.name == OTHER
                    for medication_list in cleaned_data.get('medication_given')):
                 raise forms.ValidationError({
-                    'other_medication_given': [
+                    'medication_given_other': [
                         'This field is mandatory since other was '
                         'selected above']})
         return cleaned_data
@@ -84,8 +84,8 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
                                                    'medication_taken',
                                                    'medication_given',
                                                    'consent_version',
-                                                   'other_medication_taken',
-                                                   'other_medication_given',
+                                                   'medication_taken_other',
+                                                   'medication_given_other',
                                                    'right_arm_one',
                                                    'left_arm_one',
                                                    'right_arm_two',
@@ -112,9 +112,9 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
         if cleaned_data.get('tobacco_smoking') == 'never':
             if cleaned_data.get('tobacco_counselling') != 'N/A':
-                    raise forms.ValidationError({
-                        'tobacco_counselling': [
-                            'Not Applicable is the only valid answer']})
+                raise forms.ValidationError({
+                    'tobacco_counselling': [
+                        'Not Applicable is the only valid answer']})
         return cleaned_data
 
     class Meta:

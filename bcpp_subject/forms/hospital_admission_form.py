@@ -1,7 +1,6 @@
 from django import forms
 
 from ..models import HospitalAdmission
-
 from .form_mixins import SubjectModelFormMixin
 
 

@@ -1,7 +1,8 @@
 from django import forms
 
-from ..models import HeartAttack, Cancer, Tuberculosis, Sti
+from edc_constants.constants import NONE
 
+from ..models import HeartAttack, Cancer, Tuberculosis, Sti
 from .form_mixins import SubjectModelFormMixin
 
 
@@ -31,7 +32,8 @@ class StiForm (SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super(StiForm, self).clean()
         # It None in diagnosis, then ensure no date is entered.
-        if not cleaned_data.get('sti_dx') or cleaned_data.get('sti_dx')[0].name == 'None':
+        if (not cleaned_data.get('sti_dx')
+                or cleaned_data.get('sti_dx')[0].name == NONE):
             attrs = ['wasting_date', 'yeast_infection_date', 'pneumonia_date',
                      'pcp_date', 'herpes_date', 'diarrhoea_date']
             for attr in attrs:

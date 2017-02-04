@@ -1,15 +1,15 @@
 from django import forms
 
-from ..models import OutpatientCare
-
-from .form_mixins import SubjectModelFormMixin
 from edc_constants.constants import MALE, YES
+
+from ..models import OutpatientCare
+from .form_mixins import SubjectModelFormMixin
 
 
 class OutpatientCareForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(OutpatientCareForm, self).clean()
+        cleaned_data = super().clean()
         self.subject_visit = cleaned_data.get('subject_visit')
 
         if cleaned_data.get('govt_health_care'):

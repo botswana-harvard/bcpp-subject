@@ -1,7 +1,6 @@
 from django import forms
 
 from ..models import ResourceUtilization
-
 from .form_mixins import SubjectModelFormMixin
 
 

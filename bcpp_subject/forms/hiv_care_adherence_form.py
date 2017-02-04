@@ -39,16 +39,8 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                 raise forms.ValidationError(
                     {'no_medical_care':
                      ('Please provide a reason. ref: {}'.format(get_linenumber()))})
-            elif cleaned_data.get('no_medical_care') == OTHER:
-                if not cleaned_data.get('no_medical_care_other'):
-                    raise forms.ValidationError(
-                        {'no_medical_care_other':
-                         ('This field is required. ref: {}'.format(get_linenumber()))})
-            elif cleaned_data.get('no_medical_care') != OTHER:
-                if cleaned_data.get('no_medical_care_other'):
-                    raise forms.ValidationError(
-                        {'no_medical_care_other':
-                         ('This field is not required. ref: {}'.format(get_linenumber()))})
+            self.validate_other_specify(
+                'no_medical_care', 'no_medical_care_other')
         elif cleaned_data.get('medical_care') == YES:
             if cleaned_data.get('no_medical_care') != NOT_APPLICABLE:
                 raise forms.ValidationError(
@@ -112,16 +104,8 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
             raise forms.ValidationError({
                 'first_arv':
                 'This field is not required. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('arv_stop') == OTHER
-                and not cleaned_data.get('arv_stop_other')):
-            raise forms.ValidationError({
-                'arv_stop_other':
-                'This field is required. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('arv_stop') != OTHER
-              and cleaned_data.get('arv_stop_other')):
-            raise forms.ValidationError({
-                'arv_stop_other':
-                'This field is not required. ref: {}'.format(get_linenumber())})
+        elif self.validate_other_specify('arv_stop', ref=get_linenumber()):
+            pass
         elif (cleaned_data.get('arv_stop_date') and cleaned_data.get('first_arv')
                 and cleaned_data.get('arv_stop_date') <= cleaned_data.get('first_arv')):
             raise forms.ValidationError({
@@ -274,16 +258,8 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
     def validate_hospitalization_part2(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('hospitalized_art_start_reason'):
-            if (cleaned_data.get('hospitalized_art_start_reason') == OTHER
-                    and not cleaned_data.get('hospitalized_art_start_reason_other')):
-                raise forms.ValidationError({
-                    'hospitalized_art_start_reason_other':
-                    'This field is required'})
-            elif (cleaned_data.get('hospitalized_art_start_reason') != OTHER
-                    and cleaned_data.get('hospitalized_art_start_reason_other')):
-                raise forms.ValidationError({
-                    'hospitalized_art_start_reason_other':
-                    'This field is not required'})
+            if self.validate_other_specify('hospitalized_art_start_reason'):
+                pass
             elif (cleaned_data.get('hospitalized_art_start_reason') == 'chronic_disease'
                     and not cleaned_data.get('chronic_disease')):
                 raise forms.ValidationError({
@@ -321,16 +297,8 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                 raise forms.ValidationError({
                     'hospitalized_evidence':
                     'This field is required'})
-            elif (cleaned_data.get('hospitalized_evidence') == OTHER
-                  and not cleaned_data.get('hospitalized_evidence_other')):
-                raise forms.ValidationError({
-                    'hospitalized_evidence_other':
-                    'This field is required'})
-            elif (cleaned_data.get('hospitalized_evidence') != OTHER
-                  and cleaned_data.get('hospitalized_evidence_other')):
-                raise forms.ValidationError({
-                    'hospitalized_evidence_other':
-                    'This field is not required'})
+            elif self.validate_other_specify('hospitalized_evidence'):
+                pass
         elif cleaned_data.get('hospitalized_art_start') == NO:
             if cleaned_data.get('hospitalized_evidence'):
                 raise forms.ValidationError({

@@ -21,7 +21,7 @@ class DemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'num_wives',
                 'husband_wives',
                 'live_with')}),
-        ('Religion', {
+        ('Religion and Ethnicity', {
             'fields': (
                 'religion',
                 'religion_other',

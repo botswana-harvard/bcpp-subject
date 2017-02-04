@@ -22,12 +22,10 @@ class ElisaHivResultForm (SubjectModelFormMixin):
         # validating that a Microtube exists before filling this form.
         instance.elisa_requisition_checks(forms.ValidationError)
 
-        # testing done but not providing date
         if(cleaned_data.get('hiv_result') in [POS, NEG]
                 and not cleaned_data.get('hiv_result_datetime')):
-            raise forms.ValidationError(
-                'If test has been performed, '
-                'what is the test result date time?')
+            raise forms.ValidationError({
+                'hiv_result_datetime': 'This field is required'})
 
         return cleaned_data
 

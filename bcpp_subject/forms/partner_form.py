@@ -54,7 +54,8 @@ class BasePartnerForm (SubjectModelFormMixin):
                     'within this community or Cattle post within this community. '
                     'The response in the next question is NOT_APPLICABLE')
 
-        self.validate_other('first_exchange2', 'first_exchange2_age_other')
+        self.validate_other_specify(
+            'first_exchange2', 'first_exchange2_age_other')
 
         return cleaned_data
 

@@ -1,9 +1,9 @@
 from django import forms
 
-from ..models import Participation
-
-from .form_mixins import SubjectModelFormMixin
 from edc_constants.constants import NOT_APPLICABLE, YES, NO
+
+from ..models import Participation
+from .form_mixins import SubjectModelFormMixin
 
 
 class ParticipationForm (SubjectModelFormMixin):

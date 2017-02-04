@@ -33,7 +33,7 @@ class HypertensionCardiovascular(CrfModelMixin):
             'Have you ever taken any of these medications? '
             'Tick all that apply'))
 
-    other_medication_taken = models.CharField(
+    medication_taken_other = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,
@@ -45,7 +45,7 @@ class HypertensionCardiovascular(CrfModelMixin):
         verbose_name=('If yes: Are you still being given this '
                       'medication (respond for each one ticked)'))
 
-    other_medication_given = models.CharField(
+    medication_given_other = models.CharField(
         verbose_name='If other please specify',
         null=True,
         blank=True,

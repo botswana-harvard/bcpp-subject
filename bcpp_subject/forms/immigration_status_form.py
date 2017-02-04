@@ -6,7 +6,7 @@ class ImmigrationStatusForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        self.validate_other('country_of_origin', 'country_of_origin_other')
+        self.validate_other_specify('country_of_origin')
         return cleaned_data
 
     class Meta:

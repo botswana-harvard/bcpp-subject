@@ -2,7 +2,6 @@ from django import forms
 
 from ..constants import ANNUAL
 from ..models import ReproductiveHealth
-
 from .form_mixins import SubjectModelFormMixin
 
 

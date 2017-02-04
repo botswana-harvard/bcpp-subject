@@ -1,12 +1,13 @@
 from django import forms
 
+from edc_base.modelform_mixins import CommonCleanModelFormMixin
 from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
+from edc_consent.site_consents import site_consents
+from edc_visit_tracking.form_mixins import VisitFormMixin
+
+from bcpp.consents import ANONYMOUS_CONSENT_GROUP
 
 from ..models import SubjectVisit
-from edc_consent.site_consents import site_consents
-from bcpp.consents import ANONYMOUS_CONSENT_GROUP
-from edc_base.modelform_mixins import CommonCleanModelFormMixin
-from edc_visit_tracking.form_mixins import VisitFormMixin
 
 
 class SubjectVisitForm (VisitFormMixin, RequiresConsentModelFormMixin,

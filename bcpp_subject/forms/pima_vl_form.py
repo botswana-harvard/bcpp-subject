@@ -1,12 +1,11 @@
 from django.apps import apps as django_apps
 from django import forms
+
 from edc_constants.constants import YES, NO
 
-from ..models import PimaVl
-
-from .form_mixins import SubjectModelFormMixin
-
 from ..constants import POC_VIRAL_LOAD
+from ..models import PimaVl
+from .form_mixins import SubjectModelFormMixin
 
 
 class PimaVlForm (SubjectModelFormMixin):

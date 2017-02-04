@@ -258,13 +258,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['pimacd4'])
 
-    first_regimen_no = CrfRule(
-        logic=Logic(
-            predicate=P('first_regimen', 'eq', NO),
-            consequence=REQUIRED,
-            alternative=NOT_REQUIRED),
-        target_models=['arvhistory'])
-
     require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_requires_microtube,

@@ -98,20 +98,13 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
 
     def clean_citizen_is_citizen(self):
         cleaned_data = self.cleaned_data
-        citizen = cleaned_data.get('citizen')
-        legal_marriage = cleaned_data.get('legal_marriage')
-        marriage_certificate = cleaned_data.get('marriage_certificate')
-        if citizen == YES:
-            if legal_marriage != NOT_APPLICABLE:
-                raise forms.ValidationError(
-                    'You wrote subject is a citizen. That subject is '
-                    'legally married to a citizen is not applicable.',
-                    code='invalid')
-            elif marriage_certificate != NOT_APPLICABLE:
-                raise forms.ValidationError(
-                    'You wrote subject is a citizen. The subject\'s marriage '
-                    'certificate is not applicable.',
-                    code='invalid')
+        if cleaned_data.get('citizen') == YES:
+            if cleaned_data.get('legal_marriage') != NOT_APPLICABLE:
+                raise forms.ValidationError({
+                    'legal_marriage': 'This field is not applicable'})
+            elif cleaned_data.get('marriage_certificate') != NOT_APPLICABLE:
+                raise forms.ValidationError({
+                    'marriage_certificate': 'This field is not applicable'})
 
     def household_info(self):
         household_member = self.cleaned_data.get('household_member')

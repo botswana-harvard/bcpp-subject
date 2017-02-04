@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import MALE, FEMALE, DWTA, OTHER
+from edc_constants.constants import MALE, FEMALE, DWTA
 
 from ..models import Demographics
 from ..constants import MARRIED, ALONE
@@ -9,25 +9,9 @@ from .form_mixins import SubjectModelFormMixin
 
 class DemographicsForm(SubjectModelFormMixin):
 
-    def validate_other(self, field, field_other):
-        cleaned_data = self.cleaned_data
-        if (cleaned_data.get(field)
-                and cleaned_data.get(field) == OTHER
-                and not cleaned_data.get(field_other)):
-            raise forms.ValidationError(
-                {field_other:
-                 'This field is required.'})
-        elif (cleaned_data.get(field)
-                and cleaned_data.get(field) != OTHER
-                and cleaned_data.get(field_other)):
-            raise forms.ValidationError(
-                {field_other:
-                 'This field is not required.'})
-
     def clean(self):
         cleaned_data = super().clean()
         self.validate_marriage()
-        print(cleaned_data.get('live_with'))
         if (cleaned_data.get('live_with')
                 and cleaned_data.get('live_with').count() > 1):
             for item in cleaned_data.get('live_with'):
@@ -36,8 +20,8 @@ class DemographicsForm(SubjectModelFormMixin):
                         'live_with':
                         '\'Don\'t want to answer\' or \'Alone\' '
                         'options can only be selected singularly'})
-        self.validate_other('religion', 'religion_other')
-        self.validate_other('ethnic', 'ethnic_other')
+        self.validate_other_specify('religion', 'religion_other')
+        self.validate_other_specify('ethnic', 'ethnic_other')
         return cleaned_data
 
     def validate_marriage(self):

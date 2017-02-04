@@ -1,7 +1,6 @@
 from .access_to_care_admin import AccessToCareAdmin
 from .anonymous import AnonymousConsentAdmin
 from .appointment_admin import AppointmentAdmin
-from .arv_history_admin import ArvHistoryAdmin
 from .cancer_admin import CancerAdmin
 from .circumcision_admin import (
     CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin)
