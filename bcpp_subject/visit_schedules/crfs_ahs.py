@@ -32,7 +32,7 @@ _crfs_ahs = (
         model='bcpp_subject.hypertensioncardiovascular', required=True),
     Crf(show_order=220, model='bcpp_subject.heartattack', required=True),
     Crf(show_order=230, model='bcpp_subject.cancer', required=True),
-    Crf(show_order=240, model='bcpp_subject.sti', required=True),
+    Crf(show_order=240, model='bcpp_subject.hivrelatedillness', required=True),
     Crf(show_order=250, model='bcpp_subject.tuberculosis', required=True),
     Crf(show_order=260, model='bcpp_subject.tbsymptoms', required=True),
     Crf(show_order=270, model='bcpp_subject.qualityoflife', required=True),
