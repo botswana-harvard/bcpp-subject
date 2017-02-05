@@ -17,7 +17,7 @@ class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'community_engagement',
                 'vote_engagement',
                 'problems_engagement',
@@ -27,8 +27,8 @@ class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "community_engagement": admin.VERTICAL,
-        "vote_engagement": admin.VERTICAL,
-        "solve_engagement": admin.VERTICAL, }
+        'community_engagement': admin.VERTICAL,
+        'vote_engagement': admin.VERTICAL,
+        'solve_engagement': admin.VERTICAL, }
 
     filter_horizontal = ('problems_engagement',)

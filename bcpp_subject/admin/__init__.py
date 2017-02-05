@@ -25,6 +25,7 @@ from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .hiv_test_review_admin import HivTestReviewAdmin
 from .hiv_tested_admin import HivTestedAdmin
 from .hiv_testing_history_admin import HivTestingHistoryAdmin
+from .hiv_related_illness_admin import HivRelatedIllnessAdmin
 from .hiv_untested_admin import HivUntestedAdmin
 from .hospital_admission_admin import HospitalAdmissionAdmin
 from .hypertension_cardiovascular_admin import HypertensionCardiovascularAdmin
@@ -39,13 +40,12 @@ from .pima_vl_admin import PimaVlAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin
 from .quality_of_life_admin import QualityOfLifeAdmin
+from .recent_partner_admin import RecentPartnerAdmin
 from .reproductive_health_admin import ReproductiveHealthAdmin
 from .residency_mobility_admin import ResidencyMobilityAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin
+from .second_partner_admin import SecondPartnerAdmin
 from .sexual_behaviour_admin import SexualBehaviourAdmin
-from .sexual_partner_admin import (
-    ThirdPartnerAdmin, SecondPartnerAdmin, RecentPartnerAdmin)
-from .sti_admin import StiAdmin
 from .stigma_admin import StigmaAdmin
 from .stigma_opinion_admin import StigmaOpinionAdmin
 from .subject_consent_admin import SubjectConsentAdmin
@@ -55,5 +55,6 @@ from .subject_requisition_admin import SubjectRequisitionAdmin
 from .subject_visit_admin import SubjectVisitAdmin
 from .substance_use_admin import SubstanceUseAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
+from .third_partner_admin import ThirdPartnerAdmin
 from .tuberculosis_admin import TuberculosisAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin

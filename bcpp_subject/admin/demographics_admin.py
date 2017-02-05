@@ -16,7 +16,7 @@ class DemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'marital_status',
                 'num_wives',
                 'husband_wives',
@@ -31,9 +31,9 @@ class DemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "marital_status": admin.VERTICAL,
-        "religion": admin.VERTICAL,
-        "ethnic": admin.VERTICAL,
+        'marital_status': admin.VERTICAL,
+        'religion': admin.VERTICAL,
+        'ethnic': admin.VERTICAL,
     }
 
     filter_horizontal = ('live_with', )

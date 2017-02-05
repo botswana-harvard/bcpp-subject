@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
@@ -27,6 +28,8 @@ class SubstanceUseAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'smoke': admin.VERTICAL,
         'drug_use': admin.VERTICAL,
     }
-    instructions = [(
-        'Read to Participant: I would like to now ask you '
-        'questions about drinking alcohol and smoking.')]
+
+    additional_instructions = mark_safe(
+        '<H5><span style=\"color:orange;\">Read to Participant</span></H5>'
+        'I would like to now ask you '
+        'questions about drinking alcohol and smoking.')

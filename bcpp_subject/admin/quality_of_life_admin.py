@@ -1,12 +1,11 @@
-from django.utils.translation import ugettext as _
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import QualityOfLifeForm
 from ..models import QualityOfLife
-
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
@@ -36,10 +35,13 @@ class QualityOfLifeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'anxiety': admin.VERTICAL,
     }
 
-    instructions = [(
-        'Note to Interviewer: In this section, read the heading (question) and then each of the '
-        '5 possible responses for each question. Do not read -Do not want to answer-, but record '
-        'this if respondent declines to answer.'),
-        _('<H5>Read to Participant</H5> To start, I will ask some questions regarding your '
-          'overall health. Under each heading, please indicate the ONE statement that best '
-          'describes your health TODAY.')]
+    additional_instructions = mark_safe(
+        '<h5>Note to Interviewer</h5>'
+        'In this section, read the heading '
+        '(question) and then each of the 5 possible responses for each '
+        'question. Do not read -Do not want to answer-, but record '
+        'this if respondent declines to answer.'
+        '<H5><span style="color:orange;">Read to Participant</span></H5>'
+        'To start, I will ask some questions '
+        'regarding your overall health. Under each heading, please indicate '
+        'the ONE statement that best describes your health TODAY.')

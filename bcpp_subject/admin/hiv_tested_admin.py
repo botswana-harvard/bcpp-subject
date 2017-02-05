@@ -29,7 +29,7 @@ class HivTestedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
+                'subject_visit',
                 'num_hiv_tests',
                 'where_hiv_test',
                 'where_hiv_test_other',
@@ -41,7 +41,7 @@ class HivTestedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     )
 
     radio_fields = {
-        "where_hiv_test": admin.VERTICAL,
-        "why_hiv_test": admin.VERTICAL,
-        "hiv_pills": admin.VERTICAL,
-        "arvs_hiv_test": admin.VERTICAL, }
+        'where_hiv_test': admin.VERTICAL,
+        'why_hiv_test': admin.VERTICAL,
+        'hiv_pills': admin.VERTICAL,
+        'arvs_hiv_test': admin.VERTICAL, }

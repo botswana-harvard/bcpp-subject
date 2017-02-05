@@ -1,14 +1,13 @@
 from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_base.fieldsets import Fieldset, Insert
 
 from ..admin_site import bcpp_subject_admin
-from ..constants import T1, T2, T3, E0
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
 
 from .modeladmin_mixins import CrfModelAdminMixin
+from django.utils.safestring import mark_safe
 
 
 @admin.register(HivCareAdherence, site=bcpp_subject_admin)
@@ -17,13 +16,13 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
-                "first_positive")}),
+                'subject_visit',
+                'first_positive')}),
         ('Care', {
             'fields': (
-                "medical_care",
-                "no_medical_care",
-                "no_medical_care_other",
+                'medical_care',
+                'no_medical_care',
+                'no_medical_care_other',
                 'ever_recommended_arv',
                 'ever_taken_arv',
                 'why_no_arv',
@@ -68,32 +67,33 @@ class HivCareAdherenceAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = HivCareAdherenceForm
 
     radio_fields = {
-        "medical_care": admin.VERTICAL,
-        "no_medical_care": admin.VERTICAL,
-        "ever_recommended_arv": admin.VERTICAL,
-        "ever_taken_arv": admin.VERTICAL,
-        "why_no_arv": admin.VERTICAL,
-        "on_arv": admin.VERTICAL,
-        "arv_stop": admin.VERTICAL,
-        "adherence_4_day": admin.VERTICAL,
-        "adherence_4_wk": admin.VERTICAL,
-        "arv_evidence": admin.VERTICAL,
-        "is_first_regimen": admin.VERTICAL,
-        "hospitalized_art_start": admin.VERTICAL,
-        "hospitalized_art_start_reason": admin.VERTICAL,
-        "hospitalized_evidence": admin.VERTICAL,
+        'medical_care': admin.VERTICAL,
+        'no_medical_care': admin.VERTICAL,
+        'ever_recommended_arv': admin.VERTICAL,
+        'ever_taken_arv': admin.VERTICAL,
+        'why_no_arv': admin.VERTICAL,
+        'on_arv': admin.VERTICAL,
+        'arv_stop': admin.VERTICAL,
+        'adherence_4_day': admin.VERTICAL,
+        'adherence_4_wk': admin.VERTICAL,
+        'arv_evidence': admin.VERTICAL,
+        'is_first_regimen': admin.VERTICAL,
+        'hospitalized_art_start': admin.VERTICAL,
+        'hospitalized_art_start_reason': admin.VERTICAL,
+        'hospitalized_evidence': admin.VERTICAL,
     }
 
     filter_horizontal = ('arvs', 'prev_arvs')
 
-    instructions = [("Note to Interviewer: This section is only to be"
-                     " completed by HIV-positive participants who knew"
-                     " that they were HIV-positive before today."
-                     " Section should be skipped for HIV-negative participants"
-                     " and participants who first tested HIV-positive"
-                     " today. Read to Participant: I am now going to"
-                     " ask you some questions about care you may have"
-                     " been given for your HIV infection.")]
+    additional_instructions = mark_safe(
+        'This section is only to be completed by HIV-positive participants '
+        'who knew that they were HIV-positive before today. '
+        'Section should be skipped for HIV-negative participants '
+        'and participants who first tested HIV-positive today.'
+        '<H5><span style="color:orange;">Read to Participant</span></H5>'
+        'I am now going to ask you some questions about care you may have '
+        'been given for your HIV infection.')
+
     list_display = (
         'subject_visit',
         'on_arv',

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_constants.constants import YES
@@ -26,7 +26,7 @@ class CircumcisionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                "subject_visit",
+                'subject_visit',
                 'circumcised',
                 'circumcised_location',
                 'circumcised_location_other',
@@ -36,14 +36,12 @@ class CircumcisionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'circumcised': admin.VERTICAL,
         'circumcised_location': admin.VERTICAL}
 
-    instructions = [
-        ("Note to Interviewer: This section is to be completed "
-         "by male participants. SKIP for female participants. "),
-        _("Read to Participant: Some men are circumcised. "
-          "Male circumcision is [enter site specific word] when "
-          "the foreskin of the man's penis has been cut off. "
-          "I would like to ask you a few questions regarding "
-          "male circumcision.")]
+    additional_instructions = mark_safe(
+        '<H5><span style="color:orange;">Read to Participant</span></H5>'
+        'Some men are circumcised. Male circumcision is '
+        '[enter site specific word] when the foreskin of the man\'s penis '
+        'has been cut off. I would like to ask you a few questions regarding '
+        'male circumcision.')
 
 
 @admin.register(Circumcised, site=bcpp_subject_admin)
@@ -52,9 +50,9 @@ class CircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = CircumcisedForm
 
     fields = [
-        "subject_visit",
-        "circumcised",
-        "health_benefits_smc",
+        'subject_visit',
+        'circumcised',
+        'health_benefits_smc',
         'circ_date',
         'when_circ',
         'age_unit_circ',
@@ -69,12 +67,12 @@ class CircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     }
 
     radio_fields = {
-        "circumcised": admin.VERTICAL,
-        "where_circ": admin.VERTICAL,
-        "age_unit_circ": admin.VERTICAL,
-        "why_circ": admin.VERTICAL, }
+        'circumcised': admin.VERTICAL,
+        'where_circ': admin.VERTICAL,
+        'age_unit_circ': admin.VERTICAL,
+        'why_circ': admin.VERTICAL, }
 
-    filter_horizontal = ("health_benefits_smc",)
+    filter_horizontal = ('health_benefits_smc',)
 
 
 @admin.register(Uncircumcised, site=bcpp_subject_admin)
@@ -83,9 +81,9 @@ class UncircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = UncircumcisedForm
 
     fields = (
-        "subject_visit",
-        "circumcised",
-        "health_benefits_smc",
+        'subject_visit',
+        'circumcised',
+        'health_benefits_smc',
         'reason_circ',
         'reason_circ_other',
         'future_circ',
@@ -93,10 +91,10 @@ class UncircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'service_facilities',
         'aware_free',)
     radio_fields = {
-        "circumcised": admin.VERTICAL,
-        "reason_circ": admin.VERTICAL,
-        "future_circ": admin.VERTICAL,
-        "future_reasons_smc": admin.VERTICAL,
-        "service_facilities": admin.VERTICAL,
-        "aware_free": admin.VERTICAL}
-    filter_horizontal = ("health_benefits_smc",)
+        'circumcised': admin.VERTICAL,
+        'reason_circ': admin.VERTICAL,
+        'future_circ': admin.VERTICAL,
+        'future_reasons_smc': admin.VERTICAL,
+        'service_facilities': admin.VERTICAL,
+        'aware_free': admin.VERTICAL}
+    filter_horizontal = ('health_benefits_smc',)

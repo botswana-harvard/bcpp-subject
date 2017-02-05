@@ -17,20 +17,20 @@ class HivHealthCareCostsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                "subject_visit",
-                "hiv_medical_care",
-                "reason_no_care",
-                "place_care_received",
-                "care_regularity",
-                "doctor_visits",
+                'subject_visit',
+                'hiv_medical_care',
+                'reason_no_care',
+                'place_care_received',
+                'care_regularity',
+                'doctor_visits',
             ]}),
         audit_fieldset_tuple,
     )
 
     radio_fields = {
-        "hiv_medical_care": admin.VERTICAL,
-        "reason_no_care": admin.VERTICAL,
-        "place_care_received": admin.VERTICAL,
-        "care_regularity": admin.VERTICAL,
-        "doctor_visits": admin.VERTICAL,
+        'hiv_medical_care': admin.VERTICAL,
+        'reason_no_care': admin.VERTICAL,
+        'place_care_received': admin.VERTICAL,
+        'care_regularity': admin.VERTICAL,
+        'doctor_visits': admin.VERTICAL,
     }

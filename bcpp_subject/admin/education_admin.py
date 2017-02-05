@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
 
 from edc_base.fieldsets import Fieldset
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
@@ -45,9 +45,11 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'job_type': admin.VERTICAL,
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
-        "monthly_income": admin.VERTICAL,
+        'monthly_income': admin.VERTICAL,
     }
 
-    instructions = [_("<H5>Read to Participant</H5> Next, I will ask you some "
-                      "questions about what education and work you "
-                      "may have done or are currently doing.")]
+    additional_instructions = mark_safe(
+        '<H5><span style="color:orange;">Read to Participant</span></H5>'
+        'Next, I will ask you some '
+        'questions about what education and work you '
+        'may have done or are currently doing.')

@@ -17,16 +17,16 @@ class ClinicQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                "subject_visit",
-                "report_datetime",
-                "know_hiv_status",
-                "current_hiv_status",
-                "on_arv",
-                "arv_evidence",
+                'subject_visit',
+                'report_datetime',
+                'know_hiv_status',
+                'current_hiv_status',
+                'on_arv',
+                'arv_evidence',
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
-        "know_hiv_status": admin.VERTICAL,
-        "current_hiv_status": admin.VERTICAL,
-        "on_arv": admin.VERTICAL,
-        "arv_evidence": admin.VERTICAL}
+        'know_hiv_status': admin.VERTICAL,
+        'current_hiv_status': admin.VERTICAL,
+        'on_arv': admin.VERTICAL,
+        'arv_evidence': admin.VERTICAL}

@@ -16,7 +16,7 @@ class Cd4HistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                "subject_visit",
+                'subject_visit',
                 'record_available',
                 'last_cd4_count',
                 'last_cd4_drawn_date',

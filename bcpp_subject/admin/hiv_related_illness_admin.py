@@ -3,16 +3,16 @@ from django.contrib import admin
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
-from ..models import Sti
-from ..forms import StiForm
+from ..models import HivRelatedIllness
+from ..forms import HivRelatedIllnessForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(Sti, site=bcpp_subject_admin)
-class StiAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+@admin.register(HivRelatedIllness, site=bcpp_subject_admin)
+class HivRelatedIllnessAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
-    form = StiForm
+    form = HivRelatedIllnessForm
 
     fieldsets = (
         (None, {

@@ -7,6 +7,7 @@ from ..models import HeartAttack
 from ..forms import HeartAttackForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
+from django.utils.safestring import mark_safe
 
 
 @admin.register(HeartAttack, site=bcpp_subject_admin)
@@ -18,14 +19,15 @@ class HeartAttackAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 'subject_visit',
-                'date_heart_attack',
-                'dx_heart_attack',
-                'dx_heart_attack_other',)}),
+                'heart_attack_date',
+                'heart_attack_dx',
+                'heart_attack_dx_other',)}),
         audit_fieldset_tuple
     )
 
     filter_horizontal = ('dx_heart_attack',)
 
-    instructions = [(
-        'Note to Interviewer: This form is to be filled for all participants'
-        ' even if they do not have a record (on hand) of the diagnosis.')]
+    additional_instructions = mark_safe(
+        '<H5>Note to Interviewer</H5>This form is to be filled '
+        'for all participants even if they do not have a record '
+        '(on hand) of the diagnosis.')

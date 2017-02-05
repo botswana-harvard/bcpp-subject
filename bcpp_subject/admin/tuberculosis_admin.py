@@ -18,14 +18,14 @@ class TuberculosisAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 'subject_visit',
-                'date_tb',
-                'dx_tb',
-                'dx_tb_other')}),
+                'tb_date',
+                'tb_dx',
+                'tb_dx_other')}),
         audit_fieldset_tuple,
     )
 
     radio_fields = {
-        'dx_tb': admin.VERTICAL, }
+        'tb_dx': admin.VERTICAL, }
 
     instructions = [(
         'Note to Interviewer: This form is to be filled for all participants'

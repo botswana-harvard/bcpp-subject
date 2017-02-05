@@ -1,14 +1,14 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
 
 from edc_base.fieldsets import Remove
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
 from ..constants import E0
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(ResidencyMobility, site=bcpp_subject_admin)
@@ -40,15 +40,16 @@ class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'nights_away': admin.VERTICAL,
         'cattle_postlands': admin.VERTICAL}
 
-    instructions = [
-        _('<H5>Read to Participant</H5> <p>To start, I will be asking'
-          ' you some questions about yourself, your living'
-          ' situation, and about the people that you live with.'
-          ' Your answers are very important to our research and'
-          ' will help us understand how to develop better health'
-          ' programs in your community. Some of these questions'
-          ' may be embarrassing and make you feel uncomfortable;'
-          ' however, it is really important that you give the most'
-          ' honest answer that you can. Please remember that all of '
-          ' your answers are confidential. If you do not wish to '
-          ' answer, you can skip any question.</p>')]
+    additional_instructions = mark_safe(
+        '<H5><span style="color:orange;">Read to Participant</span></H5>'
+        'To start, I will be asking '
+        'you some questions about yourself, your living '
+        'situation, and about the people that you live with.'
+        'Your answers are very important to our research and '
+        'will help us understand how to develop better health '
+        'programs in your community. Some of these questions '
+        'may be embarrassing and make you feel uncomfortable; '
+        'however, it is really important that you give the most '
+        'honest answer that you can. Please remember that all of '
+        'your answers are confidential. If you do not wish to '
+        'answer, you can skip any question.')

@@ -6,7 +6,6 @@ from ..admin_site import bcpp_subject_admin
 from ..filters import HicEnrollmentFilter
 from ..forms import HicEnrollmentForm
 from ..models import HicEnrollment
-
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
@@ -17,23 +16,22 @@ class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                "subject_visit",
-                "dob",
-                "hic_permission",
-                "permanent_resident",
-                "intend_residency",
-                "hiv_status_today",
-                "household_residency",
-                "citizen_or_spouse",
-                "locator_information",
-                "consent_datetime"
+                'subject_visit',
+                'dob',
+                'hic_permission',
+                'permanent_resident',
+                'intend_residency',
+                'hiv_status_today',
+                'household_residency',
+                'citizen_or_spouse',
+                'locator_information',
+                'consent_datetime'
             )}),
         audit_fieldset_tuple
     )
 
-    radio_fields = {
-        'hic_permission': admin.VERTICAL,
-    }
+    radio_fields = {'hic_permission': admin.VERTICAL}
+
     list_display = (
         'subject_visit',
         'dob',
@@ -45,13 +43,14 @@ class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'consent_datetime',
     )
     list_filter = ('consent_datetime', HicEnrollmentFilter,)
+
     readonly_fields = (
-        "dob",
-        "permanent_resident",
-        "intend_residency",
-        "hiv_status_today",
-        "household_residency",
-        "citizen_or_spouse",
-        "locator_information",
-        "consent_datetime",
+        'dob',
+        'permanent_resident',
+        'intend_residency',
+        'hiv_status_today',
+        'household_residency',
+        'citizen_or_spouse',
+        'locator_information',
+        'consent_datetime',
     )

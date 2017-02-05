@@ -2,21 +2,20 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from ..admin_site import bcpp_subject_admin
-from ..forms import ThirdPartnerForm
-from ..models import ThirdPartner
+from ..forms import SecondPartnerForm
+from ..models import SecondPartner
 from .modeladmin_mixins import CrfModelAdminMixin, SexualPartnerAdminMixin
 
 
-@admin.register(ThirdPartner, site=bcpp_subject_admin)
-class ThirdPartnerAdmin(SexualPartnerAdminMixin, CrfModelAdminMixin, admin.ModelAdmin):
+@admin.register(SecondPartner, site=bcpp_subject_admin)
+class SecondPartnerAdmin(SexualPartnerAdminMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
-    form = ThirdPartnerForm
+    form = SecondPartnerForm
 
     additional_instructions = mark_safe(
-        'Interviewer Note: If the respondent has only had '
-        'two partners, SKIP HIV adherence questions if HIV '
-        'negative, if HIV positive, proceed. Else go to '
-        'Reproductive health for women, '
+        '<H5>Interviewer Note</H5> If the respondent has only had '
+        'one partner, SKIP to HIV adherence questions if HIV '
+        'negative. Else go to Reproductive health for women, '
         'or circumcision for men. Ask the respondent to '
         'answer the following questions about their second '
         'most recent sexual partner. It may be helpful for '
@@ -24,6 +23,5 @@ class ThirdPartnerAdmin(SexualPartnerAdminMixin, CrfModelAdminMixin, admin.Model
         'write down or otherwise record this information. '
         '<H5><span style=\"color:orange;\">Read to Participant</span></H5>'
         'I am now going to ask you about '
-        'your <b>third</b> most recent sexual partner in the past '
-        '12 months, the one before the person we were just '
-        'talking about.')
+        'your <b>second</b> most recent sexual partner in the past, '
+        'the one before the person we were just talking about.')
