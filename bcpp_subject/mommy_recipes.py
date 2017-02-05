@@ -18,19 +18,18 @@ from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
                      HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
                      ImmigrationStatus, NonPregnancy, OutpatientCare, Participation,
                      PimaVl, PimaCd4, PositiveParticipant, Pregnancy, QualityOfLife,
-                     RbdDemographics, ReproductiveHealth, ResidencyMobility,
+                     ReproductiveHealth, ResidencyMobility,
                      ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
                      Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
                      SubjectVisit, SubstanceUse, TbSymptoms, ThirdPartner,
                      Tuberculosis, Uncircumcised, ViralLoadResult, SexualBehaviour,
                      AccessToCare, SubjectRequisition, HypertensionCardiovascular)
 
-from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion,
-                                             EthnicGroups, LiveWith,
+from bcpp_subject.models.list_models import (NeighbourhoodProblems,
+                                             LiveWith,
                                              CircumcisionBenefits, FamilyPlanning,
                                              Diagnoses, HeartDisease,
-                                             StiIllnesses, PartnerResidency,
-                                             MedicationGiven, MedicationTaken)
+                                             StiIllnesses, PartnerResidency)
 from bcpp_subject.models.sexual_partner import RecentPartner
 
 # from .models import Respondent, MostRecentPartner
@@ -153,28 +152,26 @@ correctconsent = Recipe(
     new_gender='M',
 )
 
-religion = Recipe(Religion, name='anglican', short_name='anglican')
-ethnicgroups = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
 livewith = Recipe(
     LiveWith,
     name='Partner or spouse',
     short_name='Partner or spouse'
 )
 
+demographics = Recipe(
+    Demographics,
+    religion='apostolic',
+    ethnic='catholic',
+    marital_status='Single/never married',
+    num_wives=None,
+    husband_wives=None,
+    live_with=related(livewith)
+)
+
 partnerresidency = Recipe(
     PartnerResidency,
     name='In this community',
     short_name='In this community'
-)
-
-demographics = Recipe(
-    Demographics,
-    religion=related(religion),
-    ethnic=related(ethnicgroups),
-    marital_status='Single/never married',
-    num_wives=3,
-    husband_wives=3,
-    live_with=related(livewith),
 )
 
 education = Recipe(
@@ -358,29 +355,6 @@ medicaldiagnoses = Recipe(
     tb_record=NO
 )
 
-medication_given = Recipe(
-    MedicationGiven,
-    name='Atenolol',
-    short_name='atenolol'
-)
-
-medication_given_1 = Recipe(
-    MedicationGiven,
-    name='OTHER'
-)
-
-medication_taken = Recipe(
-    MedicationTaken,
-    name='Bisoprolol',
-    short_name='bisoprolol'
-)
-
-medication_taken_1 = Recipe(
-    MedicationTaken,
-    name='OTHER',
-    short_name='other'
-)
-
 nonpregnancy = Recipe(
     NonPregnancy,
     last_birth=fake.last_year,
@@ -465,16 +439,6 @@ qualityoflife = Recipe(
     pain='no pain',
     anxiety='not anxious',
     health_today=80
-)
-
-rbddemographics = Recipe(
-    RbdDemographics,
-    religion=None,  # Many2Many
-    ethnic=None,  # Many2Many
-    marital_status='Single/never married',
-    num_wives=1,
-    husband_wives=1,
-    live_with=None,  # Many2Many
 )
 
 recentpartner = Recipe(
