@@ -12,6 +12,7 @@ from ...choices import (
 from ...constants import CPC, ECC
 from ..list_models import PartnerResidency
 from bcpp_subject.choices import PARTNER_AGE
+from edc_base.model.fields.custom_fields import OtherCharField
 
 
 class SexualPartnerMixin (models.Model):
@@ -82,6 +83,8 @@ class SexualPartnerMixin (models.Model):
         choices=FIRSTRELATIONSHIP_CHOICE,
         help_text="")
 
+    first_relationship_other = OtherCharField()
+
     first_exchange = models.CharField(
         verbose_name="To the best of your knowledge, how old is this person?",
         max_length=40,
@@ -90,15 +93,15 @@ class SexualPartnerMixin (models.Model):
         blank=False,
         help_text=("Note: If participant does not want to answer, leave blank."))
 
-    first_exchange2 = models.CharField(
+    first_exchange_age = models.CharField(
+        verbose_name="To the best of your knowledge, how old is this person?",
         max_length=25,
         choices=PARTNER_AGE,
         null=True,
         blank=False,
     )
 
-    # FIXME: add validation in form
-    first_exchange2_age_other = models.IntegerField(
+    first_exchange_age_other = models.IntegerField(
         verbose_name='If 19 or older, specify age',
         null=True,
         blank=True,

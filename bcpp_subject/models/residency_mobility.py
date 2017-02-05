@@ -66,7 +66,7 @@ class ResidencyMobility (CrfModelMixin):
     )
 
     cattle_postlands_other = models.CharField(
-        verbose_name='Give the name of the community',
+        verbose_name='If \'Other community\', please specify',
         max_length=65,
         null=True,
         blank=True,

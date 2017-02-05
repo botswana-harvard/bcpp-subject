@@ -14,19 +14,19 @@ class Tuberculosis (CrfModelMixin):
     """A model completed by the user to record any diagnosis of
     Tuberculosis in the past 12 months."""
 
-    date_tb = models.DateField(
+    tb_date = models.DateField(
         verbose_name="Date of the diagnosis of tuberculosis:",
         validators=[date_not_future],
         help_text="",
     )
 
-    dx_tb = models.CharField(
+    tb_dx = models.CharField(
         verbose_name="[Interviewer:]What is the tuberculosis diagnosis as recorded?",
         max_length=50,
         choices=DX_TB_CHOICE,
         help_text="",
     )
-    dx_tb_other = OtherCharField(
+    tb_dx_other = OtherCharField(
         null=True,
     )
 

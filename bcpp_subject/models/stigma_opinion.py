@@ -45,7 +45,7 @@ class StigmaOpinion (CrfModelMixin):
         help_text="",
     )
 
-    enacted_phyical_stigma = models.CharField(
+    enacted_physical_stigma = models.CharField(
         verbose_name="People living with or thought to be living with"
                      " HIV are sometimes physically assaulted.",
         max_length=25,

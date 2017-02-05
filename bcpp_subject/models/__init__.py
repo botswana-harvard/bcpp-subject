@@ -23,6 +23,7 @@ from .hiv_care_adherence import HivCareAdherence
 from .hiv_health_care_costs import HivHealthCareCosts
 from .hiv_linkage_to_care import HivLinkageToCare
 from .hiv_medical_care import HivMedicalCare
+from .hiv_related_illness import HivRelatedIllness
 from .hiv_result import HivResult
 from .hiv_result_documentation import HivResultDocumentation
 from .hiv_test_review import HivTestReview
@@ -47,12 +48,12 @@ from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant
 from .pregnancy import Pregnancy
 from .quality_of_life import QualityOfLife
+from .recent_partner import RecentPartner
 from .reproductive_health import ReproductiveHealth
 from .residency_mobility import ResidencyMobility
 from .resource_utilization import ResourceUtilization
 from .sexual_behaviour import SexualBehaviour
-from .sexual_partner import RecentPartner, SecondPartner, ThirdPartner
-from .sti import Sti
+from .second_partner import SecondPartner
 from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion
 from .subject_consent import SubjectConsent
@@ -63,6 +64,7 @@ from .subject_requisition import SubjectRequisition
 from .subject_visit import SubjectVisit
 from .substance_use import SubstanceUse
 from .tb_symptoms import TbSymptoms
+from .third_partner import ThirdPartner
 from .tuberculosis import Tuberculosis
 from .uncircumcised import Uncircumcised
 from .viral_load_result import ViralLoadResult

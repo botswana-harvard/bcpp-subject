@@ -13,18 +13,18 @@ class Cancer (CrfModelMixin):
 
     """A model completed by the user to record any diagnosis of cancer in the past 12 months."""
 
-    date_cancer = models.DateField(
+    cancer_date = models.DateField(
         verbose_name="Date of the diagnosis of cancer:",
         validators=[date_not_future],
         help_text="")
 
-    dx_cancer = models.CharField(
+    cancer_dx = models.CharField(
         verbose_name="[Interviewer:] What is the cancer diagnosis as recorded?",
         max_length=45,
         choices=DXCANCER_CHOICE,
         help_text="")
 
-    reason_other = OtherCharField()
+    cancer_dx_other = OtherCharField()
 
     objects = CrfModelManager()
 

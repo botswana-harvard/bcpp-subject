@@ -7,6 +7,7 @@ from ..choices import WHERE_HIV_TEST_CHOICE, WHY_HIV_TEST_CHOICE
 
 from .model_mixins import CrfModelMixin
 from edc_constants.choices import YES_NO_UNSURE
+from django.core.validators import MinValueValidator
 
 
 class HivTested (CrfModelMixin):
@@ -15,7 +16,7 @@ class HivTested (CrfModelMixin):
 
     num_hiv_tests = models.IntegerField(
         verbose_name="How many times before today have you had an HIV test?",
-        null=True,
+        validators=[MinValueValidator(1)],
         help_text="",
     )
 
@@ -34,7 +35,6 @@ class HivTested (CrfModelMixin):
                      " statements best describes the reason you were tested the last"
                      " [most recent] time you were tested before today?",
         max_length=105,
-        null=True,
         choices=WHY_HIV_TEST_CHOICE,
         help_text="",
     )
@@ -44,7 +44,6 @@ class HivTested (CrfModelMixin):
                      " HIV with pills called antiretroviral therapy or ARVs [or HAART]?",
         max_length=25,
         choices=YES_NO_UNSURE,
-        null=True,
     )
 
     arvs_hiv_test = models.CharField(
@@ -52,8 +51,6 @@ class HivTested (CrfModelMixin):
                      "antiretroviral therapy (or ARVs) can help HIV-positive people"
                      " to live longer?",
         max_length=25,
-        null=True,
-        blank=True,
         choices=YES_NO_UNSURE,
     )
 

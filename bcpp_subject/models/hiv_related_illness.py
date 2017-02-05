@@ -8,15 +8,16 @@ from .list_models import StiIllnesses
 from .model_mixins import CrfModelMixin
 
 
-class Sti (CrfModelMixin):
+class HivRelatedIllness (CrfModelMixin):
 
     """A model completed by the user to record any potentially
     HIV-related illness in the past 12 months."""
 
     sti_dx = models.ManyToManyField(
         StiIllnesses,
-        verbose_name="[Interviewer:] Indicate each potentially HIV-related illness that is reported"
-                     " by the participant and/or recorded in his or her medical records",
+        verbose_name=(
+            "[Interviewer:] Indicate each potentially HIV-related illness that is reported"
+            " by the participant and/or recorded in his or her medical records"),
         help_text="(tick all that apply)",
     )
     sti_dx_other = OtherCharField()
