@@ -12,14 +12,7 @@ class DemographicsForm(SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         self.validate_marriage()
-        if (cleaned_data.get('live_with')
-                and cleaned_data.get('live_with').count() > 1):
-            for item in cleaned_data.get('live_with'):
-                if item == ALONE or item == DWTA:
-                    raise forms.ValidationError({
-                        'live_with':
-                        '\'Don\'t want to answer\' or \'Alone\' '
-                        'options can only be selected singularly'})
+        self.m2m_single_selection_if('live_with', [ALONE, DWTA])
         self.validate_other_specify('religion', 'religion_other')
         self.validate_other_specify('ethnic', 'ethnic_other')
         return cleaned_data

@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 
 from edc_constants.constants import (
     OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK,
-    DONT_KNOW, NONE, NOT_SURE)
+    DONT_KNOW, NONE, NOT_SURE, DECLINED)
 
 from .constants import MARRIED, ALONE, REFUSED
 
@@ -1081,7 +1081,7 @@ HIV_RESULT = (
     (POS, 'HIV Positive (Reactive)'),
     (NEG, 'HIV Negative (Non-reactive)'),
     (IND, 'Indeterminate'),
-    ('Declined', 'Participant declined testing'),
+    (DECLINED, 'Participant declined testing'),
     ('Not performed',
      'Test could not be performed (e.g. supply outage, technical problem)'),
 )

@@ -1,3 +1,5 @@
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND
+from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_metadata.rules.crf_rule import CrfRule
 from edc_metadata.rules.decorators import register
 from edc_metadata.rules.logic import Logic
@@ -5,15 +7,13 @@ from edc_metadata.rules.requisition_rule import RequisitionRule
 from edc_metadata.rules.rule_group import RuleGroup
 from edc_metadata.rules.predicate import P, PF
 
-from edc_metadata.constants import NOT_REQUIRED, REQUIRED
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND
-
 from .constants import VENOUS
 from .labs import (
     microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
-from .models import ResourceUtilization, SubjectVisit
 from .metadata_rules_funcs import (
     func_anonymous_member,
+    func_art_naive,
+    func_art_defaulter,
     func_hiv_indeterminate,
     func_hiv_positive,
     func_known_hiv_pos,
@@ -28,10 +28,8 @@ from .metadata_rules_funcs import (
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
     func_requires_vl,
-    is_female,
-)
-from bcpp_subject.metadata_rules_funcs import (
-    func_art_naive, func_art_defaulter)
+    is_female)
+from .models import ResourceUtilization, SubjectVisit
 
 
 @register()
@@ -359,8 +357,8 @@ class ReproductiveRuleGroup(RuleGroup):
 
 @register()
 class MedicalDiagnosesRuleGroup(RuleGroup):
-    """Allows the heartattack, cancer, tb forms to be made available whether
-    or not the participant has a record. see redmine 314.
+    """Allows the heartattack, cancer, tb forms to be made available
+    whether or not the participant has a record. see redmine 314.
     """
     heart_attack_record = CrfRule(
         logic=Logic(
@@ -390,7 +388,8 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
 
 class BaseRequisitionRuleGroup(RuleGroup):
-    """Ensures an RBD requisition if HIV result is POS."""
+    """Ensures an RBD requisition if HIV result is POS.
+    """
     rbd = RequisitionRule(
         logic=Logic(
             predicate=func_requires_rbd,
@@ -407,7 +406,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model='bcpp_subject.subjectrequisition',
         target_panels=[viral_load_panel], )
 
-    """Ensures a Microtube is not required for POS."""
+    # Ensures a Microtube is not required for POS.
     microtube_for_neg = RequisitionRule(
         logic=Logic(
             predicate=func_requires_microtube,
@@ -437,7 +436,8 @@ class BaseRequisitionRuleGroup(RuleGroup):
 @register()
 class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
-    """Ensures an ELISA blood draw requisition if HIV result is IND."""
+    """Ensures an ELISA blood draw requisition if HIV result is IND.
+    """
     elisa_for_ind = RequisitionRule(
         logic=Logic(
             predicate=func_hiv_indeterminate,

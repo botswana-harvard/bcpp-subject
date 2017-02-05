@@ -14,6 +14,7 @@ class MockVisit:
         self.subject_identifier = '111111111'
 
 
+@tag('SS')
 class TestSubjectHelper(TestCase):
 
     def setUp(self):
@@ -353,7 +354,7 @@ class TestSubjectHelper(TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.arv_evidence, YES)
+        self.assertEqual(obj.raw.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, DEFAULTER)
 
     def test_arv_status_naive(self):
@@ -370,7 +371,7 @@ class TestSubjectHelper(TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertIsNone(obj.arv_evidence)
+        self.assertIsNone(obj.raw.arv_evidence)
         self.assertEqual(obj.final_arv_status, NAIVE)
 
     def test_arv_status_with_evidence(self):
@@ -388,7 +389,7 @@ class TestSubjectHelper(TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.arv_evidence, YES)
+        self.assertEqual(obj.raw.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, DEFAULTER)
 
     def test_arv_status_on_art(self):
@@ -405,7 +406,7 @@ class TestSubjectHelper(TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.arv_evidence, YES)
+        self.assertEqual(obj.raw.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, ON_ART)
 
     def test_prev_result_pos5(self):

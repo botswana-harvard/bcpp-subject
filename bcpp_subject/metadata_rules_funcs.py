@@ -97,8 +97,7 @@ def func_known_hiv_pos(visit_instance, *args):
     """Returns True if participant is NOT newly diagnosed POS.
     """
     subject_helper = SubjectHelper(visit_instance)
-    return (
-        subject_helper.prev_result_known and subject_helper.prev_result == POS)
+    return subject_helper.known_positive
 
 
 def func_requires_hic_enrollment(visit_instance, *args):
