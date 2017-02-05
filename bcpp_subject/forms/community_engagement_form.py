@@ -1,6 +1,4 @@
-from django import forms
-
-from edc_constants.constants import DWTA
+from edc_constants.constants import DWTA, OTHER
 
 from ..models import CommunityEngagement
 
@@ -11,16 +9,11 @@ class CommunityEngagementForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        answers = []
-        if cleaned_data.get('problems_engagement'):
-            for item in cleaned_data.get('problems_engagement'):
-                answers.append(item.name)
-            if len(answers) > 1 and DWTA in answers:
-                raise forms.ValidationError({
-                    'problems_engagement': (
-                        'You cannot choose \'Don\'t want to answer\' '
-                        'and another problem at the same time. '
-                        'Please correct.')})
+        self.m2m_single_selection_if(DWTA, m2m_field='problems_engagement')
+        self.m2m_other_specify(
+            OTHER,
+            m2m_field='problems_engagement',
+            field_other='problems_engagement_other')
         return cleaned_data
 
     class Meta:

@@ -1,8 +1,8 @@
 from django import forms
 
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import YES
 
-from ..constants import ANNUAL
+from ..constants import ANNUAL, ZERO
 from ..models import ResidencyMobility
 from .form_mixins import SubjectModelFormMixin
 
@@ -28,28 +28,29 @@ class ResidencyMobilityForm (SubjectModelFormMixin):
         # enrollment checklist
         instance.hic_enrollment_checks(forms.ValidationError)
         # validating residency + nights away. redmine 126
-        if (cleaned_data.get('permanent_resident') == 'Yes' and
+        if (cleaned_data.get('permanent_resident') == YES and
                 cleaned_data.get('nights_away') == 'more than 6 months'):
-            raise forms.ValidationError('If participant has spent 14 or more'
-                                        'nights per month '
-                                        'in this community, nights away can\'t be'
-                                        'more than 6months.')
-        # validating if other community, you specify
-        if (cleaned_data.get('cattle_postlands') == 'Other community' and not
-                cleaned_data.get('cattle_postlands_other')):
-            raise forms.ValidationError('If participant was staying in another community,'
-                                        'specify the community')
-        # this as in redmine issue 69
-        if (cleaned_data.get('nights_away') == 'zero' and
-                cleaned_data.get('cattle_postlands') != NOT_APPLICABLE):
-            raise forms.ValidationError(
-                'If participant spent zero nights away, times spent away should'
-                'be Not applicable')
-        if (cleaned_data.get('nights_away') != 'zero' and
-                cleaned_data.get('cattle_postlands') == NOT_APPLICABLE):
-            raise forms.ValidationError(
-                'Participant has spent more than zero nights away, times spent away'
-                'CANNOT be Not applicable')
+            raise forms.ValidationError({
+                'nights_away':
+                'Participant has spent 14 or more nights per month '
+                'in this community, nights away can\'t be '
+                'more than 6 months.'})
+
+        self.not_applicable_if(ZERO, 'nights_away', 'cattle_postlands')
+        self.validate_other_specify(
+            'cattle_postlands', other_stored_value='Other community')
+
+#         # this as in redmine issue 69
+#         if (cleaned_data.get('nights_away') == 'zero' and
+#                 cleaned_data.get('cattle_postlands') != NOT_APPLICABLE):
+#             raise forms.ValidationError(
+#                 'If participant spent zero nights away, times spent away should'
+#                 'be Not applicable')
+#         if (cleaned_data.get('nights_away') != 'zero' and
+#                 cleaned_data.get('cattle_postlands') == NOT_APPLICABLE):
+#             raise forms.ValidationError(
+#                 'Participant has spent more than zero nights away, times spent away'
+#                 'CANNOT be Not applicable')
         return cleaned_data
 
     class Meta:

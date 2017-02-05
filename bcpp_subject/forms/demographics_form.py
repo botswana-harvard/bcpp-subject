@@ -12,7 +12,7 @@ class DemographicsForm(SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         self.validate_marriage()
-        self.m2m_single_selection_if('live_with', [ALONE, DWTA])
+        self.m2m_single_selection_if(ALONE, DWTA, m2m_field='live_with')
         self.validate_other_specify('religion', 'religion_other')
         self.validate_other_specify('ethnic', 'ethnic_other')
         return cleaned_data
