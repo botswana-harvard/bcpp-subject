@@ -8,31 +8,31 @@ from edc_base_test.faker import EdcBaseProvider
 from edc_base_test.utils import get_utcnow
 from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
-from .models import (Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
-                     Circumcision, ClinicQuestionnaire, CommunityEngagement,
-                     CorrectConsent, Demographics, Education, ElisaHivResult,
-                     Grant, HeartAttack, HicEnrollment, HivCareAdherence,
-                     HivHealthCareCosts, HivLinkageToCare, HivMedicalCare,
-                     HivResultDocumentation, HivResult, HivTestReview, HivTested,
-                     HivTestingHistory, HivUntested, HospitalAdmission,
-                     HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
-                     ImmigrationStatus, NonPregnancy, OutpatientCare, Participation,
-                     PimaVl, PimaCd4, PositiveParticipant, Pregnancy, QualityOfLife,
-                     RbdDemographics, ReproductiveHealth, ResidencyMobility,
-                     ResourceUtilization, SecondPartner, Sti, StigmaOpinion,
-                     Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
-                     SubjectVisit, SubstanceUse, TbSymptoms, ThirdPartner,
-                     Tuberculosis, Uncircumcised, ViralLoadResult, SexualBehaviour,
-                     AccessToCare, SubjectRequisition, HypertensionCardiovascular)
+from .models import (
+    Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
+    Circumcision, ClinicQuestionnaire, CommunityEngagement,
+    CorrectConsent, Demographics, Education, ElisaHivResult,
+    Grant, HeartAttack, HicEnrollment, HivCareAdherence,
+    HivHealthCareCosts, HivLinkageToCare, HivMedicalCare,
+    HivResultDocumentation, HivResult, HivTestReview, HivTested,
+    HivTestingHistory, HivUntested, HospitalAdmission,
+    HouseholdComposition, LabourMarketWages, MedicalDiagnoses,
+    ImmigrationStatus, NonPregnancy, OutpatientCare, Participation,
+    PimaVl, PimaCd4, PositiveParticipant, Pregnancy, QualityOfLife,
+    ReproductiveHealth, ResidencyMobility,
+    ResourceUtilization, SecondPartner, HivRelatedIllness, StigmaOpinion,
+    Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
+    SubjectVisit, SubstanceUse, TbSymptoms, ThirdPartner,
+    Tuberculosis, Uncircumcised, ViralLoadResult, SexualBehaviour,
+    AccessToCare, SubjectRequisition, HypertensionCardiovascular)
 
-from bcpp_subject.models.list_models import (NeighbourhoodProblems, Religion,
-                                             EthnicGroups, LiveWith,
-                                             CircumcisionBenefits, FamilyPlanning,
-                                             Diagnoses, HeartDisease,
-                                             StiIllnesses, PartnerResidency,
-                                             MedicationGiven, MedicationTaken)
-from bcpp_subject.models.sexual_partner import RecentPartner
-
+from .models.list_models import (NeighbourhoodProblems, LiveWith,
+                                 CircumcisionBenefits, FamilyPlanning,
+                                 Diagnoses, HeartDisease,
+                                 StiIllnesses, PartnerResidency)
+from .models.sexual_partner import RecentPartner
+from .constants import ZERO
+from bcpp_subject.models.list_models import Medication
 # from .models import Respondent, MostRecentPartner
 
 
@@ -153,8 +153,6 @@ correctconsent = Recipe(
     new_gender='M',
 )
 
-religion = Recipe(Religion, name='anglican', short_name='anglican')
-ethnicgroups = Recipe(EthnicGroups, name='Babirwa', short_name='Babirwa')
 livewith = Recipe(
     LiveWith,
     name='Partner or spouse',
@@ -169,8 +167,8 @@ partnerresidency = Recipe(
 
 demographics = Recipe(
     Demographics,
-    religion=related(religion),
-    ethnic=related(ethnicgroups),
+    religion='Anglican',
+    ethnic='Asian',
     marital_status='Single/never married',
     num_wives=3,
     husband_wives=3,
@@ -260,6 +258,17 @@ hivmedicalcare = Recipe(
     first_hiv_care_pos=date.today(),
     last_hiv_care_pos=date.today(),
     lowest_cd4='100-199',
+)
+
+sti_illness = Recipe(StiIllnesses)
+hivrelatedillness = Recipe(
+    HivRelatedIllness,
+    sti_dx=related(sti_illness),  # Many2Many
+    wasting_date=date.today(),
+    yeast_infection_date=date.today(),
+    pneumonia_date=date.today(),
+    pcp_date=date.today(),
+    herpes_date=date.today()
 )
 
 hivresultdocumentation = Recipe(
@@ -358,27 +367,10 @@ medicaldiagnoses = Recipe(
     tb_record=NO
 )
 
-medication_given = Recipe(
-    MedicationGiven,
+medication = Recipe(
+    Medication,
     name='Atenolol',
     short_name='atenolol'
-)
-
-medication_given_1 = Recipe(
-    MedicationGiven,
-    name='OTHER'
-)
-
-medication_taken = Recipe(
-    MedicationTaken,
-    name='Bisoprolol',
-    short_name='bisoprolol'
-)
-
-medication_taken_1 = Recipe(
-    MedicationTaken,
-    name='OTHER',
-    short_name='other'
 )
 
 nonpregnancy = Recipe(
@@ -467,16 +459,6 @@ qualityoflife = Recipe(
     health_today=80
 )
 
-rbddemographics = Recipe(
-    RbdDemographics,
-    religion=None,  # Many2Many
-    ethnic=None,  # Many2Many
-    marital_status='Single/never married',
-    num_wives=1,
-    husband_wives=1,
-    live_with=None,  # Many2Many
-)
-
 recentpartner = Recipe(
     RecentPartner,
     sex_partner_community='test_community'
@@ -521,7 +503,7 @@ residencymobility = Recipe(
     length_residence='Less than 6 months',
     permanent_resident=YES,
     intend_residency=YES,
-    nights_away='zero',
+    nights_away=ZERO,
     cattle_postlands=NOT_APPLICABLE,
     cattle_postlands_other=None,
 )
@@ -538,16 +520,6 @@ secondpartner = Recipe(
     SecondPartner,
     sex_partner_community='test_community',
 )
-still_illness = Recipe(StiIllnesses)
-sti = Recipe(
-    Sti,
-    sti_dx=related(still_illness),  # Many2Many
-    wasting_date=date.today(),
-    yeast_infection_date=date.today(),
-    pneumonia_date=date.today(),
-    pcp_date=date.today(),
-    herpes_date=date.today()
-)
 
 stigmaopinion = Recipe(
     StigmaOpinion,
@@ -555,7 +527,7 @@ stigmaopinion = Recipe(
     gossip_community_stigma='Disagree',
     respect_community_stigma='Disagree',
     enacted_verbal_stigma='Disagree',
-    enacted_phyical_stigma='Disagree',
+    enacted_physical_stigma='Disagree',
     enacted_family_stigma='Disagree',
     fear_stigma='Disagree',
 )

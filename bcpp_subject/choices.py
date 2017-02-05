@@ -4,7 +4,7 @@ from edc_constants.constants import (
     OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK,
     DONT_KNOW, NONE, NOT_SURE, DECLINED)
 
-from .constants import MARRIED, ALONE, REFUSED
+from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS, MONTHS, YEARS
 
 
 AGREE_STRONGLY = (
@@ -1102,16 +1102,16 @@ EASY_OF_USE = (
 )
 
 SEXDAYS_CHOICE = (
-    ('Days', _('Days')),
-    ('Months', _('Months')),
+    (DAYS, _('Days')),
+    (MONTHS, _('Months')),
     (DWTA, _('Don\'t want to answer')),
 )
 
 
 LASTSEX_CHOICE = (
-    ('Days', _('Days')),
-    ('Months', _('Months')),
-    ('Years', _('Years')),
+    (DAYS, _('Days')),
+    (MONTHS, _('Months')),
+    (YEARS, _('Years')),
     (DWTA, _('Don\'t want to answer')),
 )
 
@@ -1212,7 +1212,7 @@ LENGTH_RESIDENCE_CHOICE = (
 )
 
 NIGHTS_AWAY_CHOICE = (
-    ('zero', _('Zero nights')),
+    (ZERO, _('Zero nights')),
     ('1-6 nights', _('1-6 nights')),
     ('1-2 weeks', _('1-2 weeks')),
     ('3 weeks to less than 1 month', _('3 weeks to less than 1 month')),
@@ -1262,7 +1262,7 @@ KEPT_APPT = (
 
 PARTNER_AGE = (
     ('lte_18', 'less or equal to 18 years old'),
-    (OTHER, '19 years old or older'),
+    ('gte_19', '19 years old or older'),
     (DONT_KNOW, 'Not sure'),
     (DWTA, _('Don\'t want to answer')),
     (NOT_APPLICABLE, "Not applicable"),

@@ -464,7 +464,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=func_hiv_positive,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['bcpp_subject.sti'])
+        target_models=['bcpp_subject.hivrelatedillness'])
 
     elisa_result = CrfRule(
         logic=Logic(

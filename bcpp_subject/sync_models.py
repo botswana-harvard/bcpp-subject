@@ -46,7 +46,7 @@ sync_models = [
     'bcpp_subject.resourceutilization',
     'bcpp_subject.secondpartner',
     'bcpp_subject.sexualbehaviour',
-    'bcpp_subject.sti',
+    'bcpp_subject.hivrelatedillness',
     'bcpp_subject.stigma',
     'bcpp_subject.stigmaopinion',
     'bcpp_subject.subjectconsent',
