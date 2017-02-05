@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from edc_constants.constants import (
     NOT_APPLICABLE, OTHER, DWTA, NONE, NOT_SURE)
 
+from .constants import HEART_DISEASE, CANCER, TUBERCULOSIS, STI, ALONE
 
 list_data = {
     'bcpp_subject.circumcisionbenefits': [
@@ -16,12 +17,12 @@ list_data = {
         (NOT_SURE, 'I am not sure'),
         (DWTA, "Don't want to answer")],
     'bcpp_subject.diagnoses': [
-        ('Heart Disease', 'Heart Disease or Stroke'),
-        ('Cancer', 'Cancer'),
-        ('tb', 'Tubercolosis'),
-        (OTHER, ' Other serious infection'),
+        (HEART_DISEASE, 'Heart Disease or Stroke'),
+        (CANCER, 'Cancer'),
+        (TUBERCULOSIS, 'Tubercolosis'),
+        (OTHER, 'Other serious infection'),
         (NONE, ' None'),
-        ('sti', 'STI (Sexually Transmitted Infection)')],
+        (STI, 'STI (Sexually Transmitted Infection)')],
     'bcpp_subject.familyplanning': [
         ('Condoms, consistent use (male or female)',
          'Condoms, consistent use (male or female)'),
@@ -65,7 +66,7 @@ list_data = {
     'bcpp_subject.livewith': [
         ('Partner or spouse', 'Partner or spouse'),
         ('Siblings', 'Siblings'),
-        ('Alone', 'Alone'),
+        (ALONE, 'Alone'),
         ('Extended family', 'Extended family'),
         (OTHER, ' Other'),
         (DWTA, " Don't want to answer")],
@@ -92,12 +93,12 @@ list_data = {
         (OTHER, ' OTHER, specify'),
         (DWTA, " Don't want to answer")],
     'bcpp_subject.partnerresidency': [
-        ('in this community', 'In this community'),
-        ('outside community', 'Outside community'),
-        ('farm within', 'Farm within this community'),
-        ('farm outside this community', 'Farm outside this community'),
-        ('cattelepost within', 'Cattle post within this community'),
-        ('cattlepost outside', 'Cattle post outside this community')],
+        ('inside_community', 'In this community'),
+        ('outside_community', 'Outside this community'),
+        ('farm_inside_community', 'Farm within this community'),
+        ('farm_outside_community', 'Farm outside this community'),
+        ('cattelepost_inside_community', 'Cattle post within this community'),
+        ('cattlepost_outside_community', 'Cattle post outside this community')],
     'bcpp_subject.stiillnesses': [
         ('wasting',
          'Severe weight loss (wasting) - more than 10% of body weight'),
