@@ -8,6 +8,7 @@ from edc_base_test.faker import EdcBaseProvider
 from edc_base_test.utils import get_utcnow
 from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
+from .constants import ZERO
 from .models import (
     Cancer, Cd4History, CeaEnrollmentChecklist, Circumcised,
     Circumcision, ClinicQuestionnaire, CommunityEngagement,
@@ -24,16 +25,11 @@ from .models import (
     Stigma, SubjectConsent, SubjectLocator, SubjectReferral,
     SubjectVisit, SubstanceUse, TbSymptoms, ThirdPartner,
     Tuberculosis, Uncircumcised, ViralLoadResult, SexualBehaviour,
-    AccessToCare, SubjectRequisition, HypertensionCardiovascular)
-
-from .models.list_models import (NeighbourhoodProblems, LiveWith,
-                                 CircumcisionBenefits, FamilyPlanning,
-                                 Diagnoses, HeartDisease,
-                                 StiIllnesses, PartnerResidency)
-from .models.sexual_partner import RecentPartner
-from .constants import ZERO
-from bcpp_subject.models.list_models import Medication
-# from .models import Respondent, MostRecentPartner
+    AccessToCare, SubjectRequisition, HypertensionCardiovascular,
+    RecentPartner)
+from .models.list_models import (
+    NeighbourhoodProblems, LiveWith, CircumcisionBenefits, FamilyPlanning,
+    Diagnoses, HeartDisease, StiIllnesses, PartnerResidency, Medication)
 
 
 class DateProvider(BaseProvider):
@@ -332,16 +328,6 @@ householdcomposition = Recipe(
     contact=YES,
     phone_number=72123456)
 
-# respondent = Recipe(
-#     Respondent,
-#     first_name=fake.first_name,
-#     relation='spouse',
-#     gender='M',
-#     age=30,
-#     present=YES,
-#     nights_outside=1
-# )
-
 labourmarketwages = Recipe(
     LabourMarketWages,
     employed='government sector',
@@ -358,6 +344,7 @@ labourmarketwages = Recipe(
     days_not_worked=0,
     days_inactivite=0,
 )
+
 diagnoses = Recipe(Diagnoses)
 medicaldiagnoses = Recipe(
     MedicalDiagnoses,
@@ -464,26 +451,6 @@ recentpartner = Recipe(
     sex_partner_community='test_community'
 )
 
-# mostrecentpartner = Recipe(
-#     MostRecentPartner,
-#     rel_type='Longterm partner',
-#     partner_residency='In this community',
-#     partner_age=31,
-#     partner_gender='M',
-#     last_sex_contact=3,
-#     last_sex_contact_other='Days',
-#     first_sex_contact=5,
-#     first_sex_contact_other='Days',
-#     regular_sex=5,
-#     having_sex=YES,
-#     having_sex_reg=YES,
-#     alcohol_before_sex=NO,
-#     partner_status=NEG,
-#     partner_arv=NO,
-#     status_disclosure=YES,
-#     multiple_partners=NO,
-#     intercourse_type='vaginal'
-# )
 family_planning = Recipe(FamilyPlanning)
 
 reproductivehealth = Recipe(
