@@ -64,6 +64,34 @@ class NeighbourhoodProblems (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Neighbourhood problems"
 
 
+class Religion (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+        verbose_name_plural = "Religion"
+
+
+class MedicationTaken (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+        verbose_name_plural = "Medication Taken"
+
+
+class MedicationGiven (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+        verbose_name_plural = "Medication Given"
+
+
+class EthnicGroups (ListModelMixin, BaseUuidModel):
+
+    class Meta(ListModelMixin.Meta):
+        app_label = "bcpp_subject"
+        verbose_name_plural = "Ethnic Groups"
+
+
 class PartnerResidency (ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):
