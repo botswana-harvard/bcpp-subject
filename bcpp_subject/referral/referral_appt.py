@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR
 from collections import namedtuple
 
@@ -20,9 +20,7 @@ class ReferralAppt(object):
     """
 
     def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
-                 community_code=None, community_clinic_days=None,
-                 intervention_communities=None,
-                 hiv_care_adherence_next_appointment=None):
+                 community_code=None, community_clinic_days=None):
         """This class and its needed attribute values are wrapped by
         the SubjectReferralHelper.
 
@@ -37,13 +35,22 @@ class ReferralAppt(object):
         """
 
         # should come from the user as today's date??
-        self._base_date = base_date or datetime.today()
-        self._intervention_communities = intervention_communities
-        self._referral_code = None
-        self.hiv_care_adherence_next_appointment = hiv_care_adherence_next_appointment
+        # TODO: timezone?
+        if base_date:
+            self.base_datetime = datetime(
+                base_date.year,
+                base_date.month,
+                base_date.day, 7, 30, 0)
+        else:
+            self.base_datetime = datetime.combine(
+                datetime.today(), time(7, 30, 0))
+        self.masa_appt_datetime = scheduled_appt_date
         self.community_code = community_code or site_mappers.current_mapper.map_code
         self.community_name = community_code or site_mappers.current_mapper.map_area
         self.original_scheduled_appt_date = scheduled_appt_date
+        if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
+            raise TypeError(
+                'Invalid referral code. Got {0}'.format(referral_code))
         self.referral_code = referral_code
         ClinicDaysTuple = namedtuple('ClinicDaysTuple', 'days start_date')
 
@@ -80,36 +87,45 @@ class ReferralAppt(object):
         a given scheduled date or a calculated date.
         """
         referral_appt_datetime = None
-        if 'SMC' in self.referral_code:
-            return self.smc_appt_datetime
-        elif self.referral_code == 'MASA-DF':
-            # will be next clinic date and will ignore a scheduled_appt_date
-            pass
-        elif self.referral_code == 'POS!-PR':
-            # will be next clinic date and will ignore a scheduled_appt_date
-            pass
-        elif self.referral_code == 'POS#-PR':
-            # will be next clinic date and will ignore a scheduled_appt_date
-            pass
-        elif self.referral_code == 'POS#-AN':
-            # will be next clinic date and will ignore a scheduled_appt_date
-            pass
-        elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
-            # will be next clinic date and will ignore a scheduled_appt_date
-            pass
-        else:
-            if self.scheduled_appt_datetime:
-                try:
-                    if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
-                        referral_appt_datetime = self.scheduled_appt_datetime
-                except TypeError as error_msg:
-                    if "can't compare datetime.datetime to NoneType" not in error_msg:
-                        raise TypeError(error_msg)
-                    pass
-            if 'MASA-CC' == self.referral_code:
-                referral_appt_datetime = self.masa_appt_datetime
-        return referral_appt_datetime or next_clinic_date(self.clinic_days,
-                                                          self.base_datetime)
+        if self.referral_code:
+            if 'SMC' in self.referral_code:
+                return self.smc_appt_datetime
+            elif self.referral_code == 'MASA-DF':
+                # will be next clinic date and will ignore a
+                # scheduled_appt_date
+                pass
+            elif self.referral_code == 'POS!-PR':
+                # will be next clinic date and will ignore a
+                # scheduled_appt_date
+                pass
+            elif self.referral_code == 'POS#-PR':
+                # will be next clinic date and will ignore a
+                # scheduled_appt_date
+                pass
+            elif self.referral_code == 'POS#-AN':
+                # will be next clinic date and will ignore a
+                # scheduled_appt_date
+                pass
+            elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
+                # will be next clinic date and will ignore a
+                # scheduled_appt_date
+                pass
+            else:
+                if self.scheduled_appt_datetime:
+                    try:
+                        if self.scheduled_appt_datetime <= (self.base_datetime
+                                                            + relativedelta(months=1)):
+                            referral_appt_datetime = self.scheduled_appt_datetime
+                    except TypeError as error_msg:
+                        if "can't compare datetime.datetime to NoneType" not in error_msg:
+                            raise TypeError(error_msg)
+                        pass
+                if 'MASA-CC' == self.referral_code:
+                    referral_appt_datetime = self.masa_appt_datetime
+            referral_appt_datetime = (
+                referral_appt_datetime
+                or next_clinic_date(self.clinic_days, self.base_datetime))
+        return referral_appt_datetime
 
     @property
     def referral_clinic_type(self):
@@ -136,21 +152,6 @@ class ReferralAppt(object):
         return clinic_type
 
     @property
-    def referral_code(self):
-        """Returns the referral code."""
-        return self._referral_code
-
-    @referral_code.setter
-    def referral_code(self, referral_code):
-        """Sets the referral code after confirming the code is
-        valid or ''.
-        """
-        if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
-            raise TypeError(
-                'Invalid referral code. Got {0}'.format(referral_code))
-        self._referral_code = referral_code
-
-    @property
     def scheduled_appt_datetime(self):
         """Returns a datetime as long as the date is within 1 month
         of today otherwise leaves the date as None.
@@ -172,19 +173,6 @@ class ReferralAppt(object):
                                                            scheduled_appt_datetime,
                                                            allow_same_day=True)
         return scheduled_appt_datetime
-
-    @property
-    def base_datetime(self):
-        """Returns the base date as a datetime."""
-    # TODO: use facility from edc_appointment
-        return datetime(self._base_date.year, self._base_date.month, self._base_date.day, 7, 30, 0)
-
-    @property
-    def masa_appt_datetime(self):
-        """Returns a date as long as the date is within 1 month
-        of today otherwise returns two weeks from base.
-        """
-        return self.hiv_care_adherence_next_appointment
 
     @property
     def smc_appt_datetime(self):

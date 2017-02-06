@@ -90,7 +90,8 @@ def func_requires_pima_cd4(visit_instance, *args):
     """
     subject_helper = SubjectHelper(visit_instance)
     return (subject_helper.final_hiv_status == POS
-            and subject_helper.final_arv_status == NAIVE)
+            and (subject_helper.final_arv_status == NAIVE
+                 or subject_helper.naive_at_enrollment))
 
 
 def func_known_hiv_pos(visit_instance, *args):

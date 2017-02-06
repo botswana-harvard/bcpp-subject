@@ -20,7 +20,7 @@ from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 
 class TestReferral(SubjectMixin, TestCase):
 
-    @tag("test_refferal")
+    @tag("RR")
     def test_setup(self):
         self.ahs_y2_subject_visit()
 
@@ -33,7 +33,8 @@ class TestReferral(SubjectMixin, TestCase):
         self.survey_schedule = self.get_survey_schedule(index=0)
         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             'T0', survey_schedule=self.survey_schedule, **self.consent_data)
-        self.circumcision_benefits = mommy.make_recipe('bcpp_subject.circumcision_benefits')
+        self.circumcision_benefits = mommy.make_recipe(
+            'bcpp_subject.circumcision_benefits')
 
     def hiv_result(self, status, subject_visit, report_datetime=None):
         """ Create HivResult for a particular survey.
@@ -105,11 +106,13 @@ class TestReferral(SubjectMixin, TestCase):
         new_household_member.study_resident = YES
         new_household_member.save()
 
-        new_household_member = HouseholdMember.objects.get(pk=new_household_member.pk)
+        new_household_member = HouseholdMember.objects.get(
+            pk=new_household_member.pk)
 
         report_datetime = self.get_utcnow() + relativedelta(years=2)
         self.consent_data.update(report_datetime=report_datetime)
-        subject_consent = self.add_subject_consent(new_household_member, **self.consent_data)
+        subject_consent = self.add_subject_consent(
+            new_household_member, **self.consent_data)
         appointment = Appointment.objects.get(
             subject_identifier=subject_consent.subject_identifier,
             visit_code=T2)

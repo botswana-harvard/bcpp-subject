@@ -1,5 +1,5 @@
 from ...referral.referral import Referral
-from ...models import SubjectReferral
+from pprint import pprint
 
 
 class ReferralViewMixin:
@@ -10,16 +10,12 @@ class ReferralViewMixin:
 
     def get(self, request, *args, **kwargs):
         try:
-            subject_visit = self.appointment.visit._original_object
+            subject_visit = self.appointment._original_object.subjectvisit
         except AttributeError:
             pass
         else:
-            try:
-                subject_referral = SubjectReferral.objects.get(
-                    subject_visit=subject_visit)
-            except SubjectReferral.DoesNotExist:
-                pass
-            else:
-                self.referral = Referral(subject_referral)
+            self.referral = Referral(subject_visit)
+            pprint(self.referral.__dict__)
+            print(self.referral.referral_code)
         kwargs['referral'] = self.referral
         return super().get(request, *args, **kwargs)

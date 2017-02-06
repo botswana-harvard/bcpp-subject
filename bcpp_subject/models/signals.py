@@ -17,25 +17,29 @@ from ..models.utils import is_minor
 from ..referral.referral import Referral
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
-from .subject_referral import SubjectReferral
 
 fake = Faker()
 
 
-@receiver(post_save, weak=False, sender=SubjectReferral,
-          dispatch_uid='subject_referral_on_post_save')
-def subject_referral_on_post_save(sender, instance, raw, created, using, **kwargs):
+@receiver(post_save, weak=False,
+          dispatch_uid='referral_on_post_save')
+def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
-        referral = Referral(instance)
-        for field in sender._meta.get_fields():
-            try:
-                value = getattr(referral, field.name)
-            except AttributeError:
-                pass
-            else:
-                setattr(instance, field.name, value)
-        instance.referral_appt_date = referral.referral_appt_datetime
-        instance.scheduled_appt_date = referral.original_scheduled_appt_date
+        try:
+            subject_visit = instance.subject_visit
+        except AttributeError:
+            pass
+        else:
+            referral = Referral(subject_visit)
+            for field in sender._meta.get_fields():
+                try:
+                    value = getattr(referral, field.name)
+                except AttributeError:
+                    pass
+                else:
+                    setattr(instance, field.name, value)
+            instance.referral_appt_date = referral.referral_appt.referral_appt_datetime
+            instance.scheduled_appt_date = referral.referral_appt.original_scheduled_appt_date
 
 
 @receiver(post_delete, weak=False, sender=SubjectConsent,

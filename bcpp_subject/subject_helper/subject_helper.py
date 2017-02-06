@@ -1,8 +1,10 @@
 import sys
 
 from edc_constants.constants import (
-    POS, YES, NEG, NO, NAIVE, DWTA, UNK)
+    POS, YES, NEG, NO, NAIVE, DWTA, UNK, IND)
 
+from ..constants import T0
+from ..models.hiv_care_adherence import HivCareAdherence
 from .model_values import ModelValues
 from .constants import ART_PRESCRIPTION, DEFAULTER, ON_ART
 
@@ -42,10 +44,22 @@ class SubjectHelper:
         self._prepare_final_hiv_status()
         self._prepare_final_arv_status()
         self._prepare_previous_status_date_and_awareness()
+        # additional values
         self.newly_diagnosed = (
             not self.prev_result and self.prev_result_known != YES)
         self.known_positive = (
             self.prev_result == POS and self.prev_result_known == YES)
+        self.indeterminate = (
+            self.raw.today_hiv_result == IND
+            and self.raw.elisa_hiv_result not in [POS, NEG])
+        try:
+            hiv_care_adherence = HivCareAdherence.objects.get(
+                subject_visit__subject_identifier=visit.subject_identifier,
+                subject_visit__visit_code=T0)
+        except HivCareAdherence.DoesNotExist:
+            self.naive_at_enrollment = False
+        else:
+            self.naive_at_enrollment = True if hiv_care_adherence.ever_taken_arv == NO else False
 
     @property
     def final_hiv_status_date(self):

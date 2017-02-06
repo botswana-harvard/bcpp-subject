@@ -41,7 +41,7 @@ class SubjectReferral(SubjectReferralModelMixin, CrfModelMixin):
 
     scheduled_appt_date = models.DateField(
         verbose_name=("Previously scheduled clinic "
-                      "appointment date in this BHS community"),
+                      "appointment date in this community"),
         validators=[date_is_future, ],
         help_text=("Use the IDCC date. If subject is pregnant, "
                    "use the ANC date instead of the IDCC date."

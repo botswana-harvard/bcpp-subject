@@ -24,15 +24,4 @@
             {{ consent.identity|default:'?? identity' }}
         </a>
         {% endif%}
-        {% if referral %}
-            <a class="list-group-item"><i class="fa fa-square fa-fw"></i>
-               Clinic Referral
-            </a>
-            <a class="list-group-item"><i class="fa fa-square fa-fw"></i>
-               {{ referral.referral }}
-            </a>
-            <a class="list-group-item"><i class="fa fa-square fa-fw"></i>
-              Appointment: {{ referral.referral_appt_date }}
-            </a>
-        {% endif %}
     </div>

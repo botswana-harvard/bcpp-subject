@@ -21,4 +21,5 @@ class AppConfig(DjangoApponfig):
             enrollment_checklist_anonymous_on_post_delete,
             enrollment_checklist_on_post_delete,
             enrollment_checklist_on_post_save,
+            referral_on_post_save,
         )

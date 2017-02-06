@@ -1,17 +1,17 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
 
-from edc_constants.constants import POS, NEG, MALE, IND, FEMALE, DECLINED
+from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED
 from edc_map.site_mappers import site_mappers
 
-from survey.site_surveys import site_surveys
-
 from ..models import (
-    ReproductiveHealth, ResidencyMobility, is_circumcised)
+    ReproductiveHealth, ResidencyMobility, is_circumcised, HivCareAdherence)
 from ..subject_helper import SubjectHelper, ON_ART, DEFAULTER
-from ..utils import convert_to_nullboolean
 from .choices import REFERRAL_CODES
-from .constants import ANNUAL_CODES
 from .referral_appt import ReferralAppt
+from bcpp_subject.referral.constants import URGENT_REFERRALS
+from edc_metadata.models import CrfMetadata
+from edc_metadata.constants import REQUIRED, KEYED
 
 
 class ReferralError(Exception):
@@ -64,6 +64,13 @@ class CdcReferral:
             *'bcpp_subject.tbsymptoms'.split('.'))
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(
             referral.subject_referral.subject_visit)
+        try:
+            residency_mobility_instance = ResidencyMobility.objects.get(
+                subject_visit=self.subject_visit)
+        except ResidencyMobility.DoesNotExist:
+            self.permanent_resident = None
+        else:
+            self.permanent_resident = residency_mobility_instance.permanent_resident
 
 
 class Referral:
@@ -71,31 +78,58 @@ class Referral:
     a blank string.
     """
 
-    def __init__(self, subject_referral=None, **kwargs):
-        self._circumcised = None
-        self._pregnant = None
-        self._referral_clinic = None
-        self._referral_code_list = []
-        self._consent = None
-        self._subject_referral_dict = {}
-        self.subject_referral = subject_referral
-        self.subject_helper = SubjectHelper(subject_referral.subject_visit)
-        self.gender = subject_referral.subject_visit.household_member.gender
+    def __init__(self, subject_visit=None, **kwargs):
+        self.subject_helper = SubjectHelper(subject_visit)
+        self.gender = subject_visit.household_member.gender
         self.subject_identifier = (
-            subject_referral.subject_visit.appointment.subject_identifier)
-        self.subject_visit = subject_referral.subject_visit
+            subject_visit.appointment.subject_identifier)
+        self.subject_visit = subject_visit
 
-        if self.hiv_care_adherence:
-            scheduled_appt_date = (
-                subject_referral.scheduled_appt_date
-                or self.hiv_care_adherence.next_appointment_date)
+        # ReproductiveHealth, pregnant
+        try:
+            reproductive_health = ReproductiveHealth.objects.get(
+                subject_visit=subject_visit)
+        except ReproductiveHealth.DoesNotExist:
+            self.pregnant = None
         else:
-            scheduled_appt_date = subject_referral.scheduled_appt_date
+            self.pregnant = reproductive_health.currently_pregnant
+
+        # HivCareAdherence
+        try:
+            self.hiv_care_adherence = HivCareAdherence.objects.get(
+                subject_visit=subject_visit)
+        except HivCareAdherence.DoesNotExist:
+            self.hiv_care_adherence = None
+
+        # SubjectReferral
+        try:
+            self.subject_referral = subject_visit.subjectreferral
+        except ObjectDoesNotExist:
+            self.subject_referral = None
+
+        # CD4
+        try:
+            pima_cd4 = subject_visit.pimacd4
+        except ObjectDoesNotExist:
+            self.cd4_result = None
+            self.cd4_result_datetime = None
+        else:
+            self.cd4_result = pima_cd4.cd4_value
+            self.cd4_result_datetime = pima_cd4.cd4_datetime
+
+        # scheduled_appt_date
+        try:
+            scheduled_appt_date = self.hiv_care_adherence.next_appointment_date
+        except AttributeError:
+            try:
+                scheduled_appt_date = self.subject_referral.scheduled_appt_date
+            except AttributeError:
+                scheduled_appt_date = None
 
         # from referral appt
         self.referral_appt = ReferralAppt(
-            subject_referral.referral_code,
-            base_date=subject_referral.report_datetime,
+            self.referral_code,
+            base_date=subject_visit.report_datetime,
             scheduled_appt_date=scheduled_appt_date)
 
         # from mapper
@@ -106,173 +140,113 @@ class Referral:
 
         self.valid_referral_codes = [
             code for code, _ in REFERRAL_CODES if not code == 'pending']
+        self.urgent_referral = self.referral_code in URGENT_REFERRALS
 
     def __str__(self):
         return '({0.subject_referral!r})'.format(self)
 
     @property
     def referral_code(self):
-        """Returns a string of referral codes as a join of the
-        list of referral codes delimited by ",".
-        """
-        referral_code = ','.join(self.referral_code_list)
-        referral_code = self.remove_smc_in_annual_ecc(referral_code)
-        return referral_code
-
-    @property
-    def referral_code_list(self):
-        """Returns a list of referral codes by reviewing the conditions
-         for referral.
+        """Returns a referral code or None.
          """
-        is_declined = None
-        referral_code = []
+        referral_code = None
         try:
-            is_declined = True if self.subject_helper.hiv_result == DECLINED else False
+            is_declined = (
+                True if self.subject_helper.hiv_result == DECLINED else False)
         except AttributeError:
-            pass
-        if not self.final_hiv_result or is_declined:
-            if self.gender == MALE:
-                self.male_referral_code()
-            elif self.pregnant:
-                referral_code_list.append('UNK?-PR')
-            else:
-                referral_code_list.append('TST-HIV')
+            is_declined = None
+        if not self.subject_helper.final_hiv_status or is_declined:
+            referral_code = self.referral_code_for_untested
         else:
-            self.referral_code_list_with_hiv_result()
-        # refer if on art and known positive to get VL,
-        # and o get outsiders to transfer care
-        # referal date is the next appointment date if on art
-        if referral_code_list:
-            referral_code_list = list(
-                set((referral_code_list)))
-            referral_code_list.sort()
-            for code in referral_code_list:
-                if code not in self.valid_referral_codes:
-                    raise ValueError(
-                        '{0} is not a valid referral code.'.format(code))
-        return referral_code_list
-
-    def male_referral_code(self):
-        if self.circumcised:
-            # refer if status unknown
-            self._referral_code_list.append('TST-HIV')
-        else:
-            if self.circumcised is False:
-                # refer if status unknown
-                self._referral_code_list.append('SMC-UNK')
-            else:
-                # refer if status unknown
-                self._referral_code_list.append('SMC?UNK')
-
-    def referral_code_neg(self):
-        if self.gender == FEMALE and self.pregnant:  # only refer F if pregnant
-            self._referral_code_list.append('NEG!-PR')
-        # only refer M if not circumcised
-        elif self.gender == MALE and self.circumcised is False:
-            self._referral_code_list.append('SMC-NEG')
-        # only refer M if not circumcised
-        elif self.gender == MALE and self.circumcised is None:
-            self._referral_code_list.append('SMC?NEG')
-
-    def referral_code_pos_not_on_art(self):
-        if not self.cd4_result:
-            self._referral_code_list.append('TST-CD4')
-        elif self.cd4_result > (500 if self.intervention else 350):
-            self._referral_code_list.append(
-                'POS!-HI') if self.new_pos else self._referral_code_list.append('POS#-HI')
-        elif self.cd4_result <= (500 if self.intervention else 350):
-            self._referral_code_list.append(
-                'POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
-
-    def referral_code_pos_on_art(self):
-        self._referral_code_list.append('MASA-CC')
-        if self.defaulter:
-            self._referral_code_list = [
-                'MASA-DF' for item in self._referral_code_list if item == 'MASA-CC']
-        if self.pregnant:
-            self._referral_code_list = [
-                'POS#-AN' for item in self._referral_code_list if item == 'MASA-CC']
-        # do not refer to MASA-CC except if BASELINE
-        if self.visit_code in ANNUAL_CODES:
-            try:
-                self._referral_code_list.remove('MASA-CC')
-            except ValueError:
-                pass
-
-    def referral_code_pos(self):
-        if self.gender == FEMALE and self.pregnant and self.on_art:
-            self._referral_code_list.append('POS#-AN')
-        elif self.gender == FEMALE and self.pregnant and not self.on_art:
-            self._referral_code_list.append(
-                'POS!-PR') if self.new_pos else self._referral_code_list.append('POS#-PR')
-        elif not self.on_art:
-            self.referral_code_pos_not_on_art()
-        elif self.on_art:
-            self.referral_code_pos_on_art()
-
-    def referral_code_list_with_hiv_result(self):
-        if self.hiv_result == IND:
-            # do not set referral_code_list to IND
-            pass
-        elif self.hiv_result == NEG:
-            self.referral_code_neg()
-        elif self.hiv_result == POS:
-            self.referral_code_pos()
-        else:
-            self._referral_code_list.append('TST-HIV')
-
-    def remove_smc_in_annual_ecc(self, referral_code):
-        """Removes any SMC referral codes if in the ECC during
-        an ANNUAL survey."""
-        survey_schedule = (
-            self.subject_visit.household_member.household_structure.survey_schedule)
-        code = referral_code.replace(
-            'SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
-        if (not self.intervention
-                and survey_schedule != site_surveys.current_surveys[0]):
-            referral_code = code
+            referral_code = self.referral_code_for_tested
         return referral_code
 
     @property
-    def permanent_resident(self):
-        """Returns True if permanent resident as stated on
-        ResidencyMobility.
+    def referral_code_for_untested(self):
+        """Returns a referral code or None.
         """
-        try:
-            residency_mobility_instance = ResidencyMobility.objects.get(
-                subject_visit=self.subject_visit)
-        except ResidencyMobility.DoesNotExist as e:
-            raise ReferralError(e)
-        return residency_mobility_instance.permanent_resident
+        referral_code = None
+        if self.gender == MALE:
+            if self.circumcised:
+                referral_code = 'TST-HIV'
+            else:
+                if not self.circumcised:
+                    referral_code = 'SMC-UNK'
+                else:
+                    referral_code = 'SMC?UNK'
+        elif self.gender == FEMALE:
+            if self.pregnant:
+                referral_code = 'UNK?-PR'
+            else:
+                referral_code = 'TST-HIV'
+        return referral_code
 
     @property
-    def pregnant(self):
-        """Returns None if male otherwise True if pregnant or
-        False if not.
+    def referral_code_for_tested(self):
+        """Returns a referral code or None.
         """
-        if self.gender == FEMALE:
-            if not self._pregnant:
-                try:
-                    reproductive_health = ReproductiveHealth.objects.get(
-                        subject_visit=self.subject_visit)
-                    self._pregnant = convert_to_nullboolean(
-                        reproductive_health.currently_pregnant)
-                except ReproductiveHealth.DoesNotExist:
-                    self._pregnant = None
-        return self._pregnant
+        if self.subject_helper.indeterminate:
+            referral_code = 'TST-IND'
+        elif self.subject_helper.final_hiv_status == NEG:
+            referral_code = self.referral_code_for_neg
+        elif self.subject_helper.final_hiv_status == POS:
+            referral_code = self.referral_code_for_pos
+        else:
+            referral_code = 'TST-HIV'
+        return referral_code
 
     @property
-    def urgent_referral(self):
-        """Compares the referral_codes to the "urgent" referrals
-        list and sets to true on a match.
+    def referral_code_for_neg(self):
+        """Returns a referral code or None.
         """
-        URGENT_REFERRALS = [
-            'MASA-DF', 'POS!-LO', 'POS#-LO',
-            'POS!-HI', 'POS#-HI',
-            'POS#-PR', 'POS!-PR']
-        return True if[
-            code for code in self.referral_code_list if code in URGENT_REFERRALS
-        ] else False
+        referral_code = None
+        if self.gender == FEMALE and self.pregnant:
+            referral_code = 'NEG!-PR'
+        elif self.gender == MALE and not self.circumcised:
+            referral_code = 'SMC-NEG'
+        return referral_code
+
+    @property
+    def referral_code_for_pos_naive(self):
+        """Returns a referral code or None.
+        """
+        referral_code = None
+        if not self.cd4_result:
+            referral_code = 'TST-CD4'
+        elif self.cd4_result and self.cd4_result > 500:
+            referral_code = 'POS!-HI' if self.subject_helper.newly_diagnosed else 'POS#-HI'
+        elif self.cd4_result and self.cd4_result <= 500:
+            referral_code = 'POS!-LO' if self.subject_helper.newly_diagnosed else 'POS#-LO'
+        return referral_code
+
+    @property
+    def referral_code_pos_on_art(self):
+        """Returns a referral code or None.
+        """
+        referral_code = 'MASA-CC'
+        if self.subject_helper.final_hiv_status == DEFAULTER:
+            referral_code = 'MASA-DF'
+        if self.pregnant:
+            referral_code = 'POS#-AN'
+        return referral_code
+
+    @property
+    def referral_code_for_pos(self):
+        referral_code = None
+        if (self.gender == FEMALE
+                and self.pregnant
+                and self.subject_helper.final_arv_status == ON_ART):
+            referral_code = 'POS#-AN'
+        elif (self.gender == FEMALE
+              and self.pregnant
+              and self.subject_helper.final_arv_status != ON_ART):
+            referral_code = (
+                'POS!-PR' if self.subject_helper.newly_diagnosed else 'POS#-PR')
+        elif self.subject_helper.final_arv_status != ON_ART:
+            referral_code = self.referral_code_for_pos_naive
+        elif self.subject_helper.final_arv_status == ON_ART:
+            self.referral_code_pos_on_art
+        return referral_code
 
     def previous_subject_referrals(self):
         internal_identifier = (
@@ -284,11 +258,12 @@ class Referral:
                     'report_datetime'))
 
     @property
-    def hiv_care_adherence(self):
-        HivCareAdherence = django_apps.get_model(
-            *'bcpp_subject.hivcareadherence'.split('.'))
+    def cd4_required(self):
         try:
-            return HivCareAdherence.objects.get(
-                subject_visit=self.subject_referral.subject_visit)
-        except HivCareAdherence.DoesNotExist:
+            return CrfMetadata.objects.get(
+                model='bcpp_subject.pimacd4',
+                entry_status__in=[REQUIRED, KEYED],
+                visit_code=self.subject_visit.visit_code,
+                subject_identifier=self.subject_visit.subject_identifier)
+        except CrfMetadata.DoesNotExist:
             return None
