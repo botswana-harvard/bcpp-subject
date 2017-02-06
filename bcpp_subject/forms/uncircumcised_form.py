@@ -9,7 +9,7 @@ class UncircumcisedForm (SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         self.m2m_required_if(
-            YES, field='circumcised', field_required='health_benefits_smc')
+            YES, field='circumcised', m2m_field='health_benefits_smc')
         self.m2m_single_selection_if(
             NOT_APPLICABLE, m2m_field='health_benefits_smc')
         self.validate_other_specify('reason_circ')
