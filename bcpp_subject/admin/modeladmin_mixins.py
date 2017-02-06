@@ -70,6 +70,7 @@ class SexualPartnerAdminMixin:
                 'first_first_sex_calc',
                 'first_sex_current',
                 'first_relationship',
+                'first_relationship_other',
                 'first_exchange',
                 'first_exchange_age',
                 'first_exchange_age_other',
