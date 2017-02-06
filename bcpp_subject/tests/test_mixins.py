@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from faker import Faker
@@ -264,8 +264,9 @@ class SubjectTestMixin:
                 new_household_member, **self.consent_data)
         else:
             consent = SubjectConsent.objects.filter(
-                subject_identifier=new_household_member.subject_identifier).last()
-            report_datetime = consent.report_datetime
+                subject_identifier=new_household_member.subject_identifier
+            ).order_by('consent_datetime').last()
+            report_datetime = consent.report_datetime + timedelta(hours=10)
         appointment = Appointment.objects.get(
             subject_identifier=new_household_member.subject_identifier,
             visit_code=visit_code)

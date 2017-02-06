@@ -88,9 +88,22 @@ def func_requires_todays_hiv_result(visit_instance, *args):
 def func_requires_pima_cd4(visit_instance, *args):
     """Returns True if subject is POS and ART naive.
     """
-    subject_helper = SubjectHelper(visit_instance)
-    return (subject_helper.final_hiv_status == POS
-            and subject_helper.final_arv_status == NAIVE)
+
+    def art_naive(subject_visit):
+        subject_helper = SubjectHelper(subject_visit)
+        art_naive = (
+            subject_helper.final_hiv_status == POS and
+            subject_helper.final_arv_status == NAIVE)
+        return art_naive
+    subject_visit = None
+    try:
+        subject_visit = SubjectVisit.objects.get(
+            subject_identifier=visit_instance.subject_identifier,
+            visit_code=T0)
+    except SubjectVisit.DoesNotExist:
+        pass
+    art_naive_at_enrollment = art_naive(subject_visit) if subject_visit else False
+    return art_naive_at_enrollment or art_naive(visit_instance)
 
 
 def func_known_hiv_pos(visit_instance, *args):
