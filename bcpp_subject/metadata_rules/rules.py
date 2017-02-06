@@ -1,4 +1,4 @@
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND
+from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND, NOT_SURE
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_metadata.rules.crf_rule import CrfRule
 from edc_metadata.rules.decorators import register
@@ -336,7 +336,7 @@ class ReproductiveRuleGroup(RuleGroup):
         logic=Logic(
             predicate=PF(
                 'currently_pregnant', 'menopause',
-                func=lambda x, y: True if x == YES or x == 'Not Sure' and y == NO else False),
+                func=lambda x, y: True if x == YES or x == NOT_SURE and y == NO else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.pregnancy'])
