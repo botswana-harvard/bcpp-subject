@@ -7,10 +7,12 @@ from edc_metadata.rules.requisition_rule import RequisitionRule
 from edc_metadata.rules.rule_group import RuleGroup
 from edc_metadata.rules.predicate import P, PF
 
-from .constants import VENOUS
-from .labs import (
+from ..constants import VENOUS
+from ..labs import (
     microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
-from .metadata_rules_funcs import (
+from ..models import ResourceUtilization, SubjectVisit
+
+from .funcs import (
     func_anonymous_member,
     func_art_naive,
     func_art_defaulter,
@@ -29,7 +31,6 @@ from .metadata_rules_funcs import (
     func_requires_todays_hiv_result,
     func_requires_vl,
     is_female)
-from .models import ResourceUtilization, SubjectVisit
 
 
 @register()

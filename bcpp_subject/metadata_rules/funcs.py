@@ -4,11 +4,11 @@ from edc_registration.models import RegisteredSubject
 from member.models import HouseholdMember
 
 # from .constants import T1, T2, T3, E0, T0
-from .labs import rdb_panel
-from .models import (
+from ..labs import rdb_panel
+from ..models import (
     HicEnrollment, HivTestingHistory,
     SexualBehaviour, SubjectRequisition, is_circumcised)
-from .subject_helper import SubjectHelper, DEFAULTER, ON_ART
+from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
 
 
 def func_requires_recent_partner(visit_instance, *args):

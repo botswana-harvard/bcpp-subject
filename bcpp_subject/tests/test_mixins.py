@@ -118,7 +118,7 @@ class SubjectTestMixin:
 
         # fake values
         fake_identity = fake.credit_card_number()
-        last_name = fake.last_name()
+        last_name = fake.last_name().upper()
         initials = options.get(
             'initials', enrollment_checklist.initials)
         last_name = initials[1] + last_name
@@ -247,9 +247,12 @@ class SubjectTestMixin:
         new_household_member.study_resident = YES
         new_household_member.save()
 
-        new_household_member = HouseholdMember.objects.get(pk=new_household_member.pk)
-        report_datetime = report_datetime or self.get_utcnow() + relativedelta(years=1, months=6)
-        household_log_report_date = household_log_report_date or datetime(2010, 3, 5)
+        new_household_member = HouseholdMember.objects.get(
+            pk=new_household_member.pk)
+        report_datetime = report_datetime or self.get_utcnow(
+        ) + relativedelta(years=1, months=6)
+        household_log_report_date = household_log_report_date or datetime(
+            2010, 3, 5)
         mommy.make_recipe(
             'household.householdlogentry',
             report_datetime=household_log_report_date,
