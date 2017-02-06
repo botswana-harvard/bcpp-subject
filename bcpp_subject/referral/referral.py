@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
-from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED
+from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED, NAIVE
 from edc_map.site_mappers import site_mappers
 
 from ..models import (
@@ -220,17 +220,6 @@ class Referral:
         return referral_code
 
     @property
-    def referral_code_pos_on_art(self):
-        """Returns a referral code or None.
-        """
-        referral_code = 'MASA-CC'
-        if self.subject_helper.final_hiv_status == DEFAULTER:
-            referral_code = 'MASA-DF'
-        if self.pregnant:
-            referral_code = 'POS#-AN'
-        return referral_code
-
-    @property
     def referral_code_for_pos(self):
         referral_code = None
         if (self.gender == FEMALE
@@ -239,13 +228,15 @@ class Referral:
             referral_code = 'POS#-AN'
         elif (self.gender == FEMALE
               and self.pregnant
-              and self.subject_helper.final_arv_status != ON_ART):
+              and self.subject_helper.final_arv_status == NAIVE):
             referral_code = (
                 'POS!-PR' if self.subject_helper.newly_diagnosed else 'POS#-PR')
-        elif self.subject_helper.final_arv_status != ON_ART:
+        elif self.subject_helper.final_arv_status == NAIVE:
             referral_code = self.referral_code_for_pos_naive
         elif self.subject_helper.final_arv_status == ON_ART:
-            self.referral_code_pos_on_art
+            referral_code = 'MASA-CC'
+        elif self.subject_helper.final_arv_status == DEFAULTER:
+            referral_code = 'MASA-DF'
         return referral_code
 
     def previous_subject_referrals(self):

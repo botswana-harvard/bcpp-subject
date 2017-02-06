@@ -1,5 +1,4 @@
 from ...referral.referral import Referral
-from pprint import pprint
 
 
 class ReferralViewMixin:
@@ -15,7 +14,5 @@ class ReferralViewMixin:
             pass
         else:
             self.referral = Referral(subject_visit)
-            pprint(self.referral.__dict__)
-            print(self.referral.referral_code)
         kwargs['referral'] = self.referral
         return super().get(request, *args, **kwargs)
