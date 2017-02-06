@@ -2,12 +2,11 @@ from django.db import models
 
 from edc_base.model.fields import OtherCharField
 from edc_base.model.models import HistoricalRecords
+from edc_constants.constants import FEMALE
 
 from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 from ..exceptions import CircumcisionError
-
 from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
-from edc_constants.constants import FEMALE
 
 
 def is_circumcised(visit_instance):
