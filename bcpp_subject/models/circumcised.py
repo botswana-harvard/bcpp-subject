@@ -13,8 +13,6 @@ def is_circumcised(visit_instance):
     """Returns True if circumcised before or at visit
     report datetime.
     """
-    if visit_instance.household_member.gender == FEMALE:
-        return False
     return (
         Circumcised.objects.filter(
             subject_visit__subject_identifier=visit_instance.subject_identifier,

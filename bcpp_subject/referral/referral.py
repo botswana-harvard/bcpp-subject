@@ -1,7 +1,8 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
-from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED, NAIVE
+from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED, NAIVE,\
+    NOT_APPLICABLE
 from edc_map.site_mappers import site_mappers
 
 from ..models import (
@@ -58,7 +59,7 @@ class CdcReferral:
         self.referral_appt_datetime = referral.referral_appt.referral_appt_datetime
         self.referral_clinic = referral.referral_appt.community_name
         self.referral_clinic_type = referral.referral_appt.referral_clinic_type
-        self.circumcised = is_circumcised(
+        self.circumcised = NOT_APPLICABLE if self.gender == FEMALE else is_circumcised(
             referral.subject_referral.subject_visit)
         TbSymptoms = django_apps.get_model(
             *'bcpp_subject.tbsymptoms'.split('.'))

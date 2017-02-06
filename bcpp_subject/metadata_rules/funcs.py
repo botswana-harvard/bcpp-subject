@@ -145,6 +145,8 @@ def func_hic_enrolled(visit_instance, *args):
 def func_requires_circumcision(visit_instance, *args):
     """Return True if male is not reported as circumcised.
     """
+    if visit_instance.household_member.gender == FEMALE:
+        return False
     return not is_circumcised(visit_instance)
 
 
