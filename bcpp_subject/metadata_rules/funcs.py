@@ -1,4 +1,5 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE
+from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE,\
+    DECLINED
 from edc_registration.models import RegisteredSubject
 
 from member.models import HouseholdMember
@@ -9,6 +10,7 @@ from ..models import (
     HicEnrollment, HivTestingHistory,
     SexualBehaviour, SubjectRequisition, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
+from bcpp_subject.constants import NOT_PERFORMED
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -46,21 +48,6 @@ def is_male(visit_instance, *args):
         subject_identifier=visit_instance.subject_identifier)
     return registered_subject.gender == MALE
 
-
-# def func_is_baseline_or_ess(visit_instance, *args):
-#     if visit_instance and visit_instance.visit_code in [E0, T0]:
-#         return True
-#     return False
-
-
-# def func_previous_visit(visit_instance, *args):
-#     if visit_instance.visit_code in [E0, T0]:
-#         return None
-#     visit_codes = [T0, T1, T2, T3]
-#     index = visit_codes.index(visit_instance.visit_code)
-#     return SubjectVisit.objects.get(
-#         visit_code=visit_codes[:index][0],
-#         subject_identifier=visit_instance.subject_identifier)
 
 def func_art_defaulter(visit_instance, *args):
     """Returns True is a participant is a defaulter.
@@ -118,7 +105,10 @@ def func_requires_microtube(visit_instance, *args):
     3. a new enrollee that is HIV-
      """
     # TODO: verify this
-    return SubjectHelper(visit_instance).final_hiv_status != POS
+    subject_helper = SubjectHelper(visit_instance)
+    return (
+        SubjectHelper(visit_instance).final_hiv_status != POS
+        and subject_helper.raw.today_hiv_result)
 
 
 def func_hiv_positive(visit_instance, *args):

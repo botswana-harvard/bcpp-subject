@@ -2,9 +2,12 @@ from django.utils.translation import ugettext as _
 
 from edc_constants.constants import (
     OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK,
-    DONT_KNOW, NONE, NOT_SURE, DECLINED)
+    DONT_KNOW, NONE, NOT_SURE, DECLINED
+)
 
-from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS, MONTHS, YEARS
+from .constants import (
+    MARRIED, ALONE, REFUSED, ZERO, DAYS, MONTHS, YEARS, VENOUS, CAPILLARY)
+from bcpp_subject.constants import NOT_PERFORMED
 
 
 AGREE_STRONGLY = (
@@ -29,6 +32,13 @@ APPT_GRADING = (
     ('weak', 'Possible appointment'),
     ('guess', 'Estimated by RA'),
 )
+
+BLOOD_DRAW_TYPES = (
+    (CAPILLARY, 'Capillary'),
+    (VENOUS, 'Venous'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
+
 
 CHRONIC_DISEASES = (
     ('diabetes', 'Diabetes'),
@@ -1082,7 +1092,7 @@ HIV_RESULT = (
     (NEG, 'HIV Negative (Non-reactive)'),
     (IND, 'Indeterminate'),
     (DECLINED, 'Participant declined testing'),
-    ('Not performed',
+    (NOT_PERFORMED,
      'Test could not be performed (e.g. supply outage, technical problem)'),
 )
 

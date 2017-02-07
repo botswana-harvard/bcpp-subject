@@ -1,8 +1,8 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
-from edc_constants.constants import POS, NEG, MALE, FEMALE, DECLINED, NAIVE,\
-    NOT_APPLICABLE
+from edc_constants.constants import (
+    POS, NEG, MALE, FEMALE, DECLINED, NAIVE, NOT_APPLICABLE)
 from edc_map.site_mappers import site_mappers
 
 from ..models import (

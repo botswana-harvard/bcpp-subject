@@ -8,7 +8,8 @@ from ..models import (
 class ModelValues:
 
     """A class that fetches raw model values for the status
-    helper class."""
+    helper class.
+    """
 
     def __init__(self, visit):
         self.arv_evidence = None
@@ -90,8 +91,9 @@ class ModelValues:
                 self.result_recorded_date = qs.last().result_date
                 self.result_recorded_document = qs.last().result_doc_type
 
-        # HivResult
+        # HivResult performed, not declined
         qs = HivResult.objects.filter(
+            hiv_result_datetime__isnull=False,
             **options).order_by('report_datetime')
         if qs:
             obj = self.get_first_positive_or_none(qs, 'hiv_result')
