@@ -85,7 +85,7 @@ class HicEnrollmentForm (SubjectModelFormMixin):
                     'Please complete {} first.'.format(
                         ElisaHivResult._meta.verbose_name))
         subject_helper = SubjectHelper(cleaned_data.get('subject_visit'))
-        if subject_helper.final_hiv_result != NEG:
+        if subject_helper.final_hiv_status != NEG:
             raise forms.ValidationError(
                 'Please review \'hiv_result\' in Today\'s Hiv '
                 'Result form or in Elisa Hiv Result before '
