@@ -59,8 +59,7 @@ class CdcReferral:
         self.referral_appt_datetime = referral.referral_appt.referral_appt_datetime
         self.referral_clinic = referral.referral_appt.community_name
         self.referral_clinic_type = referral.referral_appt.referral_clinic_type
-        self.circumcised = NOT_APPLICABLE if self.gender == FEMALE else is_circumcised(
-            referral.subject_referral.subject_visit)
+        self.circumcised = referral.circumcised
         TbSymptoms = django_apps.get_model(
             *'bcpp_subject.tbsymptoms'.split('.'))
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(
@@ -117,6 +116,9 @@ class Referral:
         else:
             self.cd4_result = pima_cd4.cd4_value
             self.cd4_result_datetime = pima_cd4.cd4_datetime
+
+        self.circumcised = NOT_APPLICABLE if self.gender == FEMALE else is_circumcised(
+            subject_visit)
 
         # scheduled_appt_date
         try:
