@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_constants.constants import (
-    POS, NEG, MALE, FEMALE, DECLINED, NAIVE, NOT_APPLICABLE)
+    POS, NEG, MALE, FEMALE, DECLINED, NAIVE, NOT_APPLICABLE, YES)
 from edc_map.site_mappers import site_mappers
 
 from ..models import (
@@ -92,7 +92,8 @@ class Referral:
         except ReproductiveHealth.DoesNotExist:
             self.pregnant = None
         else:
-            self.pregnant = reproductive_health.currently_pregnant
+            self.pregnant = (
+                True if reproductive_health.currently_pregnant == YES else False)
 
         # HivCareAdherence
         try:
