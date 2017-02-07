@@ -1,13 +1,14 @@
 from django import forms
 
 from edc_base.utils import age
-from edc_constants.constants import YES, NO, NEG
+from edc_constants.constants import YES, NO, NEG, IND
 
 from ..models import (
     HicEnrollment, ElisaHivResult, HivResult, SubjectConsent,
     SubjectLocator, ResidencyMobility)
 
 from .form_mixins import SubjectModelFormMixin
+from bcpp_subject.subject_helper.subject_helper import SubjectHelper
 
 
 class HicEnrollmentForm (SubjectModelFormMixin):
@@ -69,27 +70,26 @@ class HicEnrollmentForm (SubjectModelFormMixin):
     def validate_is_hiv_negative(self):
         cleaned_data = self.cleaned_data
         try:
-            obj = HivResult.objects.get(
+            hiv_result = HivResult.objects.get(
                 subject_visit=cleaned_data.get('subject_visit'))
         except HivResult.DoesNotExist:
             raise forms.ValidationError(
                 'Please complete {} first.'.format(
                     HivResult._meta.verbose_name))
-        else:
+        if hiv_result.hiv_result == IND:
             try:
-                elisa_result_obj = ElisaHivResult.objects.get(
+                ElisaHivResult.objects.get(
                     subject_visit=cleaned_data.get('subject_visit'))
             except ElisaHivResult.DoesNotExist:
                 raise forms.ValidationError(
                     'Please complete {} first.'.format(
                         ElisaHivResult._meta.verbose_name))
-            else:
-                if (not obj.hiv_result == NEG
-                        or not (elisa_result_obj.hiv_result == NEG)):
-                    raise forms.ValidationError(
-                        'Please review \'hiv_result\' in Today\'s Hiv '
-                        'Result form or in Elisa Hiv Result before '
-                        'proceeding.')
+        subject_helper = SubjectHelper(cleaned_data.get('subject_visit'))
+        if subject_helper.final_hiv_result != NEG:
+            raise forms.ValidationError(
+                'Please review \'hiv_result\' in Today\'s Hiv '
+                'Result form or in Elisa Hiv Result before '
+                'proceeding.')
 
     def validate_citizenship(self, subject_consent):
         # Raise an error if not a citizen or married to a citizen.
