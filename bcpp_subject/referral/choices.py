@@ -2,7 +2,7 @@ REFERRAL_CODES = (
     ('pending', '<data collection in progress>'),
     ('TST-CD4', 'POS any, need CD4 testing'),    # not needed
     ('TST-HIV', 'HIV test'),
-    ('TST-IND', 'IND is indeterminate'),
+    ('TST-IND', 'Indeterminate result'),
 
     ('MASA-CC', 'Known POS, MASA continued care'),  # viral load
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
