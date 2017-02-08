@@ -1,7 +1,7 @@
 from django import forms
 
 from edc_base.model.constants import DEFAULT_BASE_FIELDS
-from edc_constants.constants import NO, NEVER, YES
+from edc_constants.constants import NO, YES
 
 from ..models import HypertensionCardiovascular
 

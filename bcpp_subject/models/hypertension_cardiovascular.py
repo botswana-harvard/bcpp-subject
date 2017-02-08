@@ -1,11 +1,11 @@
 from django.db import models
 
 from edc_constants.choices import YES_NO_NA, YES_NO
+from edc_constants.constants import NOT_SURE, DWTA, NOT_APPLICABLE
 
-from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
+from ..choices import HEALTH_CARE_FACILITY
 from .list_models import Medication
 from .model_mixins import CrfModelMixin
-from edc_constants.constants import NOT_SURE, DWTA, NOT_APPLICABLE
 
 REASONS = (
     ('afraid', 'I am afraid to know my blood pressure'),
