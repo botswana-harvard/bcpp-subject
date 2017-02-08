@@ -37,7 +37,7 @@ _crfs_bhs = (
     Crf(show_order=330, model='bcpp_subject.stigmaopinion', required=True),
     Crf(show_order=340,
         model='bcpp_subject.positiveparticipant', required=True),
-    Crf(show_order=350, model='bcpp_subject.accesstocare', required=True),
+    Crf(show_order=350, model='bcpp_subject.accesstocare', required=False),
     Crf(show_order=370, model='bcpp_subject.hivresult', required=True),
     Crf(show_order=380, model='bcpp_subject.elisahivresult',
         required=False, additional=True),

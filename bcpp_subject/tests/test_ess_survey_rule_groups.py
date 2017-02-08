@@ -415,3 +415,13 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj(
                 'bcpp_subject.immigrationstatus',
                 NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('accesstocare')
+    def test_access_tocare(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.accesstocare',
+                NOT_REQUIRED, E0, self.subject_identifier).count(), 1)

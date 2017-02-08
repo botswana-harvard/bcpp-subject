@@ -65,12 +65,12 @@ class SubjectVisitRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['pimacd4'])
 
-    immigration_status = CrfRule(
+    anonymous_forms = CrfRule(
         logic=Logic(
             predicate=func_anonymous_member,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
-        target_models=['immigrationstatus'])
+        target_models=['immigrationstatus', 'accesstocare'])
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
