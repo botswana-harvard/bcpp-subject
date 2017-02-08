@@ -259,9 +259,9 @@ class SubjectTestMixin:
             household_log=new_household_member.household_structure.householdlog,
             household_status=ELIGIBLE_REPRESENTATIVE_PRESENT)
         if not visit_code == T2:
-            self.consent_data.update(report_datetime=report_datetime)
+            options.update(report_datetime=report_datetime)
             self.add_subject_consent(
-                new_household_member, **self.consent_data)
+                new_household_member, **options)
         else:
             consent = SubjectConsent.objects.filter(
                 subject_identifier=new_household_member.subject_identifier

@@ -58,7 +58,9 @@ def func_art_defaulter(visit_instance, *args):
 def func_art_naive(visit_instance, *args):
     """Returns True if the participant art naive.
     """
-    return SubjectHelper(visit_instance).final_arv_status == NAIVE
+    subject_helper = SubjectHelper(visit_instance)
+    return (subject_helper.final_arv_status == NAIVE or
+            subject_helper.naive_at_enrollment)
 
 
 def func_on_art(visit_instance, *args):
