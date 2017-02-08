@@ -27,7 +27,7 @@ class HypertensionCardiovascularAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'salt_intake_counselling',
                 'tobacco_smoking',
                 'tobacco_counselling',
-                'weight_history'
+                'weight_history',
                 'weight_counselling',
                 'physical_activity_counselling',
                 'alcohol_counselling',
