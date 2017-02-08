@@ -5,6 +5,16 @@ from edc_constants.choices import YES_NO_NA, YES_NO
 from ..choices import HEALTH_CARE_FACILITY, TOBACCO_SMOKING
 from .list_models import Medication
 from .model_mixins import CrfModelMixin
+from edc_constants.constants import NOT_SURE, DWTA, NOT_APPLICABLE
+
+REASONS = (
+    ('afraid', 'I am afraid to know my blood pressure'),
+    ('no_time', 'I do not have time'),
+    ('painful', 'I was told it is painful'),
+    ('not_ready', 'I am not ready'),
+    (NOT_SURE, 'I am not sure why'),
+    (DWTA, 'Don\'t want to answer'),
+)
 
 
 class HypertensionCardiovascular(CrfModelMixin):
@@ -13,18 +23,16 @@ class HypertensionCardiovascular(CrfModelMixin):
     info.
     """
 
-    may_take_blood_pressure = models.CharField(
-        verbose_name=('As part of our questions about your health we '
-                      'would like to check your blood pressure and measure your '
-                      'waist and hips. Are you willing to have your blood'
-                      'pressure and body measurements taken today?'),
-        choices=YES_NO,
-        max_length=5)
-
     hypertension_diagnosis = models.CharField(
         verbose_name='Have you ever been diagnosed with hypertension?',
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
+
+    health_care_facility = models.CharField(
+        verbose_name='If yes: Health facility providing care',
+        choices=HEALTH_CARE_FACILITY,
+        default=NOT_APPLICABLE,
+        max_length=25)
 
     medication_taken = models.ManyToManyField(
         Medication,
@@ -51,21 +59,22 @@ class HypertensionCardiovascular(CrfModelMixin):
         blank=True,
         max_length=100)
 
-    health_care_facility = models.CharField(
-        verbose_name='If yes: Health facility providing care',
-        choices=HEALTH_CARE_FACILITY,
-        max_length=50)
-
     salt_intake_counselling = models.CharField(
         verbose_name=(
             'Have you ever been counselled about salt intake '
             'by a health care worker in the past 3 years?'),
-        choices=YES_NO_NA,
+        choices=YES_NO,
+        max_length=15)
+
+    tobacco = models.CharField(
+        verbose_name='Have you ever smoked tobacco products?',
+        choices=YES_NO,
         max_length=20)
 
-    tobacco_smoking = models.CharField(
-        verbose_name='Have you ever smoked tobacco products?',
-        choices=TOBACCO_SMOKING,
+    tobacco_current = models.CharField(
+        verbose_name='Do you currently smoke tobacco products?',
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE,
         max_length=20)
 
     tobacco_counselling = models.CharField(
@@ -74,6 +83,7 @@ class HypertensionCardiovascular(CrfModelMixin):
             'have you been counselled about smoking cessation / not '
             'taking up smoking by a healthcare worker in the past 3 years?'),
         choices=YES_NO_NA,
+        default=NOT_APPLICABLE,
         max_length=20)
 
     weight_history = models.CharField(
@@ -113,6 +123,19 @@ class HypertensionCardiovascular(CrfModelMixin):
         choices=YES_NO_NA,
         max_length=20)
 
+    bp = models.CharField(
+        verbose_name=('As part of our questions about your health we '
+                      'would like to check your blood pressure. '
+                      'Are you willing to have your blood'
+                      'pressure taken today?'),
+        choices=YES_NO,
+        max_length=5)
+
+    bp_refused_reason = models.CharField(
+        verbose_name=('If no, provide reason'),
+        choices=REASONS,
+        max_length=25)
+
     # blood pressure
     right_arm_one = models.CharField(
         verbose_name='Right Arm BP 1:',
@@ -137,6 +160,19 @@ class HypertensionCardiovascular(CrfModelMixin):
         max_length=15,
         null=True,
         blank=True)
+
+    bm = models.CharField(
+        verbose_name=('As part of our questions about your health we '
+                      'would like to measure your '
+                      'waist and hips. Are you willing to have body '
+                      'measurements taken today?'),
+        choices=YES_NO,
+        max_length=5)
+
+    bm_refused_reason = models.CharField(
+        verbose_name=('If no, provide reason'),
+        choices=REASONS,
+        max_length=25)
 
     # waist circumference
     waist_reading_one = models.CharField(

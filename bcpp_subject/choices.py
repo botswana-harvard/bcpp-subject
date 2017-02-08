@@ -1314,13 +1314,13 @@ HEALTH_CARE_FACILITY = (
     (NOT_APPLICABLE, "Not applicable"),
 )
 
-TOBACCO_SMOKING = (
-    ("never", "Never"),
-    ("ever", "Ever"),
-    ("prior", "Prior"),
-    ("current", "Current"),
-    (NOT_APPLICABLE, "Not applicable")
-)
+# TOBACCO_SMOKING = (
+#     ("never", "Never"),
+#     ("ever", "Ever"),
+#     ("prior", "Prior"),
+#     ("current", "Current"),
+#     (NOT_APPLICABLE, "Not applicable")
+# )
 
 PANEL_CHOICE = (
     ('ELISA', _('ELISA')),
