@@ -110,7 +110,7 @@ def func_requires_microtube(visit_instance, *args):
     subject_helper = SubjectHelper(visit_instance)
     return (
         SubjectHelper(visit_instance).final_hiv_status != POS
-        and subject_helper.raw.today_hiv_result)
+        and not subject_helper.raw.today_hiv_result)
 
 
 def func_hiv_positive(visit_instance, *args):

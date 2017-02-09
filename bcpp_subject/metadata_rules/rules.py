@@ -175,7 +175,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_requires_microtube,
+            predicate=func_requires_todays_hiv_result,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
@@ -230,14 +230,14 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_requires_microtube,
+            predicate=func_requires_todays_hiv_result,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
 
     class Meta:
         app_label = 'bcpp_subject'
-        source_model = 'bcpp_subject.hivTestReview'
+        source_model = 'bcpp_subject.hivtestreview'
 
 
 @register()
@@ -259,7 +259,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
-            predicate=func_requires_microtube,
+            predicate=func_requires_todays_hiv_result,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresult'])
