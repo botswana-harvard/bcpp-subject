@@ -143,17 +143,11 @@ def func_requires_circumcision(visit_instance, *args):
 
 
 def func_requires_rbd(visit_instance, *args):
-    """Returns True if rdb is required.
+    """Returns True if subject is POS.
     """
-    requires_rbd = False
     if SubjectHelper(visit_instance).final_hiv_status == POS:
-        try:
-            SubjectRequisition.objects.get(
-                subject_visit__subject_identifier=visit_instance.subject_identifier,
-                panel_name=rdb_panel.name)
-        except SubjectRequisition.DoesNotExist:
-            requires_rbd = True
-    return requires_rbd
+        return True
+    return False
 
 
 def func_requires_vl(visit_instance, *args):

@@ -11,7 +11,6 @@ from ..constants import VENOUS
 from ..labs import (
     microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
 from ..models import ResourceUtilization, SubjectVisit
-
 from .funcs import (
     func_anonymous_member,
     func_art_naive,
