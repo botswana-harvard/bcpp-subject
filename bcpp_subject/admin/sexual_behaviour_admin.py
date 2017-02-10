@@ -17,8 +17,8 @@ class SexualBehaviourAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SexualBehaviourForm
 
-    conditional_fieldlist = {
-        T0: Remove(['first_sex_partner_age', 'first_sex_partner_age_other']),
+    conditional_fieldlists = {
+        T0: Remove('first_sex_partner_age', 'first_sex_partner_age_other'),
     }
 
     fieldsets = (

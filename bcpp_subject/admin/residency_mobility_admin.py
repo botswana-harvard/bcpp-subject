@@ -16,8 +16,8 @@ class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResidencyMobilityForm
 
-    conditional_fieldlist = {
-        E0: Remove(['intend_residency']),
+    conditional_fieldlists = {
+        E0: Remove('intend_residency'),
     }
 
     fieldsets = (

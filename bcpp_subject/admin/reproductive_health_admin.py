@@ -22,7 +22,7 @@ class ReproductiveHealthAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ReproductiveHealthForm
 
-    conditional_fieldlist = {T0: Remove(fields)}
+    conditional_fieldlists = {T0: Remove(fields)}
 
     fieldsets = (
         (None, {

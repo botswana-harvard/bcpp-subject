@@ -19,7 +19,7 @@ class HivTestedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestedForm
 
-    conditional_fieldlist = {
+    conditional_fieldlists = {
         T1: Remove(fields),
         T2: Remove(fields),
         T3: Remove(fields),
