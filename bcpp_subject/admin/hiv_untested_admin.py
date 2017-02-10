@@ -15,7 +15,7 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class HivUntestedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     conditional_fieldlists = {
-        E0: Remove('hiv_pills', 'arvs_hiv_test'),
+        E0: Remove(['hiv_pills', 'arvs_hiv_test']),
     }
 
     fieldsets = (
