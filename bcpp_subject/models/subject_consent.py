@@ -27,6 +27,7 @@ from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
 from ..patterns import subject_identifier
 
+from .model_mixins import SearchSlugModelMixin
 from .utils import is_minor
 
 
@@ -74,7 +75,7 @@ class SubjectConsent(
         NonUniqueSubjectIdentifierModelMixin, SurveyScheduleModelMixin,
         IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
         SampleCollectionFieldsMixin, CitizenFieldsMixin,
-        VulnerabilityFieldsMixin, BaseUuidModel):
+        VulnerabilityFieldsMixin, SearchSlugModelMixin, BaseUuidModel):
     """ A model completed by the user that captures the ICF.
     """
 

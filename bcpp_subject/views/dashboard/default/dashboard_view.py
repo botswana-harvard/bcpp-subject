@@ -9,9 +9,9 @@ from django.views.generic import TemplateView
 
 from ....models import SubjectConsent, SubjectOffstudy
 from ...wrappers import (
-    CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper)
+    CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper,
+    SubjectConsentModelWrapper)
 from .dashboard_view_mixin import DashboardViewMixin
-from .wrappers import SubjectConsentModelWrapper
 
 
 class DashboardView(

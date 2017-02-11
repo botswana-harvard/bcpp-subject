@@ -10,9 +10,10 @@ from edc_dashboard.view_mixins import (
 from survey.view_mixins import SurveyViewMixin
 
 from ....models import AnonymousConsent
+from ...wrappers import AnonymousConsentModelWrapper
 from .dashboard_view_mixin import DashboardViewMixin
 from .wrappers import (
-    AnonymousConsentModelWrapper, AppointmentModelWrapper,
+    AppointmentModelWrapper,
     SubjectVisitModelWrapper, CrfModelWrapper, RequisitionModelWrapper)
 
 

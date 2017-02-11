@@ -6,13 +6,29 @@
 
 <!--  begin columns  -->
 
+<td>{{ result.subject_identifier }}
+</td>
 {% if navbar_name == 'anonymous' %}
+    <td>
+    {% if result.gender == MALE %}
+        <i class="fa fa-male fa-lg"></i>
+    {% else %}
+        <i class="fa fa-female fa-lg"></i>
+    {% endif %}
+    </td>
     <td>{% age_in_years result.dob %} yrs</td>
     <td>{{ result.consent_datetime|date:"Y-m-d" }}</td>  
     <td>{{ result.modified|date:"Y-m-d H:i" }}</td>
     <td>{{ result.hostname_created }}</td>
 {% else %}
-	<td>{{ result.subject_consent.first_name }} {{ result.subject_consent.initials }}</td>
+	<td>
+    {% if result.gender == MALE %}
+        <i class="fa fa-male fa-lg"></i>
+    {% else %}
+        <i class="fa fa-female fa-lg"></i>
+    {% endif %}
+    {{ result.subject_consent.first_name }} {{ result.subject_consent.initials }}
+	</td>
 	<td>{% age_in_years result.subject_consent.dob %}yrs {{ result.subject_consent.dob|date:"Y-m-d" }}</td>
 	<td>{{ result.subject_consent.consent_datetime|date:"Y-m-d" }}</td>  
 	<td>{{ result.survey_schedule_object.name }}.{{ result.survey.name|upper }}</td>

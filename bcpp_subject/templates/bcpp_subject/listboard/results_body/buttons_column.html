@@ -17,25 +17,23 @@
 	            <i class="fa fa-home fa-lg"></i>
 	       </a>
 	
-		   {% with members=result.members %}
-		     {% include 'enumeration/members_button.html' %}
-		   {% endwith %}
+	      <a role="button" title="back to enumeration" class="btn btn-sm btn-default"
+	        href="{% url enumeration_listboard_url_name household_identifier=result.household_identifier survey_schedule=result.survey_schedule %}">
+	            <i class="fa fa-sitemap fa-fw"></i>
+	      </a>
+           {% with members=result.members %}
+             {% include 'enumeration/members_button.html' %}
+           {% endwith %}
 
 	   {% endif %}   
    
 	    <a title="dashboard" role="button" class="btn btn-default btn-sm"
 		    href="{{ result.reverse }}">
-		
 		    {% if navbar_name == 'anonymous' %}
 		        <i class="fa fa-user-secret fa-lg"></i>
 		    {% else %}
 		        <i class="fa fa-user-circle-o fa-lg"></i>
 		    {% endif %}
-		    {% if result.gender == MALE %}
-		        <i class="fa fa-male fa-lg"></i>
-		    {% else %}
-		        <i class="fa fa-female fa-lg"></i>
-		    {% endif %}
-		    {{ result.subject_identifier }}
+            &nbsp;Dashboard
 	    </a>
     </td>
