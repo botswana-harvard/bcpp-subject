@@ -10,11 +10,11 @@ from ..forms import ReproductiveHealthForm
 from ..models import ReproductiveHealth
 from .modeladmin_mixins import CrfModelAdminMixin
 
-fields = (
+fields = ([
     'when_pregnant',
     'gestational_weeks',
     'pregnancy_hiv_tested',
-    'pregnancy_hiv_retested')
+    'pregnancy_hiv_retested'])
 
 
 @admin.register(ReproductiveHealth, site=bcpp_subject_admin)
