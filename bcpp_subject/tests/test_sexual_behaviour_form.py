@@ -39,9 +39,9 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         self.assertTrue(form.is_valid())
 
     def test_more_sex_last_year_sex_partners(self):
-        """ Assert participant has never had sex with somebody living outside of the '
-            'community, cannot have 0 last year partners, else
-                raise validation error."""
+        """Assert participant has never had sex with somebody living
+        outside of the community, cannot have 0 last year partners.
+        """
         self.options.update(last_year_partners=None)
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())

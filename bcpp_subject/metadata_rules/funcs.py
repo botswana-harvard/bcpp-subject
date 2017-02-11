@@ -11,6 +11,7 @@ from ..models import (
     SexualBehaviour, SubjectRequisition, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
 from bcpp_subject.constants import NOT_PERFORMED
+from bcpp_subject.models.hiv_result import HivResult
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -101,16 +102,18 @@ def func_requires_hic_enrollment(visit_instance, *args):
 
 def func_requires_microtube(visit_instance, *args):
     """Returns True to trigger the Microtube requisition if one is
-    1. an hic participant who is still HIV-
-    2. an hic participant who has sero-converted but the HIV+
-       result was not tested by bhp
-    3. a new enrollee that is HIV-
-     """
+    """
     # TODO: verify this
     subject_helper = SubjectHelper(visit_instance)
+    try:
+        hiv_result = HivResult.objects.get(subject_visit=visit_instance)
+    except HivResult.DoesNotExist:
+        today_hiv_result = None
+    else:
+        today_hiv_result = hiv_result.today_hiv_result
     return (
-        SubjectHelper(visit_instance).final_hiv_status != POS
-        and not subject_helper.raw.today_hiv_result)
+        subject_helper.final_hiv_status != POS
+        and not today_hiv_result)
 
 
 def func_hiv_positive(visit_instance, *args):

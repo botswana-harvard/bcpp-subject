@@ -406,8 +406,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model='bcpp_subject.subjectrequisition',
         target_panels=[viral_load_panel], )
 
-    # Ensures a Microtube is not required for POS.
-    microtube_for_neg = RequisitionRule(
+    microtube = RequisitionRule(
         logic=Logic(
             predicate=func_requires_microtube,
             consequence=REQUIRED,

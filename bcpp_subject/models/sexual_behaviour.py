@@ -11,11 +11,13 @@ from .model_mixins import CrfModelMixin, CrfModelManager
 
 class SexualBehaviour (CrfModelMixin):
 
-    """A model completed by the user on the participant's sexual behaviour."""
+    """A model completed by the user on the participant's sexual behaviour.
+    """
 
     ever_sex = models.CharField(
-        verbose_name="In your lifetime, have you ever had sex with anyone"
-                     " (including your spouse, friends, or someone you have just met)?",
+        verbose_name=(
+            "In your lifetime, have you ever had sex with anyone "
+            "(including your spouse, friends, or someone you have just met)?"),
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",

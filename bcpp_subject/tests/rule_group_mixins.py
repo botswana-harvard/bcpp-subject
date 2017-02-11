@@ -8,10 +8,6 @@ from edc_constants.constants import NO, YES
 
 
 class RuleGroupMixin:
-    """TODO: make reusable funcs to create male and female for
-
-        different HIV STATUS.
-    """
 
     def crf_metadata_obj(
             self, model, entry_status, visit_code, subject_identifier):

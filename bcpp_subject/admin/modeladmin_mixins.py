@@ -51,11 +51,11 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
 class SexualPartnerAdminMixin:
 
     conditional_fieldlists = {
-        T0: Remove(['first_exchange_age', 'first_exchange_age_other']),
-        T1: Remove(['first_exchange']),
-        T2: Remove(['first_exchange']),
-        T3: Remove(['first_exchange']),
-        E0: Remove(['first_exchange']),
+        T0: Remove('first_exchange_age', 'first_exchange_age_other'),
+        T1: Remove('first_exchange'),
+        T2: Remove('first_exchange'),
+        T3: Remove('first_exchange'),
+        E0: Remove('first_exchange'),
     }
 
     fieldsets = (
