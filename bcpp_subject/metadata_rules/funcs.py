@@ -1,17 +1,12 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE,\
-    DECLINED
+from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE
 from edc_registration.models import RegisteredSubject
 
 from member.models import HouseholdMember
 
-# from .constants import T1, T2, T3, E0, T0
-from ..labs import rdb_panel
 from ..models import (
-    HicEnrollment, HivTestingHistory,
-    SexualBehaviour, SubjectRequisition, is_circumcised)
+    HicEnrollment, HivTestingHistory, HivResult,
+    SexualBehaviour, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
-from bcpp_subject.constants import NOT_PERFORMED
-from bcpp_subject.models.hiv_result import HivResult
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -110,7 +105,7 @@ def func_requires_microtube(visit_instance, *args):
     except HivResult.DoesNotExist:
         today_hiv_result = None
     else:
-        today_hiv_result = hiv_result.today_hiv_result
+        today_hiv_result = hiv_result.hiv_result
     return (
         subject_helper.final_hiv_status != POS
         and not today_hiv_result)
