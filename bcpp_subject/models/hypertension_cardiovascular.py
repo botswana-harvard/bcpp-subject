@@ -14,6 +14,7 @@ REASONS = (
     ('not_ready', 'I am not ready'),
     (NOT_SURE, 'I am not sure why'),
     (DWTA, 'Don\'t want to answer'),
+    (NOT_APPLICABLE, 'Not applicable'),
 )
 
 
