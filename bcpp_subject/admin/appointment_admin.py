@@ -11,10 +11,13 @@ from .modeladmin_mixins import ModelAdminMixin
 from ..models import Appointment
 
 from ..admin_site import bcpp_subject_admin
+from ..forms import AppointmentForm
 
 
 @admin.register(Appointment, site=bcpp_subject_admin)
 class AppointmentAdmin(ModelAdminMixin):
+
+    form = AppointmentForm
 
     fieldsets = (
         (None, {

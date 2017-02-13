@@ -1,18 +1,19 @@
 import pytz
-from copy import deepcopy
+import re
 
 from django import forms
 from django.conf import settings
 from django.forms import ValidationError
 
 from edc_consent.modelform_mixins import ConsentModelFormMixin as BaseConsentModelFormMixin
-from edc_constants.constants import NOT_APPLICABLE
-from edc_constants.constants import YES, NO
+from edc_constants.constants import NOT_APPLICABLE, YES, NO
+from edc_registration.models import RegisteredSubject
 
 from member.constants import HEAD_OF_HOUSEHOLD
-from member.models import HouseholdInfo
+from member.models import HouseholdInfo, EnrollmentChecklist
 
-from ..models import SubjectConsent
+from ..models import SubjectConsent, HicEnrollment
+from ..patterns import subject_identifier
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
@@ -21,26 +22,114 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-
+        self.validate_with_enrollment_checklist()
+        self.validate_with_hic_enrollment()
         self.clean_consent_with_household_member()
         self.clean_citizen_is_citizen()
         self.clean_citizen_is_not_citizen()
+        self.validate_identity_with_internal_identifier()
         self.household_info()
         return cleaned_data
 
-    def clean_consent_matches_enrollment(self):
+    def validate_with_enrollment_checklist(self):
+        household_member = self.cleaned_data.get('household_member')
+        initials = self.cleaned_data.get('initials')
+        dob = self.cleaned_data.get('dob')
+        gender = self.cleaned_data.get('gender')
+        citizen = self.cleaned_data.get('citizen')
+        is_literate = self.cleaned_data.get('is_literate')
+        witness_name = self.cleaned_data.get('witness_name')
+        guardian_name = self.cleaned_data.get('guardian_name')
+
+        try:
+            enrollment_checklist = EnrollmentChecklist.objects.get(
+                household_member=household_member)
+        except EnrollmentChecklist.DoesNotExist:
+            raise forms.ValidationError(
+                'Please complete \'{}\' first.'.format(
+                    EnrollmentChecklist._meta.verbose_name))
+
+        if not enrollment_checklist.is_eligible:
+            raise forms.ValidationError(
+                'Member did not pass eligibility criteria. See \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name))
+        elif enrollment_checklist.initials != initials:
+            raise forms.ValidationError({
+                'initials': 'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+        elif enrollment_checklist.gender != gender:
+            raise forms.ValidationError({
+                'gender': 'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+        elif dob and enrollment_checklist.dob != dob:
+            raise forms.ValidationError({
+                'dob': 'Does not match \'{}\'. Expected {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name,
+                    enrollment_checklist.dob.strftime('%Y-%m-%d'))})
+        elif enrollment_checklist.citizen != citizen:
+            raise forms.ValidationError({
+                'citizen': 'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+        elif (is_literate in [YES, NO]
+              and enrollment_checklist.literacy != is_literate):
+            raise forms.ValidationError({
+                'is_literate': 'Does not match \'{}\'.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+        elif is_literate == NO and not witness_name:
+            raise forms.ValidationError({
+                'witness_name': 'Witness name is required'})
+        elif enrollment_checklist.guardian == YES and not guardian_name:
+            raise forms.ValidationError({
+                'guardian_name': 'Expected guardian name. See {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+        elif enrollment_checklist.guardian in [NO, NOT_APPLICABLE] and guardian_name:
+            raise forms.ValidationError({
+                'guardian_name': 'Guardian name not expected. See {}.'.format(
+                    EnrollmentChecklist._meta.verbose_name)})
+
+    def validate_with_hic_enrollment(self):
         household_member = self.cleaned_data.get("household_member")
-        if not SubjectConsent.objects.filter(
-                household_member__internal_identifier=household_member.internal_identifier).exclude(
-                household_member=household_member).exists():
-            consent_datetime = self.cleaned_data.get(
-                "consent_datetime", self.instance.consent_datetime)
-            options = deepcopy(self.cleaned_data)
-            options.update({'consent_datetime': consent_datetime})
-            self.instance.matches_enrollment_checklist(
-                SubjectConsent(**options), forms.ValidationError)
-            self.instance.matches_hic_enrollment(
-                SubjectConsent(**options), household_member, forms.ValidationError)
+        dob = self.cleaned_data.get('dob')
+        if dob:
+            try:
+                hic_enrollment = HicEnrollment.objects.get(
+                    subject_visit__household_member=household_member)
+            except HicEnrollment.DoesNotExist:
+                pass
+            except:
+                if hic_enrollment.dob != dob:
+                    raise forms.ValidationError({
+                        'dob': 'Does not match \'{}\'.'.format(
+                            HicEnrollment._meta.verbose_name)})
+
+    def validate_identity_with_internal_identifier(self):
+        household_member = self.cleaned_data.get('household_member')
+        identity = self.cleaned_data.get('identity')
+        try:
+            registered_subject = RegisteredSubject.objects.get(
+                registration_identifier=household_member.internal_identifier)
+        except RegisteredSubject.DoesNotExist:
+            pass
+        else:
+            if registered_subject.identity != identity:
+                raise forms.ValidationError(
+                    {'identity': 'Identity does not match this subject. '
+                     'Expected {}.'.format(registered_subject.identity)})
+
+
+#     def clean_consent_matches_enrollment(self):
+#         household_member = self.cleaned_data.get("household_member")
+#         if not SubjectConsent.objects.filter(
+#                 household_member__internal_identifier=household_member.internal_identifier).exclude(
+#                 household_member=household_member).exists():
+#             consent_datetime = self.cleaned_data.get(
+#                 "consent_datetime", self.instance.consent_datetime)
+#             options = deepcopy(self.cleaned_data)
+#             options.update({'consent_datetime': consent_datetime})
+#             self.instance.matches_enrollment_checklist(
+#                 SubjectConsent(**options), forms.ValidationError)
+#             self.instance.matches_hic_enrollment(
+# SubjectConsent(**options), household_member, forms.ValidationError)
 
     def clean_consent_with_household_member(self):
         """Validates subject consent values against household
@@ -66,6 +155,39 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                     'gender': 'Gender does not match with household member. '
                     'Got %(gender)s <> %(hm_gender)s'.format(
                         household_member.gender, gender)})
+
+    def clean_identity_with_unique_fields(self):
+        """Overrides default."""
+        exclude_options = {}
+        household_member = self.cleaned_data.get('household_member')
+        identity = self.cleaned_data.get('identity')
+        first_name = self.cleaned_data.get('first_name')
+        initials = self.cleaned_data.get('initials')
+        dob = self.cleaned_data.get('dob')
+        unique_together_form = self.unique_together_string(
+            first_name, initials, dob)
+        if re.match(subject_identifier, household_member.subject_identifier):
+            exclude_options = {
+                'subject_identifier': household_member.subject_identifier}
+        for consent in self._meta.model.objects.filter(
+                identity=identity).exclude(**exclude_options):
+            unique_together_model = self.unique_together_string(
+                consent.first_name, consent.initials, consent.dob)
+            if not self.personal_details_changed:
+                if unique_together_form != unique_together_model:
+                    raise ValidationError({
+                        'identity':
+                        'Identity {} is already in use by subject {}. '
+                        'Please resolve.'.format(
+                            identity, consent.subject_identifier)})
+        for consent in self._meta.model.objects.filter(
+                first_name=first_name, initials=initials, dob=dob):
+            if consent.identity != identity:
+                raise ValidationError({
+                    'identity':
+                    'Subject\'s identity was previously reported as \'{}\'. '
+                    'You wrote \'{}\'. Please resolve.'.format(
+                        consent.identity, identity)})
 
     def clean_citizen_is_not_citizen(self):
         citizen = self.cleaned_data.get('citizen')
@@ -130,32 +252,6 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
             if not (self.cleaned_data.get("marriage_certificate") in [YES, NO]):
                 raise forms.ValidationError({
                     'marriage_certificate': 'This field is required.'})
-
-    def clean_identity_with_unique_fields(self):
-        identity = self.cleaned_data.get('identity')
-        first_name = self.cleaned_data.get('first_name')
-        initials = self.cleaned_data.get('initials')
-        dob = self.cleaned_data.get('dob')
-        unique_together_form = self.unique_together_string(
-            first_name, initials, dob)
-        for consent in self._meta.model.objects.filter(identity=identity):
-            unique_together_model = self.unique_together_string(
-                consent.first_name, consent.initials, consent.dob)
-            if not self.personal_details_changed:
-                if unique_together_form != unique_together_model:
-                    raise ValidationError({
-                        'identity':
-                        'Identity {} is already in use by subject {}. '
-                        'Please resolve.'.format(
-                            identity, consent.subject_identifier)})
-        for consent in self._meta.model.objects.filter(
-                first_name=first_name, initials=initials, dob=dob):
-            if consent.identity != identity:
-                raise ValidationError({
-                    'identity':
-                    'Subject\'s identity was previously reported as \'{}\'. '
-                    'You wrote \'{}\'. Please resolve.'.format(
-                        consent.identity, identity)})
 
 
 class SubjectConsentForm(ConsentModelFormMixin, forms.ModelForm):

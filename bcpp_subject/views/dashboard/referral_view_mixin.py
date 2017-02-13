@@ -7,12 +7,9 @@ class ReferralViewMixin:
         super().__init__(**kwargs)
         self.referral = None
 
-    def get(self, request, *args, **kwargs):
-        try:
-            subject_visit = self.appointment._original_object.subjectvisit
-        except AttributeError:
-            pass
-        else:
-            self.referral = Referral(subject_visit)
-        kwargs['referral'] = self.referral
-        return super().get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.subject_visit:
+            self.referral = Referral(self.subject_visit)
+        context.update(referral=self.referral)
+        return context

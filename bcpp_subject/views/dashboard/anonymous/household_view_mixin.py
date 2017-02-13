@@ -4,11 +4,12 @@ from household.views import HouseholdViewMixin as BaseHouseholdViewMixin
 
 class HouseholdViewMixin(BaseHouseholdViewMixin):
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         plot = get_anonymous_plot()
         household = plot.household_set.all().last()
         try:
-            kwargs['household_identifier'] = household.household_identifier
+            context['household_identifier'] = household.household_identifier
         except AttributeError:
-            kwargs['household_identifier'] = None
-        return super().get(request, *args, **kwargs)
+            context['household_identifier'] = None
+        return context

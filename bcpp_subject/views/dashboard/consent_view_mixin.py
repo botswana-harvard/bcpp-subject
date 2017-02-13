@@ -10,6 +10,6 @@ class ConsentViewMixin(BaseConsentViewMixin):
         """Returns a new unsaved mock consent model."""
         return self.consent_model(
             consent_identifier=str(uuid4()),
-            household_member=self.household_member._original_object,
+            household_member=self.household_member,
             survey_schedule=self.household_member.survey_schedule_object.field_value,
             version=self.consent_object.version)

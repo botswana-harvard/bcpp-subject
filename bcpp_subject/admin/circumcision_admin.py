@@ -8,7 +8,6 @@ from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from ..models import Circumcision, Circumcised, Uncircumcised
-
 from .modeladmin_mixins import CrfModelAdminMixin
 
 

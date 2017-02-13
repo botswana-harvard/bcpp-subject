@@ -1,9 +1,7 @@
 import re
 
-from django.apps import apps as django_apps
 from django.db import models
 
-from edc_base.exceptions import AgeValueError
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
@@ -12,7 +10,7 @@ from edc_consent.field_mixins import (
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
-from edc_constants.constants import YES, NO, NOT_APPLICABLE
+from edc_constants.constants import YES, NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
 from edc_registration.exceptions import RegisteredSubjectError
@@ -20,10 +18,9 @@ from edc_registration.model_mixins import (
     UpdatesOrCreatesRegistrationModelMixin
     as BaseUpdatesOrCreatesRegistrationModelMixin)
 
-from member.models import EnrollmentChecklist, HouseholdMember
+from member.models import HouseholdMember
 from survey.model_mixins import SurveyScheduleModelMixin
 
-from ..exceptions import ConsentValidationError
 from ..managers import SubjectConsentManager
 from ..patterns import subject_identifier
 
@@ -123,143 +120,6 @@ class SubjectConsent(
         return ((self.subject_identifier, self.version, ) +
                 self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_age_and_dob(self):
-        # confirm member is eligible
-        if not (self.household_member.age_in_years >= 16
-                and self.household_member.age_in_years <= 64
-                and self.household_member.study_resident == YES
-                and self.household_member.inability_to_participate == NOT_APPLICABLE):
-            raise ConsentValidationError('Member is not eligible for consent')
-        # validate dob with HicEnrollment, if it exists
-        HicEnrollment = django_apps.get_model(
-            *'bcpp_subject.hicenrollment'.split('.'))
-        try:
-            HicEnrollment.objects.get(
-                subject_visit__household_member=self.household_member)
-            if self.dob != self.dob:
-                raise ConsentValidationError('Does not match \'{}\'.'.format(
-                    HicEnrollment._meta.verbose_name), 'dob')
-        except HicEnrollment.DoesNotExist:
-            pass
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_completed_enrollment_checklist(self):
-        try:
-            enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member=self.household_member)
-        except EnrollmentChecklist.DoesNotExist:
-            raise ConsentValidationError(
-                'Member has not completed the \'{}\'. '
-                'Please correct before continuing'.format(
-                    EnrollmentChecklist._meta.verbose_name))
-        if not enrollment_checklist.is_eligible:
-            raise ConsentValidationError('Member is not eligible.')
-        return enrollment_checklist
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_dob(self, enrollment_checklist):
-        if self.dob:
-            # minor (do this before comparing DoB)
-            if (is_minor(enrollment_checklist.dob,
-                         enrollment_checklist.report_datetime)
-                    and not is_minor(self.dob, self.consent_datetime)):
-                if is_minor(enrollment_checklist.dob,
-                            enrollment_checklist.report_datetime):
-                    raise ConsentValidationError(
-                        'Subject is a minor by the {}.'.format(
-                            EnrollmentChecklist._meta.verbose_name), 'dob')
-                else:
-                    raise ConsentValidationError(
-                        'Subject is a not minor by the {}.'.format(
-                            EnrollmentChecklist._meta.verbose_name), 'dob')
-            # match DoB
-            if enrollment_checklist.dob != self.dob:
-                raise ConsentValidationError(
-                    'Does not match \'{}\'. Expected {}.'.format(
-                        EnrollmentChecklist._meta.verbose_name,
-                        enrollment_checklist.dob.strftime('%Y-%m-%d')), 'dob')
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_literacy(self, enrollment_checklist):
-        # match literacy
-        if enrollment_checklist.literacy == YES and self.is_literate != YES:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'is_literate')
-        elif enrollment_checklist.literacy == NO and self.is_literate != NO:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'is_literate')
-        elif (enrollment_checklist.literacy == NO
-              and self.is_literate == NO
-              and not self.witness_name):
-            raise ConsentValidationError(
-                'Witness name is required', 'witness_name')
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_citizen(self, enrollment_checklist):
-        # match citizenship
-        if enrollment_checklist.citizen != self.citizen:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'citizen')
-        if self.citizen == NO:
-            if (enrollment_checklist.legal_marriage != self.legal_marriage or
-                enrollment_checklist.marriage_certificate !=
-                    self.marriage_certificate):
-                raise ConsentValidationError(
-                    'Citizenship by marriage mismatch. {} reports subject '
-                    'is married to a citizen with a valid marriage '
-                    'certificate. This does not match \'{}\''.format(
-                        self._meta.verbose_name,
-                        EnrollmentChecklist._meta.verbose_name))
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_minor(self, enrollment_checklist):
-        # minor and guardian name
-        if enrollment_checklist.guardian == YES and not self.guardian_name:
-            raise ConsentValidationError(
-                'Expected guardian name. See {}.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
-        elif enrollment_checklist.guardian in [NO, NOT_APPLICABLE] and self.guardian_name:
-            raise ConsentValidationError(
-                'Guardian name not expected. See {}.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'guardian_name')
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_gender(self, enrollment_checklist):
-        # match gender
-        if enrollment_checklist.gender != self.gender:
-            raise ConsentValidationError(
-                'Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'gender')
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean_initials(self, enrollment_checklist):
-        # match initials
-        if not self.household_member.personal_details_changed == YES:
-            if enrollment_checklist.initials != self.initials:
-                raise ConsentValidationError('Does not match \'{}\'.'.format(
-                    EnrollmentChecklist._meta.verbose_name), 'initials')
-
-    # TODO: reconcile this with forms.py validations
-    def common_clean(self):
-        self.common_clean_age_and_dob()
-        enrollment_checklist = self.common_clean_completed_enrollment_checklist()
-        self.common_clean_initials(enrollment_checklist)
-        self.common_clean_dob(enrollment_checklist)
-        self.common_clean_gender(enrollment_checklist)
-        self.common_clean_minor(enrollment_checklist)
-        self.common_clean_literacy(enrollment_checklist)
-        self.common_clean_citizen(enrollment_checklist)
-        super().common_clean()
-
-    @property
-    def common_clean_exceptions(self):
-        return super().common_clean_exceptions + [
-            ConsentValidationError, AgeValueError, RegisteredSubjectError]
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'

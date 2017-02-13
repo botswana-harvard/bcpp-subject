@@ -7,10 +7,9 @@ from django.utils.decorators import method_decorator
 
 from edc_dashboard.forms import SearchForm as BaseSearchForm
 
-from .base import BaseListboardView
-
 from ...models import SubjectConsent
 from ..wrappers import SubjectConsentModelWrapper
+from .base_listboard import BaseListboardView
 
 
 class SearchForm(BaseSearchForm):
@@ -38,12 +37,6 @@ class ListboardView(BaseListboardView):
             {'household_member__household_structure__household__plot__plot_identifier': plot_identifier})
         return options
 
-    def extra_search_options(self, search_term):
-        q = Q()
-        if re.match('^[A-Z]+$', search_term):
-            q = Q(first_name__exact=search_term)
-        return q
-
     def get_queryset_filter_options(self, request, *args, **kwargs):
         options = super().get_queryset_filter_options(request, *args, **kwargs)
         if kwargs.get('subject_identifier'):
@@ -53,3 +46,9 @@ class ListboardView(BaseListboardView):
             options.update(
                 {'survey_schedule': kwargs.get('survey_schedule')})
         return options
+
+    def extra_search_options(self, search_term):
+        q = Q()
+        if re.match('^[A-Z]+$', search_term):
+            q = Q(first_name__exact=search_term)
+        return q
