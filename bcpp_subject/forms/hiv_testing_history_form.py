@@ -13,9 +13,9 @@ class HivTestingHistoryForm (SubjectModelFormMixin):
         self.required_if(
             YES, field='has_tested', field_required='when_hiv_test')
         self.required_if(
-            YES, field='has_tested', field_applicable='when_hiv_test')
+            YES, field='has_tested', field_required='when_hiv_test')
         self.required_if(
-            YES, field='has_tested', field_applicable='verbal_hiv_result')
+            YES, field='has_tested', field_required='verbal_hiv_result')
         self.applicable_if(
             YES, field='has_tested', field_applicable='other_record')
         self.applicable_if(

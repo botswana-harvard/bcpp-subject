@@ -7,6 +7,7 @@ from ..models import (
     HicEnrollment, HivTestingHistory, HivResult,
     SexualBehaviour, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
+from bcpp.surveys import BCPP_YEAR_3
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -89,7 +90,11 @@ def func_known_hiv_pos(visit_instance, *args):
 def func_requires_hic_enrollment(visit_instance, *args):
     """If the participant is tested HIV NEG and was not HIC
     enrolled then HIC is REQUIRED.
+
+    Not required for last survey / bcpp-year-3.
     """
+    if visit_instance.survey_schedule_object.name == BCPP_YEAR_3:
+        return False
     subject_helper = SubjectHelper(visit_instance)
     return (subject_helper.final_hiv_status == NEG
             and not func_hic_enrolled(visit_instance))
