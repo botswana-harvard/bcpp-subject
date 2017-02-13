@@ -1,4 +1,5 @@
 from .access_to_care_form import AccessToCareForm
+from .appointment_form import AppointmentForm
 from .cancer_form import CancerForm
 from .cd4_history_form import Cd4HistoryForm
 from .cea_enrollment_checklist_form import CeaEnrollmentChecklistForm

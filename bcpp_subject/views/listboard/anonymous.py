@@ -4,10 +4,9 @@ from django.utils.decorators import method_decorator
 
 from edc_dashboard.forms import SearchForm as BaseSearchForm
 
-from .base import BaseListboardView
-
 from ...models import AnonymousConsent
 from ..wrappers import AnonymousConsentModelWrapper
+from .base_listboard import BaseListboardView
 
 
 class SearchForm(BaseSearchForm):

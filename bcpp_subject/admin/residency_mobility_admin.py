@@ -52,4 +52,9 @@ class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'however, it is really important that you give the most '
         'honest answer that you can. Please remember that all of '
         'your answers are confidential. If you do not wish to '
-        'answer, you can skip any question.')
+        'answer, you can skip any question.'
+        '<H5><span style="color:orange;">Special note for non-citizen participants</span></H5>'
+        '<B>(For non-citizens only)</B> '
+        'We will not ask your name, the name of others living with you, '
+        'or record any identifiable information about you. The information '
+        'you give will be anonymous.')

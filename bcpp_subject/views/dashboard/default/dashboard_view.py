@@ -1,23 +1,23 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic.base import TemplateResponseMixin, ContextMixin, View,\
+    TemplateView
+
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import (
     DashboardViewMixin as EdcDashboardViewMixin, AppConfigViewMixin)
-from survey.view_mixins import SurveyViewMixin
-
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
 
 from ....models import SubjectConsent, SubjectOffstudy
 from ...wrappers import (
     CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper,
     SubjectConsentModelWrapper)
-from .dashboard_view_mixin import DashboardViewMixin
+from .base_dashboard_view import BaseDashboardView
 
 
 class DashboardView(
-        SurveyViewMixin, DashboardViewMixin,
+        BaseDashboardView, EdcDashboardViewMixin,
         AppConfigViewMixin, EdcBaseViewMixin,
-        EdcDashboardViewMixin, TemplateView):
+        TemplateView):
 
     app_config_name = 'bcpp_subject'
     navbar_item_selected = 'bcpp_subject'
@@ -26,6 +26,10 @@ class DashboardView(
     crf_model_wrapper_class = CrfModelWrapper
     requisition_model_wrapper_class = RequisitionModelWrapper
     visit_model_wrapper_class = SubjectVisitModelWrapper
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.anonymous = None
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -40,5 +44,5 @@ class DashboardView(
             subject_offstudy = None
         context.update(
             subject_offstudy=subject_offstudy,
-        )
+            anonymous=None)
         return context

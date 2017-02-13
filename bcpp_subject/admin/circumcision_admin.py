@@ -2,13 +2,12 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_constants.constants import YES
+from edc_constants.constants import NO
 
 from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from ..models import Circumcision, Circumcised, Uncircumcised
-
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
@@ -20,7 +19,7 @@ class CircumcisionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     custom_form_labels = {
         'circumcised': {
             'label': 'Since we last saw you in {previous}, were you circumcised?',
-            'callback': lambda obj: True if obj.circumcised != YES else False}
+            'callback': lambda obj: True if obj.circumcised == NO else False}
     }
 
     fieldsets = (
