@@ -7,6 +7,7 @@ from ..forms import ImmigrationStatusForm
 from ..models import ImmigrationStatus
 
 from .modeladmin_mixins import CrfModelAdminMixin
+from django.utils.safestring import mark_safe
 
 
 @admin.register(ImmigrationStatus, site=bcpp_subject_admin)
@@ -32,3 +33,5 @@ class ImmigrationStatusAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + audit_fields
+
+    additional_instructions = mark_safe('<B>(For non-citizens only)</B>')
