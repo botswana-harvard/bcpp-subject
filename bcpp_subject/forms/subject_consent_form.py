@@ -21,9 +21,10 @@ tz = pytz.timezone(settings.TIME_ZONE)
 class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
 
     def clean(self):
-        if not self.cleaned_data.get('consent_datetime'):
-            raise forms.ValidationError(
-                'Please indicate the consent datetime.')
+        if 'consent_datetime' in self.cleaned_data:
+            if not self.cleaned_data.get('consent_datetime'):
+                raise forms.ValidationError(
+                    'Please indicate the consent datetime.')
         cleaned_data = super().clean()
         self.validate_with_enrollment_checklist()
         self.validate_with_hic_enrollment()
