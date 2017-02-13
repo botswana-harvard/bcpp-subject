@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.deletion import PROTECT
 
-from edc_base.model.models import HistoricalRecords, BaseUuidModel
+from edc_base.model.models import HistoricalRecords, BaseUuidModel, FormAsJSONModelMixin
 from edc_base.model.validators.date import datetime_not_future
 from edc_base.utils import get_utcnow
 from edc_metadata.model_mixins.updates import UpdatesCrfMetadataModelMixin
@@ -28,9 +28,11 @@ class CrfModelManager(VisitTrackingCrfModelManager):
 
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     RequiresConsentMixin, PreviousVisitModelMixin,
-                    UpdatesCrfMetadataModelMixin, BaseUuidModel):
+                    UpdatesCrfMetadataModelMixin,
+                    FormAsJSONModelMixin, BaseUuidModel):
 
-    """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
+    """ Base model for all scheduled models (adds key to :class:`SubjectVisit`).
+    """
 
     subject_visit = models.OneToOneField(SubjectVisit, on_delete=PROTECT)
 

@@ -3,7 +3,7 @@ from django import forms
 from edc_base.modelform_mixins import (
     CommonCleanModelFormMixin, OtherSpecifyValidationMixin,
     ApplicableValidationMixin, Many2ManyModelValidationMixin,
-    RequiredFieldValidationMixin)
+    RequiredFieldValidationMixin, JSONModelFormMixin)
 from edc_constants.constants import NO, DWTA
 
 from ..constants import DAYS, MONTHS, YEARS
@@ -15,6 +15,7 @@ class SubjectModelFormMixin(CommonCleanModelFormMixin,
                             ApplicableValidationMixin,
                             Many2ManyModelValidationMixin,
                             RequiredFieldValidationMixin,
+                            JSONModelFormMixin,
                             forms.ModelForm):
 
     visit_model = SubjectVisit

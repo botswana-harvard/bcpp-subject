@@ -6,7 +6,8 @@ from django.urls.exceptions import NoReverseMatch
 from edc_base.modeladmin_mixins import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
     ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
-    ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin, audit_fieldset_tuple)
+    ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin,
+    FormAsJSONModelAdminMixin, audit_fieldset_tuple)
 from edc_base.fieldsets import FieldsetsModelAdminMixin
 from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
@@ -18,15 +19,16 @@ from ..constants import T0, T1, T2, T3, E0
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
                       ModelAdminFormAutoNumberMixin, ModelAdminRevisionMixin,
                       ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin,
-                      ModelAdminInstitutionMixin, admin.ModelAdmin):
+                      ModelAdminInstitutionMixin,
+                      admin.ModelAdmin):
 
     list_per_page = 10
     date_hierarchy = 'modified'
     empty_value_display = '-'
 
 
-class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
-                         FieldsetsModelAdminMixin, ModelAdminMixin):
+class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin,
+                         FieldsetsModelAdminMixin, FormAsJSONModelAdminMixin):
 
     instructions = (
         'Please complete the questions below. Required questions are in bold. '
