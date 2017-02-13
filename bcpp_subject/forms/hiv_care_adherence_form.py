@@ -73,46 +73,45 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
         Therapy.
         """
         cleaned_data = self.cleaned_data
-        if(cleaned_data.get('ever_taken_arv')) == YES:
-            if (cleaned_data.get('on_arv') == YES
-                  and cleaned_data.get('arv_stop_date')):
-                raise forms.ValidationError({
-                    'arv_stop_date':
-                    'This field is not required. ref: {}'.format(get_linenumber())})
-            elif (cleaned_data.get('on_arv') == NO
-                  and not cleaned_data.get('arv_stop_date')):
-                raise forms.ValidationError({
-                    'arv_stop_date':
-                    'This field is required. ref: {}'.format(get_linenumber())})
-            elif (cleaned_data.get('arv_stop_date')
-                  and cleaned_data.get('arv_stop') == NOT_APPLICABLE):
-                raise forms.ValidationError({
-                    'arv_stop':
-                    'This field is applicable. ref: {}'.format(get_linenumber())})
-            elif (not cleaned_data.get('arv_stop_date')
-                  and cleaned_data.get('arv_stop') != NOT_APPLICABLE):
-                raise forms.ValidationError({
-                    'arv_stop':
-                    'This field is not applicable. ref: {}'.format(get_linenumber())})
-            elif (cleaned_data.get('ever_taken') == YES
-                    and cleaned_data.get('on_arv') == NO
-                    and not cleaned_data.get('arv_stop_date')):
-                raise forms.ValidationError({
-                    'arv_stop':
-                    'Participant was on ART. This field is required. ref: {}'.format(get_linenumber())})
-            elif (cleaned_data.get('ever_taken') == NO
-                  and cleaned_data.get('first_arv')):
-                raise forms.ValidationError({
-                    'first_arv':
-                    'This field is not required. ref: {}'.format(get_linenumber())})
-            elif self.validate_other_specify('arv_stop', ref=get_linenumber()):
-                pass
-            elif (cleaned_data.get('arv_stop_date') and cleaned_data.get('first_arv')
-                    and cleaned_data.get('arv_stop_date') <= cleaned_data.get('first_arv')):
-                raise forms.ValidationError({
-                    'arv_stop_date':
-                    'Date cannot be on or before {}. (See ART start date above)'.format(
-                        cleaned_data.get('first_arv').strftime('%Y-%m-%d'))})
+        if (cleaned_data.get('on_arv') == YES
+              and cleaned_data.get('arv_stop_date')):
+            raise forms.ValidationError({
+                'arv_stop_date':
+                'This field is not required. ref: {}'.format(get_linenumber())})
+        elif (cleaned_data.get('on_arv') == NO
+              and not cleaned_data.get('arv_stop_date')):
+            raise forms.ValidationError({
+                'arv_stop_date':
+                'This field is required. ref: {}'.format(get_linenumber())})
+        elif (cleaned_data.get('arv_stop_date')
+              and cleaned_data.get('arv_stop') == NOT_APPLICABLE):
+            raise forms.ValidationError({
+                'arv_stop':
+                'This field is applicable. ref: {}'.format(get_linenumber())})
+        elif (not cleaned_data.get('arv_stop_date')
+              and cleaned_data.get('arv_stop') != NOT_APPLICABLE):
+            raise forms.ValidationError({
+                'arv_stop':
+                'This field is not applicable. ref: {}'.format(get_linenumber())})
+        elif (cleaned_data.get('ever_taken') == YES
+                and cleaned_data.get('on_arv') == NO
+                and not cleaned_data.get('arv_stop_date')):
+            raise forms.ValidationError({
+                'arv_stop':
+                'Participant was on ART. This field is required. ref: {}'.format(get_linenumber())})
+        elif (cleaned_data.get('ever_taken') == NO
+              and cleaned_data.get('first_arv')):
+            raise forms.ValidationError({
+                'first_arv':
+                'This field is not required. ref: {}'.format(get_linenumber())})
+        elif self.validate_other_specify('arv_stop', ref=get_linenumber()):
+            pass
+        elif (cleaned_data.get('arv_stop_date') and cleaned_data.get('first_arv')
+                and cleaned_data.get('arv_stop_date') <= cleaned_data.get('first_arv')):
+            raise forms.ValidationError({
+                'arv_stop_date':
+                'Date cannot be on or before {}. (See ART start date above)'.format(
+                    cleaned_data.get('first_arv').strftime('%Y-%m-%d'))})
 
     def validate_art_regimen(self, m2m_field=None, field_other=None):
         cleaned_data = self.cleaned_data
