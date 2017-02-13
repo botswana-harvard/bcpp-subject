@@ -12,7 +12,6 @@ class SubjectLocatorViewMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print('SubjectLocatorViewMixin')
         self.subject_locator = self.subject_locator_model_wrapper
         context.update(subject_locator=self.subject_locator)
         return context

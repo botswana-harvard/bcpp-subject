@@ -7,7 +7,6 @@ class SubjectVisitViewMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print('SubjectVisitViewMixin')
         try:
             self.subject_visit = self.appointment.subjectvisit
         except AttributeError as e:
