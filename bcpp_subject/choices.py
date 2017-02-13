@@ -1079,10 +1079,8 @@ WHY_HIV_TEST_CHOICE = (
      'me to get tested for '
      'HIV', _('I read information on a brochure/flier that it is '
               'important for me to get tested for HIV')),
-    ('I had information from the Ya_Tsie study that it was important'
-     'to get tested for '
-     'HIV', _('I had information from the Ya_Tsie study'
-              'that it was important to get tested for HIV')),
+    ('from_ya_tsie', _('I had information from the Ya Tsie study '
+                       'that it was important to get tested for HIV')),
     (OTHER, _('Other')),
     (NOT_SURE, _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),

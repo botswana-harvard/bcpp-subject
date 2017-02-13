@@ -25,3 +25,6 @@ class HivTestReviewAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {
         "recorded_hiv_result": admin.VERTICAL, }
+
+    additional_instructions = (
+        'Answer the following about the record of the last most recent HIV test')

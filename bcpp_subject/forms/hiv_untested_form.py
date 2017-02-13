@@ -1,8 +1,8 @@
 from ..models import HivUntested
-from .form_mixins import SubjectModelFormMixin
+from .form_mixins import SubjectModelFormMixin, HivTestFormMixin
 
 
-class HivUntestedForm (SubjectModelFormMixin):
+class HivUntestedForm (HivTestFormMixin, SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()

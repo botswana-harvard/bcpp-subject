@@ -12,7 +12,6 @@ _crfs_ahs = (
     Crf(show_order=60, model='bcpp_subject.hivresultdocumentation',
         required=True),
     Crf(show_order=70, model='bcpp_subject.hivtested', required=True),
-    Crf(show_order=80, model='bcpp_subject.hivuntested', required=True),
     Crf(show_order=85, model='bcpp_subject.hivcareadherence', required=True),
     Crf(show_order=90, model='bcpp_subject.sexualbehaviour', required=True),
     Crf(show_order=100, model='bcpp_subject.recentpartner', required=True),

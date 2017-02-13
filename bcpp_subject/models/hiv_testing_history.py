@@ -39,12 +39,11 @@ class HivTestingHistory (CrfModelMixin):
         blank=True,
         choices=YES_NO_RECORD_REFUSAL,
         help_text=(
-            'For example, OPD card, Tebelopele, Ya Tsie, other. If no card '
-            'available for viewing, proceed to next question'),
+            'For example, OPD card, Tebelopele, Ya Tsie, other.'),
     )
 
     verbal_hiv_result = models.CharField(
-        verbose_name='Please tell me the results of your last [most recent] HIV test?',
+        verbose_name='Please tell me the results of your last most recent HIV test?',
         max_length=30,
         null=True,
         blank=True,

@@ -1,3 +1,5 @@
+import arrow
+
 from django import forms
 
 from edc_base.modelform_mixins import (
@@ -7,7 +9,7 @@ from edc_base.modelform_mixins import (
 from edc_constants.constants import NO, DWTA
 
 from ..constants import DAYS, MONTHS, YEARS
-from ..models import SubjectVisit, PartnerResidency, SexualBehaviour
+from ..models import SubjectVisit, PartnerResidency, SexualBehaviour, HivTestingHistory
 
 
 class SubjectModelFormMixin(CommonCleanModelFormMixin,
@@ -23,6 +25,60 @@ class SubjectModelFormMixin(CommonCleanModelFormMixin,
     def clean(self):
         cleaned_data = super().clean()
         return cleaned_data
+
+
+class PreviousAppointmentFormMixin:
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._previous_appointment_rdate = None
+        self._previous_appointment = None
+
+    @property
+    def previous_appointment(self):
+        if not self._previous_appointment:
+            cleaned_data = self.cleaned_data
+            self._previous_appointment = cleaned_data.get(
+                'subject_visit').appointment.previous_by_timepoint
+        return self._previous_appointment
+
+    @property
+    def previous_appointment_rdate(self):
+        """Returns the utc arrow object of appt_datetime of the previous
+        appointment
+
+        Usage:
+            from django.conf import settings
+            rdate.to(settings.TIME_ZONE).date()
+            rdate.to(settings.TIME_ZONE).datetime
+        """
+        if not self._previous_appointment_rdate:
+            if self.previous_appointment:
+                rdate = arrow.Arrow.fromdatetime(
+                    self.previous_appointment.appt_datetime,
+                    tzinfo=self.previous_appointment.appt_datetime.tzinfo)
+            else:
+                rdate = None
+            self._previous_appointment_rdate = rdate
+        return self._previous_appointment_rdate
+
+
+class HivTestFormMixin:
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_hiv_test_review_complete()
+        return cleaned_data
+
+    def validate_hiv_test_review_complete(self):
+        cleaned_data = self.cleaned_data
+        try:
+            HivTestingHistory.objects.get(
+                subject_visit=cleaned_data.get('subject_visit'))
+        except HivTestingHistory.DoesNotExist:
+            raise forms.ValidationError(
+                'Please complete {} first.'.format(
+                    HivTestingHistory._meta.verbose_name))
 
 
 class SexualPartnerFormMixin:

@@ -49,7 +49,7 @@ class SubjectVisitRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
-    known_pos_in_y1 = CrfRule(
+    known_pos = CrfRule(
         logic=Logic(
             predicate=func_known_hiv_pos,
             consequence=NOT_REQUIRED,

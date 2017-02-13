@@ -11,7 +11,7 @@ from ..models import HivTested
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-fields = ('num_hiv_tests', 'hiv_pills', 'arvs_hiv_test', 'why_hiv_test')
+fields = ('num_hiv_tests', 'hiv_pills', 'arvs_hiv_test')
 
 
 @admin.register(HivTested, site=bcpp_subject_admin)

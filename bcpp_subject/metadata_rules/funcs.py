@@ -162,10 +162,14 @@ def func_requires_vl(visit_instance, *args):
 
 
 def func_requires_hivuntested(visit_instance, *args):
-    hiv_testing = HivTestingHistory.objects.filter(
-        subject_visit__subject_identifier=visit_instance.subject_identifier).last()
-    if hiv_testing:
-        if hiv_testing.has_tested == NO:
+    """Only for ESS."""
+    try:
+        obj = HivTestingHistory.objects.get(
+            subject_visit=visit_instance)
+    except:
+        pass
+    else:
+        if obj and obj.has_tested == NO:
             return True
     return False
 
