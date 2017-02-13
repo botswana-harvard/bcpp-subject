@@ -15,6 +15,14 @@ class HivTestingHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestingHistoryForm
 
+    custom_form_labels = {
+        'has_tested': {
+            'label': (
+                'Since we last saw you in {previous}, '
+                'have you tested for HIV?'),
+            'callback': lambda obj: True}
+    }
+
     fieldsets = (
         (None, {
             'fields': (

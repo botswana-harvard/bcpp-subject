@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc_base.model.models import HistoricalRecords
-from edc_constants.choices import YES_NO_NA, YES_NO_DWTA
+from edc_constants.choices import YES_NO_NA, YES_NO_DWTA, YES_NO_NA_DWTA
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import WHEN_HIV_TEST_CHOICE, VERBAL_HIV_RESULT_CHOICE, YES_NO_RECORD_REFUSAL
 
@@ -11,7 +12,8 @@ from .model_mixins import CrfModelMixin
 class HivTestingHistory (CrfModelMixin):
 
     """A model completed by the user of the participant's history
-    of testing for HIV."""
+    of testing for HIV.
+    """
 
     has_tested = models.CharField(
         verbose_name="Have you ever been tested for HIV before?",
@@ -21,8 +23,8 @@ class HivTestingHistory (CrfModelMixin):
     )
 
     when_hiv_test = models.CharField(
-        verbose_name="When was the last [most recent]"
-                     " time you were tested for HIV?",
+        verbose_name="When was the last, most recent, "
+                     "time you were tested for HIV?",
         max_length=25,
         null=True,
         blank=True,
