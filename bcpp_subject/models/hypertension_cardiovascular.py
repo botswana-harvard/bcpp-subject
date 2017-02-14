@@ -7,8 +7,18 @@ from ..choices import HEALTH_CARE_FACILITY
 from .list_models import Medication
 from .model_mixins import CrfModelMixin
 
-REASONS = (
+REASONS_BP = (
     ('afraid', 'I am afraid to know my blood pressure'),
+    ('no_time', 'I do not have time'),
+    ('painful', 'I was told it is painful'),
+    ('not_ready', 'I am not ready'),
+    (NOT_SURE, 'I am not sure why'),
+    (DWTA, 'Don\'t want to answer'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
+
+REASONS_BM = (
+    ('afraid', 'I am afraid to know my hips measurements'),
     ('no_time', 'I do not have time'),
     ('painful', 'I was told it is painful'),
     ('not_ready', 'I am not ready'),
@@ -136,7 +146,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     bp_refused_reason = models.CharField(
         verbose_name=('If no, provide reason'),
-        choices=REASONS,
+        choices=REASONS_BP,
         max_length=25)
 
     # blood pressure
@@ -174,7 +184,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     bm_refused_reason = models.CharField(
         verbose_name=('If no, provide reason'),
-        choices=REASONS,
+        choices=REASONS_BM,
         max_length=25)
 
     # waist circumference
