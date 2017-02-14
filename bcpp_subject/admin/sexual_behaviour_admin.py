@@ -3,6 +3,7 @@ from django.utils.safestring import mark_safe
 
 from edc_base.fieldsets import Remove
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
+from edc_constants.constants import YES
 
 from ..admin_site import bcpp_subject_admin
 from ..constants import T0
@@ -19,6 +20,16 @@ class SexualBehaviourAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     conditional_fieldlists = {
         T0: Remove('first_sex_partner_age', 'first_sex_partner_age_other'),
+    }
+
+    custom_form_labels = {
+        'ever_sex': {
+            'label': (
+                'In your lifetime, have you ever had sex with anyone?<br>'
+                '<span style="color:orange;">Interviewer</span>. '
+                '<span style="font-weight:normal;">On {previous} subject '
+                'reported <B>YES</B>. Select <B>YES</B> to continue.</span>'),
+            'callback': lambda obj: True if obj.ever_sex == YES else False}
     }
 
     fieldsets = (

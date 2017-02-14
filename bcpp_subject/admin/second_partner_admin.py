@@ -23,5 +23,5 @@ class SecondPartnerAdmin(SexualPartnerAdminMixin, CrfModelAdminMixin, admin.Mode
         'write down or otherwise record this information. '
         '<H5><span style=\"color:orange;\">Read to Participant</span></H5>'
         'I am now going to ask you about '
-        'your <b>second</b> most recent sexual partner in the past, '
+        'your <b>second</b> most recent sexual partner in the past 12 months, '
         'the one before the person we were just talking about.')
