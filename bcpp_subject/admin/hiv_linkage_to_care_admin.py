@@ -14,6 +14,15 @@ class HivLinkageToCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivLinkageToCareForm
 
+#     custom_form_labels = {
+#         'kept_appt': {
+#             'label': (
+#                 'Since we last saw you in {previous} and scheduled an appointment '
+#                 'for you in an HIV care clinic on {last_appt_date}. '
+#                 'Did you keep that appointment?'),
+#             'callback': lambda obj: True if obj.circumcised == NO else False}
+#     }
+
     fieldsets = (
         (None, {
             'fields': [

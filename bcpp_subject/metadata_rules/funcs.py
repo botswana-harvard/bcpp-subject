@@ -47,7 +47,10 @@ def is_male(visit_instance, *args):
 
 
 def func_requires_hivlinkagetocare(self, visit_instance, *args):
-    return func_art_defaulter or func_defaulter_at_enrollment or func_art_naive
+    return (
+        func_art_defaulter(visit_instance)
+        or func_defaulter_at_enrollment(visit_instance)
+        or func_art_naive(visit_instance))
 
 
 def func_defaulter_at_enrollment(self, visit_instance, *args):
