@@ -2,7 +2,7 @@ from inspect import currentframe
 
 from django import forms
 
-from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE, DWTA
+from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE
 
 from ..models import HivCareAdherence
 from .form_mixins import SubjectModelFormMixin
