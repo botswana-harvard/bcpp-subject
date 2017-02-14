@@ -46,7 +46,7 @@ def is_male(visit_instance, *args):
     return registered_subject.gender == MALE
 
 
-def defaulter_at_enrollment(self, visit_instance, *args):
+def func_defaulter_at_enrollment(self, visit_instance, *args):
     subject_helper = SubjectHelper(visit_instance)
     return subject_helper.defaulter_at_enrollment
 
@@ -55,8 +55,7 @@ def func_art_defaulter(visit_instance, *args):
     """Returns True is a participant is a defaulter.
     """
     subject_helper = SubjectHelper(visit_instance)
-    return (
-        subject_helper.final_arv_status == DEFAULTER)
+    return subject_helper.final_arv_status == DEFAULTER
 
 
 def func_art_naive(visit_instance, *args):
