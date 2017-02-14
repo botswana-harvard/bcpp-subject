@@ -19,9 +19,9 @@ class HeartAttackAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 'subject_visit',
-                'heart_attack_date',
-                'heart_attack_dx',
-                'heart_attack_dx_other',)}),
+                'date_heart_attack',
+                'dx_heart_attack',
+                'dx_heart_attack_other',)}),
         audit_fieldset_tuple
     )
 

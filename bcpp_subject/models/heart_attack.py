@@ -10,7 +10,9 @@ from .model_mixins import CrfModelMixin
 
 class HeartAttack (CrfModelMixin):
 
-    """A model completed by the user to record any heart conditions in the past 12 months."""
+    """A model completed by the user to record any heart conditions
+    in the past 12 months.
+    """
 
     date_heart_attack = models.DateField(
         verbose_name="Date of the heart disease or stroke diagnosis:",
