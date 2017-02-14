@@ -1,13 +1,13 @@
 from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE
 from edc_registration.models import RegisteredSubject
 
+from bcpp.surveys import BCPP_YEAR_3
 from member.models import HouseholdMember
 
 from ..models import (
     HicEnrollment, HivTestingHistory, HivResult,
     SexualBehaviour, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
-from bcpp.surveys import BCPP_YEAR_3
 
 
 def func_requires_recent_partner(visit_instance, *args):

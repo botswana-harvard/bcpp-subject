@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_constants.constants import (
-    POS, NEG, MALE, FEMALE, DECLINED, NAIVE, NOT_APPLICABLE, YES)
+    POS, NEG, MALE, FEMALE, DECLINED, NAIVE, NOT_APPLICABLE, YES, UNK)
 from edc_map.site_mappers import site_mappers
 
 from ..models import (
@@ -159,7 +159,9 @@ class Referral:
                 True if self.subject_helper.hiv_result == DECLINED else False)
         except AttributeError:
             is_declined = None
-        if not self.subject_helper.final_hiv_status or is_declined:
+        if (not self.subject_helper.final_hiv_status
+                or self.subject_helper.final_hiv_status == UNK
+                or is_declined):
             referral_code = self.referral_code_for_untested
         else:
             referral_code = self.referral_code_for_tested
@@ -174,10 +176,7 @@ class Referral:
             if self.circumcised:
                 referral_code = 'TST-HIV'
             else:
-                if not self.circumcised:
-                    referral_code = 'SMC-UNK'
-                else:
-                    referral_code = 'SMC?UNK'
+                referral_code = 'SMC-UNK'
         elif self.gender == FEMALE:
             if self.pregnant:
                 referral_code = 'UNK?-PR'
