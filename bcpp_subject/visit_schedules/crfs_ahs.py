@@ -40,7 +40,7 @@ _crfs_ahs = (
     Crf(show_order=310,
         model='bcpp_subject.hivhealthcarecosts', required=True),
     Crf(show_order=320, model='bcpp_subject.labourmarketwages', required=True),
-    Crf(show_order=330, model='bcpp_subject.hivlinkagetocare', required=False),
+    Crf(show_order=330, model='bcpp_subject.hivlinkagetocare', required=True),
     Crf(show_order=340, model='bcpp_subject.hivresult', required=True),
     Crf(show_order=350, model='bcpp_subject.elisahivresult',
         required=False, additional=True),

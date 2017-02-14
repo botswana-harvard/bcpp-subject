@@ -30,7 +30,7 @@ from .funcs import (
     func_requires_todays_hiv_result,
     func_requires_vl,
     is_female,
-    defaulter_at_enrollment)
+    func_defaulter_at_enrollment)
 
 
 @register()
@@ -74,7 +74,8 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
-            predicate=(func_art_defaulter or defaulter_at_enrollment or func_art_naive),
+            predicate=(
+                func_art_defaulter or func_defaulter_at_enrollment or func_art_naive),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])
