@@ -37,6 +37,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     medication_taken = models.ManyToManyField(
         Medication,
+        blank=True,
         related_name='medication_taken',
         verbose_name=(
             'Have you ever taken any of these medications? '
@@ -50,6 +51,7 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     medication_given = models.ManyToManyField(
         Medication,
+        blank=True,
         related_name='medication_given',
         verbose_name=('If yes: Are you still being given this '
                       'medication (respond for each one ticked)'))
@@ -89,39 +91,39 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     weight_history = models.CharField(
         verbose_name='Have you had your weight checked in the past 3 years?',
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     weight_counselling = models.CharField(
         verbose_name=(
             'Have you ever been counselled about what weight you '
             'should aim for by a health care worker in the past 3 years? '),
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     physical_activity_counselling = models.CharField(
         verbose_name=('Have you ever been counselled about the amount of '
                       'physical activity (or exercise) to maintain by a '
                       'healthcare worker in the past 3 years?'),
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     alcohol_counselling = models.CharField(
         verbose_name=('Have you ever been counselled about correct alcohol '
                       'intake by a healthcare worker in the past 3 years?'),
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     blood_test_for_cholesterol = models.CharField(
         verbose_name=('Have you ever had a blood test for high cholesterol '
                       'in the past 3 years?'),
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     blood_test_for_diabetes = models.CharField(
         verbose_name=('Have you ever had blood test for sugar diabetes in '
                       'the past 3 years?'),
-        choices=YES_NO_NA,
+        choices=YES_NO,
         max_length=20)
 
     bp = models.CharField(
