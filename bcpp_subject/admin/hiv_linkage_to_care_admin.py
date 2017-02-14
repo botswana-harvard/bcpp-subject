@@ -12,49 +12,6 @@ from .modeladmin_mixins import CrfModelAdminMixin
 @admin.register(HivLinkageToCare, site=bcpp_subject_admin)
 class HivLinkageToCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
-    #     replacements = {
-    #         'first_rep': {
-    #             'app_model': 'bcpp_subject.hivlinkagetocare',
-    #             'query_attr': 'subject_visit',
-    #             'field_attr': 'kept_appt',
-    #             'placeholder': 'last_visit_date',
-    #             'replacement_attr': 'report_datetime',
-    #             'attr': 'previous_visit',
-    #         },
-    #         'second_rep': {
-    #             'app_model': 'bcpp_subject.hivlinkagetocare',
-    #             'query_attr': 'appointment',
-    #             'field_attr': 'kept_appt',
-    #             'placeholder': 'last_appt_date',
-    #             'replacement_attr': 'appt_datetime',
-    #             'attr': 'previous_appt',
-    #         },
-    #         'third_rep': {
-    #             'app_model': 'bcpp_subject.hivlinkagetocare',
-    #             'query_attr': 'subject_visit',
-    #             'field_attr': 'recommended_therapy',
-    #             'placeholder': 'last_visit_date',
-    #             'replacement_attr': 'report_datetime',
-    #             'attr': 'previous_visit',
-    #         },
-    #         'forth_rep': {
-    #             'app_model': 'bcpp_subject.hivlinkagetocare',
-    #             'query_attr': 'subject_visit',
-    #             'field_attr': 'startered_therapy',
-    #             'placeholder': 'last_visit_date',
-    #             'replacement_attr': 'report_datetime',
-    #             'attr': 'previous_visit',
-    #         },
-    #         'fifth_rep': {
-    #             'app_model': 'bcpp_subject.hivlinkagetocare',
-    #             'query_attr': 'plot',
-    #             'field_attr': 'clinic_first_date',
-    #             'placeholder': 'community_name',
-    #             'replacement_attr': 'community',
-    #             'attr': 'last_community',
-    #         },
-    #     }
-
     form = HivLinkageToCareForm
 
     fieldsets = (

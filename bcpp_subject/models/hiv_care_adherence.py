@@ -102,7 +102,7 @@ class HivCareAdherence (CrfModelMixin):
     on_arv = models.CharField(
         verbose_name='Are you currently taking antiretroviral therapy (ARVs)?',
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text='If yes, need to answer next two questions.',   # Q11 all
     )
 
@@ -284,7 +284,7 @@ class HivCareAdherence (CrfModelMixin):
         verbose_name=mark_safe(
             '<span style="color:orange;">Interviewer: </span> Is there evidence that the '
             'participant is on therapy?'),
-        choices=YES_NO,  # Q17
+        choices=YES_NO_NA,  # Q17
         max_length=3,
         help_text='Examples of evidence might be OPD card, tablets, masa number, etc.'
     )

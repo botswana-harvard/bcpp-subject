@@ -31,7 +31,7 @@ _crfs_ess = (
     Crf(show_order=240, model='bcpp_subject.hivrelatedillness', required=True),
     Crf(show_order=250, model='bcpp_subject.tuberculosis', required=True),
     Crf(show_order=260, model='bcpp_subject.tbsymptoms', required=True),
-    Crf(show_order=330, model='bcpp_subject.hivlinkagetocare', required=True),
+    # Crf(show_order=330, model='bcpp_subject.hivlinkagetocare', required=True),
     Crf(show_order=340, model='bcpp_subject.hivresult', required=True),
     Crf(show_order=350, model='bcpp_subject.elisahivresult',
         required=False, additional=True),

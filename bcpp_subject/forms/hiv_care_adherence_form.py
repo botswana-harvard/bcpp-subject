@@ -19,9 +19,18 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
         cleaned_data = super().clean()
 
         # section: care
-        self.validate_medical_care()
-        self.validate_ever_taken()
+        self.applicable_if(
+            NO, field='medical_care', field_applicable='no_medical_care')
+        self.validate_other_specify('no_medical_care')
+        self.applicable_if(
+            NO, field='ever_taken_arv', field_applicable='why_no_arv')
+        self.validate_other_specify('why_no_arv')
+
         self.validate_art_part1()
+
+        self.required_if(NO, field='on_arv', field_required='arv_stop_date')
+        self.applicable_if_true(
+            cleaned_data.get('arv_stop_date'), field_applicable='arv_stop')
         self.validate_art_regimen()
         self.validate_prev_art_regimen()
         self.validate_adherence()
@@ -32,86 +41,35 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
 
         return cleaned_data
 
-    def validate_medical_care(self):
-        cleaned_data = self.cleaned_data
-        if cleaned_data.get('medical_care') == NO:
-            if cleaned_data.get('no_medical_care') == NOT_APPLICABLE:
-                raise forms.ValidationError(
-                    {'no_medical_care':
-                     ('Please provide a reason. ref: {}'.format(get_linenumber()))})
-            self.validate_other_specify(
-                'no_medical_care', 'no_medical_care_other')
-        elif cleaned_data.get('medical_care') == YES:
-            if cleaned_data.get('no_medical_care') != NOT_APPLICABLE:
-                raise forms.ValidationError(
-                    {'no_medical_care':
-                     ('Participant has not received any medical care, '
-                      'please give reason why not. ref: {}'.format(get_linenumber()))})
-        elif cleaned_data.get('medical_care') == DWTA:
-            if cleaned_data.get('no_medical_care') != DWTA:
-                raise forms.ValidationError(
-                    {'no_medical_care':
-                     ('Field should be \'Don\'t want to answer\'. ref: {}'.format(get_linenumber()))})
-            elif cleaned_data.get('no_medical_care_other'):
-                raise forms.ValidationError(
-                    {'no_medical_care_other':
-                     ('This field is not required. ref: {}'.format(get_linenumber()))})
-
-    def validate_ever_taken(self):
-        cleaned_data = self.cleaned_data
-        if (cleaned_data.get('ever_taken_arv') == YES
-                and cleaned_data.get('why_no_arv') != NOT_APPLICABLE):
-            raise forms.ValidationError({
-                'why_no_arv': 'This field is not applicable. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('ever_taken_arv') == NO
-              and cleaned_data.get('why_no_arv') == NOT_APPLICABLE):
-            raise forms.ValidationError({
-                'why_no_arv': 'Please provide a reason. ref: {}'.format(get_linenumber())})
-
     def validate_art_part1(self):
         """Validations for first part of section Antiretiroviral
         Therapy.
         """
         cleaned_data = self.cleaned_data
-        if (cleaned_data.get('on_arv') == YES
-              and cleaned_data.get('arv_stop_date')):
-            raise forms.ValidationError({
-                'arv_stop_date':
-                'This field is not required. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('on_arv') == NO
-              and not cleaned_data.get('arv_stop_date')):
-            raise forms.ValidationError({
-                'arv_stop_date':
-                'This field is required. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('arv_stop_date')
-              and cleaned_data.get('arv_stop') == NOT_APPLICABLE):
-            raise forms.ValidationError({
-                'arv_stop':
-                'This field is applicable. ref: {}'.format(get_linenumber())})
-        elif (not cleaned_data.get('arv_stop_date')
-              and cleaned_data.get('arv_stop') != NOT_APPLICABLE):
-            raise forms.ValidationError({
-                'arv_stop':
-                'This field is not applicable. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('ever_taken') == YES
-                and cleaned_data.get('on_arv') == NO
-                and not cleaned_data.get('arv_stop_date')):
-            raise forms.ValidationError({
-                'arv_stop':
-                'Participant was on ART. This field is required. ref: {}'.format(get_linenumber())})
-        elif (cleaned_data.get('ever_taken') == NO
-              and cleaned_data.get('first_arv')):
+        self.applicable_if(
+            YES, field='ever_taken_arv', field_applicable='on_arv')
+        self.applicable_if(
+            YES, field='ever_taken_arv', field_applicable='arv_evidence')
+        self.required_if(
+            YES, field='ever_taken_arv', field_required='first_arv')
+
+        if (cleaned_data.get('first_positive') and cleaned_data.get('first_arv')
+                and cleaned_data.get('first_positive') > cleaned_data.get('first_arv')):
             raise forms.ValidationError({
                 'first_arv':
-                'This field is not required. ref: {}'.format(get_linenumber())})
-        elif self.validate_other_specify('arv_stop', ref=get_linenumber()):
-            pass
-        elif (cleaned_data.get('arv_stop_date') and cleaned_data.get('first_arv')
+                'Cannot be before {}.'.format(
+                    cleaned_data.get('first_positive').strftime('%Y-%m-%d'))})
+
+        self.required_if(
+            NO, field='on_arv', field_required='arv_stop_date')
+
+        if (cleaned_data.get('arv_stop_date') and cleaned_data.get('first_arv')
                 and cleaned_data.get('arv_stop_date') <= cleaned_data.get('first_arv')):
             raise forms.ValidationError({
                 'arv_stop_date':
-                'Date cannot be on or before {}. (See ART start date above)'.format(
+                'Cannot be before {}'.format(
                     cleaned_data.get('first_arv').strftime('%Y-%m-%d'))})
+        self.validate_other_specify('arv_stop')
 
     def validate_art_regimen(self, m2m_field=None, field_other=None):
         cleaned_data = self.cleaned_data
@@ -164,18 +122,11 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
 
     def validate_is_first_regimen(self):
         cleaned_data = self.cleaned_data
-        if (cleaned_data.get('on_arv') == YES
+        self.required_if(
+            YES, field='on_arv', field_required='is_first_regimen')
+        if (cleaned_data.get('on_arv') == NO
                 and not cleaned_data.get('is_first_regimen')):
-            raise forms.ValidationError({
-                'is_first_regimen':
-                'This field is required.'})
-        elif cleaned_data.get('on_arv') == NO:
-            if cleaned_data.get('is_first_regimen'):
-                raise forms.ValidationError({
-                    'is_first_regimen':
-                    'This field is not required.'})
-            elif not cleaned_data.get('is_first_regimen'):
-                self.prev_art_regimen_not_required()
+            self.prev_art_regimen_not_required()
 
     def prev_art_regimen_not_required(self):
         cleaned_data = self.cleaned_data

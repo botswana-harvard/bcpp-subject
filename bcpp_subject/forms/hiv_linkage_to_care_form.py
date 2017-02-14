@@ -9,7 +9,7 @@ from .form_mixins import SubjectModelFormMixin
 class HivLinkageToCareForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(HivLinkageToCareForm, self).clean()
+        cleaned_data = super().clean()
         try:
             hiv_care_adherence = HivCareAdherence.objects.get(
                 subject_visit=cleaned_data.get('subject_visit'))
