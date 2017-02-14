@@ -38,6 +38,8 @@ class HivMedicalCare (CrfModelMixin):
         verbose_name="What was your lowest CD4 (masole) count that was ever measured?",
         max_length=25,
         choices=LOWEST_CD4_CHOICE,
+        null=True,
+        blank=False,
         help_text="Assist the participant by helping review their outpatient cards if "
                   "they are available.",
     )

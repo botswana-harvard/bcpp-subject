@@ -61,7 +61,7 @@ class HivCareAdherence (CrfModelMixin):
         max_length=25,
         choices=YES_NO_DWTA,
         help_text='Common '
-        'medicines include: combivir, truvada, atripla, nevirapine',
+        'medicines include: combivir, truvada, atripla, nevirapine, dolutegravir',
     )
 
     # longitudinal, YES if terminal value of first_arv  = YES

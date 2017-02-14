@@ -24,9 +24,6 @@ _crfs_ahs = (
     Crf(show_order=170, model='bcpp_subject.uncircumcised', required=True),
     Crf(show_order=180,
         model='bcpp_subject.reproductivehealth', required=True),
-    # not required for year3/ahs
-    #     Crf(show_order=190, model='bcpp_subject.pregnancy', required=True),
-    #     Crf(show_order=200, model='bcpp_subject.nonpregnancy', required=True),
     Crf(show_order=210, model='bcpp_subject.medicaldiagnoses', required=True),
     Crf(show_order=215,
         model='bcpp_subject.hypertensioncardiovascular', required=True),

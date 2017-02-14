@@ -1,17 +1,27 @@
 from django.contrib import admin
 
+from edc_base.modeladmin_mixins import audit_fieldset_tuple
+from edc_base.fieldsets.fieldlist import Remove
+
+
 from ..admin_site import bcpp_subject_admin
 from ..models import HivMedicalCare
 from ..forms import HivMedicalCareForm
+from ..constants import T1, T2, T3
 
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 
 @admin.register(HivMedicalCare, site=bcpp_subject_admin)
 class HivMedicalCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivMedicalCareForm
+
+    conditional_fieldlists = {
+        T1: Remove('lowest_cd4'),
+        T2: Remove('lowest_cd4'),
+        T3: Remove('lowest_cd4')
+    }
 
     fieldsets = (
         (None, {
