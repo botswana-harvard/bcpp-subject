@@ -73,7 +73,7 @@ class SubjectVisitRuleGroup(RuleGroup):
 
     hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
-            predicate=(func_art_naive or func_art_defaulter),
+            predicate=(func_art_defaulter or func_art_naive),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])

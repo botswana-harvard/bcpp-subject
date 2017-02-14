@@ -1178,3 +1178,64 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
         self.assertEqual(obj.final_hiv_status_date, date(2015, 11, 4))
+
+    @tag('test_default_at_enrollment_helper')
+    def test_default_at_enrollment(self):
+        """Previously enrollees at t0, t1 who are HIV-positive
+        but were on ART, (i.e not arv_naive) at the time of enrollment.
+        HivLinkageToCare NOT_REQUIRED 066-01990054-8
+        """
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male_t0,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=YES
+        )
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestreview',
+            report_datetime=self.get_utcnow(),
+            subject_visit=self.subject_visit_male_t0,
+            hiv_test_date=self.get_utcnow() - timedelta(days=50),
+            recorded_hiv_result=POS)
+
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=self.get_utcnow(),
+            subject_visit=self.subject_visit_male_t0,
+            report_datetime=self.get_utcnow(),
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=NO,
+            arv_evidence=YES,  # this is the rule field
+        )
+
+        obj = SubjectHelper(self.subject_visit_male_t0)
+        self.assertTrue(obj.defaulter_at_enrollment)
+
+        subject_visit = self.add_subject_visit_followup(
+            self.subject_visit_male_t0.household_member, T1)
+
+        obj = SubjectHelper(subject_visit)
+        self.assertTrue(obj.defaulter_at_enrollment)
+
+        # add HivCarAdherence,
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=subject_visit.report_datetime,
+            subject_visit=subject_visit,
+            report_datetime=subject_visit.report_datetime,
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
+        obj = SubjectHelper(subject_visit)
+        self.assertEqual(obj.final_arv_status, ON_ART)
+        self.assertTrue(obj.defaulter_at_enrollment)

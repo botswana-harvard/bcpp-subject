@@ -31,6 +31,7 @@ class SubjectHelper:
         self.prev_result_date = None
         self.prev_result_known = None
         self.newly_diagnosed = None
+        self.defaulter_at_enrollment = None
 
         self.subject_visit = visit
         self.subject_identifier = visit.subject_identifier
@@ -58,8 +59,12 @@ class SubjectHelper:
                 subject_visit__visit_code=T0)
         except HivCareAdherence.DoesNotExist:
             self.naive_at_enrollment = False
+            self.defaulter_at_enrollment = False
         else:
             self.naive_at_enrollment = True if hiv_care_adherence.ever_taken_arv == NO else False
+            self.defaulter_at_enrollment = (
+                True if hiv_care_adherence.ever_taken_arv == YES
+                and hiv_care_adherence.on_arv == NO else False)
 
     @property
     def final_hiv_status_date(self):
