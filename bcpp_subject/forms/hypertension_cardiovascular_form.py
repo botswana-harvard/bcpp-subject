@@ -1,7 +1,6 @@
 from edc_constants.constants import YES, OTHER, NO
 
 from ..models import HypertensionCardiovascular
-
 from .form_mixins import SubjectModelFormMixin
 
 

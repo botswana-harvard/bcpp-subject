@@ -6,7 +6,7 @@ class HeartAttackForm (SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        self.validate_other_specify('heart_attack_dx')
+        self.validate_other_specify('dx_heart_attack')
         return cleaned_data
 
     class Meta:
