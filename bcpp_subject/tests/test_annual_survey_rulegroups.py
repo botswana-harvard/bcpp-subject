@@ -5,14 +5,13 @@ from model_mommy import mommy
 
 from django.test import TestCase, tag
 
-from edc_constants.constants import NO, YES, POS, NEG
+from edc_constants.constants import NO, YES, POS, NEG, DECLINED
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
 from .test_mixins import SubjectMixin
-# from bcpp_subject.constants import DECLINED
 
 
 @tag('ANNUAL_RULE')
@@ -1199,7 +1198,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.make_subject_locator(self.subject_identifier, self.get_utcnow())
 
         self.hiv_result(
-            'DECLINED', self.bhs_subject_visit_male, self.get_utcnow())
+            DECLINED, self.bhs_subject_visit_male, self.get_utcnow())
 
         subject_visit_male_y2 = self.add_subject_visit_followup(
             self.bhs_subject_visit_male.household_member, T1)
@@ -1228,7 +1227,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            'DECLINED', subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
         self.assertEqual(
             self.requisition_metadata_obj(
                 'bcpp_subject.subjectrequisition', NOT_REQUIRED,
@@ -1251,7 +1250,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            'DECLINED', subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
 
         self.assertEqual(
             self.crf_metadata_obj('bcpp_subject.pimacd4', REQUIRED, T1).count(), 1)
@@ -1267,7 +1266,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.make_subject_locator(self.subject_identifier, self.get_utcnow())
 
         self.hiv_result(
-            'DECLINED', self.bhs_subject_visit_male, self.get_utcnow())
+            DECLINED, self.bhs_subject_visit_male, self.get_utcnow())
 
         self.make_hivtesting_history(
             self.bhs_subject_visit_male,
@@ -1278,7 +1277,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         report_datetime = subject_visit_male_y2.report_datetime
 
         self.hiv_result(
-            'DECLINED', subject_visit_male_y2, report_datetime)
+            DECLINED, subject_visit_male_y2, report_datetime)
 
         self.make_hivtesting_history(
             subject_visit_male_y2,
@@ -1400,7 +1399,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
     def test_on_art_at_previous_visit_and_ahs_require_linkage_to_care(self):
         """Previously enrollees at t0, t1 who are HIV-positive
         but were on ART, (i.e not arv_naive) at the time of enrollment.
-        HivLinkageToCare NOT_REQUIRED
+        HivLinkageToCare NOT_REQUIRED 066-01990054-8
         """
         self.make_hivtesting_history(
             self.bhs_subject_visit_male,
@@ -1443,3 +1442,68 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivlinkagetocare', REQUIRED, T2).count(), 1)
+
+    @tag('test_default_at_bhs_at_ahs_requires_linkage')
+    def test_default_at_bhs_at_ahs_requires_linkage(self):
+        """Previously enrollees at t0, t1 who are HIV-positive
+        but were on ART, (i.e not arv_naive) at the time of enrollment.
+        HivLinkageToCare NOT_REQUIRED 066-01990054-8
+        """
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.bhs_subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=YES
+        )
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestreview',
+            report_datetime=self.get_utcnow(),
+            subject_visit=self.bhs_subject_visit_male,
+            hiv_test_date=self.get_utcnow() - timedelta(days=50),
+            recorded_hiv_result=POS)
+
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=self.get_utcnow(),
+            subject_visit=self.bhs_subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=NO,
+            arv_evidence=YES,  # this is the rule field
+        )
+
+        self.assertEqual(
+            self.requisition_metadata_obj(
+                'bcpp_subject.subjectrequisition',
+                REQUIRED, T0, RESEARCH_BLOOD_DRAW).count(), 1)
+
+        subject_visit_male_y2 = self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+
+        crf_count = CrfMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.hivlinkagetocare',
+            visit_code=subject_visit_male_y2.visit_code,
+            subject_identifier=subject_visit_male_y2.subject_identifier)
+
+        self.assertEqual(crf_count.count(), 1)
+
+        # add HivCarAdherence,
+        mommy.make_recipe(
+            'bcpp_subject.hivcareadherence',
+            first_positive=subject_visit_male_y2.report_datetime,
+            subject_visit=subject_visit_male_y2,
+            report_datetime=subject_visit_male_y2.report_datetime,
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )

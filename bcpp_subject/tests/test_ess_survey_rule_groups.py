@@ -14,6 +14,8 @@ from ..constants import E0
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
+from bcpp_subject.constants import MICROTUBE
+from edc_metadata.models import RequisitionMetadata
 
 
 @tag('ESSRULE')
@@ -176,6 +178,11 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
                 REQUIRED, E0, self.subject_identifier).count(), 1)
 
         self.assertEqual(
+            self.requisition_metadata_obj(REQUIRED, self.subject_visit_male.visit_code,
+                                          MICROTUBE,
+                                          self.subject_visit_male.subject_identifier).count(), 1)
+
+        self.assertEqual(
             self.crf_metadata_obj(
                 'bcpp_subject.hivmedicalcare',
                 REQUIRED, E0, self.subject_identifier).count(), 1)
@@ -333,8 +340,15 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, YES, POS, NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -346,8 +360,15 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -359,8 +380,15 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, NO, POS, NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -372,8 +400,15 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=NEG,
+            other_record=NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -385,8 +420,15 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
 
         self.subject_identifier = self.subject_visit_male.subject_identifier
 
-        self.make_hivtesting_history(
-            self.subject_visit_male, self.get_utcnow(), YES, NO, NEG, NO)
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=NEG,
+            other_record=NO)
 
         self.assertEqual(
             self.crf_metadata_obj(
@@ -425,3 +467,31 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             self.crf_metadata_obj(
                 'bcpp_subject.accesstocare',
                 NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+    @tag('test_requires_microtube_without_documentation')
+    def test_requires_microtube_without_documentation(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO)
+
+        self.assertEqual(
+            self.crf_metadata_obj(
+                'bcpp_subject.hivresultdocumentation',
+                NOT_REQUIRED, E0, self.subject_identifier).count(), 1)
+
+        req = RequisitionMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.subjectrequisition',
+            subject_identifier=self.subject_identifier,
+            panel_name=MICROTUBE,
+            visit_code=E0)
+        self.assertEqual(req.count(), 1)
