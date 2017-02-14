@@ -233,6 +233,7 @@ TRAVEL_HOURS = (
 
 
 NO_MEDICALCARE_REASON = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('not thinking about HIV care',
      _('I am not thinking about HIV related medical/clinical '
        'care at this time')),
@@ -261,7 +262,7 @@ NO_MEDICALCARE_REASON = (
 
 
 HEALTH_CARE_PLACE = (
-    (NONE, _('None')),
+    (NOT_APPLICABLE, 'Not applicable'),
     ('Government dispensary', _('Government dispensary')),
     ('Government health center', _('Government health center')),
     ('Government hospital', _('Government hospital')),
@@ -279,6 +280,7 @@ HEALTH_CARE_PLACE = (
 
 
 CARE_REGULARITY = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('0 times', _('0 times')),
     ('1 time', _('1 time')),
     ('2 times', _('2 times')),
@@ -292,6 +294,7 @@ CARE_REGULARITY = (
 
 
 DOCTOR_VISITS = (
+    (NOT_APPLICABLE, 'Not applicable'),
     ('always', _('All of the time (always)')),
     ('almost always', _('Most of the time (almost always)')),
     ('sometimes', _('Some of the time (sometimes)')),

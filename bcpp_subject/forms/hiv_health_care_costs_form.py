@@ -1,5 +1,3 @@
-from django import forms
-
 from edc_constants.constants import YES, NO
 
 from ..models import HivHealthCareCosts
@@ -9,43 +7,16 @@ from .form_mixins import SubjectModelFormMixin
 class HivHealthCareCostsForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(HivHealthCareCostsForm, self).clean()
+        cleaned_data = super().clean()
 
-        if (cleaned_data.get('hiv_medical_care') == YES
-                and cleaned_data.get('reason_no_care') is not None):
-            raise forms.ValidationError(
-                'If participant has received HIV medical care, reason '
-                'for not receiving care should be None ')
-
-        if (cleaned_data.get('hiv_medical_care') == YES
-                and not cleaned_data.get('place_care_received')):
-            raise forms.ValidationError(
-                'If participant has received HIV medical care, '
-                'where was it received? ')
-
-        if (cleaned_data.get('hiv_medical_care') == YES
-                and cleaned_data.get('place_care_received') == 'None'):
-            raise forms.ValidationError(
-                'If participant has received HIV medical care, '
-                'place where medical care received CANNOT be NONE? ')
-
-        if (cleaned_data.get('hiv_medical_care') == YES
-                and not cleaned_data.get('care_regularity')):
-            raise forms.ValidationError(
-                'If participant has received HIV medical care, how '
-                'often was the care received? ')
-
-        if (cleaned_data.get('hiv_medical_care') == YES
-                and not cleaned_data.get('doctor_visits')):
-            raise forms.ValidationError(
-                'If participant has received HIV medical care, how '
-                'often where you taken to see a doctor? ')
-
-        if (cleaned_data.get('hiv_medical_care') == NO
-                and cleaned_data.get('place_care_received') != 'None'):
-            raise forms.ValidationError(
-                'If participant DID NOT received HIV medical care, then'
-                'place care received should be NONE? ')
+        self.applicable_if(
+            NO, field='hiv_medical_care', field_applicable='reason_no_care')
+        self.applicable_if(
+            YES, field='hiv_medical_care', field_applicable='place_care_received')
+        self.applicable_if(
+            YES, field='hiv_medical_care', field_applicable='care_regularity')
+        self.applicable_if(
+            YES, field='hiv_medical_care', field_applicable='doctor_visits')
 
         return cleaned_data
 

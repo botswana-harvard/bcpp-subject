@@ -1,4 +1,4 @@
-from edc_constants.constants import POS
+from edc_constants.constants import POS, NOT_APPLICABLE
 
 from ..models import (
     HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
@@ -35,9 +35,9 @@ class ModelValues:
         obj = HivCareAdherence.objects.filter(
             **options).order_by('report_datetime').last()
         if obj:
-            self.arv_evidence = obj.arv_evidence
+            self.arv_evidence = None if obj.arv_evidence == NOT_APPLICABLE else obj.arv_evidence
             self.ever_taken_arv = obj.ever_taken_arv
-            self.on_arv = obj.on_arv
+            self.on_arv = None if self.on_arv == NOT_APPLICABLE else obj.on_arv
 
         # ElisaHivResult
         qs = ElisaHivResult.objects.filter(

@@ -88,7 +88,7 @@ class OutpatientCare (CrfModelMixin):
     outpatient_expense = models.DecimalField(
         verbose_name=(
             "For this most recent outpatient medical care visit, "
-            "how much did you have to pay to the health care "
+            "how much did you have to pay, in PULA, to the health care "
             "provider, including any medicines?"),
         max_digits=10,
         decimal_places=2,

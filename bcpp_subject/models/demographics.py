@@ -19,7 +19,9 @@ class Demographics (CrfModelMixin):
     religion = models.CharField(
         verbose_name='What is your religious affiliation?',
         max_length=25,
-        choices=RELIGION)
+        choices=RELIGION,
+        null=True,
+        blank=False)
 
     religion_other = OtherCharField()
 
@@ -27,6 +29,8 @@ class Demographics (CrfModelMixin):
         verbose_name='What is your ethnic group?',
         max_length=25,
         choices=ETHNIC_GROUP,
+        null=True,
+        blank=False,
         help_text='Ask for the original ethnic group')
 
     ethnic_other = OtherCharField()

@@ -9,8 +9,6 @@ REFERRAL_CODES = (
     ('SMC-NEG', 'SMC (uncircumcised, hiv neg)'),    # not needed
     ('SMC?NEG', 'SMC (Unknown circumcision status, hiv neg'),    # not needed
     ('SMC-UNK', 'SMC (uncircumcised, hiv result not known)'),    # not needed
-    # not needed
-    ('SMC?UNK', 'SMC (Unknown circumcision status, hiv result not known)'),
     ('NEG!-PR', 'NEG today, Pregnant'),    # not needed
     ('POS!-PR', 'POS today, Pregnant'),
     ('UNK?-PR', 'HIV UNKNOWN, Pregnant'),

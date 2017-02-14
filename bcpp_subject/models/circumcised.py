@@ -8,17 +8,6 @@ from ..exceptions import CircumcisionError
 from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
 
 
-def is_circumcised(visit_instance):
-    """Returns True if circumcised before or at visit
-    report datetime.
-    """
-    return (
-        Circumcised.objects.filter(
-            subject_visit__subject_identifier=visit_instance.subject_identifier,
-            subject_visit__report_datetime__lte=visit_instance.report_datetime)
-        .exists())
-
-
 class Circumcised (CircumcisionModelMixin, CrfModelMixin):
 
     circ_date = models.DateField(

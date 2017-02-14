@@ -6,8 +6,9 @@ from edc_constants.constants import NOT_SURE, DWTA, NOT_APPLICABLE
 from ..choices import HEALTH_CARE_FACILITY
 from .list_models import Medication
 from .model_mixins import CrfModelMixin
+from django.core.validators import RegexValidator
 
-REASONS = (
+REASONS_BP = (
     ('afraid', 'I am afraid to know my blood pressure'),
     ('no_time', 'I do not have time'),
     ('painful', 'I was told it is painful'),
@@ -16,6 +17,22 @@ REASONS = (
     (DWTA, 'Don\'t want to answer'),
     (NOT_APPLICABLE, 'Not applicable'),
 )
+
+REASONS_BM = (
+    ('afraid', 'I am afraid to know my hips measurements'),
+    ('no_time', 'I do not have time'),
+    ('painful', 'I was told it is painful'),
+    ('not_ready', 'I am not ready'),
+    (NOT_SURE, 'I am not sure why'),
+    (DWTA, 'Don\'t want to answer'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
+
+bm_validator = RegexValidator(
+    '^\d*[.]?\d*$', message='Enter a valid number or decimal')
+
+bp_validator = RegexValidator(
+    '^\d{1,3}\/\d{1,3}$', message='Enter a valid BP in SYS/DIA format')
 
 
 class HypertensionCardiovascular(CrfModelMixin):
@@ -136,33 +153,41 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     bp_refused_reason = models.CharField(
         verbose_name=('If no, provide reason'),
-        choices=REASONS,
+        choices=REASONS_BP,
         max_length=25)
 
     # blood pressure
     right_arm_one = models.CharField(
         verbose_name='Right Arm BP 1:',
         max_length=15,
+        validators=[bp_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in mmHg. format SYS/DIA, e.g. 120/80')
 
     left_arm_one = models.CharField(
         verbose_name='Left Arm BP 1:',
         max_length=15,
+        validators=[bp_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in mmHg. format SYS/DIA, e.g. 120/80')
 
     right_arm_two = models.CharField(
         verbose_name='Right Arm BP 2:',
         max_length=15,
+        validators=[bp_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in mmHg. format SYS/DIA, e.g. 120/80')
 
     left_arm_two = models.CharField(
         verbose_name='Left Arm BP 2:',
         max_length=15,
+        validators=[bp_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in mmHg. format SYS/DIA, e.g. 120/80')
 
     bm = models.CharField(
         verbose_name=('As part of our questions about your health we '
@@ -174,33 +199,41 @@ class HypertensionCardiovascular(CrfModelMixin):
 
     bm_refused_reason = models.CharField(
         verbose_name=('If no, provide reason'),
-        choices=REASONS,
+        choices=REASONS_BM,
         max_length=25)
 
     # waist circumference
     waist_reading_one = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 1)',
         max_length=15,
+        validators=[bm_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in centimeters (cm)')
 
     waist_reading_two = models.CharField(
         verbose_name='Waist circumference Measurement today (Reading 2)',
         max_length=15,
+        validators=[bm_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in centimeters (cm)')
 
     hip_reading_one = models.CharField(
         verbose_name='Hip circumference Measurement today (Reading 1)',
         max_length=15,
+        validators=[bm_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in centimeters (cm)')
 
     hip_reading_two = models.CharField(
         verbose_name='Hip circumference Measurement today (Reading 2)',
         max_length=15,
+        validators=[bm_validator],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='in centimeters (cm)')
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
