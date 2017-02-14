@@ -2,6 +2,7 @@ from django.db import models
 
 from edc_base.model.fields import OtherCharField
 from edc_base.model.models import HistoricalRecords
+from edc_constants.constants import YES
 
 from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 from ..exceptions import CircumcisionError
@@ -15,7 +16,8 @@ def is_circumcised(visit_instance):
     return (
         Circumcised.objects.filter(
             subject_visit__subject_identifier=visit_instance.subject_identifier,
-            subject_visit__report_datetime__lte=visit_instance.report_datetime)
+            subject_visit__report_datetime__lte=visit_instance.report_datetime,
+            circumcised=YES)
         .exists())
 
 
