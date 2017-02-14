@@ -16,7 +16,6 @@ def is_circumcised(visit_instance):
     return (
         Circumcised.objects.filter(
             subject_visit__subject_identifier=visit_instance.subject_identifier,
-            subject_visit__report_datetime__lte=visit_instance.report_datetime,
             circumcised=YES)
         .exists())
 
