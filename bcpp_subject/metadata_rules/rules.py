@@ -13,8 +13,7 @@ from ..labs import (
 from ..models import ResourceUtilization, SubjectVisit
 from .funcs import (
     func_anonymous_member,
-    func_art_naive,
-    func_art_defaulter,
+    func_requires_hivlinkagetocare,
     func_hiv_indeterminate,
     func_hiv_positive,
     func_known_hiv_pos,
@@ -29,8 +28,7 @@ from .funcs import (
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
     func_requires_vl,
-    is_female,
-    func_defaulter_at_enrollment)
+    is_female)
 
 
 @register()
@@ -72,10 +70,9 @@ class SubjectVisitRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['immigrationstatus', 'accesstocare'])
 
-    hiv_linkage_to_care_art_naive = CrfRule(
+    require_hivlinkagetocare = CrfRule(
         logic=Logic(
-            predicate=(
-                func_art_defaulter or func_defaulter_at_enrollment or func_art_naive),
+            predicate=func_requires_hivlinkagetocare,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivlinkagetocare'])

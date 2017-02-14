@@ -46,6 +46,10 @@ def is_male(visit_instance, *args):
     return registered_subject.gender == MALE
 
 
+def func_requires_hivlinkagetocare(self, visit_instance, *args):
+    return func_art_defaulter or func_defaulter_at_enrollment or func_art_naive
+
+
 def func_defaulter_at_enrollment(self, visit_instance, *args):
     subject_helper = SubjectHelper(visit_instance)
     print('defaulter_at_enrollment={}'.format(
