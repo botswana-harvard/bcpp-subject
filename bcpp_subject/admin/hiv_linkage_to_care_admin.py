@@ -59,7 +59,6 @@ class HivLinkageToCareAdmin(CustomFormLabelMixin, CrfModelAdminMixin, admin.Mode
                 "initiated",
                 "initiated_date",
                 "initiated_clinic",
-                "initiated_clinic_other",
                 "initiated_clinic_community",
                 "evidence_art",
                 "evidence_art_other",
@@ -68,6 +67,7 @@ class HivLinkageToCareAdmin(CustomFormLabelMixin, CrfModelAdminMixin, admin.Mode
     radio_fields = {
         "kept_appt": admin.VERTICAL,
         "evidence_referral": admin.VERTICAL,
+        "recommended_art": admin.VERTICAL,
         "reason_recommended_art": admin.VERTICAL,
         "initiated": admin.VERTICAL,
         "evidence_art": admin.VERTICAL}
