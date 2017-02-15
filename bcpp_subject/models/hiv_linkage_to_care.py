@@ -8,6 +8,7 @@ from ..choices import (
     RECOMMENDED_THERAPY, REASON_RECOMMENDED, REASONS_INITIATED)
 
 from .model_mixins import CrfModelMixin
+from edc_constants.choices import YES_NO
 
 
 class HivLinkageToCare (CrfModelMixin):
@@ -68,7 +69,7 @@ class HivLinkageToCare (CrfModelMixin):
             'that you start antiretroviral therapy (ARVs), a '
             'combination of medicines to treat your HIV infection?'),
         max_length=50,
-        choices=RECOMMENDED_THERAPY,
+        choices=YES_NO,
         null=True,
         help_text='If No [SKIP TO #10]')
 
@@ -88,7 +89,7 @@ class HivLinkageToCare (CrfModelMixin):
             'Did you [start/restart] ART since we '
             'spoke with you on last_visit_date?'),
         max_length=50,
-        choices=REASONS_INITIATED,
+        choices=YES_NO,
         null=True,
         help_text='If NO [SKIP TO #9]')
 
@@ -104,8 +105,6 @@ class HivLinkageToCare (CrfModelMixin):
         verbose_name='Which clinic facility did you start/restart ART at?',
         max_length=25,
         help_text='Indicate the name of the clinic')
-
-    initiated_clinic_other = OtherCharField()
 
     initiated_clinic_community = models.CharField(
         verbose_name=('[If Clinic is not the referred clinic] '
@@ -125,9 +124,6 @@ class HivLinkageToCare (CrfModelMixin):
     evidence_art_other = OtherCharField()
 
     history = HistoricalRecords()
-
-    def last_community(self, request):
-        return self.subject_visit.household_member.household_structure.household.plot
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

@@ -1267,10 +1267,10 @@ KEPT_APPT = (
     ('attended_different_clinic',
      'No but attended a visit at a different HIV clinic'),
     ('went_different_clinic', 'I went to a different clinic'),
-    ('no_tried_left',
+    ('failed_attempt',
      'No but tried to attend an HIV care clinic and left before '
      'I saw a healthcare provider'),
-    ('no_not_been', 'I have not been to any HIV care clinic')
+    ('didnt_attend', 'I have not been to any HIV care clinic')
 )
 
 PARTNER_AGE = (
@@ -1283,20 +1283,10 @@ PARTNER_AGE = (
 )
 
 TYPE_OF_EVIDENCE = (
-    ("self_report_only", "Self-Report Only"),
+    ("self_report", "Self-Report Only"),
     ("opr_card", "OPD Card"),
     ("clinic_paperwork", "Clinic paperwork"),
     (OTHER, "Other ")
-)
-
-RECOMMENDED_THERAPY = (
-    (YES, "Yes"),
-    (NO, "No")
-)
-
-REASONS_INITIATED = (
-    ("Yes", "Yes"),
-    ("No", "No")
 )
 
 REASON_RECOMMENDED = (
@@ -1305,7 +1295,8 @@ REASON_RECOMMENDED = (
     ("pregnancy_breastfeeding", "Pregnancy or breastfeeding"),
     ("tuberculosis", "Tuberculosis"),
     ("cancer", "Cancer"),
-    ("dnt_knw", "Do not know"),
+    (OTHER, "Other, specify"),
+    (DONT_KNOW, "Do not know"),
 )
 
 HEALTH_CARE_FACILITY = (
