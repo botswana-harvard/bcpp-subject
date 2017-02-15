@@ -11,29 +11,33 @@ class HivLinkageToCareForm (SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         try:
-            hiv_care_adherence = HivCareAdherence.objects.get(
+            HivCareAdherence.objects.get(
                 subject_visit=cleaned_data.get('subject_visit'))
         except HivCareAdherence.DoesNotExist:
             raise forms.ValidationError(
                 'Please complete {} first.'.format(
                     HivCareAdherence._meta.verbose_name))
-        else:
-            if (hiv_care_adherence.on_arv == YES
-                    and cleaned_data.get('startered_therapy') == NO):
-                raise forms.ValidationError(
-                    {'startered_therapy':
-                     'If participant is said to be on ART on the {} '
-                     'this is contrary to the information given on '
-                     'question 12'.format(
-                         HivCareAdherence._meta.verbose_name)})
-            if (hiv_care_adherence.on_arv == NO
-                    and cleaned_data.get('startered_therapy') == YES):
-                raise forms.ValidationError(
-                    {'startered_therapy':
-                     'If participant is said to be not on art on the '
-                     ' {} this is contrary to the information given on '
-                     'question 12'.format(
-                         HivCareAdherence._meta.verbose_name)})
+
+        self.required_if_true(
+            (cleaned_data.get('kept_appt') == 'attended_different_clinic'
+             or cleaned_data.get('kept_appt') == 'went_different_clinic'),
+            field_required='different_clinic')
+
+        self.required_if(
+            'failed_attempt', field='kept_appt', field_required='failed_attempt_date')
+
+        self.validate_other_specify('evidence_referral')
+
+        self.required_if(
+            YES, field='recommended_art', field_required='reason_recommended_art')
+
+        self.validate_other_specify('reason_recommended_art')
+
+        self.required_if(
+            YES, field='initiated', field_required='initiated_date')
+
+        self.validate_other_specify('evidence_art')
+
         return cleaned_data
 
     class Meta:
