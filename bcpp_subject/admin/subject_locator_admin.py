@@ -6,12 +6,14 @@ from edc_base.modeladmin_mixins import (
     ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectMixin,
     audit_fieldset_tuple)
 from edc_locator.modeladmin_mixins import ModelAdminLocatorMixin
+from edc_base.fieldsets import Remove
 
 # from ..actions import export_locator_for_cdc_action
 from ..admin_site import bcpp_subject_admin
 # from ..filters import SubjectLocatorIsReferredListFilter
 from ..forms import SubjectLocatorForm
 from ..models import SubjectLocator
+from ..constants import E0
 
 
 @admin.register(SubjectLocator, site=bcpp_subject_admin)
@@ -78,3 +80,7 @@ class SubjectLocatorAdmin(
         'has_alt_contact',
         'may_call_work',
         'may_contact_someone')
+
+    conditional_fieldlists = {
+        E0: Remove('mail_address'),
+    }
