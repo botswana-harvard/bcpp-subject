@@ -108,7 +108,8 @@ class TestSubjectHelper(SubjectMixin, TestCase):
 
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=report_datetime,
             medical_care=NO,
@@ -256,7 +257,8 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=subject_visit.report_datetime,
             medical_care=NO,
@@ -832,7 +834,8 @@ class TestSubjectHelper(SubjectMixin, TestCase):
 
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=report_datetime,
             medical_care=NO,
@@ -872,7 +875,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, YES)
+        self.assertEqual(obj.current.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, DEFAULTER)
 
     def test_arv_status_naive(self):
@@ -889,7 +892,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertIsNone(obj.raw.arv_evidence)
+        self.assertIsNone(obj.current.arv_evidence)
         self.assertEqual(obj.final_arv_status, NAIVE)
 
     @tag('model_data')
@@ -944,7 +947,8 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=subject_visit.report_datetime,
             medical_care=NO,
@@ -968,7 +972,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
 
         obj = SubjectHelper(subject_visit)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, NO)
+        self.assertEqual(obj.current.arv_evidence, NO)
         self.assertEqual(obj.final_arv_status, NAIVE)
 
     def test_arv_status_with_evidence(self):
@@ -986,7 +990,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, YES)
+        self.assertEqual(obj.current.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, DEFAULTER)
 
     @tag('model_data')
@@ -1041,14 +1045,15 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=subject_visit.report_datetime,
             medical_care=NO,
             ever_recommended_arv=NO,
             ever_taken_arv=NO,
             on_arv=NO,
-            arv_evidence=YES)
+            arv_evidence=NO)
 
         mommy.make_recipe(
             'bcpp_subject.subjectrequisition',
@@ -1065,7 +1070,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
 
         obj = SubjectHelper(subject_visit)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, YES)
+        self.assertEqual(obj.current.arv_evidence, NO)
         self.assertEqual(obj.final_arv_status, NAIVE)
 
     def test_arv_status_on_art(self):
@@ -1082,7 +1087,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         obj = SubjectHelper(self.visit, model_values=self.model_values)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, YES)
+        self.assertEqual(obj.current.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, ON_ART)
 
     @tag('model_data')
@@ -1137,7 +1142,8 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         mommy.make_recipe(
             'bcpp_subject.hivcareadherence',
-            first_positive=subject_visit.report_datetime - relativedelta(days=100),
+            first_positive=subject_visit.report_datetime -
+            relativedelta(days=100),
             subject_visit=subject_visit,
             report_datetime=subject_visit.report_datetime,
             medical_care=YES,
@@ -1161,7 +1167,7 @@ class TestSubjectHelper(SubjectMixin, TestCase):
 
         obj = SubjectHelper(subject_visit)
         self.assertEqual(obj.final_hiv_status, POS)
-        self.assertEqual(obj.raw.arv_evidence, YES)
+        self.assertEqual(obj.current.arv_evidence, YES)
         self.assertEqual(obj.final_arv_status, ON_ART)
 
     def test_prev_result_pos5(self):

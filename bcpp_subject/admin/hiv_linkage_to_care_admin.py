@@ -11,9 +11,7 @@ from ..models import HivLinkageToCare, SubjectReferral
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(HivLinkageToCare, site=bcpp_subject_admin)
-class HivLinkageToCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-    form = HivLinkageToCareForm
+class CustomFormLabelMixin:
 
     custom_form_labels = [
         FormLabel(
@@ -40,6 +38,11 @@ class HivLinkageToCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         label = label.format(
             previous=previous, referral_appt_date=referral_appt_date)
         return label
+
+
+@admin.register(HivLinkageToCare, site=bcpp_subject_admin)
+class HivLinkageToCareAdmin(CustomFormLabelMixin, CrfModelAdminMixin, admin.ModelAdmin):
+    form = HivLinkageToCareForm
 
     fieldsets = (
         (None, {
