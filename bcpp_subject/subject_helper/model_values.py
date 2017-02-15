@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NOT_APPLICABLE
+from edc_constants.constants import POS, NOT_APPLICABLE, DECLINED
 
 from ..models import (
     HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
@@ -110,6 +110,14 @@ class ModelValues:
                 self.today_hiv_result = qs.last().hiv_result
                 self.today_hiv_result_date = (
                     qs.last().hiv_result_datetime.date())
+
+        try:
+            obj = HivResult.objects.get(
+                subject_visit=visit, hiv_result=DECLINED)
+        except HivResult.DoesNotExist:
+            self.declined = None
+        else:
+            self.declined = True
 
     def get_first_positive_or_none(self, qs, field_name):
         """Returns the first model instance that is POS or None.

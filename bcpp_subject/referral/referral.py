@@ -154,16 +154,13 @@ class Referral:
         """Returns a referral code or None.
          """
         referral_code = None
-        try:
-            is_declined = (
-                True if self.subject_helper.hiv_result == DECLINED else False)
-        except AttributeError:
-            is_declined = None
-        if self.subject_helper.final_hiv_status == NEG and is_declined:
+        self.subject_helper.current.declined
+        if (self.subject_helper.final_hiv_status == NEG
+                and self.subject_helper.current.declined):
             referral_code = self.referral_code_for_untested
         elif (not self.subject_helper.final_hiv_status
                 or self.subject_helper.final_hiv_status == UNK
-                or is_declined):
+                or self.subject_helper.current.declined):
             referral_code = self.referral_code_for_untested
         else:
             referral_code = self.referral_code_for_tested
