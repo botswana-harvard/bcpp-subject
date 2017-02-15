@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.test.utils import tag
 
-from edc_constants.constants import NO, YES, POS, NEG, UNK, DWTA
+from edc_constants.constants import NO, YES, POS, NEG, UNK, DWTA, NOT_APPLICABLE, IND
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 
 from member.models.household_member import HouseholdMember
@@ -14,8 +14,8 @@ from ..constants import E0
 
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
-from bcpp_subject.constants import MICROTUBE
-from edc_metadata.models import RequisitionMetadata
+from bcpp_subject.constants import MICROTUBE, ELISA, CAPILLARY
+from edc_metadata.models import RequisitionMetadata, CrfMetadata
 
 
 @tag('ESSRULE')
@@ -494,4 +494,96 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             subject_identifier=self.subject_identifier,
             panel_name=MICROTUBE,
             visit_code=E0)
+        self.assertEqual(req.count(), 1)
+
+    @tag('test_requires_microtube_without_documentation')
+    def test_requires_microtube_declined_testing(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=NO,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=None,
+            other_record=NO)
+
+        req = RequisitionMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.subjectrequisition',
+            subject_identifier=self.subject_identifier,
+            panel_name=MICROTUBE,
+            visit_code=E0)
+        self.assertEqual(req.count(), 1)
+
+    @tag('test_requires_microtube_without_documentation')
+    def test_requires_microtube_declined_with_hivtest_neg(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=NO,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=None,
+            other_record=NO)
+
+        req = RequisitionMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.subjectrequisition',
+            subject_identifier=self.subject_identifier,
+            panel_name=MICROTUBE,
+            visit_code=E0)
+        self.assertEqual(req.count(), 1)
+
+    @tag('test_requires_elisa_requisition')
+    def test_requires_elisa_requisition(self):
+
+        self.subject_identifier = self.subject_visit_male.subject_identifier
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.get_utcnow(),
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=NEG,
+            other_record=NOT_APPLICABLE)
+
+        mommy.make_recipe(
+            'bcpp_subject.subjectrequisition',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.subject_visit_male.report_datetime,
+            panel_name=MICROTUBE,
+        )
+
+        mommy.make_recipe(
+            'bcpp_subject.hivresult',
+            subject_visit=self.subject_visit_male,
+            report_datetime=self.subject_visit_male.report_datetime,
+            hiv_result=IND,
+            blood_draw_type=CAPILLARY,
+            insufficient_vol=NO
+        )
+
+        crf_count = CrfMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.elisahivresult',
+            visit_code=self.subject_visit_male.visit_code,
+            subject_identifier=self.subject_visit_male.subject_identifier).count()
+        self.assertEqual(crf_count, 1)
+
+        req = RequisitionMetadata.objects.filter(
+            entry_status=REQUIRED,
+            model='bcpp_subject.subjectrequisition',
+            subject_identifier=self.subject_identifier,
+            visit_code=E0)
+
         self.assertEqual(req.count(), 1)

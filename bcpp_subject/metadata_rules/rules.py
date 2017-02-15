@@ -438,7 +438,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     """
     elisa_for_ind = RequisitionRule(
         logic=Logic(
-            predicate=func_hiv_indeterminate,
+            P('hiv_result', 'eq', IND),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
