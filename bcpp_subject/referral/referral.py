@@ -159,7 +159,9 @@ class Referral:
                 True if self.subject_helper.hiv_result == DECLINED else False)
         except AttributeError:
             is_declined = None
-        if (not self.subject_helper.final_hiv_status
+        if self.subject_helper.final_hiv_status == NEG and is_declined:
+            referral_code = self.referral_code_for_untested
+        elif (not self.subject_helper.final_hiv_status
                 or self.subject_helper.final_hiv_status == UNK
                 or is_declined):
             referral_code = self.referral_code_for_untested
