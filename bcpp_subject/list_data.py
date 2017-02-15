@@ -19,7 +19,7 @@ list_data = {
     'bcpp_subject.diagnoses': [
         (HEART_DISEASE, 'Heart Disease or Stroke'),
         (CANCER, 'Cancer'),
-        (TUBERCULOSIS, 'Tubercolosis'),
+        (TUBERCULOSIS, 'Tuberculosis'),
         (OTHER, 'Other serious infection'),
         (NONE, ' None'),
         (STI, 'STI (Sexually Transmitted Infection)')],
