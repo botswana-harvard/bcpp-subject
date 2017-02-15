@@ -14,7 +14,7 @@ from ..modeladmin_mixins import ModelAdminMixin
 
 
 @admin.register(AnonymousConsent, site=bcpp_subject_admin)
-class AnonymousConsentAdmin(ModelAdminMixin):
+class AnonymousConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
@@ -52,7 +52,8 @@ class AnonymousConsentAdmin(ModelAdminMixin):
                 'study_site',
                 'consent_datetime',)
         else:
-            readonly_fields += ('subject_identifier', 'subject_identifier_as_pk',)
+            readonly_fields += ('subject_identifier',
+                                'subject_identifier_as_pk',)
         return readonly_fields
 
     def view_on_site(self, obj):
@@ -69,7 +70,8 @@ class AnonymousConsentAdmin(ModelAdminMixin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            HouseholdMember = django_apps.get_model('member', 'householdmember')
+            HouseholdMember = django_apps.get_model(
+                'member', 'householdmember')
             kwargs["queryset"] = (
                 HouseholdMember.objects.filter(id__exact=request.GET.get('household_member')))
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

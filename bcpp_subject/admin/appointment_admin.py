@@ -15,7 +15,7 @@ from ..forms import AppointmentForm
 
 
 @admin.register(Appointment, site=bcpp_subject_admin)
-class AppointmentAdmin(ModelAdminMixin):
+class AppointmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = AppointmentForm
 
