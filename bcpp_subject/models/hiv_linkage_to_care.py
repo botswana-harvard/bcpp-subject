@@ -2,13 +2,11 @@ from django.db import models
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
+from edc_constants.choices import YES_NO
 
-from ..choices import (
-    KEPT_APPT, TYPE_OF_EVIDENCE,
-    RECOMMENDED_THERAPY, REASON_RECOMMENDED, REASONS_INITIATED)
+from ..choices import KEPT_APPT, TYPE_OF_EVIDENCE, REASON_RECOMMENDED
 
 from .model_mixins import CrfModelMixin
-from edc_constants.choices import YES_NO
 
 
 class HivLinkageToCare (CrfModelMixin):
