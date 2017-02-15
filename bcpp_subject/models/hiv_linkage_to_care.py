@@ -89,10 +89,10 @@ class HivLinkageToCare (CrfModelMixin):
         max_length=50,
         choices=YES_NO,
         null=True,
-        help_text='If NO [SKIP TO #9]')
+        help_text='')
 
     initiated_date = models.DateField(
-        verbose_name='When did you [start/restart] ART?',
+        verbose_name='When did you start/restart ART?',
         default=None,
         null=True,
         blank=True,
@@ -105,8 +105,7 @@ class HivLinkageToCare (CrfModelMixin):
         help_text='Indicate the name of the clinic')
 
     initiated_clinic_community = models.CharField(
-        verbose_name=('[If Clinic is not the referred clinic] '
-                      'In which community is this clinic located'),
+        verbose_name=('In which community is this clinic located'),
         null=True,
         max_length=50,
         help_text='Indicate the community name'

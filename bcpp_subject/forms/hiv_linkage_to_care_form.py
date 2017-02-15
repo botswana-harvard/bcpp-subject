@@ -21,7 +21,7 @@ class HivLinkageToCareForm (SubjectModelFormMixin):
         self.required_if_true(
             (cleaned_data.get('kept_appt') == 'attended_different_clinic'
              or cleaned_data.get('kept_appt') == 'went_different_clinic'),
-            cleaned_data.get('kept_appt'), field_required='different_clinic')
+            field_required='different_clinic')
 
         self.required_if(
             'failed_attempt', field='kept_appt', field_required='failed_attempt_date')
