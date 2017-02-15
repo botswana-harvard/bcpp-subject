@@ -1,13 +1,12 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
-
 from .modeladmin_mixins import CrfModelAdminMixin
-from django.utils.safestring import mark_safe
 
 
 @admin.register(HivCareAdherence, site=bcpp_subject_admin)
