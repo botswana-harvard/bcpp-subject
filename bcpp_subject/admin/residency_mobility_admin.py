@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from edc_base.fieldsets import Remove
+from edc_base.fieldsets import Remove, FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
@@ -19,6 +19,28 @@ class ResidencyMobilityAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     conditional_fieldlists = {
         E0: Remove('intend_residency'),
     }
+
+    custom_form_labels = [
+        FormLabel(
+            field='permanent_resident',
+            label=('We last visited you in {previous}. Since then, have you '
+                   'typically spent 14 or more nights per month in this '
+                   'community?'),
+            previous_appointment=True),
+        FormLabel(
+            field='nights_away',
+            label=('We last visited you in {previous}. Since then, in total '
+                   'how many nights did you spend away from this community, '
+                   'including visits to cattle post and lands? (If you don\'t '
+                   'know exactly, give your best guess).'),
+            previous_appointment=True),
+        FormLabel(
+            field='cattle_postlands',
+            label=('We last visited you in {previous}. Since then, during '
+                   'the times you were away from this community, where were '
+                   'you primarily staying?'),
+            previous_appointment=True)
+    ]
 
     fieldsets = (
         (None, {
