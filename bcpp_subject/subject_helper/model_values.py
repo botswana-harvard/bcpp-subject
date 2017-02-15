@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NOT_APPLICABLE, DECLINED
+from edc_constants.constants import POS, NOT_APPLICABLE, DECLINED, NEG
 
 from ..models import (
     HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
@@ -45,19 +45,30 @@ class ModelValues:
             self.ever_taken_arv = obj.ever_taken_arv
             self.on_arv = None if self.on_arv == NOT_APPLICABLE else obj.on_arv
 
-        # ElisaHivResult
-        qs = ElisaHivResult.objects.filter(
-            **options).order_by('report_datetime')
-        if qs:
-            obj = self.get_first_positive_or_none(qs, 'hiv_result')
-            if obj:
-                self.elisa_hiv_result = obj.hiv_result
-                self.elisa_hiv_result_date = obj.hiv_result_datetime
-            else:
-                self.elisa_hiv_result = qs.last().hiv_result
-                self.elisa_hiv_result_date = qs.last().hiv_result_datetime
-
         # HivTestingHistory
+        self.update_from_hiv_testing_history(visit, **options)
+
+        # HivTestReview
+        self.update_from_direct_documention(visit, **options)
+
+        # HivResultDocumentation
+        self.update_from_indirect_documentation(visit, **options)
+
+        # ElisaHivResult
+        self.update_from_elisa(visit, **options)
+
+        # HivResult performed, not declined
+        self.update_from_rapid_hiv_tests(visit, **options)
+
+        try:
+            obj = HivResult.objects.get(
+                subject_visit=visit, hiv_result=DECLINED)
+        except HivResult.DoesNotExist:
+            self.declined = None
+        else:
+            self.declined = True
+
+    def update_from_hiv_testing_history(self, visit, **options):
         qs = HivTestingHistory.objects.filter(
             **options).order_by('report_datetime')
         if qs:
@@ -70,10 +81,36 @@ class ModelValues:
                 self.has_tested = qs.last().has_tested
                 self.other_record = qs.last().other_record
                 self.self_reported_result = qs.last().verbal_hiv_result
+        # print('self_reported_result', self.self_reported_result)
 
-        # HivTestReview
+    def update_from_rapid_hiv_tests(self, visit, **options):
+        """Updates using values from HivResult fetching the first POS from
+        the history of HivResult, if one exists, or with a NEG result from
+        today, if it exists.
+        """
+        # HivResult performed, not declined
+        qs = HivResult.objects.filter(
+            hiv_result_datetime__isnull=False,
+            **options).order_by('hiv_result_datetime')
+        if qs:
+            obj = self.get_first_positive_or_none(qs, 'hiv_result')
+            if obj:
+                self.today_hiv_result = obj.hiv_result
+                self.today_hiv_result_date = obj.hiv_result_datetime.date()
+            else:
+                try:
+                    obj = HivResult.objects.get(
+                        subject_visit=visit, hiv_result=NEG)
+                except HivResult.DoesNotExist:
+                    pass
+                else:
+                    self.today_hiv_result = obj.hiv_result
+                    self.today_hiv_result_date = obj.hiv_result_datetime.date()
+        # print('today_hiv_result', self.today_hiv_result)
+
+    def update_from_direct_documention(self, visit, **options):
         qs = HivTestReview.objects.filter(
-            **options).order_by('report_datetime')
+            **options).order_by('hiv_test_date')
         if qs:
             obj = self.get_first_positive_or_none(qs, 'recorded_hiv_result')
             if obj:
@@ -82,10 +119,15 @@ class ModelValues:
             else:
                 self.recorded_hiv_result = qs.last().recorded_hiv_result
                 self.recorded_hiv_result_date = qs.last().hiv_test_date
+        # print('recorded_hiv_result', self.recorded_hiv_result)
 
-        # HivResultDocumentation
+    def update_from_indirect_documentation(self, visit, **options):
+        """Updates using values from HivResultDocumentation fetching the first
+        POS from the history of HivResultDocumentation, if one exists, or from
+        the last entered HivResultDocumentation.
+        """
         qs = HivResultDocumentation.objects.filter(
-            **options).order_by('report_datetime')
+            **options).order_by('result_date')
         if qs:
             obj = self.get_first_positive_or_none(qs, 'result_recorded')
             if obj:
@@ -96,28 +138,22 @@ class ModelValues:
                 self.result_recorded = qs.last().result_recorded
                 self.result_recorded_date = qs.last().result_date
                 self.result_recorded_document = qs.last().result_doc_type
+        # print('result_recorded', self.result_recorded)
 
-        # HivResult performed, not declined
-        qs = HivResult.objects.filter(
-            hiv_result_datetime__isnull=False,
-            **options).order_by('report_datetime')
+    def update_from_elisa(self, visit, **options):
+        """Updates using the first POS, if it exists, or the last result,
+        if it exists.
+        """
+        qs = ElisaHivResult.objects.filter(
+            **options).order_by('hiv_result_datetime')
         if qs:
             obj = self.get_first_positive_or_none(qs, 'hiv_result')
             if obj:
-                self.today_hiv_result = obj.hiv_result
-                self.today_hiv_result_date = obj.hiv_result_datetime.date()
+                self.elisa_hiv_result = obj.hiv_result
+                self.elisa_hiv_result_date = obj.hiv_result_datetime
             else:
-                self.today_hiv_result = qs.last().hiv_result
-                self.today_hiv_result_date = (
-                    qs.last().hiv_result_datetime.date())
-
-        try:
-            obj = HivResult.objects.get(
-                subject_visit=visit, hiv_result=DECLINED)
-        except HivResult.DoesNotExist:
-            self.declined = None
-        else:
-            self.declined = True
+                self.elisa_hiv_result = qs.last().hiv_result
+                self.elisa_hiv_result_date = qs.last().hiv_result_datetime
 
     def get_first_positive_or_none(self, qs, field_name):
         """Returns the first model instance that is POS or None.
