@@ -1,8 +1,7 @@
 from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic.base import TemplateResponseMixin, ContextMixin, View,\
-    TemplateView
+from django.views.generic.base import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import (
@@ -10,15 +9,15 @@ from edc_dashboard.view_mixins import (
 
 from ....models import AnonymousConsent
 from ...wrappers import AnonymousConsentModelWrapper
-from .dashboard_view_mixin import DashboardViewMixin
+from .base_dashboard_view import BaseDashboardView
 from .wrappers import (
     AppointmentModelWrapper,
     SubjectVisitModelWrapper, CrfModelWrapper, RequisitionModelWrapper)
 
 
 class DashboardView(
+        BaseDashboardView, EdcDashboardViewMixin,
         AppConfigViewMixin, EdcBaseViewMixin,
-        EdcDashboardViewMixin, DashboardViewMixin,
         TemplateView):
 
     app_config_name = 'bcpp_subject'

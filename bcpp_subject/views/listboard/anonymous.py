@@ -20,6 +20,8 @@ class AnonymousListboardView(BaseListboardView):
     model_wrapper_class = AnonymousConsentModelWrapper
     search_form_class = SearchForm
     paginate_by = 10
+    navbar_name = 'anonymous'
+    navbar_item_selected = 'bcpp_subject'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
