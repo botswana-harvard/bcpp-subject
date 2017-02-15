@@ -2,12 +2,10 @@ from django.contrib import admin
 
 from edc_base.fieldsets import FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_constants.constants import NO
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import HivLinkageToCareForm
 from ..models import HivLinkageToCare, SubjectReferral
-
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
@@ -50,28 +48,26 @@ class HivLinkageToCareAdmin(CustomFormLabelMixin, CrfModelAdminMixin, admin.Mode
                 "subject_visit",
                 "report_datetime",
                 "kept_appt",
-                "diff_clininc",
-                "left_clininc_datetime",
-                "clinic_first_datetime",
-                "evidence_type_clinic",
-                "evidence_type_clinic_other",
-                "recommended_therapy",
-                "reason_recommended",
-                "reason_recommended_other",
-                "startered_therapy",
-                "startered_therapy_date",
-                "start_therapy_clininc",
-                "start_therapy_clininc_other",
-                "not_refered_clininc",
-                "evidence_not_refered",
-                "evidence_not_refered_other",
+                "different_clinic",
+                "failed_attempt_date",
+                "first_attempt_date",
+                "evidence_referral",
+                "evidence_referral_other",
+                "recommended_art",
+                "reason_recommended_art",
+                "reason_recommended_art_other",
+                "initiated",
+                "initiated_date",
+                "initiated_clinic",
+                "initiated_clinic_other",
+                "initiated_clinic_community",
+                "evidence_art",
+                "evidence_art_other",
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
         "kept_appt": admin.VERTICAL,
-        "evidence_type_clinic": admin.VERTICAL,
-        "recommended_therapy": admin.VERTICAL,
-        "reason_recommended": admin.VERTICAL,
-        "startered_therapy": admin.VERTICAL,
-        "start_therapy_clininc": admin.VERTICAL,
-        "evidence_not_refered": admin.VERTICAL}
+        "evidence_referral": admin.VERTICAL,
+        "reason_recommended_art": admin.VERTICAL,
+        "initiated": admin.VERTICAL,
+        "evidence_art": admin.VERTICAL}

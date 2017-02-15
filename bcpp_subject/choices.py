@@ -1261,15 +1261,16 @@ FIRST_PARTNER_HIV_CHOICE = (
 # FIXME: responses are not unique
 KEPT_APPT = (
     (YES, 'Yes, kept appointment'),
-    ('No_refered_other_clinic',
+    ('attended_other_date',
      'No but attended a visit at the HIV care clinic to which '
      'they were referred on another date'),
-    ('No_other_clinic', 'No but attended a visit at a different HIV clinic'),
-    ('diff_clininc', 'I went to a different clinic'),
-    ('No',
+    ('attended_different_clinic',
+     'No but attended a visit at a different HIV clinic'),
+    ('went_different_clinic', 'I went to a different clinic'),
+    ('no_tried_left',
      'No but tried to attend an HIV care clinic and left before '
      'I saw a healthcare provider'),
-    ('No', 'I have not been to any HIV care clinic [skip to #3]')
+    ('no_not_been', 'I have not been to any HIV care clinic')
 )
 
 PARTNER_AGE = (
@@ -1293,7 +1294,7 @@ RECOMMENDED_THERAPY = (
     (NO, "No")
 )
 
-STARTERED_THERAPY = (
+REASONS_INITIATED = (
     ("Yes", "Yes"),
     ("No", "No")
 )
