@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NEG, IND, NO, YES, FEMALE, NAIVE
+from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE
 from edc_registration.models import RegisteredSubject
 
 from bcpp.surveys import BCPP_YEAR_3
@@ -141,10 +141,6 @@ def func_hiv_positive(visit_instance, *args):
     diagnosed HIV positive.
     """
     return SubjectHelper(visit_instance).final_hiv_status == POS
-
-
-def func_hiv_indeterminate(visit_instance, *args):
-    return SubjectHelper(visit_instance).final_hiv_status == IND
 
 
 def func_requires_circumcision(visit_instance, *args):

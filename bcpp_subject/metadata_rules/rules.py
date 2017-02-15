@@ -3,9 +3,9 @@ from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_metadata.rules.crf_rule import CrfRule
 from edc_metadata.rules.decorators import register
 from edc_metadata.rules.logic import Logic
+from edc_metadata.rules.predicate import P, PF
 from edc_metadata.rules.requisition_rule import RequisitionRule
 from edc_metadata.rules.rule_group import RuleGroup
-from edc_metadata.rules.predicate import P, PF
 
 from ..constants import VENOUS
 from ..labs import (
@@ -13,12 +13,12 @@ from ..labs import (
 from ..models import ResourceUtilization, SubjectVisit
 from .funcs import (
     func_anonymous_member,
-    func_requires_hivlinkagetocare,
-    func_hiv_indeterminate,
     func_hiv_positive,
+    func_is_female,
     func_known_hiv_pos,
     func_requires_circumcision,
     func_requires_hic_enrollment,
+    func_requires_hivlinkagetocare,
     func_requires_hivuntested,
     func_requires_microtube,
     func_requires_pima_cd4,
@@ -27,8 +27,7 @@ from .funcs import (
     func_requires_second_partner_forms,
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
-    func_requires_vl,
-    func_is_female)
+    func_requires_vl)
 
 
 @register()

@@ -1,12 +1,12 @@
 from django import forms
 
-from edc_constants.constants import (
-    NOT_APPLICABLE, NEG, POS, IND, YES, NO, DECLINED)
+from edc_constants.constants import NEG, POS, IND, DECLINED
 
 from ..models import HivResult, SubjectRequisition, HicEnrollment
 
 from .form_mixins import SubjectModelFormMixin
 from bcpp_subject.constants import NOT_PERFORMED, CAPILLARY, VENOUS
+from bcpp_subject.labs import microtube_panel
 
 
 class HivResultForm (SubjectModelFormMixin):
@@ -27,17 +27,14 @@ class HivResultForm (SubjectModelFormMixin):
                     'Got {0}'.format(HicEnrollment._meta.verbose_name,
                                      cleaned_data.get('hiv_result')))
 
-#         try:
-#             microtube = SubjectRequisition.objects.get(
-#                 subject_visit=cleaned_data.get('subject_visit'),
-#                 panel_name='Microtube')
-#         except SubjectRequisition.DoesNotExist:
-#             microtube = None
-#
-#         if (cleaned_data.get('hiv_result') not in [DECLINED, NOT_PERFORMED]
-#                 and not microtube):
-#             raise forms.ValidationError(
-#                 'Please complete Microtube Requisition first.')
+        try:
+            SubjectRequisition.objects.get(
+                subject_visit=cleaned_data.get('subject_visit'),
+                panel_name=microtube_panel.name)
+        except SubjectRequisition.DoesNotExist:
+            if cleaned_data.get('hiv_result') not in [DECLINED, NOT_PERFORMED]:
+                raise forms.ValidationError(
+                    'Please complete Microtube Requisition first.')
 
         self.required_if(
             POS, NEG, IND, field='hiv_result', field_required='hiv_result_datetime')

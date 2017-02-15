@@ -5,11 +5,9 @@ from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from ..choices import HIV_RESULT, WHY_NO_HIV_TESTING_CHOICE
+from ..choices import HIV_RESULT, WHY_NO_HIV_TESTING_CHOICE, BLOOD_DRAW_TYPES
 
 from .model_mixins import CrfModelMixin
-from bcpp_subject.constants import VENOUS
-from bcpp_subject.choices import BLOOD_DRAW_TYPES
 
 
 class HivResult(CrfModelMixin):
