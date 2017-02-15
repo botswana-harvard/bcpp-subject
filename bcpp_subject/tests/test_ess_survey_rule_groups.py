@@ -563,7 +563,6 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             report_datetime=self.subject_visit_male.report_datetime,
             panel_name=MICROTUBE,
         )
-
         mommy.make_recipe(
             'bcpp_subject.hivresult',
             subject_visit=self.subject_visit_male,
@@ -584,6 +583,7 @@ class TestEssSurveyRuleGroups(SubjectMixin, RuleGroupMixin, TestCase):
             entry_status=REQUIRED,
             model='bcpp_subject.subjectrequisition',
             subject_identifier=self.subject_identifier,
+            panel_name=ELISA,
             visit_code=E0)
 
         self.assertEqual(req.count(), 1)
