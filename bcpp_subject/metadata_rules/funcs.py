@@ -59,8 +59,6 @@ def func_requires_hivlinkagetocare(visit_instance, *args):
     subject_helper = SubjectHelper(visit_instance)
     if subject_helper.defaulter_at_baseline:
         return True
-    elif subject_helper.final_arv_status in [DEFAULTER, NAIVE]:
-        return True
     elif subject_helper.naive_at_baseline:
         return True
     return False
@@ -88,7 +86,7 @@ def func_on_art(visit_instance, *args):
 
 def func_requires_todays_hiv_result(visit_instance, *args):
     subject_helper = SubjectHelper(visit_instance)
-    return (subject_helper.final_hiv_status != POS)
+    return subject_helper.final_hiv_status != POS
 
 
 def func_requires_pima_cd4(visit_instance, *args):
