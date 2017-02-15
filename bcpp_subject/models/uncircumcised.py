@@ -28,6 +28,7 @@ class Uncircumcised (CircumcisionModelMixin, CrfModelMixin):
         verbose_name="Would you ever consider being circumcised in the future?",
         max_length=25,
         choices=YES_NO_UNSURE,
+        null=True,
         help_text="",
     )
 

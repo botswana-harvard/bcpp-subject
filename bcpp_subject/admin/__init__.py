@@ -2,8 +2,8 @@ from .access_to_care_admin import AccessToCareAdmin
 from .anonymous import AnonymousConsentAdmin
 from .appointment_admin import AppointmentAdmin
 from .cancer_admin import CancerAdmin
-from .circumcision_admin import (
-    CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin)
+from .circumcised_admin import CircumcisedAdmin
+from .circumcision_admin import CircumcisionAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
 from .correct_consent_admin import CorrectConsentAdmin
@@ -57,4 +57,5 @@ from .substance_use_admin import SubstanceUseAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .third_partner_admin import ThirdPartnerAdmin
 from .tuberculosis_admin import TuberculosisAdmin
+from .uncircumcised_admin import UncircumcisedAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
