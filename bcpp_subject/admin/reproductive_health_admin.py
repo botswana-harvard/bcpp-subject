@@ -36,7 +36,7 @@ class ReproductiveHealthAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         T0: Remove(
             'when_pregnant', 'gestational_weeks', 'pregnancy_hiv_tested',
             'pregnancy_hiv_retested', 'given_birth', 'more_children'),
-        E0: Remove('given_birth', 'more_children'),
+        E0: Remove('given_birth', 'more_children', 'when_pregnant'),
     }
 
     fieldsets = (
