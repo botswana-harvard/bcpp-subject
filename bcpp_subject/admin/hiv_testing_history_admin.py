@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from edc_base.fieldsets import FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
@@ -15,13 +16,11 @@ class HivTestingHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestingHistoryForm
 
-    custom_form_labels = {
-        'has_tested': {
-            'label': (
-                'Since we last saw you in {previous}, '
-                'have you tested for HIV?'),
-            'callback': lambda obj: True}
-    }
+    custom_form_labels = [
+        FormLabel(
+            field='has_tested',
+            label='Since we last saw you in {previous}, have you tested for HIV?')
+    ]
 
     fieldsets = (
         (None, {

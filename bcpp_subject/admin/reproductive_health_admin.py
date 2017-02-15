@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from edc_base.fieldsets import Remove
+from edc_base.fieldsets import Remove, FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
@@ -22,16 +22,15 @@ class ReproductiveHealthAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ReproductiveHealthForm
 
-    custom_form_labels = {
-        'given_birth': {
-            'label': 'Have you given birth since we last spoke in {previous}',
-            'callback': lambda obj: True if obj else False},
-        'menopause': {
-            'label': (
-                'Have you reached menopause (more than 12 months without a period) '
-                'since we last spoke in {previous}?'),
-            'callback': lambda obj: True if obj else False}
-    }
+    custom_form_labels = [
+        FormLabel(
+            field='given_birth',
+            label='Have you given birth since we last spoke in {previous}'),
+        FormLabel(
+            field='menopause',
+            label=('Have you reached menopause (more than 12 months without a period) '
+                   'since we last spoke in {previous}?'))
+    ]
 
     conditional_fieldlists = {
         T0: Remove(

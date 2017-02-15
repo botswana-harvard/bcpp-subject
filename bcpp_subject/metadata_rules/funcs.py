@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NEG, IND, NO, MALE, YES, FEMALE, NAIVE
+from edc_constants.constants import POS, NEG, IND, NO, YES, FEMALE, NAIVE
 from edc_registration.models import RegisteredSubject
 
 from bcpp.surveys import BCPP_YEAR_3
@@ -8,6 +8,24 @@ from ..models import (
     HicEnrollment, HivTestingHistory, HivResult,
     SexualBehaviour, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
+
+
+def is_hic_enrolled(visit_instance):
+    """Returns True if subject is enrolled to Hic.
+    """
+    try:
+        HicEnrollment.objects.get(
+            subject_visit__subject_identifier=visit_instance.subject_identifier,
+            hic_permission=YES)
+        return True
+    except HicEnrollment.DoesNotExist:
+        return False
+
+
+def func_is_female(visit_instance, *args):
+    registered_subject = RegisteredSubject.objects.get(
+        subject_identifier=visit_instance.subject_identifier)
+    return registered_subject.gender == FEMALE
 
 
 def func_requires_recent_partner(visit_instance, *args):
@@ -34,28 +52,18 @@ def func_requires_third_partner_forms(visit_instance, *args):
     return False
 
 
-def is_female(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(
-        subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == FEMALE
-
-
-def is_male(visit_instance, *args):
-    registered_subject = RegisteredSubject.objects.get(
-        subject_identifier=visit_instance.subject_identifier)
-    return registered_subject.gender == MALE
-
-
-def func_requires_hivlinkagetocare(self, visit_instance, *args):
-    return (
-        func_art_defaulter(visit_instance)
-        or func_defaulter_at_enrollment(visit_instance)
-        or func_art_naive(visit_instance))
-
-
-def func_defaulter_at_enrollment(self, visit_instance, *args):
+def func_requires_hivlinkagetocare(visit_instance, *args):
+    """Returns True is a participant is a defaulter now or at baseline,
+    is naive now or at baseline.
+    """
     subject_helper = SubjectHelper(visit_instance)
-    return subject_helper.defaulter_at_enrollment
+    if subject_helper.defaulter_at_baseline:
+        return True
+    elif subject_helper.final_arv_status in [DEFAULTER, NAIVE]:
+        return True
+    elif subject_helper.naive_at_baseline:
+        return True
+    return False
 
 
 def func_art_defaulter(visit_instance, *args):
@@ -69,8 +77,7 @@ def func_art_naive(visit_instance, *args):
     """Returns True if the participant art naive.
     """
     subject_helper = SubjectHelper(visit_instance)
-    return (subject_helper.final_arv_status == NAIVE or
-            subject_helper.naive_at_enrollment)
+    return subject_helper.final_arv_status == NAIVE
 
 
 def func_on_art(visit_instance, *args):
@@ -86,11 +93,13 @@ def func_requires_todays_hiv_result(visit_instance, *args):
 
 def func_requires_pima_cd4(visit_instance, *args):
     """Returns True if subject is POS and ART naive.
+
+    Note: if naive at baseline, is also required.
     """
     subject_helper = SubjectHelper(visit_instance)
     return (subject_helper.final_hiv_status == POS
             and (subject_helper.final_arv_status == NAIVE
-                 or subject_helper.naive_at_enrollment))
+                 or subject_helper.naive_at_baseline))
 
 
 def func_known_hiv_pos(visit_instance, *args):
@@ -110,7 +119,7 @@ def func_requires_hic_enrollment(visit_instance, *args):
         return False
     subject_helper = SubjectHelper(visit_instance)
     return (subject_helper.final_hiv_status == NEG
-            and not func_hic_enrolled(visit_instance))
+            and not is_hic_enrolled(visit_instance))
 
 
 def func_requires_microtube(visit_instance, *args):
@@ -138,16 +147,6 @@ def func_hiv_positive(visit_instance, *args):
 
 def func_hiv_indeterminate(visit_instance, *args):
     return SubjectHelper(visit_instance).final_hiv_status == IND
-
-
-def func_hic_enrolled(visit_instance, *args):
-    try:
-        HicEnrollment.objects.get(
-            subject_visit__subject_identifier=visit_instance.subject_identifier,
-            hic_permission=YES)
-        return True
-    except HicEnrollment.DoesNotExist:
-        return False
 
 
 def func_requires_circumcision(visit_instance, *args):

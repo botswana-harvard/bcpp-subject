@@ -3,13 +3,11 @@ import sys
 from edc_constants.constants import (
     POS, YES, NEG, NO, NAIVE, DWTA, UNK, IND)
 
-from ..constants import T0
-from ..models.hiv_care_adherence import HivCareAdherence
 from .model_values import ModelValues
 from .constants import ART_PRESCRIPTION, DEFAULTER, ON_ART
 
 
-class Raw:
+class ValuesSetter:
 
     def __init__(self, model_values):
         for attr, value in model_values.items():
@@ -23,23 +21,27 @@ class SubjectHelper:
     """
 
     def __init__(self, visit, model_values=None, **kwargs):
+        self.defaulter_at_baseline = None
         self.documented_pos = None
         self.documented_pos_date = None
         self.final_arv_status = None
         self.final_hiv_status = None
+        self.naive_at_baseline = None
+        self.newly_diagnosed = None
         self.prev_result = None
         self.prev_result_date = None
         self.prev_result_known = None
-        self.newly_diagnosed = None
-        self.defaulter_at_enrollment = None
 
         self.subject_visit = visit
         self.subject_identifier = visit.subject_identifier
 
-        self.raw = Raw(model_values or ModelValues(visit).__dict__)
+        self.baseline = ValuesSetter(
+            model_values or ModelValues(visit, baseline=True).__dict__)
+        self.current = ValuesSetter(
+            model_values or ModelValues(visit).__dict__)
 
-        if self.raw.result_recorded_document == ART_PRESCRIPTION:
-            self.raw.arv_evidence = YES
+        if self.current.result_recorded_document == ART_PRESCRIPTION:
+            self.current.arv_evidence = YES
 
         self._prepare_documented_status_and_date()
         self._prepare_final_hiv_status()
@@ -51,20 +53,14 @@ class SubjectHelper:
         self.known_positive = (
             self.prev_result == POS and self.prev_result_known == YES)
         self.indeterminate = (
-            self.raw.today_hiv_result == IND
-            and self.raw.elisa_hiv_result not in [POS, NEG])
-        try:
-            hiv_care_adherence = HivCareAdherence.objects.get(
-                subject_visit__subject_identifier=visit.subject_identifier,
-                subject_visit__visit_code=T0)
-        except HivCareAdherence.DoesNotExist:
-            self.naive_at_enrollment = False
-            self.defaulter_at_enrollment = False
-        else:
-            self.naive_at_enrollment = True if hiv_care_adherence.ever_taken_arv == NO else False
-            self.defaulter_at_enrollment = (
-                True if hiv_care_adherence.ever_taken_arv == YES
-                and hiv_care_adherence.on_arv == NO else False)
+            self.current.today_hiv_result == IND
+            and self.current.elisa_hiv_result not in [POS, NEG])
+
+        if self.baseline.ever_taken_arv == NO:
+            self.naive_at_baseline = True
+        if (self.baseline.ever_taken_arv == YES
+                and self.baseline.on_arv == NO):
+            self.defaulter_at_baseline = True
 
     @property
     def final_hiv_status_date(self):
@@ -78,18 +74,18 @@ class SubjectHelper:
 
     @property
     def prev_results_discordant(self):
-        if self.raw.result_recorded and self.raw.recorded_hiv_result:
-            return self.raw.result_recorded != self.raw.recorded_hiv_result
+        if self.current.result_recorded and self.current.recorded_hiv_result:
+            return self.current.result_recorded != self.current.recorded_hiv_result
         return False
 
     @property
     def best_prev_result_date(self):
         """Returns best date after changing result based on ARV status.
         """
-        if self.raw.recorded_hiv_result == POS:
-            best_prev_result_date = self.raw.recorded_hiv_result_date
-        elif self.raw.result_recorded == POS:
-            best_prev_result_date = self.raw.result_recorded_date
+        if self.current.recorded_hiv_result == POS:
+            best_prev_result_date = self.current.recorded_hiv_result_date
+        elif self.current.result_recorded == POS:
+            best_prev_result_date = self.current.result_recorded_date
         else:
             best_prev_result_date = None
         return best_prev_result_date
@@ -116,13 +112,13 @@ class SubjectHelper:
         The caller is responsible for handling recorded_hiv_result
         and result_recorded being discordant.
         """
-        if result and self.raw.recorded_hiv_result == result:
+        if result and self.current.recorded_hiv_result == result:
             self.prev_result = result
-            self.prev_result_date = self.raw.recorded_hiv_result_date
+            self.prev_result_date = self.current.recorded_hiv_result_date
             self.prev_result_known = YES
-        elif result and self.raw.result_recorded == result:
+        elif result and self.current.result_recorded == result:
             self.prev_result = result
-            self.prev_result_date = self.raw.result_recorded_date
+            self.prev_result_date = self.current.result_recorded_date
             self.prev_result_known = YES
         elif not result:
             self.prev_result = None
@@ -147,40 +143,40 @@ class SubjectHelper:
     def _prepare_final_arv_status(self):
         self.final_arv_status = None
         if self.final_hiv_status == POS:
-            if ((not self.raw.ever_taken_arv or self.raw.ever_taken_arv in (NO, DWTA))
-                    and (self.raw.arv_evidence == NO or not self.raw.arv_evidence)):
+            if ((not self.current.ever_taken_arv or self.current.ever_taken_arv in (NO, DWTA))
+                    and (self.current.arv_evidence == NO or not self.current.arv_evidence)):
                 self.final_arv_status = NAIVE
-            elif ((self.raw.ever_taken_arv == YES or self.raw.arv_evidence == YES)
-                  and self.raw.on_arv == NO):
+            elif ((self.current.ever_taken_arv == YES or self.current.arv_evidence == YES)
+                  and self.current.on_arv == NO):
                 self.final_arv_status = DEFAULTER
-            elif ((self.raw.arv_evidence == YES or self.raw.ever_taken_arv == YES)
-                  and self.raw.on_arv == YES):
+            elif ((self.current.arv_evidence == YES or self.current.ever_taken_arv == YES)
+                  and self.current.on_arv == YES):
                 self.final_arv_status = ON_ART
-            elif (self.raw.arv_evidence == YES
-                  and not self.raw.on_arv
-                  and not self.raw.ever_taken_arv):
+            elif (self.current.arv_evidence == YES
+                  and not self.current.on_arv
+                  and not self.current.ever_taken_arv):
                 self.final_arv_status = ON_ART
             else:
                 sys.stdout.write(
                     'Cannot determine final_arv_status for {}. '
                     'Got ever_taken_arv={}, on_arv={}, arv_evidence={}'.format(
                         self.subject_identifier,
-                        self.raw.ever_taken_arv,
-                        self.raw.on_arv,
-                        self.raw.arv_evidence))
+                        self.current.ever_taken_arv,
+                        self.current.on_arv,
+                        self.current.arv_evidence))
 
     def _prepare_documented_status_and_date(self):
-        if self.raw.recorded_hiv_result == POS:
+        if self.current.recorded_hiv_result == POS:
             self.documented_pos = YES
-            self.documented_pos_date = self.raw.recorded_hiv_result_date
-        elif self.raw.other_record == YES and self.raw.result_recorded == POS:
+            self.documented_pos_date = self.current.recorded_hiv_result_date
+        elif self.current.other_record == YES and self.current.result_recorded == POS:
             self.documented_pos = YES
-            self.documented_pos_date = self.raw.result_recorded_date
-        elif self.raw.arv_evidence == YES:
+            self.documented_pos_date = self.current.result_recorded_date
+        elif self.current.arv_evidence == YES:
             self.documented_pos = YES
             self.documented_pos_date = None
-        elif (self.raw.recorded_hiv_result not in (POS, NEG) and
-                not (self.raw.other_record == YES and self.raw.result_recorded == POS)):
+        elif (self.current.recorded_hiv_result not in (POS, NEG) and
+                not (self.current.other_record == YES and self.current.result_recorded == POS)):
             self.documented_pos = NO
             self.documented_pos_date = None
         else:
@@ -188,10 +184,10 @@ class SubjectHelper:
             self.documented_pos_date = None
 
     def _prepare_final_hiv_status(self):
-        if self.raw.elisa_hiv_result in (POS, NEG):
-            self.final_hiv_status = self.raw.elisa_hiv_result
-        elif self.raw.today_hiv_result in (POS, NEG):
-            self.final_hiv_status = self.raw.today_hiv_result
+        if self.current.elisa_hiv_result in (POS, NEG):
+            self.final_hiv_status = self.current.elisa_hiv_result
+        elif self.current.today_hiv_result in (POS, NEG):
+            self.final_hiv_status = self.current.today_hiv_result
         elif self.documented_pos == YES:
             self.final_hiv_status = POS
         else:
@@ -205,10 +201,10 @@ class SubjectHelper:
         if self.final_hiv_status == POS:
             if self.prev_result_known == YES and self.prev_result == POS:
                 final_hiv_status_date = self.prev_result_date
-            elif self.raw.today_hiv_result == POS:
-                final_hiv_status_date = self.raw.today_hiv_result_date
-            elif self.raw.elisa_hiv_result == POS:
-                final_hiv_status_date = self.raw.elisa_hiv_result_date
+            elif self.current.today_hiv_result == POS:
+                final_hiv_status_date = self.current.today_hiv_result_date
+            elif self.current.elisa_hiv_result == POS:
+                final_hiv_status_date = self.current.elisa_hiv_result_date
         return final_hiv_status_date
 
     @property
@@ -217,10 +213,10 @@ class SubjectHelper:
         """
         final_hiv_status_date = None
         if self.final_hiv_status == NEG:
-            if self.raw.elisa_hiv_result_date:
-                final_hiv_status_date = self.raw.elisa_hiv_result_date
-            elif self.raw.today_hiv_result_date:
-                final_hiv_status_date = self.raw.today_hiv_result_date
+            if self.current.elisa_hiv_result_date:
+                final_hiv_status_date = self.current.elisa_hiv_result_date
+            elif self.current.today_hiv_result_date:
+                final_hiv_status_date = self.current.today_hiv_result_date
             elif self.prev_result_known == YES and self.prev_result == NEG:
                 final_hiv_status_date = self.prev_result_date
         return final_hiv_status_date

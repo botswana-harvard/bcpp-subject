@@ -1216,13 +1216,13 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
 
         obj = SubjectHelper(self.subject_visit_male_t0)
-        self.assertTrue(obj.defaulter_at_enrollment)
+        self.assertTrue(obj.defaulter_at_baseline)
 
         subject_visit = self.add_subject_visit_followup(
             self.subject_visit_male_t0.household_member, T1)
 
         obj = SubjectHelper(subject_visit)
-        self.assertTrue(obj.defaulter_at_enrollment)
+        self.assertTrue(obj.defaulter_at_baseline)
 
         # add HivCarAdherence,
         mommy.make_recipe(
@@ -1238,4 +1238,4 @@ class TestSubjectHelper(SubjectMixin, TestCase):
         )
         obj = SubjectHelper(subject_visit)
         self.assertEqual(obj.final_arv_status, ON_ART)
-        self.assertTrue(obj.defaulter_at_enrollment)
+        self.assertTrue(obj.defaulter_at_baseline)

@@ -2,7 +2,7 @@ from edc_constants.constants import POS, NOT_APPLICABLE
 
 from ..models import (
     HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
-    HivResultDocumentation, HivResult)
+    HivResultDocumentation, HivResult, SubjectVisit)
 
 
 class ModelValues:
@@ -11,7 +11,7 @@ class ModelValues:
     helper class.
     """
 
-    def __init__(self, visit):
+    def __init__(self, visit, baseline=None):
         self.arv_evidence = None
         self.elisa_hiv_result = None
         self.elisa_hiv_result_date = None
@@ -27,9 +27,15 @@ class ModelValues:
         self.today_hiv_result = None
         self.today_hiv_result_date = None
 
-        options = dict(
-            subject_visit__subject_identifier=visit.subject_identifier,
-            subject_visit__report_datetime__lte=visit.report_datetime)
+        if baseline:
+            subject_visit = SubjectVisit.objects.filter(
+                subject_identifier=visit.subject_identifier).order_by(
+                    'report_datetime').first()
+            options = dict(subject_visit=subject_visit)
+        else:
+            options = dict(
+                subject_visit__subject_identifier=visit.subject_identifier,
+                subject_visit__report_datetime__lte=visit.report_datetime)
 
         # HivCareAdherence
         obj = HivCareAdherence.objects.filter(
