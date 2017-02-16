@@ -2,11 +2,12 @@ from django.db import models
 
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.utils import age
-from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin, SampleCollectionFieldsMixin
+from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
+from edc_dashboard.model_mixins import SearchSlugModelMixin as BaseSearchSlugModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
@@ -23,11 +24,23 @@ def is_minor(dob, reference_datetime):
     return 16 <= age(dob, reference_datetime).years < 18
 
 
+class SearchSlugModelMixin(BaseSearchSlugModelMixin):
+
+    def get_slugs(self):
+        slugs = super().get_slugs()
+        return slugs + [
+            self.subject_identifier] + self.household_member.get_slugs()
+
+    class Meta:
+        abstract = True
+
+
 class AnonymousConsent(
         ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
         NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
+        SearchSlugModelMixin,
         BaseUuidModel):
 
     """ A model completed by the user that captures the ICF.
