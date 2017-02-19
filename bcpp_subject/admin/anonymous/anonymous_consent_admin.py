@@ -44,7 +44,7 @@ class AnonymousConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
-        readonly_fields + audit_fields + survey_fields
+        readonly_fields = readonly_fields + audit_fields + survey_fields
         if obj:
             readonly_fields += (
                 'subject_identifier',

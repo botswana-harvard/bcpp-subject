@@ -44,6 +44,7 @@ from .recent_partner_admin import RecentPartnerAdmin
 from .reproductive_health_admin import ReproductiveHealthAdmin
 from .residency_mobility_admin import ResidencyMobilityAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin
+from .result import ResultAdmin, ResultItemAdmin
 from .second_partner_admin import SecondPartnerAdmin
 from .sexual_behaviour_admin import SexualBehaviourAdmin
 from .stigma_admin import StigmaAdmin
