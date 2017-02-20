@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel
-from edc_lab.model_mixins import RequisitionModelMixin
+from edc_lab.model_mixins import (
+    RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin)
 from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
 from edc_visit_tracking.managers import (
@@ -9,20 +10,27 @@ from edc_visit_tracking.managers import (
 from edc_visit_tracking.model_mixins import (
     CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin)
 
-from .subject_visit import SubjectVisit
+from .model_mixins import SearchSlugModelMixin
 from .requires_consent_model_mixin import RequiresConsentMixin
+from .subject_visit import SubjectVisit
 
 
 class SubjectRequisition(
-        RequisitionModelMixin, VisitTrackingCrfModelMixin, OffstudyMixin,
+        RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin,
+        VisitTrackingCrfModelMixin, OffstudyMixin,
         RequiresConsentMixin, PreviousVisitModelMixin,
-        UpdatesRequisitionMetadataModelMixin, BaseUuidModel):
-
-    ADMIN_SITE_NAME = 'bcpp_subject_admin'
+        UpdatesRequisitionMetadataModelMixin, SearchSlugModelMixin,
+        BaseUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
     objects = VisitTrackingCrfModelManager()
+
+    def get_slugs(self):
+        return ([self.subject_visit.subject_identifier,
+                 self.requisition_identifier,
+                 self.identifier_prefix]
+                + self.subject_visit.household_member.get_slugs())
 
     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
         consent_model = 'bcpp_subject.subjectconsent'

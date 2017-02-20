@@ -52,6 +52,7 @@ from .recent_partner import RecentPartner
 from .reproductive_health import ReproductiveHealth
 from .residency_mobility import ResidencyMobility
 from .resource_utilization import ResourceUtilization
+from .result import Result, ResultItem
 from .sexual_behaviour import SexualBehaviour
 from .second_partner import SecondPartner
 from .stigma import Stigma

@@ -3,7 +3,8 @@ from edc_lab.lab_profile import LabProfile
 from edc_lab.processing_profile import ProcessingProfile
 from edc_lab.requisition_panel import RequisitionPanel
 from edc_lab.site_labs import site_labs
-from bcpp_subject.constants import RESEARCH_BLOOD_DRAW, MICROTUBE, VIRAL_LOAD, ELISA
+
+from .constants import RESEARCH_BLOOD_DRAW, MICROTUBE, VIRAL_LOAD, ELISA
 
 
 lab_profile = LabProfile('bcpp_subject')
@@ -28,12 +29,14 @@ pbmc_processing = ProcessingProfile('pbmc', wb)
 pbmc_processing.add_process(pl, 4)
 lab_profile.add_processing_profile(pbmc_processing)
 
-viral_load_panel = RequisitionPanel(VIRAL_LOAD, wb)  # link this to the visit_schedule
+# link this to the visit_schedule
+viral_load_panel = RequisitionPanel(VIRAL_LOAD, wb)
 viral_load_panel.processing_profile = viral_load_processing
 lab_profile.add_panel(viral_load_panel)
 
 # TODO, add processing profile details
-microtube_panel = RequisitionPanel(MICROTUBE, wb)  # link this to the visit_schedule
+# link this to the visit_schedule
+microtube_panel = RequisitionPanel(MICROTUBE, wb)
 lab_profile.add_panel(microtube_panel)
 
 # TODO, add processing profile details
@@ -41,11 +44,14 @@ elisa_panel = RequisitionPanel(ELISA, wb)  # link this to the visit_schedule
 lab_profile.add_panel(elisa_panel)
 
 # TODO, add processing profile details
-venous_panel = RequisitionPanel('Venous (HIV)', wb)  # link this to the visit_schedule
+# link this to the visit_schedule
+venous_panel = RequisitionPanel('Venous (HIV)', wb)
 lab_profile.add_panel(venous_panel)
 
 
-rdb_panel = RequisitionPanel(RESEARCH_BLOOD_DRAW, wb)  # link this to the visit_schedule
+# link this to the visit_schedule
+rdb_panel = RequisitionPanel(RESEARCH_BLOOD_DRAW, wb)
+rdb_panel.processing_profile = ProcessingProfile('rbd', wb)
 lab_profile.add_panel(rdb_panel)
 
 site_labs.register('bcpp_subject.subjectrequisition', lab_profile)

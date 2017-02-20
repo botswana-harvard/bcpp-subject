@@ -7,7 +7,8 @@ class ConsentViewMixin(BaseConsentViewMixin):
 
     @property
     def empty_consent(self):
-        """Returns a new unsaved mock consent model."""
+        """Returns a new unsaved mock consent model.
+        """
         return self.consent_model(
             consent_identifier=str(uuid4()),
             household_member=self.household_member,

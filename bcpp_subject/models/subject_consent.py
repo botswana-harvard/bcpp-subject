@@ -23,7 +23,6 @@ from survey.model_mixins import SurveyScheduleModelMixin
 
 from ..managers import SubjectConsentManager
 from ..patterns import subject_identifier
-
 from .model_mixins import SearchSlugModelMixin
 from .utils import is_minor
 
