@@ -151,23 +151,18 @@ list_data = {
 }
 
 
-# for list_obj in list_data.keys():
-#     model = django_apps.get_app_config(
-#         list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
-#     model.objects.all().delete()
-
 for list_obj in list_data.keys():
     try:
         model = django_apps.get_app_config(
             list_obj.split('.')[0]).get_model(list_obj.split('.')[1])
         for tpl in list_data.get(list_obj):
-            a, b = tpl
+            short_name, display_value = tpl
             try:
-                obj = model.objects.get(short_name=a)
+                obj = model.objects.get(short_name=short_name)
             except ObjectDoesNotExist:
-                model.objects.create(short_name=a, name=b)
+                model.objects.create(short_name=short_name, name=display_value)
             else:
-                obj.name = b
+                obj.name = display_value
                 obj.save()
     except Exception as e:
         print(e)
