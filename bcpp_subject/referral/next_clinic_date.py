@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from ..utils import split_weekdays
+from edc_base.utils import get_utcnow
 
 
 def next_clinic_date(community_clinic_days, base_datetime=None,
@@ -15,7 +16,7 @@ def next_clinic_date(community_clinic_days, base_datetime=None,
     clinic_dates = []
     next_clinic_datetime = None
     if community_clinic_days:
-        base_datetime = base_datetime or datetime.today()
+        base_datetime = base_datetime or get_utcnow()
         for DAY in community_clinic_days.days:
             if allow_same_day:
                 clinic_dates.append(

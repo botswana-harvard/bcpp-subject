@@ -1,5 +1,5 @@
-from edc_visit_schedule.visit import Crf
 from edc_map.site_mappers import site_mappers
+from edc_visit_schedule.visit import Crf
 
 from bcpp.communities import is_intervention
 

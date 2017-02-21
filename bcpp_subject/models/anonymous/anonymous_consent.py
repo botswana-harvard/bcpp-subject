@@ -7,7 +7,8 @@ from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
-from edc_dashboard.model_mixins import SearchSlugModelMixin as BaseSearchSlugModelMixin
+from edc_dashboard.model_mixins import (
+    SearchSlugModelMixin as BaseSearchSlugModelMixin, SearchSlugManager)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
@@ -33,6 +34,10 @@ class SearchSlugModelMixin(BaseSearchSlugModelMixin):
 
     class Meta:
         abstract = True
+
+
+class Manager(SubjectConsentManager, SearchSlugManager):
+    pass
 
 
 class AnonymousConsent(
@@ -70,7 +75,7 @@ class AnonymousConsent(
 
     is_signed = models.BooleanField(default=False, editable=False)
 
-    objects = SubjectConsentManager()
+    objects = Manager()
 
     consent = ConsentManager()
 

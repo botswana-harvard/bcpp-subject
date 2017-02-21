@@ -2,12 +2,9 @@ from django.db import models
 
 from edc_base.model.models import HistoricalRecords
 
-
 from edc_base.model.fields import OtherCharField
 
-
 from ..choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
-
 from .list_models import MedicalCareAccess
 from .model_mixins import CrfModelMixin, CrfModelManager
 

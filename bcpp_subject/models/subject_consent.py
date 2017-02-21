@@ -11,6 +11,7 @@ from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO
+from edc_dashboard.model_mixins import SearchSlugManager
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
 from edc_registration.exceptions import RegisteredSubjectError
@@ -25,6 +26,10 @@ from ..managers import SubjectConsentManager
 from ..patterns import subject_identifier
 from .model_mixins import SearchSlugModelMixin
 from .utils import is_minor
+
+
+class Manager(SubjectConsentManager, SearchSlugManager):
+    pass
 
 
 class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationModelMixin):
@@ -92,7 +97,7 @@ class SubjectConsent(
 
     is_signed = models.BooleanField(default=False, editable=False)
 
-    objects = SubjectConsentManager()
+    objects = Manager()
 
     consent = ConsentManager()
 

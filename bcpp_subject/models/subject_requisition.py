@@ -1,6 +1,7 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel
+from edc_dashboard.model_mixins import SearchSlugManager
 from edc_lab.model_mixins import (
     RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin)
 from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMixin
@@ -15,6 +16,10 @@ from .requires_consent_model_mixin import RequiresConsentMixin
 from .subject_visit import SubjectVisit
 
 
+class Manager(VisitTrackingCrfModelManager, SearchSlugManager):
+    pass
+
+
 class SubjectRequisition(
         RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin,
         VisitTrackingCrfModelMixin, OffstudyMixin,
@@ -24,11 +29,12 @@ class SubjectRequisition(
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
-    objects = VisitTrackingCrfModelManager()
+    objects = Manager()
 
     def get_slugs(self):
         return ([self.subject_visit.subject_identifier,
                  self.requisition_identifier,
+                 self.human_requisition_identifier,
                  self.identifier_prefix]
                 + self.subject_visit.household_member.get_slugs())
 
