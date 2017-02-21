@@ -96,7 +96,6 @@ def enrollment_checklist_anonymous_on_post_save(
                 first_name=instance.household_member.first_name,
                 initials=instance.household_member.initials,
                 may_store_samples=instance.may_store_samples,
-                citizen=instance.citizen,
                 is_minor=is_minor(dob, instance.created),
                 user_created=instance.user_created,
                 user_modified=instance.user_modified,
