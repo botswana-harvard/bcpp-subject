@@ -1,7 +1,4 @@
-from edc_lab.aliquot_type import AliquotType
-from edc_lab.lab_profile import LabProfile
-from edc_lab.processing_profile import ProcessingProfile
-from edc_lab.requisition_panel import RequisitionPanel
+from edc_lab import AliquotType, LabProfile, ProcessingProfile, RequisitionPanel
 from edc_lab.site_labs import site_labs
 
 from .constants import RESEARCH_BLOOD_DRAW, MICROTUBE, VIRAL_LOAD, ELISA

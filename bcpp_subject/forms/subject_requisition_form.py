@@ -1,4 +1,4 @@
-from edc_lab.modelform_mixins import RequisitionFormMixin
+from edc_lab.forms import RequisitionFormMixin
 
 from ..models import SubjectRequisition
 from .form_mixins import SubjectModelFormMixin
