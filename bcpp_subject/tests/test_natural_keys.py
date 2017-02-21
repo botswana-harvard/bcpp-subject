@@ -56,7 +56,7 @@ class TestNaturalKey(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, T
         survey_schedule = self.get_survey_schedule(index=2)
         subject_visit = self.make_subject_visit_for_consented_subject_male(
             E0, survey_schedule=survey_schedule, **consent_data_male)
-        verbose = True
+        verbose = False
         self.sync_test_natural_keys_by_schedule(
             visits=[subject_visit],
             verbose=verbose,

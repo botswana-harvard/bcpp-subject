@@ -8,6 +8,7 @@ from bcpp_subject.tests.test_mixins import SubjectMixin
 
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from edc_sync.models import OutgoingTransaction, IncomingTransaction
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from household.models.household import Household
 from household.models.household_log import HouseholdLog
@@ -19,13 +20,29 @@ from member.models.household_head_eligibility import HouseholdHeadEligibility
 from member.models.household_member.household_member import HouseholdMember
 from member.models.representative_eligibility import RepresentativeEligibility
 from plot.models import Plot, PlotLog, PlotLogEntry
+from edc_sync.test_mixins import SyncTestSerializerMixin
+
+from .test_mixins import CompleteCrfsMixin
+from bcpp_subject.constants import E0
 
 
 @tag('TestConsumeIncomingTransactions')
-class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
+class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+
+    def delete_crfs(self, subject_visit):
+        deleted_crfs = []
+        for crf in site_visit_schedules.get_schedule('ess_schedule').visit_registry['E0'].crfs:
+            try:
+                Crf = crf.model
+                crf = crf.model.objects.get(subject_visit=subject_visit)
+                deleted_crfs.append(crf)
+                crf.delete()
+            except Crf.DoesNotExist:
+                pass
+        return deleted_crfs
 
     def delete_enrollment_records(self):
         subject_visits = SubjectVisit.objects.all()
@@ -81,7 +98,7 @@ class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
 
     def test_created_incoming_tx(self):
         total_outgoing_transactions = OutgoingTransaction.objects.all().count()
-        for outgoing in OutgoingTransaction.objects.all():
+        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
             data = outgoing.__dict__
             del data['using']
             del data['is_consumed_middleman']
@@ -92,6 +109,75 @@ class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
         self.assertEqual(
             total_outgoing_transactions,
             IncomingTransaction.objects.all().count())
+
+    @tag('test_crfs_incoming_transactions_ess')
+    def test_crfs_incoming_transactions_ess(self):
+        consent_data_male = {
+            'identity': '31721515',
+            'confirm_identity': '31721515',
+        }
+        survey_schedule = self.get_survey_schedule(index=2)
+        subject_visit = self.make_subject_visit_for_consented_subject_male(
+            E0, survey_schedule=survey_schedule, **consent_data_male)
+        verbose = True
+        self.sync_test_natural_keys_by_schedule(
+            visits=[subject_visit],
+            verbose=verbose,
+            visit_attr='subject_visit'
+        )
+        client_crfs = self.delete_crfs(subject_visit=subject_visit)
+        self.delete_enrollment_records()
+        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
+            data = outgoing.__dict__
+            del data['using']
+            del data['is_consumed_middleman']
+            del data['is_consumed_server']
+            del data['_state']
+            del data['hostname_modified']
+            IncomingTransaction.objects.create(**data)
+        outgoing_tx = OutgoingTransaction.objects.all()
+        outgoing_tx.delete()
+        for crf in client_crfs:
+            Crf = crf.__class__
+            try:
+                Crf.objects.get(subject_visit=subject_visit)
+                self.fail("make sure all crfs are deleted!")
+            except Crf.DoesNotExist:
+                pass
+
+        for incoming_tx in IncomingTransaction.objects.filter(
+                is_consumed=False, is_ignored=False).order_by('created'):
+            incoming_tx.deserialize_transaction(check_hostname=False)
+
+        self.assertTrue(Crf.objects.get(subject_visit=subject_visit))
+
+    @tag('test_crfs_incoming_transactions_t0')
+    def test_crfs_incoming_transactions_bhs(self):
+        client_crfs = self.delete_crfs(subject_visit=self.self.subject_visit_male_t0)
+        self.delete_enrollment_records()
+        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
+            data = outgoing.__dict__
+            del data['using']
+            del data['is_consumed_middleman']
+            del data['is_consumed_server']
+            del data['_state']
+            del data['hostname_modified']
+            IncomingTransaction.objects.create(**data)
+        outgoing_tx = OutgoingTransaction.objects.all()
+        outgoing_tx.delete()
+        for crf in client_crfs:
+            Crf = crf.__class__
+            try:
+                Crf.objects.get(subject_visit=self.subject_visit_male_t0)
+                self.fail("make sure all crfs are deleted!")
+            except Crf.DoesNotExist:
+                pass
+
+        for incoming_tx in IncomingTransaction.objects.filter(
+                is_consumed=False, is_ignored=False).order_by('created'):
+            incoming_tx.deserialize_transaction(check_hostname=False)
+
+        self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
 
     @tag('test_created_incoming_tx')
     def test_delete_enrollment_records(self):
@@ -113,17 +199,7 @@ class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
     @tag('test_consume_incoming_transactions_enrollment_models')
     def test_consume_incoming_transactions_enrollment_models(self):
         self.delete_enrollment_records()
-        for outgoing in OutgoingTransaction.objects.filter(
-                tx_name__in=[
-                    'plot.plot', 'plot.plotlog', 'plot.plotlogentry',
-                    'household.household', 'household.householdlog',
-                    'household.householdstructure',
-                    'member.householdmember', 'household.householdlogentry',
-                    'household.householdheadeligibility',
-                    'member.representativeeligibility',
-                    # 'member.enrollmentchecklist',
-                    # 'bcpp_subject.appointment', 'bcpp_subject.subjectvisit',
-                ]).order_by('created'):  # , 'plot.plotlogentry'
+        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
             data = outgoing.__dict__
             del data['using']
             del data['is_consumed_middleman']
@@ -136,16 +212,16 @@ class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
         self.assertEqual(0, OutgoingTransaction.objects.all().count())
 
         for incoming_tx in IncomingTransaction.objects.filter(
-                is_consumed=False, is_ignored=False, action='I').order_by('created'):
+                is_consumed=False, is_ignored=False).order_by('created'):
             incoming_tx.deserialize_transaction(check_hostname=False)
 
         self.assertNotEqual(0, HouseholdLogEntry.objects.all().count())
         self.assertNotEqual(0, HouseholdLog.objects.all().count())
-#         self.assertNotEqual(0, SubjectVisit.objects.all().count())
-#         self.assertNotEqual(0, Appointment.objects.all().count())
-#         self.assertNotEqual(0, EnrollmentChecklist.objects.all().count())
-#         self.assertNotEqual(0, RepresentativeEligibility.objects.all().count())
-#         self.assertNotEqual(0, HouseholdHeadEligibility.objects.all().count())
+        self.assertNotEqual(0, SubjectVisit.objects.all().count())
+        self.assertNotEqual(0, Appointment.objects.all().count())
+        self.assertNotEqual(0, EnrollmentChecklist.objects.all().count())
+        self.assertNotEqual(0, RepresentativeEligibility.objects.all().count())
+        self.assertNotEqual(0, HouseholdHeadEligibility.objects.all().count())
         self.assertNotEqual(0, HouseholdMember.objects.all().count())
         self.assertNotEqual(0, HouseholdStructure.objects.all().count())
         self.assertNotEqual(0, Household.objects.all().count())

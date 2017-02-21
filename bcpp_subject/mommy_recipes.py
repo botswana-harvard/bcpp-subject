@@ -61,8 +61,6 @@ fake.add_provider(DateProvider)
 
 cancer = Recipe(
     Cancer,
-    date_cancer=date.today(),
-    dx_cancer='Kaposi\'s sarcoma (KS)'
 )
 
 cd4history = Recipe(
@@ -580,8 +578,6 @@ thirdpartner = Recipe(
 
 tuberculosis = Recipe(
     Tuberculosis,
-    date_tb=fake.last_year,
-    dx_tb='Pulmonary tuberculosis',
 )
 
 immigrationstatus = Recipe(
