@@ -1,19 +1,18 @@
 from django.apps import apps as django_apps
 from django.db import models
-
-from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.model.models import HistoricalRecords, BaseUuidModel
-from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
+from edc_constants.choices import YES_NO_NA, YES, NOT_APPLICABLE
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_locator.model_mixins import LocatorModelMixin
 
 
 class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
-    """A model completed by the user to that captures participant locator information
-    and permission to contact."""
+    """A model completed by the user to that captures participant
+    locator information and permission to contact.
+    """
 
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
@@ -21,25 +20,23 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
-        null=True,
-    )
+        null=True)
+
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
-        verbose_name="If we are unable to contact the person indicated above, is there another"
-                     " individual (including next of kin) with whom the study team can get"
-                     " in contact with?",
-        help_text="",
-    )
+        verbose_name=(
+            'If we are unable to contact the person indicated above, '
+            'is there another individual (including next of kin) with '
+            'whom the study team can get in contact with?'))
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
         verbose_name="Full Name of the responsible person",
         help_text="include first name and surname",
         blank=True,
-        null=True,
-    )
+        null=True)
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
@@ -79,26 +76,6 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
 
     def __str__(self):
         return '{}'.format(self.subject_identifier)
-
-    def save(self, *args, **kwargs):
-        self.hic_enrollment_checks()
-        super(SubjectLocator, self).save(*args, **kwargs)
-
-    def hic_enrollment_checks(self, exception_cls=None):
-        from .hic_enrollment import HicEnrollment
-        exception_cls = exception_cls or ValidationError
-        if (self.may_follow_up == YES) or (
-                self.may_follow_up == NO and self.may_sms_follow_up == YES):
-            if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-                try:
-                    HicEnrollment.objects.get(
-                        subject_visit__subject_identifier=self.subject_identifier)
-                    raise exception_cls(
-                        'An HicEnrollment form exists for this subject. '
-                        'At least one of \'subject_cell\', '
-                        '\'subject_cell_alt\' or \'subject_phone\' is required.')
-                except HicEnrollment.DoesNotExist:
-                    pass
 
     @property
     def ready_to_export_transaction(self):
