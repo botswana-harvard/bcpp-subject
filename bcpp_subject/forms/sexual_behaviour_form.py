@@ -31,8 +31,6 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
                 int(cleaned_data.get('last_year_partners')) > 0,
                 field_required='more_sex')
 
-        # self.required_if(YES, field='ever_sex', field_required='more_sex')
-
         self.required_if(YES, field='ever_sex', field_required='first_sex')
         self.validate_first_sex_age()
         self.applicable_if(
