@@ -1,14 +1,14 @@
-from django.core.validators import MinValueValidator, MaxValueValidator,\
-    RegexValidator
+from django.core.validators import (
+    MinValueValidator, MaxValueValidator, RegexValidator)
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_DWTA
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import ALCOHOL_SEX, PARTNER_AGE
 from .model_mixins import CrfModelMixin, CrfModelManager
-from django.utils.safestring import mark_safe
-from edc_constants.constants import NOT_APPLICABLE
 
 
 class SexualBehaviour (CrfModelMixin):
