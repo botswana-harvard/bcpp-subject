@@ -42,7 +42,7 @@ class HivResultForm (SubjectModelFormMixin):
         self.applicable_if(
             POS, NEG, IND, field='hiv_result', field_applicable='blood_draw_type')
         self.applicable_if(
-            CAPILLARY, VENOUS, field='blood_draw_type', field_applicable='insufficient_vol')
+            CAPILLARY, field='blood_draw_type', field_applicable='insufficient_vol')
 
         self.required_if(
             DECLINED, NOT_PERFORMED, field='hiv_result', field_required='why_not_tested')

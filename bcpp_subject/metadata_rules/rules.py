@@ -28,6 +28,7 @@ from .funcs import (
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
     func_requires_vl)
+from bcpp_subject.constants import CAPILLARY
 
 
 @register()
@@ -450,7 +451,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         logic=Logic(
             predicate=PF(
                 'insufficient_vol', 'blood_draw_type',
-                func=lambda x, y: True if x == YES or y == VENOUS else False),
+                func=lambda x, y: True if x == YES and y == CAPILLARY else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
