@@ -25,7 +25,13 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
                 'last_year_partners':
                 'Cannot exceed {} partners from above.'.format(
                     cleaned_data.get('lifetime_sex_partners'))})
-        self.required_if(YES, field='ever_sex', field_required='more_sex')
+
+        if cleaned_data.get('last_year_partners'):
+            self.required_if_true(
+                int(cleaned_data.get('last_year_partners')) > 0,
+                field_required='more_sex')
+
+        # self.required_if(YES, field='ever_sex', field_required='more_sex')
 
         self.required_if(YES, field='ever_sex', field_required='first_sex')
         self.validate_first_sex_age()

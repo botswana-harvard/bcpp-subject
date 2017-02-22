@@ -1,4 +1,5 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator,\
+    RegexValidator
 from django.db import models
 
 from edc_base.model.models import HistoricalRecords
@@ -7,6 +8,7 @@ from edc_constants.choices import YES_NO_DWTA
 from ..choices import ALCOHOL_SEX, PARTNER_AGE
 from .model_mixins import CrfModelMixin, CrfModelManager
 from django.utils.safestring import mark_safe
+from edc_constants.constants import NOT_APPLICABLE
 
 
 class SexualBehaviour (CrfModelMixin):
@@ -23,9 +25,12 @@ class SexualBehaviour (CrfModelMixin):
         choices=YES_NO_DWTA,
         help_text='')
 
-    lifetime_sex_partners = models.IntegerField(
+    lifetime_sex_partners = models.CharField(
+        max_length=10,
         verbose_name='In your lifetime, how many different people have you had '
                      'sex with?',
+        validators=[RegexValidator(
+            r'^([1-9][0-9]*)|([0])$', 'Expected a number greater than or equal to zero')],
         null=True,
         blank=True,
         help_text=mark_safe(
@@ -35,9 +40,12 @@ class SexualBehaviour (CrfModelMixin):
             'If you can\'t recall the exact number, please give a best guess.</i></p>'),
     )
 
-    last_year_partners = models.IntegerField(
+    last_year_partners = models.CharField(
+        max_length=10,
         verbose_name='In the past 12 months, how many different people have you had '
                      'sex with?',
+        validators=[RegexValidator(
+            r'^([1-9][0-9]*)|([0])$', 'Expected a number greater than or equal to zero')],
         null=True,
         blank=True,
         help_text=mark_safe(
@@ -72,8 +80,7 @@ class SexualBehaviour (CrfModelMixin):
             'How old was your sex partner when you had sex for the first time'),
         max_length=25,
         choices=PARTNER_AGE,
-        null=True,
-        blank=False,
+        default=NOT_APPLICABLE,
     )
 
     first_sex_partner_age_other = models.IntegerField(

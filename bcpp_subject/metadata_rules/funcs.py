@@ -32,7 +32,7 @@ def func_requires_recent_partner(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(
         subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
-        return True if sexual_behaviour.last_year_partners >= 1 else False
+        return True if int(sexual_behaviour.last_year_partners) >= 1 else False
     return False
 
 
@@ -40,7 +40,7 @@ def func_requires_second_partner_forms(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(
         subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
-        return True if sexual_behaviour.last_year_partners >= 2 else False
+        return True if int(sexual_behaviour.last_year_partners) >= 2 else False
     return False
 
 
@@ -48,7 +48,7 @@ def func_requires_third_partner_forms(visit_instance, *args):
     sexual_behaviour = SexualBehaviour.objects.get(
         subject_visit=visit_instance)
     if sexual_behaviour.last_year_partners:
-        return True if sexual_behaviour.last_year_partners >= 3 else False
+        return True if int(sexual_behaviour.last_year_partners) >= 3 else False
     return False
 
 
