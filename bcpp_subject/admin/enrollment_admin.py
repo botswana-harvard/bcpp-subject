@@ -40,7 +40,7 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
     def view_on_site(self, obj):
         try:
             return reverse(
-                'bcpp-subject:dashboard_url', kwargs=dict(
+                'bcpp_subject:dashboard_url', kwargs=dict(
                     subject_identifier=obj.subject_identifier,
                     household_identifier=(
                         obj.household_member.household_structure.

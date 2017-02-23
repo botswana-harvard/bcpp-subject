@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
 
 from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
@@ -13,7 +14,8 @@ class Grant(CrfModelMixin):
 
     """Inline for labour_market_wages."""
 
-    labour_market_wages = models.ForeignKey(LabourMarketWages)
+    labour_market_wages = models.ForeignKey(
+        LabourMarketWages, on_delete=PROTECT)
 
     grant_number = models.IntegerField(
         verbose_name="How many of each type of grant do you receive?",

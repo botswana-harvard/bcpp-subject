@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, RegexValidator
+from django.urls import reverse
 from django_crypto_fields.fields import EncryptedTextField
 
 from edc_base.model.fields import OtherCharField

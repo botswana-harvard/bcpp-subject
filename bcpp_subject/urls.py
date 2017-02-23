@@ -10,6 +10,8 @@ from .patterns import subject_identifier
 from .views import (
     ListboardView, DashboardView, AnonymousListboardView, AnonymousDashboardView)
 
+app_name = 'bcpp_subject'
+
 
 def listboard_urls():
     urlpatterns = []

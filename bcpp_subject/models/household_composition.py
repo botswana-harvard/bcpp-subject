@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
 from django_crypto_fields.fields import EncryptedCharField
 
 from edc_base.model.models import HistoricalRecords
@@ -6,7 +7,6 @@ from edc_base.model.fields import OtherCharField
 from edc_constants.choices import GENDER, YES_NO
 
 from ..choices import RELATION
-
 from .model_mixins import CrfModelMixin
 
 
@@ -47,7 +47,8 @@ class HouseholdComposition (CrfModelMixin):
 
 class Respondent (CrfModelMixin):
 
-    household_composition = models.ForeignKey(HouseholdComposition)
+    household_composition = models.ForeignKey(
+        HouseholdComposition, on_delete=PROTECT)
 
     first_name = EncryptedCharField(
         verbose_name="First name or initials ",

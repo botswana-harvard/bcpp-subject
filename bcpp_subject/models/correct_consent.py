@@ -1,9 +1,10 @@
 from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models.deletion import PROTECT
+from django.urls import reverse
 from django_crypto_fields.fields import FirstnameField, EncryptedCharField, LastnameField
 
 from edc_base.model.models import BaseUuidModel, HistoricalRecords
@@ -32,7 +33,8 @@ class CorrectConsentMixin:
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
                 old_value = getattr(instance, field.name)
-                new_value = getattr(instance, 'new_{}'.format(field.name.split('old_')[1]))
+                new_value = getattr(
+                    instance, 'new_{}'.format(field.name.split('old_')[1]))
                 if (not old_value and new_value) or (old_value and not new_value):
                     raise exception_cls(
                         'Both the old and new value must '
@@ -56,7 +58,8 @@ class CorrectConsentMixin:
 
     def update_household_member_and_enrollment_checklist(self):
         enrollment_checklist = self.subject_consent.household_member.enrollment_checklist
-        enrollment_checklist = self.update_name_and_initials(enrollment_checklist)
+        enrollment_checklist = self.update_name_and_initials(
+            enrollment_checklist)
         enrollment_checklist = self.update_gender(enrollment_checklist)
         enrollment_checklist = self.update_dob(enrollment_checklist)
         enrollment_checklist = self.update_guardian_name(enrollment_checklist)
@@ -186,7 +189,8 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 
-    subject_consent = models.OneToOneField(SubjectConsent)
+    subject_consent = models.OneToOneField(
+        SubjectConsent, on_delete=PROTECT)
 
     report_datetime = models.DateTimeField(
         verbose_name="Correction report date ad time",

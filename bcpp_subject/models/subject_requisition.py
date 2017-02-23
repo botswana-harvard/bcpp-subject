@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
 
 from edc_base.model.models import BaseUuidModel
 from edc_dashboard.model_mixins import SearchSlugManager
@@ -27,7 +28,7 @@ class SubjectRequisition(
         UpdatesRequisitionMetadataModelMixin, SearchSlugModelMixin,
         BaseUuidModel):
 
-    subject_visit = models.ForeignKey(SubjectVisit)
+    subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
 
     objects = Manager()
 

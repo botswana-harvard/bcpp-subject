@@ -120,7 +120,7 @@ class CrfModelWrapper(ModelWrapper):
 
     admin_site_name = django_apps.get_app_config(
         'bcpp_subject').admin_site_name
-    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    url_namespace = 'bcpp_subject'
     next_url_name = django_apps.get_app_config(
         'bcpp_subject').dashboard_url_name
     next_url_attrs = dict(crf=[
@@ -170,7 +170,7 @@ class SubjectLocatorModelWrapper(ModelWrapper):
     model_name = 'bcpp_subject.subjectlocator'
     admin_site_name = django_apps.get_app_config(
         'bcpp_subject').admin_site_name
-    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    url_namespace = 'bcpp_subject'
     next_url_name = django_apps.get_app_config(
         'bcpp_subject').dashboard_url_name
     next_url_attrs = {'bcpp_subject.subjectlocator': [
@@ -185,7 +185,7 @@ class RequisitionModelWrapper(ModelWrapper):
 
     admin_site_name = django_apps.get_app_config(
         'bcpp_subject').admin_site_name
-    url_namespace = django_apps.get_app_config('bcpp_subject').url_namespace
+    url_namespace = 'bcpp_subject'
     next_url_name = django_apps.get_app_config(
         'bcpp_subject').dashboard_url_name
     next_url_attrs = dict(requisition=[
