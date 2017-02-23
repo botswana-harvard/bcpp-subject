@@ -100,7 +100,7 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                     subject_visit__household_member=household_member)
             except HicEnrollment.DoesNotExist:
                 pass
-            except:
+            else:
                 if hic_enrollment.dob != dob:
                     raise forms.ValidationError({
                         'dob': 'Does not match \'{}\'.'.format(

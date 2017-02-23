@@ -33,7 +33,7 @@ class ReproductiveHealth (CrfModelMixin):
 
     more_children = models.CharField(
         verbose_name='Do you wish to have a child now or in the future?',
-        max_length=3,
+        max_length=10,
         choices=YES_NO_UNSURE,
         null=True,
         blank=False,

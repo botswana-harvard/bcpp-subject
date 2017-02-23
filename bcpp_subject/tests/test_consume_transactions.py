@@ -98,7 +98,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
 
     def test_created_incoming_tx(self):
         total_outgoing_transactions = OutgoingTransaction.objects.all().count()
-        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
+        for outgoing in OutgoingTransaction.objects.all():
             data = outgoing.__dict__
             del data['using']
             del data['is_consumed_middleman']
@@ -110,7 +110,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
             total_outgoing_transactions,
             IncomingTransaction.objects.all().count())
 
-    @tag('test_crfs_incoming_transactions_ess')
+    @tag('test_apply_incoming')
     def test_crfs_incoming_transactions_ess(self):
         consent_data_male = {
             'identity': '31721515',
@@ -119,7 +119,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         survey_schedule = self.get_survey_schedule(index=2)
         subject_visit = self.make_subject_visit_for_consented_subject_male(
             E0, survey_schedule=survey_schedule, **consent_data_male)
-        verbose = True
+        verbose = False
         self.sync_test_natural_keys_by_schedule(
             visits=[subject_visit],
             verbose=verbose,
@@ -127,7 +127,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         )
         client_crfs = self.delete_crfs(subject_visit=subject_visit)
         self.delete_enrollment_records()
-        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
+        for outgoing in OutgoingTransaction.objects.all():
             data = outgoing.__dict__
             del data['using']
             del data['is_consumed_middleman']
@@ -137,6 +137,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
             IncomingTransaction.objects.create(**data)
         outgoing_tx = OutgoingTransaction.objects.all()
         outgoing_tx.delete()
+
         for crf in client_crfs:
             Crf = crf.__class__
             try:
@@ -146,16 +147,21 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
                 pass
 
         for incoming_tx in IncomingTransaction.objects.filter(
-                is_consumed=False, is_ignored=False).order_by('created'):
+                is_consumed=False, is_ignored=False):
             incoming_tx.deserialize_transaction(check_hostname=False)
 
-        self.assertTrue(Crf.objects.get(subject_visit=subject_visit))
+        for crf in client_crfs:
+            Crf = crf.__class__
+            try:
+                self.assertTrue(Crf.objects.get(subject_visit=subject_visit))
+            except Crf.DoesNotExist:
+                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
 
-    @tag('test_crfs_incoming_transactions_t0')
+    @tag('test_apply_incoming')
     def test_crfs_incoming_transactions_bhs(self):
-        client_crfs = self.delete_crfs(subject_visit=self.self.subject_visit_male_t0)
+        client_crfs = self.delete_crfs(subject_visit=self.subject_visit_male_t0)
         self.delete_enrollment_records()
-        for outgoing in OutgoingTransaction.objects.all().order_by('created'):
+        for outgoing in OutgoingTransaction.objects.all():
             data = outgoing.__dict__
             del data['using']
             del data['is_consumed_middleman']
@@ -174,10 +180,15 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
                 pass
 
         for incoming_tx in IncomingTransaction.objects.filter(
-                is_consumed=False, is_ignored=False).order_by('created'):
+                is_consumed=False, is_ignored=False):
             incoming_tx.deserialize_transaction(check_hostname=False)
 
-        self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
+        for crf in client_crfs:
+            Crf = crf.__class__
+            try:
+                self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
+            except Crf.DoesNotExist:
+                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
 
     @tag('test_created_incoming_tx')
     def test_delete_enrollment_records(self):
@@ -212,7 +223,7 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         self.assertEqual(0, OutgoingTransaction.objects.all().count())
 
         for incoming_tx in IncomingTransaction.objects.filter(
-                is_consumed=False, is_ignored=False).order_by('created'):
+                is_consumed=False, is_ignored=False):
             incoming_tx.deserialize_transaction(check_hostname=False)
 
         self.assertNotEqual(0, HouseholdLogEntry.objects.all().count())
