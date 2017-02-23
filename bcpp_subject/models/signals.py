@@ -90,6 +90,7 @@ def enrollment_checklist_anonymous_on_post_save(
                 consent_datetime=get_utcnow(),
                 gender=instance.gender,
                 dob=dob,
+                citizen=NO,
                 identity=identity,
                 confirm_identity=identity,
                 study_site='88',

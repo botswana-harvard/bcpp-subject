@@ -15,8 +15,11 @@
         <a class="list-group-item"><i class="fa fa-birthday-cake fa-fw"></i>
             {% if navbar_name != 'anonymous' %}
                 {{ consent.dob|date:"Y-m-d" }}
+                {% age_in_years consent.dob %} yrs
+            {% else %}
+                {{ household_member.age_in_years }} yrs
             {% endif %}
-            {% age_in_years consent.dob %} yrs
+            
        </a>
        {% if navbar_name != 'anonymous' %}
         <a class="list-group-item"><i class="fa fa-address-card-o fa-fw"></i>

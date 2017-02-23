@@ -11,6 +11,8 @@
         <thead></thead>
         <tbody>
 
+    {% if navbar_name != 'anonymous' %}
+
         <tr>
         
         
@@ -28,7 +30,6 @@
 
         </tr>
 
-    {% if navbar_name != 'anonymous' %}
 
         <tr>
             {% with wrapped=subject_locator %}

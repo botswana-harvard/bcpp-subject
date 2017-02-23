@@ -9,7 +9,6 @@ from survey.admin import survey_fields, survey_fieldset_tuple
 
 from ...admin_site import bcpp_subject_admin
 from ...models import AnonymousConsent
-
 from ..modeladmin_mixins import ModelAdminMixin
 
 
