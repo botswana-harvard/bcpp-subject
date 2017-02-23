@@ -280,10 +280,10 @@ hivresult = Recipe(
     insufficient_vol=NOT_APPLICABLE,
     why_not_tested='not_sure',
 )
-from django.utils import timezone
+
 hivtestreview = Recipe(
     HivTestReview,
-    hiv_test_date=timezone.now().date(),
+    hiv_test_date=date.today(),
     recorded_hiv_result=POS,
 )
 
