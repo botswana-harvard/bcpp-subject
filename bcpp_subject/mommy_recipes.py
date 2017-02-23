@@ -105,7 +105,7 @@ circumcision = Recipe(
     Circumcision,
     circumcised=YES,
     last_seen_circumcised=YES,
-    circumcised_datetime=get_utcnow(),
+    circumcised_datetime=get_utcnow().date(),
     circumcised_location='Bokaa',
     health_benefits_smc=related(circumcision_benefits),
 )
@@ -215,7 +215,7 @@ hivcareadherence = Recipe(
     on_arv=YES,
     clinic_receiving_from='Bokaa',
     next_appointment_date=fake.next_month,
-    arv_stop_date=get_utcnow(),
+    arv_stop_date=get_utcnow().date(),
     arv_stop='Did not feel they were helping',
     adherence_4_day='Zero',
     adherence_4_wk='Good',
@@ -280,10 +280,10 @@ hivresult = Recipe(
     insufficient_vol=NOT_APPLICABLE,
     why_not_tested='not_sure',
 )
-
+from django.utils import timezone
 hivtestreview = Recipe(
     HivTestReview,
-    hiv_test_date=get_utcnow,
+    hiv_test_date=timezone.now().date(),
     recorded_hiv_result=POS,
 )
 
