@@ -1,65 +1,13 @@
+from django.apps import apps as django_apps
+
 from edc_sync.site_sync_models import site_sync_models
 from edc_sync.sync_model import SyncModel
+from edc_base.model.models.list_model_mixin import ListModelMixin
 
-sync_models = [
-    'bcpp_subject.accesstocare',
-    'bcpp_subject.appointment',
-    'bcpp_subject.cancer',
-    'bcpp_subject.cd4history',
-    'bcpp_subject.ceaenrollmentchecklist',
-    'bcpp_subject.circumcised',
-    'bcpp_subject.circumcision',
-    'bcpp_subject.clinicquestionnaire',
-    'bcpp_subject.communityengagement',
-    'bcpp_subject.correctconsent',
-    'bcpp_subject.demographics',
-    'bcpp_subject.education',
-    'bcpp_subject.elisahivresult',
-    'bcpp_subject.enrollment',
-    'bcpp_subject.grant',
-    'bcpp_subject.heartattack',
-    'bcpp_subject.hicenrollment',
-    'bcpp_subject.hivcareadherence',
-    'bcpp_subject.hivhealthcarecosts',
-    'bcpp_subject.hivlinkagetocare',
-    'bcpp_subject.hivmedicalcare',
-    'bcpp_subject.hivresult',
-    'bcpp_subject.hivresultdocumentation',
-    'bcpp_subject.hivtested',
-    'bcpp_subject.hivtestinghistory',
-    'bcpp_subject.hivtestreview',
-    'bcpp_subject.hivuntested',
-    'bcpp_subject.hospitaladmission',
-    'bcpp_subject.labourmarketwages',
-    'bcpp_subject.medicaldiagnoses',
-    'bcpp_subject.nonpregnancy',
-    'bcpp_subject.outpatientcare',
-    'bcpp_subject.participation',
-    'bcpp_subject.pima',
-    'bcpp_subject.pimavl',
-    'bcpp_subject.positiveparticipant',
-    'bcpp_subject.pregnancy',
-    'bcpp_subject.qualityoflife',
-    'bcpp_subject.recentpartner',
-    'bcpp_subject.reproductivehealth',
-    'bcpp_subject.residencymobility',
-    'bcpp_subject.resourceutilization',
-    'bcpp_subject.secondpartner',
-    'bcpp_subject.sexualbehaviour',
-    'bcpp_subject.hivrelatedillness',
-    'bcpp_subject.stigma',
-    'bcpp_subject.stigmaopinion',
-    'bcpp_subject.subjectconsent',
-    'bcpp_subject.subjectlocator',
-    'bcpp_subject.subjectoffstudy',
-    'bcpp_subject.subjectreferral',
-    'bcpp_subject.subjectvisit',
-    'bcpp_subject.substanceuse',
-    'bcpp_subject.tbsymptoms',
-    'bcpp_subject.thirdpartner',
-    'bcpp_subject.tuberculosis',
-    'bcpp_subject.uncircumcised',
-    'bcpp_subject.viralloadresult',
-]
+sync_models = []
+app = django_apps.get_app_config('bcpp_subject')
+for model in app.get_models():
+    if not issubclass(model, ListModelMixin):
+        sync_models.append(model._meta.label_lower)
 
 site_sync_models.register(sync_models, SyncModel)
