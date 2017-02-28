@@ -3,7 +3,7 @@ from django.db.models.deletion import PROTECT
 
 from edc_base.model.models import BaseUuidModel
 from edc_dashboard.model_mixins import SearchSlugManager
-from edc_lab.model_mixins import (
+from edc_lab.model_mixins.requisition import (
     RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin)
 from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin

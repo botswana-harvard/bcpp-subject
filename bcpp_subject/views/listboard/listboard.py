@@ -5,25 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 
-from edc_dashboard.forms import SearchForm as BaseSearchForm
-
 from ...models import SubjectConsent
 from ..wrappers import SubjectConsentModelWrapper
 from .base_listboard import BaseListboardView
 from edc_map.models import InnerContainer
 
 
-class SearchForm(BaseSearchForm):
-    action_url_name = django_apps.get_app_config(
-        'bcpp_subject').listboard_url_name
-
-
 class ListboardView(BaseListboardView):
 
     model = SubjectConsent
     model_wrapper_class = SubjectConsentModelWrapper
-    search_form_class = SearchForm
-    paginate_by = 10
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -48,7 +39,7 @@ class ListboardView(BaseListboardView):
             plot_identifier_list = []
         if plot_identifier_list:
             options.update(
-            {'household_member__household_structure__household__plot__plot_identifier__in': plot_identifier_list})
+                {'household_member__household_structure__household__plot__plot_identifier__in': plot_identifier_list})
         if kwargs.get('subject_identifier'):
             options.update(
                 {'subject_identifier': kwargs.get('subject_identifier')})

@@ -10,7 +10,7 @@ class SubjectLocatorForm (SubjectModelFormMixin):
 
     subject_identifier = forms.CharField(
         label='Subject identifier',
-        disabled=True)
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     def clean(self):
         cleaned_data = super().clean()
