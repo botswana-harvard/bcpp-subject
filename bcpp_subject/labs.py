@@ -17,7 +17,7 @@ wb.add_derivative(bc)
 wb.add_derivative(pl)
 lab_profile.add_aliquot_type(wb)
 
-viral_load_panel = RequisitionPanel(VIRAL_LOAD, wb)
+viral_load_panel = RequisitionPanel(VIRAL_LOAD, wb, abbreviation='VLD')
 viral_load_processing = ProcessingProfile('viral_load', wb)
 viral_load_processing.add_process(pl, 3)
 viral_load_processing.add_process(bc, 1)
@@ -25,7 +25,7 @@ viral_load_panel.processing_profile = viral_load_processing
 lab_profile.add_processing_profile(viral_load_processing)
 lab_profile.add_panel(viral_load_panel)
 
-microtube_panel = RequisitionPanel(MICROTUBE, wb)
+microtube_panel = RequisitionPanel(MICROTUBE, wb, abbreviation='MCT')
 microtube_processing = ProcessingProfile('microtube', wb)
 microtube_processing.add_process(pl, 1)
 microtube_processing.add_process(bc, 1)
@@ -33,21 +33,21 @@ microtube_panel.processing_profile = microtube_processing
 lab_profile.add_processing_profile(microtube_processing)
 lab_profile.add_panel(microtube_panel)
 
-elisa_panel = RequisitionPanel(ELISA, wb)
+elisa_panel = RequisitionPanel(ELISA, wb, abbreviation='ELI')
 elisa_processing_profile = ProcessingProfile('elisa', wb)
 elisa_processing_profile.add_process(pl, 1)
 elisa_panel.processing_profile = elisa_processing_profile
 lab_profile.add_processing_profile(elisa_processing_profile)
 lab_profile.add_panel(elisa_panel)
 
-venous_panel = RequisitionPanel('Venous (HIV)', wb)
+venous_panel = RequisitionPanel('Venous (HIV)', wb, abbreviation='VEN')
 venous_processing_profile = ProcessingProfile('venous', wb)
 venous_processing_profile.add_process(pl, 1)
 venous_panel.processing_profile = venous_processing_profile
 lab_profile.add_processing_profile(venous_processing_profile)
 lab_profile.add_panel(venous_panel)
 
-rdb_panel = RequisitionPanel(RESEARCH_BLOOD_DRAW, wb)
+rdb_panel = RequisitionPanel(RESEARCH_BLOOD_DRAW, wb, abbreviation='RBD')
 rdb_processing_profile = ProcessingProfile('rbd', wb)
 rdb_processing_profile.add_process(pl, 4)
 rdb_processing_profile.add_process(bc, 2)

@@ -15,6 +15,7 @@ from edc_visit_tracking.model_mixins import (
 from .model_mixins import SearchSlugModelMixin
 from .requires_consent_model_mixin import RequiresConsentMixin
 from .subject_visit import SubjectVisit
+from edc_map.site_mappers import site_mappers
 
 
 class Manager(VisitTrackingCrfModelManager, SearchSlugManager):
@@ -32,10 +33,15 @@ class SubjectRequisition(
 
     objects = Manager()
 
+    def save(self, *args, **kwargs):
+        self.study_site = site_mappers.current_map_code
+        self.study_site_name = site_mappers.current_map_area
+        super().save(*args, **kwargs)
+
     def get_slugs(self):
         return ([self.subject_visit.subject_identifier,
                  self.requisition_identifier,
-                 self.human_requisition_identifier,
+                 self.human_readable_identifier,
                  self.identifier_prefix]
                 + self.subject_visit.household_member.get_slugs())
 
