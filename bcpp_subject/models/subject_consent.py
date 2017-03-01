@@ -114,7 +114,6 @@ class SubjectConsent(
             self.survey_schedule = self.household_member.survey_schedule_object.field_value
             if re.match(subject_identifier, self.household_member.subject_identifier):
                 self.subject_identifier = self.household_member.subject_identifier
-        # FIXME: get this using the map_area from survey
         self.study_site = site_mappers.current_map_code
         self.is_minor = YES if is_minor(
             self.dob, self.consent_datetime) else NO

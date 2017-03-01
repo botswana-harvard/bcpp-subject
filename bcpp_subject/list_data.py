@@ -7,6 +7,8 @@ from edc_constants.constants import (
 from .constants import HEART_DISEASE, CANCER, TUBERCULOSIS, STI, ALONE
 
 list_data = {
+    'edc_lab.destination': [
+        ('BHHRL', 'BHHRL')],
     'bcpp_subject.circumcisionbenefits': [
         ('Improved hygiene ', 'Improved hygiene '),
         ('Reduced risk of HIV ', 'Reduced risk of HIV '),
