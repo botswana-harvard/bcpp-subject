@@ -74,8 +74,8 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
             raise forms.ValidationError({
                 'citizen': 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name)})
-        elif (is_literate in [YES, NO]
-              and enrollment_checklist.literacy != is_literate):
+        elif (enrollment_checklist.literacy != is_literate
+              and not witness_name):
             raise forms.ValidationError({
                 'is_literate': 'Does not match \'{}\'.'.format(
                     EnrollmentChecklist._meta.verbose_name)})
