@@ -10,7 +10,7 @@ from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import YES_NO, PIMA
 from edc_protocol.validators import datetime_not_before_study_start
-from edc_quota.client.models import QuotaMixin, QuotaManager
+# from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from ..choices import EASY_OF_USE, QUANTIFIER
 
@@ -22,7 +22,8 @@ PIMA_SETTING_VL = (
 )
 
 
-class PimaVl (QuotaMixin, CrfModelMixin):
+# class PimaVl (QuotaMixin, CrfModelMixin):
+class PimaVl (CrfModelMixin):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date",
@@ -122,7 +123,7 @@ class PimaVl (QuotaMixin, CrfModelMixin):
 
     history = HistoricalRecords()
 
-    quota = QuotaManager()
+    # quota = QuotaManager()
 
     def pre_order(self):
         url = reverse('admin:bcpp_lab_preorder_changelist')
