@@ -19,8 +19,8 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
 
         if (cleaned_data.get('last_year_partners')
                 and cleaned_data.get('lifetime_sex_partners')
-                and cleaned_data.get('last_year_partners')
-                > cleaned_data.get('lifetime_sex_partners')):
+                and int(cleaned_data.get('last_year_partners'))
+                > int(cleaned_data.get('lifetime_sex_partners'))):
             raise forms.ValidationError({
                 'last_year_partners':
                 'Cannot exceed {} partners from above.'.format(
