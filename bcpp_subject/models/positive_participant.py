@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
+from edc_base.model_managers import HistoricalRecords
 
 from ..choices import AGREE_STRONGLY
 from .model_mixins import CrfModelMixin

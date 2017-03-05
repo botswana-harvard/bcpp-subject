@@ -2,7 +2,7 @@ from django.db import models
 
 from django.core.exceptions import ValidationError
 
-from edc_base.model.models import HistoricalRecords
+from edc_base.model_managers import HistoricalRecords
 from edc_constants.constants import NOT_APPLICABLE
 from edc_constants.choices import YES_NO
 

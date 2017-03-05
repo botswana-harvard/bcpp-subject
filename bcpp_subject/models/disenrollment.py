@@ -1,4 +1,4 @@
-from edc_base.model.models import BaseUuidModel
+from edc_base.model_mixins import BaseUuidModel
 from edc_visit_schedule.model_mixins import DisenrollmentModelMixin
 
 from ..managers import DisenrollmentManager

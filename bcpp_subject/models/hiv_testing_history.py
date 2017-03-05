@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
+from edc_base.model_managers import HistoricalRecords
 from edc_constants.choices import YES_NO_NA, YES_NO_DWTA
 
 from ..choices import WHEN_HIV_TEST_CHOICE, VERBAL_HIV_RESULT_CHOICE, YES_NO_RECORD_REFUSAL

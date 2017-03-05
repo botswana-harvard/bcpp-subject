@@ -1,8 +1,8 @@
 from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.fields import InitialsField
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_fields import InitialsField
 
 from .model_mixins import CrfModelMixin
 

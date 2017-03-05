@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import datetime_not_future, eligible_if_yes
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_not_future, eligible_if_yes
 from edc_constants.choices import YES_NO, YES_NO_REFUSED
 
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
@@ -25,7 +25,8 @@ class CeaEnrollmentChecklist (CrfModelMixin):
         help_text="")
 
     legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana citizen?"),
+        verbose_name=(
+            "If not a citizen, are you legally married to a Botswana citizen?"),
         max_length=3,
         choices=YES_NO,
         null=True,
@@ -34,7 +35,8 @@ class CeaEnrollmentChecklist (CrfModelMixin):
         help_text=" if 'NO,' STOP participant cannot be enrolled")
 
     marriage_certificate = models.CharField(
-        verbose_name=("Has the participant produced the marriage certificate, as proof? "),
+        verbose_name=(
+            "Has the participant produced the marriage certificate, as proof? "),
         max_length=3,
         choices=YES_NO,
         null=True,

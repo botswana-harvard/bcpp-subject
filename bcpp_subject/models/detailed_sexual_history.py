@@ -1,10 +1,12 @@
 from django.db import models
 
-from edc_base.model.fields import OtherCharField
-from edc_constants.choices import GENDER, POS_NEG_UNKNOWN
-from edc_constants.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
+from edc_base.model_fields import OtherCharField
+from edc_constants.choices import (
+    GENDER, POS_NEG_UNKNOWN, YES_NO_REFUSED, YES_NO_DONT_KNOW)
 
-from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
+from ..choices import (
+    RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY,
+    INTERCOURSE_TYPE)
 
 
 class DetailedSexualHistory(models.Model):

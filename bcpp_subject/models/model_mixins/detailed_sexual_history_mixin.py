@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.fields.custom_fields import OtherCharField
+from edc_base.model_fields import OtherCharField
 from edc_constants.choices import GENDER, YES_NO_REFUSED, POS_NEG_UNKNOWN, YES_NO_DONT_KNOW
 
 from ...choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE

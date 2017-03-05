@@ -1,8 +1,8 @@
 from django.apps import apps as django_apps
 
+from edc_base.model_mixins import ListModelMixin
 from edc_sync.site_sync_models import site_sync_models
 from edc_sync.sync_model import SyncModel
-from edc_base.model.models.list_model_mixin import ListModelMixin
 
 sync_models = []
 app = django_apps.get_app_config('bcpp_subject')

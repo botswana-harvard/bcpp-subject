@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.fields import OtherCharField
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
 from ..choices import KEPT_APPT, TYPE_OF_EVIDENCE, REASON_RECOMMENDED

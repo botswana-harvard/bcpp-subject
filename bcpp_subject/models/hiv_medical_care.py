@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import date_not_future
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import date_not_future
 
 from ..choices import LOWEST_CD4_CHOICE
 

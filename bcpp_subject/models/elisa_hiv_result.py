@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import datetime_not_future
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import POS_NEG
 
 from .hic_enrollment import HicEnrollment

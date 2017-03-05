@@ -1,5 +1,3 @@
-from django.db import models
-
 from edc_dashboard.model_mixins import SearchSlugModelMixin as BaseSearchSlugModelMixin
 
 

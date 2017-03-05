@@ -7,8 +7,9 @@ from django.db.models.deletion import PROTECT
 from django.urls import reverse
 from django_crypto_fields.fields import FirstnameField, EncryptedCharField, LastnameField
 
-from edc_base.model.models import BaseUuidModel, HistoricalRecords
-from edc_base.model.validators import datetime_not_future
+from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
 
 from ..managers import CorrectConsentManager

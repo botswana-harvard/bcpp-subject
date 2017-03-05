@@ -1,6 +1,7 @@
 from django.db import models
 
-from edc_base.model.models import BaseUuidModel, HistoricalRecords
+from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_managers import HistoricalRecords
 from edc_metadata.model_mixins.creates import CreatesMetadataModelMixin
 from edc_visit_tracking.constants import SCHEDULED
 from edc_visit_tracking.managers import VisitModelManager

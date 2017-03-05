@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import datetime_is_future, date_is_future
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import (

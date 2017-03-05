@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import datetime_not_future
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import YES_NO
 
 from .model_mixins import CrfModelMixin, CrfModelManager

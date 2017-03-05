@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
+from edc_base.model_managers import HistoricalRecords
 from edc_constants.choices import YES_NO_REFUSED
 from edc_constants.constants import NOT_APPLICABLE
 

@@ -1,8 +1,8 @@
 from django.db import models
 
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import date_not_future
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_fields import OtherCharField
+from edc_base.model_validators import date_not_future
 
 from ..choices import DX_TB_CHOICE
 

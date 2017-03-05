@@ -1,5 +1,6 @@
 from django.db import models
 
+from edc_base.model_fields import OtherCharField
 from edc_constants.choices import (
     YES_NO_DWTA, YES_NO_UNSURE_DWTA, YES_NO_UNSURE)
 from edc_constants.constants import OTHER, NOT_APPLICABLE
@@ -8,11 +9,9 @@ from edc_map.site_mappers import site_mappers
 from ...choices import (
     COMMUNITY_NA, FREQ_IN_YEAR, SEXDAYS_CHOICE, LASTSEX_CHOICE,
     FIRSTRELATIONSHIP_CHOICE, AGE_RANGES, FIRST_DISCLOSE_CHOICE,
-    FIRST_CONDOM_FREQ_CHOICE, FIRST_PARTNER_HIV_CHOICE)
+    FIRST_CONDOM_FREQ_CHOICE, FIRST_PARTNER_HIV_CHOICE, PARTNER_AGE)
 from ...constants import CPC, ECC
 from ..list_models import PartnerResidency
-from bcpp_subject.choices import PARTNER_AGE
-from edc_base.model.fields.custom_fields import OtherCharField
 
 
 class SexualPartnerMixin (models.Model):

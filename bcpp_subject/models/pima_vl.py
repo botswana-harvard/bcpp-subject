@@ -5,9 +5,9 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.urls import reverse
 from django_crypto_fields.fields import EncryptedTextField
 
-from edc_base.model.fields import OtherCharField
-from edc_base.model.models import HistoricalRecords
-from edc_base.model.validators import datetime_not_future
+from edc_base.model_fields import OtherCharField
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import YES_NO, PIMA
 from edc_protocol.validators import datetime_not_before_study_start
 # from edc_quota.client.models import QuotaMixin, QuotaManager
