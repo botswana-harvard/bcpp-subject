@@ -25,6 +25,8 @@ class HivCareAdherence (CrfModelMixin):
     first_positive = models.DateField(
         verbose_name='When was your first positive HIV test result?',
         validators=[date_not_future],
+        null=True,
+        blank=True,
         help_text=(
             'Note: If participant does not want to answer or is '
             'unable to estimate date, leave blank.'),

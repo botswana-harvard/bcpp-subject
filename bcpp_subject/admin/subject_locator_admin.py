@@ -1,23 +1,44 @@
 from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_base.fieldsets import Remove
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectLocatorForm
 from ..models import SubjectLocator
+from .modeladmin_mixins import ModelAdminMixin, FieldsetsModelAdminMixin
+from ..models.subject_visit import SubjectVisit
 from ..constants import E0
-from .modeladmin_mixins import ModelAdminMixin
 
 
 @admin.register(SubjectLocator, site=bcpp_subject_admin)
-class SubjectLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
+class SubjectLocatorAdmin(ModelAdminMixin, FieldsetsModelAdminMixin,
+                          admin.ModelAdmin):
 
     form = SubjectLocatorForm
 
-    conditional_fieldlists = {
-        E0: Remove('mail_address'),
-    }
+    def get_fieldsets(self, request, obj=None):
+        """Returns fieldsets after modifications declared in
+        "conditional" dictionaries.
+        """
+        fieldsets = super().get_fieldsets(request, obj=obj)
+        subject_identifier = request.GET.get('subject_identifier')
+        try:
+            subject_visit = SubjectVisit.objects.get(subject_identifier=subject_identifier)
+            if subject_visit.visit_code == E0:
+                fields = fieldsets[0][1].get('fields')
+                field_list = []
+                for field in fields:
+                    field_list.append(field)
+                field_list.remove('mail_address')
+                fields = ()
+                for field in field_list:
+                    fields += (field,)
+                fieldsets[0][1].update(fields=fields)
+        except SubjectVisit.DoesNotExist:
+            pass
+        except SubjectVisit.MultipleObjectsReturned:
+            pass
+        return fieldsets
 
     fieldsets = (
         (None, {
