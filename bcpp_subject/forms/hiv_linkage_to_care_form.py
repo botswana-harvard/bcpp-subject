@@ -35,6 +35,12 @@ class HivLinkageToCareForm (SubjectModelFormMixin):
 
         self.required_if(
             YES, field='initiated', field_required='initiated_date')
+        self.required_if(
+            YES, field='initiated', field_required='initiated_clinic')
+        self.required_if(
+            YES, field='initiated', field_required='initiated_clinic_community')
+        self.required_if(
+            YES, field='initiated', field_required='evidence_art')
 
         self.validate_other_specify('evidence_art')
 

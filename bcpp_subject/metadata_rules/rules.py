@@ -128,7 +128,7 @@ class ResourceUtilizationRuleGroup(RuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         #  source_fk = (SubjectVisit, 'subject_visit')
-        source_model = ResourceUtilization
+        source_model = 'bcpp_subject.resourceutilization'
 
 
 @register()

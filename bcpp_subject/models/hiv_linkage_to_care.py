@@ -102,11 +102,14 @@ class HivLinkageToCare (CrfModelMixin):
     initiated_clinic = models.CharField(
         verbose_name='Which clinic facility did you start/restart ART at?',
         max_length=25,
+        null=True,
+        blank=True,
         help_text='Indicate the name of the clinic')
 
     initiated_clinic_community = models.CharField(
         verbose_name=('In which community is this clinic located'),
         null=True,
+        blank=True,
         max_length=50,
         help_text='Indicate the community name'
     )
@@ -116,6 +119,7 @@ class HivLinkageToCare (CrfModelMixin):
         max_length=50,
         choices=TYPE_OF_EVIDENCE,
         null=True,
+        blank=True,
         help_text='')
 
     evidence_art_other = OtherCharField()
