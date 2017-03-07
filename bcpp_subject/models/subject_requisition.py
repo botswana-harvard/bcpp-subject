@@ -42,6 +42,8 @@ class SubjectRequisition(
         return ([self.subject_visit.subject_identifier,
                  self.requisition_identifier,
                  self.human_readable_identifier,
+                 self.panel_name,
+                 self.panel_object.abbreviation,
                  self.identifier_prefix]
                 + self.subject_visit.household_member.get_slugs())
 
