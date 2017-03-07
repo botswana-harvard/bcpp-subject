@@ -20,7 +20,7 @@ lab_profile.add_aliquot_type(wb)
 viral_load_panel = RequisitionPanel(VIRAL_LOAD, wb, abbreviation='VL')
 viral_load_processing = ProcessingProfile('viral_load', wb)
 viral_load_processing.add_process(pl, 3)
-viral_load_processing.add_process(bc, 1)
+viral_load_processing.add_process(bc, 2)
 viral_load_panel.processing_profile = viral_load_processing
 lab_profile.add_processing_profile(viral_load_processing)
 lab_profile.add_panel(viral_load_panel)
