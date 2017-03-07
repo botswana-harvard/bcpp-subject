@@ -1,0 +1,18 @@
+{% load edc_base_extras %}
+
+    <div class="list-group">
+
+		<a class="list-group-item">
+		   <span class="text small text-muted">Final: {{ subject_helper.final_hiv_status|default:'' }} {{ subject_helper.final_hiv_status_date|date:"Y-m-d" }}</span>
+		</a>
+		<a class="list-group-item">
+		   <span class="text small text-muted">Previous: {{ subject_helper.prev_result|default:'' }} {{ subject_helper.prev_result_date|date:"Y-m-d" }}</span>
+		</a>
+		<a class="list-group-item">
+		   <span class="text small text-muted">Known: {{ subject_helper.prev_result_known|default:"" }}</span>
+		</a>
+		<a class="list-group-item">
+		   <span class="text small text-muted">ART: {{ subject_helper.final_arv_status|default:'' }} {{ subject_helper.final_arv_status_date|date:"Y-m-d" }}</span>
+		</a>
+
+  </div>

@@ -1,0 +1,117 @@
+{% extends 'bcpp_subject/dashboard/sidebar/base_sidebar.html' %}
+
+{% load tz %}
+{% load edc_base_extras %}
+
+
+{% block special_forms %}
+
+<div class="table-responsive small text-default">
+    <table class="table table-condensed">
+        <thead></thead>
+        <tbody>
+
+    {% if navbar_name != 'anonymous' %}
+
+        <tr>
+        
+        
+        <td class="{% if consent %}success{% else %}warning{% endif %}">
+
+        {% with wrapped=consent %}
+
+            {% include 'edc_dashboard/controls/change_button.html' %}
+
+        {% endwith %}
+
+        <td class="{% if consent %}success{% else %}warning{% endif %}">
+            <h6>{{ consent.verbose_name|title }} v{{ consent.version }} <span class="text text-muted">{{ consent.consent_datetime|date:"Y-m-d"}}</span></h6> 
+        </td>
+
+        </tr>
+
+
+        <tr>
+            {% with wrapped=subject_locator %}
+        
+                {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+        
+            {% endwith %}
+
+        </tr>
+    {% endif %}
+        </tbody>
+    </table>
+</div>
+                  
+{% endblock special_forms %}
+
+{% block demographics %}   
+
+    {% include 'bcpp_subject/dashboard/sidebar/demographics.html' %}
+
+{% endblock demographics %}
+
+{% block hiv_status %}   
+
+    {% include 'bcpp_subject/dashboard/sidebar/hiv_status.html' %}
+
+{% endblock hiv_status %}
+
+
+{% block survey_schedules %}   
+
+    {% include 'bcpp_subject/dashboard/sidebar/survey_schedules.html' %}
+
+{% endblock survey_schedules %}
+
+{% block referral %}   
+
+    {% include 'bcpp_subject/dashboard/sidebar/referral.html' %}
+
+{% endblock referral %}
+
+
+{% block consent_history %}
+
+	<div class="list-group">
+	  {% if not consents %}
+	    <a class="list-group-item" href="#">Never consented</a>
+	  {% endif %}
+	  {% for obj in consents %}
+	       <a class="list-group-item" href="#">
+	            {{ obj.consent_datetime|date:"Y-m-d" }} Version {{ obj.version }}
+	       </a>
+	  {% endfor %}
+	</div>
+
+{% endblock consent_history %}
+
+
+{% block household %}
+    
+    {% if navbar_name != 'anonymous' %}
+    
+	    <div class="list-group">
+	    {% for household_member in household_members %}
+		    {% if household_member.survey_schedule_object.field_value == survey_schedule_object.field_value %}
+		        {% if household_member.subject_identifier != subject_identifier %}
+			        {% if household_member.is_consented %}
+			            <a class="list-group-item" href="{% url bcpp_subject_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
+			        {% else %}
+			            <a class="list-group-item" href="{% url enumeration_dashboard_url_name subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value household_identifier=household_identifier %}">
+			        {% endif %}
+		            <i class="{% if household_member.gender == MALE %}fa fa-male{% else %}female{% endif %} fa-lg fa-fw"></i>
+		                {{ household_member.first_name }} {{ household_member.initials }} {{ household_member.age_in_years }}
+		                {% if not household_member.eligible_member %}<i class="fa fa-ban fa-fw"></i>{% endif %}
+		                {% if household_member.eligible_subject and household_member.is_consented %}<i class="fa fa-dot-circle-o fa-fw"></i>{% endif %}
+		                {% if household_member.eligible_subject and not household_member.is_consented %}<i class="fa fa-circle-o fa-fw"></i>{% endif %}
+			        </a>
+		        {% endif %}
+             {% endif %}
+	    {% endfor %}
+	    </div>
+
+    {% endif %}
+{% endblock household %}
+

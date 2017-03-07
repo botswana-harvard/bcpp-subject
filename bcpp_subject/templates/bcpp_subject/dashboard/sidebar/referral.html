@@ -1,0 +1,15 @@
+{% load edc_base_extras %}
+
+    <div class="list-group">
+
+        <a class="list-group-item">
+           <span class="text small text-muted">{{ referral.referral_code }}</span>
+        </a>
+        <a class="list-group-item">
+           <span class="text small text-muted">{{ referral.referral_appt.referral_appt_datetime|date:"Y-m-d" }}</span>
+        </a>
+        <a class="list-group-item">
+           <span class="text small text-muted">{{ referral.referral_appt.referral_clinic_type }}</span>
+        </a>
+
+  </div>

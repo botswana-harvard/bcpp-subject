@@ -1,0 +1,90 @@
+
+<div class="panel-group" id="accordion">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#demographics">
+              <i class="{% if household_member.gender == MALE %}fa fa-male{% else %}fa fa-female{% endif %} fa-lg fa-fw"></i>
+              {{ subject_identifier }}</a>
+          </h6>
+      </div>
+      <div id="demographics" class="panel-collapse collapse in">
+          {% block demographics %}{% endblock demographics %}           
+      </div>           
+    </div>
+
+    {% if subject_helper.final_hiv_status and subject_helper.final_hiv_status != UNK %}
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	          <h6 class="panel-title">
+	              <a data-toggle="collapse" data-parent="#accordion" href="#hiv_status">
+	              HIV Status</a>
+	          </h6>
+	      </div>
+	      <div id="hiv_status" class="panel-collapse collapse in">
+	          {% block hiv_status %}{% endblock hiv_status %}           
+	      </div>           
+	    </div>
+    {% endif %}
+
+    {% if referral %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+              <h6 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#referral">
+                  Referral</a>
+              </h6>
+          </div>
+          <div id="referral" class="panel-collapse collapse in">
+              {% block referral %}{% endblock referral %}           
+          </div>           
+        </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#consent">Special Forms</a>
+          </h6>
+      </div>
+      <div >
+         {% block special_forms %}{% endblock special_forms %}
+      </div>           
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-map fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#enrollment">Survey Schedule</a>
+          </h6>
+      </div>
+      <div id="enrollment" class="panel-collapse collapse">
+         {% block survey_schedules %}{% endblock survey_schedules %}
+      </div>           
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-home fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#household">{{ household_identifier }}</a>
+          </h6>
+      </div>
+      <div id="household" class="panel-collapse collapse">
+         {% block household %}{% endblock household %}
+      </div>           
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <h6 class="panel-title"><i class="fa fa-history fa-lg fa-fw"></i> 
+              <a data-toggle="collapse" data-parent="#accordion" href="#consent_history">Consent History</a>
+          </h6>
+      </div>
+      <div id="consent_history" class="panel-collapse collapse">
+         {% block consent_history %}{% endblock consent_history %}
+      </div>           
+    </div>
+
+
+</div>

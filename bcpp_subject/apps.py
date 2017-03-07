@@ -1,0 +1,24 @@
+from django.apps import AppConfig as DjangoApponfig
+
+
+class AppConfig(DjangoApponfig):
+    name = 'bcpp_subject'
+    listboard_template_name = 'bcpp_subject/listboard.html'
+    dashboard_template_name = 'bcpp_subject/dashboard.html'
+    base_template_name = 'edc_base/base.html'
+    listboard_url_name = 'bcpp_subject:listboard_url'
+    anonymous_listboard_url_name = 'bcpp_subject:anonymous_listboard_url'
+    dashboard_url_name = 'bcpp_subject:dashboard_url'
+    anonymous_dashboard_url_name = 'bcpp_subject:anonymous_dashboard_url'
+    admin_site_name = 'bcpp_subject_admin'
+
+    def ready(self):
+        from bcpp_subject.models.signals import (
+            consent_on_post_save,
+            subject_consent_on_post_delete,
+            enrollment_checklist_anonymous_on_post_save,
+            enrollment_checklist_anonymous_on_post_delete,
+            enrollment_checklist_on_post_delete,
+            enrollment_checklist_on_post_save,
+            referral_on_post_save,
+        )
