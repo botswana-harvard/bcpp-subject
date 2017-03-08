@@ -609,6 +609,7 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         hivresultdocumentation_data = {
             "report_datetime": self.bhs_subject_visit_male.report_datetime,
             "result_date": date(2013, 10, 18),
+            'result_recorded': NEG,
             "result_doc_type": "Tebelopele",
             "subject_visit": self.bhs_subject_visit_male}
 
