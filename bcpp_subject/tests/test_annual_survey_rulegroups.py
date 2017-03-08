@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, date
 from dateutil.relativedelta import relativedelta
 
 from model_mommy import mommy
@@ -586,6 +586,100 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
 
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hicenrollment', NOT_REQUIRED, T2).count(), 1)
+
+    def test_known_neg_at_bhs_todays_hiv_required(self):
+        """ Assert if a known smc neg at bhs today's HIV is required.
+        """
+        self.make_subject_locator(
+            self.subject_identifier,
+            self.bhs_subject_visit_male.report_datetime)
+
+        circumcision_data = {
+            "circumcised": "No",
+            "circumcised_datetime": None,
+            "circumcised_location": "N/A",
+            "last_seen_circumcised": None,
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.circumcision',
+            **circumcision_data)
+
+        hivresultdocumentation_data = {
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "result_date": date(2013, 10, 18),
+            "result_doc_type": "Tebelopele",
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.hivresultdocumentation',
+            **hivresultdocumentation_data)
+
+        hivtested_data = {
+            "arvs_hiv_test": "Yes",
+            "hiv_pills": "Yes",
+            "num_hiv_tests": 2,
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "where_hiv_test": "Tebelopele VCT center",
+            "why_hiv_test": "I read information on a brochure/flier that it is important for me to get tested for HIV",
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtested',
+            **hivtested_data)
+
+        hivtestinghistory_data = {
+            "has_record": "Yes",
+            "has_tested": "Yes",
+            "other_record": "N/A",
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "verbal_hiv_result": "NEG",
+            "when_hiv_test": "6 to 12 months ago",
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestinghistory',
+            **hivtestinghistory_data)
+
+        hivtestreview_data = {
+            "hiv_test_date": "2013-09-14",
+            "recorded_hiv_result": "NEG",
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.hivtestreview',
+            **hivtestreview_data)
+
+        uncircumcised_data = {
+            "aware_free": "Television",
+            "circumcised": "No",
+            "future_circ": "Yes",
+            "future_reasons_smc": "More information about risks",
+            "reason_circ": "Procedure might be painful",
+            "report_datetime": self.bhs_subject_visit_male.report_datetime,
+            "service_facilities": "Yes",
+            "subject_visit": self.bhs_subject_visit_male}
+
+        mommy.make_recipe(
+            'bcpp_subject.uncircumcised',
+            **uncircumcised_data)
+
+        self.make_residency_mobility(
+            self.bhs_subject_visit_male, YES,
+            NO, self.bhs_subject_visit_male.report_datetime)
+
+        self.hiv_result(
+            NEG, self.bhs_subject_visit_male,
+            self.bhs_subject_visit_male.report_datetime)
+
+        self.make_hic_enrolment(
+            self.bhs_subject_visit_male, YES,
+            self.bhs_subject_visit_male.report_datetime)
+
+        self.assertEqual(self.crf_metadata_obj(
+            'bcpp_subject.hivresult', REQUIRED, T1).count(), 1)
 
     @tag("reviewed")
     def test_hic_not_enrolled_at_bhs(self):
