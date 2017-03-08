@@ -678,6 +678,9 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             self.bhs_subject_visit_male, YES,
             self.bhs_subject_visit_male.report_datetime)
 
+        self.add_subject_visit_followup(
+            self.bhs_subject_visit_male.household_member, T1)
+
         self.assertEqual(self.crf_metadata_obj(
             'bcpp_subject.hivresult', REQUIRED, T1).count(), 1)
 
