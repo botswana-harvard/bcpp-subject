@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'household.apps.AppConfig',
     'member.apps.AppConfig',
     'plot.apps.AppConfig',
-    'bcpp_lab.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
     'enumeration.apps.AppConfig',
 ]

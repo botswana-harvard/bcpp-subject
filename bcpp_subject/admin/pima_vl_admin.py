@@ -34,7 +34,7 @@ class PimaVlAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     list_filter = ('subject_visit', 'time_of_test', 'pima_id')
 
     list_display = (
-        'subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id', 'pre_order')
+        'subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id')
 
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,

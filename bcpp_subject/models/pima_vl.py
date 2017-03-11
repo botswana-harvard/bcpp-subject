@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
-from django.urls import reverse
 from django_crypto_fields.fields import EncryptedTextField
 
 from edc_base.model_fields import OtherCharField
@@ -10,10 +9,8 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import YES_NO, PIMA
 from edc_protocol.validators import datetime_not_before_study_start
-# from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from ..choices import EASY_OF_USE, QUANTIFIER
-
 from .model_mixins import CrfModelMixin
 
 PIMA_SETTING_VL = (
@@ -22,7 +19,6 @@ PIMA_SETTING_VL = (
 )
 
 
-# class PimaVl (QuotaMixin, CrfModelMixin):
 class PimaVl (CrfModelMixin):
 
     report_datetime = models.DateTimeField(
@@ -124,12 +120,6 @@ class PimaVl (CrfModelMixin):
     history = HistoricalRecords()
 
     # quota = QuotaManager()
-
-    def pre_order(self):
-        url = reverse('admin:bcpp_lab_preorder_changelist')
-        return '<a href="{0}?q={1}">pre_orders</a>'.format(
-            url, self.subject_visit.subject_identifier)
-    pre_order.allow_tags = True
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
