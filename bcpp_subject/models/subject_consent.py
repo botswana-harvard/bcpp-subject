@@ -87,16 +87,17 @@ class SubjectConsent(
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
         max_length=10,
+        choices=YES_NO,
         null=True,
         blank=False,
-        default='-',
-        choices=YES_NO,
         help_text=('Subject is a minor if aged 16-17. A guardian must '
                    'be present for consent. HIV status may NOT be '
                    'revealed in the household.'),
         editable=False)
 
-    is_signed = models.BooleanField(default=False, editable=False)
+    is_signed = models.BooleanField(
+        default=False,
+        editable=False)
 
     objects = Manager()
 

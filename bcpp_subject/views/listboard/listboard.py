@@ -6,10 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 
+from edc_map.models import InnerContainer
+
 from ...models import SubjectConsent
 from ..wrappers import SubjectConsentModelWrapper
 from .base_listboard import BaseListboardView
-from edc_map.models import InnerContainer
 
 
 class ListboardView(BaseListboardView):
