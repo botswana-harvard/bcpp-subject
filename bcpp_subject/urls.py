@@ -43,7 +43,7 @@ def listboard_urls():
             url(r'^' + label + '/'
                 '(?P<subject_identifier>' + subject_identifier + ')/',
                 listboard_view_class.as_view(), name=listboard_url_name),
-            url(r'^' + label + 'listboard/(?P<page>\d+)/',
+            url(r'^' + label + '/(?P<page>\d+)/',
                 listboard_view_class.as_view(), name=listboard_url_name),
             url(r'^' + label + '/',
                 listboard_view_class.as_view(), name=listboard_url_name)])
