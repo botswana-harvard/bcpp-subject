@@ -10,8 +10,9 @@ from .model_mixins import CrfModelMixin
 class StigmaOpinion (CrfModelMixin):
 
     test_community_stigma = models.CharField(
-        verbose_name="People are hesitant to take an HIV test due to"
-                     " fear of people\'s reaction if the test result is positive for HIV.",
+        verbose_name=(
+            'People are hesitant to take an HIV test due to fear of people\'s '
+            'reaction if the test result is positive for HIV.'),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -37,8 +38,9 @@ class StigmaOpinion (CrfModelMixin):
     )
 
     enacted_verbal_stigma = models.CharField(
-        verbose_name="People living with or thought to be living with HIV"
-                     " are verbally insulted, harassed and/or threatened.",
+        verbose_name=(
+            'People living with or thought to be living with HIV '
+            'are verbally insulted, harassed and/or threatened.'),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -46,8 +48,9 @@ class StigmaOpinion (CrfModelMixin):
     )
 
     enacted_physical_stigma = models.CharField(
-        verbose_name="People living with or thought to be living with"
-                     " HIV are sometimes physically assaulted.",
+        verbose_name=(
+            'People living with or thought to be living with '
+            'HIV are sometimes physically assaulted.'),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -55,9 +58,10 @@ class StigmaOpinion (CrfModelMixin):
     )
 
     enacted_family_stigma = models.CharField(
-        verbose_name="People living with or thought to be living with"
-                     " HIV are now more accepted by others as there is now an effective"
-                     " treatment available.",
+        verbose_name=(
+            'People living with or thought to be living with HIV are now more '
+            'accepted by others as there is now an effective treatment '
+            'available.'),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -65,8 +69,9 @@ class StigmaOpinion (CrfModelMixin):
     )
 
     fear_stigma = models.CharField(
-        verbose_name="People living with HIV are less able to financially"
-                     " support themselves and their families.",
+        verbose_name=(
+            'People living with HIV are less able to financially '
+            'support themselves and their families.'),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
