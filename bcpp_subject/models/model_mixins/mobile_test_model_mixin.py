@@ -4,7 +4,9 @@ from django.core.validators import MinValueValidator, RegexValidator
 
 from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
-from edc_constants.choices import YES_NO, PIMA
+from edc_constants.choices import YES_NO
+
+from ...choices import PIMA
 
 
 class MobileTestModelMixin(models.Model):
@@ -21,7 +23,8 @@ class MobileTestModelMixin(models.Model):
         null=True,
         blank=True)
 
-    reason_not_done_other = OtherCharField()
+    reason_not_done_other = OtherCharField(
+        max_length=50)
 
     machine_identifier = models.CharField(
         max_length=9,
@@ -42,6 +45,11 @@ class MobileTestModelMixin(models.Model):
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0)],
+        null=True,
+        blank=True)
+
+    comment = models.TextField(
+        max_length=250,
         null=True,
         blank=True)
 

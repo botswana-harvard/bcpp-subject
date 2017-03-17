@@ -23,7 +23,8 @@ class SubjectLocatorAdmin(ModelAdminMixin, FieldsetsModelAdminMixin,
         fieldsets = super().get_fieldsets(request, obj=obj)
         subject_identifier = request.GET.get('subject_identifier')
         try:
-            subject_visit = SubjectVisit.objects.get(subject_identifier=subject_identifier)
+            subject_visit = SubjectVisit.objects.get(
+                subject_identifier=subject_identifier)
             if subject_visit.visit_code == E0:
                 fields = fieldsets[0][1].get('fields')
                 field_list = []
@@ -44,7 +45,6 @@ class SubjectLocatorAdmin(ModelAdminMixin, FieldsetsModelAdminMixin,
         (None, {
             'fields': (
                 'subject_identifier',
-                'date_signed',
                 'mail_address',
                 'home_visit_permission',
                 'physical_address',
@@ -71,7 +71,6 @@ class SubjectLocatorAdmin(ModelAdminMixin, FieldsetsModelAdminMixin,
 
     list_display = (
         'subject_identifier',
-        'date_signed',
         'home_visit_permission',
         'may_follow_up',
         'has_alt_contact',

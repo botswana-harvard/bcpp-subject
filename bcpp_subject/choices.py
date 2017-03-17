@@ -1413,3 +1413,10 @@ REFERRAL_LETTER_YES_NO_REFUSED = (
     (YES, 'Yes, subject has been handed a referral letter'),
     (NO, 'No, subject has not been handed a referral letter'),
     (REFUSED, 'Subject refused referral the referral letter'))
+
+PIMA = (
+    ('Participant Declined', 'Participant Declined'),
+    ('Multiple PIMA malfunction', 'Multiple PIMA malfunction'),
+    ('Failed Blood Collection', 'Failed Blood Collection'),
+    (OTHER, _('Other, specify:')),
+)
