@@ -2,6 +2,7 @@ import re
 import socket
 
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -33,6 +34,9 @@ class ListboardView(BaseListboardView):
 
     def get_queryset_filter_options(self, request, *args, **kwargs):
         options = super().get_queryset_filter_options(request, *args, **kwargs)
+        map_area = settings.CURRENT_MAP_AREA
+        options.update(
+            {'household_member__household_structure__household__plot__map_area': map_area})
         device_name = socket.gethostname()
         plot_identifier_list = []
         try:
