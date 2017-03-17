@@ -1129,7 +1129,7 @@ LASTSEX_CHOICE = (
 
 FIRSTRELATIONSHIP_CHOICE = (
     ('Long-term partner', _('Long-term partner (>2 years) or spouse')),
-    # ('2 years or spouse', _('2 years or spouse')),
+    ('2 years or spouse', _('2 years or spouse')),
     ('Boyfriend/Girlfriend', _('Boyfriend/Girlfriend')),
     ('Casual (known) partner', _('Casual (known) partner')),
     ('One time partner (previously unknown)',
@@ -1138,7 +1138,6 @@ FIRSTRELATIONSHIP_CHOICE = (
     (OTHER, _('Other, specify:')),
     (DWTA, _('Don\'t want to answer')),
 )
-
 
 FIRST_PARTNER_HIV_CHOICE = (
     (POS, _('HIV positive')),
@@ -1171,13 +1170,12 @@ FREQ_IN_YEAR = (
 )
 
 AGE_RANGES = (
-    (('less or equal to 18 years old'), _('less or equal to 18 years old')),
-    (('19-29'), _('19-29 years old')),
-    (('30-39'), _('30-39 years old')),
-    (('40-49'), _('40-49 years old')),
-    (('50-59'), _('50-59 years old')),
-    (('50-59'), _('50-59 years old')),
-    (('60 or older'), _('60 year or older')),
+    ('less or equal to 18 years old', _('less or equal to 18 years old')),
+    ('19-29', _('19-29 years old')),
+    ('30-39', _('30-39 years old')),
+    ('40-49', _('40-49 years old')),
+    ('50-59', _('50-59 years old')),
+    ('60 or older', _('60 year or older')),
     (NOT_SURE, _('Not sure')),
     (DWTA, 'Don\'t want to answer'),
 )
@@ -1415,3 +1413,10 @@ REFERRAL_LETTER_YES_NO_REFUSED = (
     (YES, 'Yes, subject has been handed a referral letter'),
     (NO, 'No, subject has not been handed a referral letter'),
     (REFUSED, 'Subject refused referral the referral letter'))
+
+PIMA = (
+    ('Participant Declined', 'Participant Declined'),
+    ('Multiple PIMA malfunction', 'Multiple PIMA malfunction'),
+    ('Failed Blood Collection', 'Failed Blood Collection'),
+    (OTHER, _('Other, specify:')),
+)

@@ -6,7 +6,7 @@ from edc_base.modelform_mixins import (
     CommonCleanModelFormMixin, OtherSpecifyValidationMixin,
     ApplicableValidationMixin, Many2ManyModelValidationMixin,
     RequiredFieldValidationMixin, JSONModelFormMixin)
-from edc_constants.constants import NO, DWTA
+from edc_constants.constants import NO, DWTA, YES
 
 from ..constants import DAYS, MONTHS, YEARS
 from ..models import SubjectVisit, PartnerResidency, SexualBehaviour, HivTestingHistory
@@ -131,4 +131,19 @@ class SexualPartnerFormMixin:
 #             raise forms.ValidationError(
 #                 'If partner status is not known, do not give information '
 #                 'about status of ARV\'s')
+        return cleaned_data
+
+
+class MobileTestModelFormMixin:
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.required_if(
+            NO, field='test_done', field_required='reason_not_done')
+        self.validate_other_specify('reason_not_done')
+        self.required_if(
+            YES, field='test_done', field_required='machine_identifier')
+        self.required_if(YES, field='test_done', field_required='result_value')
+        self.required_if(
+            YES, field='test_done', field_required='result_datetime')
         return cleaned_data

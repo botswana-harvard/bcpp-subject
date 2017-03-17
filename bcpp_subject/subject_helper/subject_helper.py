@@ -1,5 +1,7 @@
 import sys
 
+from django.apps import apps as django_apps
+
 from edc_constants.constants import (
     POS, YES, NEG, NO, NAIVE, DWTA, UNK, IND)
 
@@ -20,7 +22,7 @@ class SubjectHelper:
     HIV status and ART status.
     """
 
-    def __init__(self, visit, model_values=None, **kwargs):
+    def __init__(self, visit=None, subject_identifier=None, model_values=None, **kwargs):
         self.defaulter_at_baseline = None
         self.documented_pos = None
         self.documented_pos_date = None
@@ -32,13 +34,24 @@ class SubjectHelper:
         self.prev_result_date = None
         self.prev_result_known = None
 
-        self.subject_visit = visit
-        self.subject_identifier = visit.subject_identifier
+        if visit:
+            self.subject_visit = visit
+            self.subject_identifier = visit.subject_identifier
+        else:
+            SubjectVisit = django_apps.get_model(
+                *'bcpp_subject.subjectvisit'.split('.'))
+            self.subject_identifier = subject_identifier
+            self.subject_visit = SubjectVisit.objects.filter(
+                subject_identifier=subject_identifier).order_by('report_datetime').last()
 
+        self.survey_schedule = self.subject_visit.survey_schedule_object.field_value
+        self.visit_schedule_name = self.subject_visit.visit_schedule_name
+        self.schedule_name = self.subject_visit.schedule_name
+        self.visit_code = self.subject_visit.visit_code
         self.baseline = ValuesSetter(
-            model_values or ModelValues(visit, baseline=True).__dict__)
+            model_values or ModelValues(self.subject_visit, baseline=True).__dict__)
         self.current = ValuesSetter(
-            model_values or ModelValues(visit).__dict__)
+            model_values or ModelValues(self.subject_visit).__dict__)
 
         if self.current.result_recorded_document == ART_PRESCRIPTION:
             self.current.arv_evidence = YES
@@ -58,7 +71,7 @@ class SubjectHelper:
 
         if self.baseline.ever_taken_arv == NO:
             self.naive_at_baseline = True
-        if (self.baseline.ever_taken_arv == YES
+        elif (self.baseline.ever_taken_arv == YES
                 and self.baseline.on_arv == NO):
             self.defaulter_at_baseline = True
 

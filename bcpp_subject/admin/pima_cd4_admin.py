@@ -19,20 +19,22 @@ class PimaCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': (
                 "subject_visit",
-                'pima_today',
-                'pima_today_other',
-                'pima_today_other_other',
-                'pima_id',
-                'cd4_value',
-                'cd4_datetime')}),
+                'test_done',
+                'reason_not_done',
+                'reason_not_done_other',
+                'machine_identifier',
+                'result_datetime'
+                'result_value',
+            )}),
         audit_fieldset_tuple,
     )
 
     list_filter = (
-        'subject_visit', 'cd4_datetime', 'pima_id', Cd4ThreshHoldFilter,)
+        'subject_visit', 'result_datetime', 'machine_identifier', Cd4ThreshHoldFilter,)
 
-    list_display = ('subject_visit', 'cd4_datetime', 'cd4_value', 'pima_id')
+    list_display = (
+        'subject_visit', 'result_datetime', 'result_value', 'machine_identifier')
 
     radio_fields = {
-        'pima_today': admin.VERTICAL,
-        'pima_today_other': admin.VERTICAL}
+        'test_done': admin.VERTICAL,
+        'reason_not_done': admin.VERTICAL}
