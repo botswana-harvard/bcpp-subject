@@ -28,11 +28,12 @@ class ModelValues:
         self.today_hiv_result_date = None
 
         if baseline:
-            subject_visit = SubjectVisit.objects.filter(
+            self.subject_visit = SubjectVisit.objects.filter(
                 subject_identifier=visit.subject_identifier).order_by(
                     'report_datetime').first()
-            options = dict(subject_visit=subject_visit)
+            options = dict(subject_visit=self.subject_visit)
         else:
+            self.subject_visit = visit
             options = dict(
                 subject_visit__subject_identifier=visit.subject_identifier,
                 subject_visit__report_datetime__lte=visit.report_datetime)

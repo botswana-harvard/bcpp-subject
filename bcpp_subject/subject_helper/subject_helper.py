@@ -23,27 +23,22 @@ class SubjectHelper:
     """
 
     def __init__(self, visit=None, subject_identifier=None, model_values=None, **kwargs):
-        self.defaulter_at_baseline = None
+        self._subject_visits = None
         self.documented_pos = None
         self.documented_pos_date = None
         self.final_arv_status = None
         self.final_hiv_status = None
-        self.naive_at_baseline = None
         self.newly_diagnosed = None
         self.prev_result = None
         self.prev_result_date = None
         self.prev_result_known = None
 
         if visit:
-            self.subject_visit = visit
             self.subject_identifier = visit.subject_identifier
+            self.subject_visit = visit
         else:
-            SubjectVisit = django_apps.get_model(
-                *'bcpp_subject.subjectvisit'.split('.'))
             self.subject_identifier = subject_identifier
-            self.subject_visit = SubjectVisit.objects.filter(
-                subject_identifier=subject_identifier).order_by('report_datetime').last()
-
+            self.subject_visit = self.subject_visits.last()
         self.survey_schedule = self.subject_visit.survey_schedule_object.field_value
         self.visit_schedule_name = self.subject_visit.visit_schedule_name
         self.schedule_name = self.subject_visit.schedule_name
@@ -59,21 +54,73 @@ class SubjectHelper:
         self._prepare_documented_status_and_date()
         self._prepare_final_hiv_status()
         self._prepare_final_arv_status()
-        self._prepare_previous_status_date_and_awareness()
+
+        if self.previous_visit:
+            previous_helper = self.__class__(visit=self.previous_visit)
+            self.prev_result = previous_helper.final_hiv_status
+            self.prev_result_known = YES if previous_helper.final_hiv_status else NO
+            self.prev_result_date = previous_helper.final_hiv_status_date
+        else:
+            self._prepare_previous_status_date_and_awareness()
         # additional values
-        self.newly_diagnosed = (
-            not self.prev_result and self.prev_result_known != YES)
-        self.known_positive = (
-            self.prev_result == POS and self.prev_result_known == YES)
+
         self.indeterminate = (
             self.current.today_hiv_result == IND
             and self.current.elisa_hiv_result not in [POS, NEG])
 
-        if self.baseline.ever_taken_arv == NO:
-            self.naive_at_baseline = True
-        elif (self.baseline.ever_taken_arv == YES
-                and self.baseline.on_arv == NO):
-            self.defaulter_at_baseline = True
+        self.newly_diagnosed = (
+            self.final_hiv_status == POS and self.prev_result_known != YES)
+        self.known_positive = (
+            self.prev_result == POS and self.prev_result_known == YES)
+        self.has_tested = YES if YES in [
+            self.baseline.has_tested, self.current.has_tested] else NO
+
+    @property
+    def subject_visits(self):
+        if not self._subject_visits:
+            SubjectVisit = django_apps.get_model(
+                *'bcpp_subject.subjectvisit'.split('.'))
+            self._subject_visits = SubjectVisit.objects.filter(
+                subject_identifier=self.subject_identifier).order_by('report_datetime')
+        return self._subject_visits
+
+    @property
+    def previous_visit(self):
+        visits = [obj for obj in self.subject_visits]
+        for index, visit in enumerate(visits):
+            if visit == self.subject_visit:
+                if index > 0:
+                    try:
+                        return visits[index - 1]
+                    except IndexError:
+                        return None
+        return None
+
+    @property
+    def options(self):
+        options = self.__dict__
+        options.update(
+            final_arv_status_baseline=self.final_arv_status_baseline,
+            naive_at_baseline=self.naive_at_baseline,
+            defaulter_at_baseline=self.defaulter_at_baseline,
+            final_hiv_status_date=self.final_hiv_status_date,
+            prev_results_discordant=self.prev_results_discordant,
+        )
+        return options
+
+    @property
+    def final_arv_status_baseline(self):
+        baseline_helper = self.__class__(visit=self.baseline.subject_visit)
+        return baseline_helper.final_arv_status
+
+    @property
+    def naive_at_baseline(self):
+        return self.final_arv_status_baseline == NAIVE
+
+    @property
+    def defaulter_at_baseline(self):
+        baseline_helper = self.__class__(visit=self.baseline.subject_visit)
+        return baseline_helper.final_arv_status == DEFAULTER
 
     @property
     def final_hiv_status_date(self):
@@ -125,6 +172,8 @@ class SubjectHelper:
         The caller is responsible for handling recorded_hiv_result
         and result_recorded being discordant.
         """
+        # FIXME: to be final_hiv_status at baseline or previous
+        # at baseline
         if result and self.current.recorded_hiv_result == result:
             self.prev_result = result
             self.prev_result_date = self.current.recorded_hiv_result_date
