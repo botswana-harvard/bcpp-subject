@@ -1,4 +1,5 @@
 import re
+import uuid
 
 from django.db import models
 
@@ -54,8 +55,9 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                 'Identity may not be changed. Expected {}. Got {}'.format(
                     registered_subject.identity,
                     self.identity))
+            
         if (registered_subject.registration_identifier
-            and registered_subject.registration_identifier !=
+            and uuid.UUID(registered_subject.registration_identifier) !=
                 self.household_member.internal_identifier):
             raise RegisteredSubjectError(
                 'Internal Identifier may not be changed. Expected {}. '
