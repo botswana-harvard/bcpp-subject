@@ -55,7 +55,6 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                 'Identity may not be changed. Expected {}. Got {}'.format(
                     registered_subject.identity,
                     self.identity))
-            
         if (registered_subject.registration_identifier
             and uuid.UUID(registered_subject.registration_identifier) !=
                 self.household_member.internal_identifier):
