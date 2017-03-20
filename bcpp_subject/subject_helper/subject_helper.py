@@ -43,26 +43,40 @@ class SubjectHelper:
         self.visit_schedule_name = self.subject_visit.visit_schedule_name
         self.schedule_name = self.subject_visit.schedule_name
         self.visit_code = self.subject_visit.visit_code
-        self.baseline = ValuesSetter(
-            model_values or ModelValues(self.subject_visit, baseline=True).__dict__)
-        self.current = ValuesSetter(
-            model_values or ModelValues(self.subject_visit).__dict__)
+        for index, subject_visit in enumerate(self.subject_visits):
+            value_setter = ValuesSetter(
+                model_values or ModelValues(subject_visit).__dict__)
+            setattr(self, subject_visit.visit_code, value_setter)
+            if index == 0:
+                self.baseline = value_setter
+            if subject_visit == self.subject_visit:
+                self.current = value_setter
 
+#         self.baseline = ValuesSetter(
+#             model_values or ModelValues(self.subject_visit, baseline=True).__dict__)
+#         self.current = ValuesSetter(
+#             model_values or ModelValues(self.subject_visit).__dict__)
         if self.current.result_recorded_document == ART_PRESCRIPTION:
             self.current.arv_evidence = YES
 
         self._prepare_documented_status_and_date()
         self._prepare_final_hiv_status()
         self._prepare_final_arv_status()
-
+        self._prepare_previous_status_date_and_awareness()
         if self.previous_visit:
             previous_helper = self.__class__(visit=self.previous_visit)
-            self.prev_result = previous_helper.final_hiv_status
-            self.prev_result_known = YES if previous_helper.final_hiv_status else NO
-            self.prev_result_date = previous_helper.final_hiv_status_date
-        else:
-            self._prepare_previous_status_date_and_awareness()
-        # additional values
+            previous_result = previous_helper.final_hiv_status
+            previous_result_known = YES if previous_helper.final_hiv_status else NO
+            previous_result_date = previous_helper.final_hiv_status_date
+            if not self.prev_result_date:
+                self.prev_result = previous_result
+                self.prev_result_known = previous_result_known
+                self.prev_result_date = previous_result_date
+            elif (previous_result_date
+                    and previous_result_date > self.prev_result_date):
+                self.prev_result = previous_result
+                self.prev_result_known = previous_result_known
+                self.prev_result_date = previous_result_date
 
         self.indeterminate = (
             self.current.today_hiv_result == IND
