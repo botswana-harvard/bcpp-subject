@@ -115,7 +115,7 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
                  CreateAppointmentsMixin, BaseUuidModel):
 
     """A model used by the system. Auto-completed by the
-    Subjectand Anonymous Consents.
+    Subject and Anonymous Consents.
     """
 
     ADMIN_SITE_NAME = 'bcpp_subject_admin'

@@ -31,7 +31,9 @@ visit_schedule_bhs = VisitSchedule(
     default_disenrollment_model='bcpp_subject.disenrollmentbhs',
     visit_model='bcpp_subject.subjectvisit',
     offstudy_model='bcpp_subject.subjectoffstudy',
+    previous_visit_schedule=None,
 )
+visit_schedule_bhs.add_schedule(bhs_schedule)
 
 visit_schedule_ahs = VisitSchedule(
     name='visit_schedule_ahs',
@@ -41,7 +43,9 @@ visit_schedule_ahs = VisitSchedule(
     default_disenrollment_model='bcpp_subject.disenrollmentahs',
     visit_model='bcpp_subject.subjectvisit',
     offstudy_model='bcpp_subject.subjectoffstudy',
+    previous_visit_schedule=visit_schedule_bhs,
 )
+visit_schedule_ahs.add_schedule(ahs_schedule)
 
 visit_schedule_ess = VisitSchedule(
     name='visit_schedule_ess',
@@ -51,7 +55,9 @@ visit_schedule_ess = VisitSchedule(
     default_disenrollment_model='bcpp_subject.disenrollmentess',
     visit_model='bcpp_subject.subjectvisit',
     offstudy_model='bcpp_subject.subjectoffstudy',
+    previous_visit_schedule=None,
 )
+visit_schedule_ess.add_schedule(ess_schedule)
 
 
 visit_schedule_ano = VisitSchedule(
@@ -62,11 +68,8 @@ visit_schedule_ano = VisitSchedule(
     default_disenrollment_model='bcpp_subject.disenrollmentano',
     visit_model='bcpp_subject.subjectvisit',
     offstudy_model='bcpp_subject.subjectoffstudy',
+    previous_visit_schedule=None,
 )
-
-visit_schedule_bhs.add_schedule(bhs_schedule)
-visit_schedule_ahs.add_schedule(ahs_schedule)
-visit_schedule_ess.add_schedule(ess_schedule)
 visit_schedule_ano.add_schedule(ano_schedule)
 
 site_visit_schedules.register(visit_schedule_bhs)
