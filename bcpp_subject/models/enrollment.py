@@ -31,20 +31,20 @@ class EnrollmentManager(BaseEnrollmentManager):
         next_survey_object = self.get_next_survey_object(
             subject_identifier, household_member)
         if next_survey_object:
+            enrollment_model = self.get_enrollment_model_class(
+                next_survey_object)
             try:
-                enrollment = self.get(
-                    survey=next_survey_object.field_value,
+                enrollment = enrollment_model.objects.get(
                     subject_identifier=subject_identifier)
             except Enrollment.DoesNotExist:
-                model = self.get_enrollment_model_class(next_survey_object)
-                enrollment = model(
+                enrollment = enrollment_model(
                     consent_identifier=consent_identifier,
                     subject_identifier=subject_identifier,
                     household_member=household_member,
                     report_datetime=report_datetime,
                     survey=next_survey_object.field_value)
-                if save:
-                    enrollment.save()
+            if save:
+                enrollment.save()
         else:
             raise EnrollmentError(
                 'No surveys in this survey schedule left to enroll. '
@@ -137,6 +137,12 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
     objects = EnrollmentManager()
 
     history = HistoricalRecords()
+
+    def __str__(self):
+        return '{} {} survey={}'.format(
+            self.subject_identifier,
+            self.schedule_name,
+            self.survey_object.name)
 
     def save(self, *args, **kwargs):
         self.facility_name = 'home'

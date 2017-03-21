@@ -6,8 +6,6 @@
 
 <!--  begin columns  -->
 
-<td>{{ result.subject_identifier }}
-</td>
 {% if navbar_name == 'anonymous' %}
     <td>
     {% if result.gender == MALE %}
@@ -15,6 +13,7 @@
     {% else %}
         <i class="fa fa-female fa-lg"></i>
     {% endif %}
+    {{ result.subject_identifier }}
     </td>
     <td>{% age_in_years result.dob %} yrs</td>
     <td>{{ result.consent_datetime|date:"Y-m-d" }}</td>  
@@ -27,6 +26,7 @@
     {% else %}
         <i class="fa fa-female fa-lg"></i>
     {% endif %}
+    {{ result.subject_identifier }}
     {{ result.subject_consent.first_name }} {{ result.subject_consent.initials }}
 	</td>
 	<td>{% age_in_years result.subject_consent.dob %}yrs {{ result.subject_consent.dob|date:"Y-m-d" }}</td>

@@ -3,7 +3,6 @@ from edc_visit_schedule.schedule import Schedule
 from .crfs_ess import crfs_ess
 from .requisitions import requisitions
 
-# schedule for new participants
 ano_schedule = Schedule(name='ano_schedule', title='Anonymous')
 
 ano_schedule.add_visit(
