@@ -3,8 +3,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc_base.model_managers import HistoricalRecords
-from edc_constants.constants import NOT_APPLICABLE
-from edc_constants.choices import YES_NO
+from edc_constants.constants import NOT_APPLICABLE, YES, NO
+from edc_constants.choices import YES_NO, YES_NO_DWTA
 
 from ..choices import LENGTH_RESIDENCE_CHOICE, NIGHTS_AWAY_CHOICE, CATTLEPOST_LANDS_CHOICE
 from .hic_enrollment import HicEnrollment
@@ -28,7 +28,7 @@ class ResidencyMobility (CrfModelMixin):
         verbose_name='In the past 12 months, have you typically spent 14 or'
                      ' more nights per month in this community? ',
         max_length=10,
-        choices=YES_NO,
+        choices=YES_NO_DWTA,
         help_text=('If participant has moved into the '
                    'community in the past 12 months, then '
                    'since moving in has the participant typically '
@@ -80,7 +80,7 @@ class ResidencyMobility (CrfModelMixin):
     def hic_enrollment_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
-            if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
+            if self.permanent_resident != YES or self.intend_residency != NO:
                 raise exception_cls('An HicEnrollment form exists for this '
                                     'subject. Values for \'permanent_resident\''
                                     ' and \'intend_residency\' cannot be changed.')

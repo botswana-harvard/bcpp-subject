@@ -1,4 +1,4 @@
-from edc_constants.constants import POS, NOT_APPLICABLE, DECLINED, NEG
+from edc_constants.constants import POS, NOT_APPLICABLE, DECLINED, NEG, NO, DWTA
 
 from ..models import (
     HivCareAdherence, ElisaHivResult, HivTestingHistory, HivTestReview,
@@ -43,8 +43,16 @@ class ModelValues:
             **options).order_by('report_datetime').last()
         if obj:
             self.arv_evidence = None if obj.arv_evidence == NOT_APPLICABLE else obj.arv_evidence
+
             self.ever_taken_arv = obj.ever_taken_arv
-            self.on_arv = None if self.on_arv == NOT_APPLICABLE else obj.on_arv
+            if obj.ever_taken_arv == DWTA:
+                self.ever_taken_arv = NO
+
+            self.on_arv = obj.on_arv
+            if self.on_arv == NOT_APPLICABLE:
+                self.on_arv = None
+            elif self.on_arv == DWTA:
+                self.on_arv = NO
 
         # HivTestingHistory
         self.update_from_hiv_testing_history(visit, **options)

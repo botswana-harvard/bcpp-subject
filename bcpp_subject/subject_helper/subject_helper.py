@@ -3,7 +3,7 @@ import sys
 from django.apps import apps as django_apps
 
 from edc_constants.constants import (
-    POS, YES, NEG, NO, NAIVE, DWTA, UNK, IND)
+    POS, YES, NEG, NO, NAIVE, UNK, IND)
 
 from .model_values import ModelValues
 from .constants import ART_PRESCRIPTION, DEFAULTER, ON_ART
@@ -219,7 +219,7 @@ class SubjectHelper:
     def _prepare_final_arv_status(self):
         self.final_arv_status = None
         if self.final_hiv_status == POS:
-            if ((not self.current.ever_taken_arv or self.current.ever_taken_arv in (NO, DWTA))
+            if ((not self.current.ever_taken_arv or self.current.ever_taken_arv == NO)
                     and (self.current.arv_evidence == NO or not self.current.arv_evidence)):
                 self.final_arv_status = NAIVE
             elif ((self.current.ever_taken_arv == YES or self.current.arv_evidence == YES)
