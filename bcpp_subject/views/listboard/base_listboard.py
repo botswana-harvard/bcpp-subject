@@ -4,14 +4,21 @@ from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import AppConfigViewMixin
 from edc_dashboard.views import ListboardView
 
+from household.view_mixins import HouseholdQuerysetViewMixin
 from survey import SurveyViewMixin
+from plot.view_mixins import PlotQuerysetViewMixin
 
 
 class BaseListboardView(SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,
+                        HouseholdQuerysetViewMixin, PlotQuerysetViewMixin,
                         ListboardView):
 
     app_config_name = 'bcpp_subject'
     navbar_item_selected = 'bcpp_subject'
+    plot_queryset_lookups = [
+        'household_member', 'household_structure', 'household', 'plot']
+    household_queryset_lookups = [
+        'household_member', 'household_structure', 'household']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
