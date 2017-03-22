@@ -7,7 +7,8 @@ from edc_base.model_managers import HistoricalRecords
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
 from bcpp.surveys import (
-    BHS_SURVEY, AHS_SURVEY, ESS_SURVEY, ANONYMOUS_SURVEY, BCPP_YEAR_3)
+    BHS_SURVEY, AHS_SURVEY, ESS_SURVEY,
+    ANONYMOUS_SURVEY, BCPP_YEAR_3)
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S
