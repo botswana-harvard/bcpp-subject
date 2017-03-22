@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import YES, DWTA, NO
+from edc_constants.constants import YES, NO
 
 from ..models import SexualBehaviour
 from .form_mixins import SubjectModelFormMixin
@@ -13,9 +13,9 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
         cleaned_data = super().clean()
         self.validate_with_previous_instance()
         self.not_required_if(
-            NO, DWTA, field='ever_sex', field_required='lifetime_sex_partners')
+            NO, field='ever_sex', field_required='lifetime_sex_partners')
         self.not_required_if(
-            NO, DWTA, field='ever_sex', field_required='last_year_partners')
+            NO, field='ever_sex', field_required='last_year_partners')
 
         if (cleaned_data.get('last_year_partners')
                 and cleaned_data.get('lifetime_sex_partners')
