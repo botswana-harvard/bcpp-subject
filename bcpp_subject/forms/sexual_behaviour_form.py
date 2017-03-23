@@ -12,10 +12,10 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
     def clean(self):
         cleaned_data = super().clean()
         self.validate_with_previous_instance()
-        self.not_required_if(
-            NO, field='ever_sex', field_required='lifetime_sex_partners')
-        self.not_required_if(
-            NO, field='ever_sex', field_required='last_year_partners')
+        self.required_if(
+            YES, field='ever_sex', field_required='lifetime_sex_partners')
+        self.required_if(
+            YES, field='ever_sex', field_required='last_year_partners')
 
         if (cleaned_data.get('last_year_partners')
                 and cleaned_data.get('lifetime_sex_partners')
