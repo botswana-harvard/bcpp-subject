@@ -115,8 +115,8 @@ class Referral:
             self.cd4_result = None
             self.cd4_result_datetime = None
         else:
-            self.cd4_result = pima_cd4.cd4_value
-            self.cd4_result_datetime = pima_cd4.cd4_datetime
+            self.cd4_result = pima_cd4.result_value
+            self.cd4_result_datetime = pima_cd4.result_datetime
 
         self.circumcised = None if self.gender == FEMALE else is_circumcised(
             subject_visit)
