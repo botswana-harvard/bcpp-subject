@@ -23,7 +23,7 @@ class PimaCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'reason_not_done',
                 'reason_not_done_other',
                 'machine_identifier',
-                'result_datetime'
+                'result_datetime',
                 'result_value',
             )}),
         audit_fieldset_tuple,
