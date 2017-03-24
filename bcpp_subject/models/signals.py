@@ -45,9 +45,13 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
 @receiver(post_delete, weak=False, sender=SubjectConsent,
           dispatch_uid="subject_consent_on_post_delete")
 def subject_consent_on_post_delete(sender, instance, using, **kwargs):
-    enrollment = Enrollment.objects.get(
-        consent_identifier=instance.consent_identifier)
-    enrollment.delete()
+    try:
+        enrollment = Enrollment.objects.get(
+            consent_identifier=instance.consent_identifier)
+    except Enrollment.DoesNotExist:
+        pass
+    else:
+        enrollment.delete()
 
 
 @receiver(post_save, weak=False, dispatch_uid='consent_on_post_save')

@@ -5,6 +5,7 @@ from member.models import HouseholdMember
 
 from ...models import Appointment
 from ..wrappers import AppointmentModelWrapper
+from edc_appointment.constants import NEW_APPT
 
 
 class AppointmentViewMixin(BaseAppointmentMixin):
@@ -14,10 +15,22 @@ class AppointmentViewMixin(BaseAppointmentMixin):
     @property
     def appointments(self):
         appointments = super().appointments
-        return [
-            obj for obj in appointments
-            if obj.survey_schedule_object.field_value
-            == self.survey_schedule_object.field_value]
+        for appointment in appointments:
+            if appointment.appt_status == NEW_APPT:
+                print(self.household_member, appointment)
+                appointment.household_member = self.household_member
+                appointment.save()
+        return Appointment.objects.filter(
+            household_member=self.household_member)
+
+#     @property
+#     def appointments(self):
+#         appointments = super().appointments
+#         print(appointments)
+#         return [
+#             obj for obj in appointments
+#             if obj.survey_schedule_object.field_value
+#             == self.survey_schedule_object.field_value]
 
     def empty_appointment(self, **kwargs):
         household_member = HouseholdMember(

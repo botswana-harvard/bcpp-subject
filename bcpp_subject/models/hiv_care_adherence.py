@@ -6,7 +6,7 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import (
-    YES_NO_DWTA, YES_NO_NA, NOT_APPLICABLE, YES_NO)
+    YES_NO_DWTA, YES_NO_NA, NOT_APPLICABLE, YES_NO, YES_NO_NA_DWTA)
 
 from ..choices import (
     WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE, HOSPITALIZATION_REASONS,
@@ -72,7 +72,7 @@ class HivCareAdherence (CrfModelMixin):
             'Have you ever taken any antiretroviral therapy (ARVs) for '
             'your HIV infection?'),
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_DWTA,
         help_text=(
             'For women, do not include treatment that '
             'you took during pregnancy to protect your baby from HIV'),  # Q7
@@ -104,7 +104,7 @@ class HivCareAdherence (CrfModelMixin):
     on_arv = models.CharField(
         verbose_name='Are you currently taking antiretroviral therapy (ARVs)?',
         max_length=25,
-        choices=YES_NO_NA,
+        choices=YES_NO_NA_DWTA,
         help_text='If yes, need to answer next two questions.',   # Q11 all
     )
 

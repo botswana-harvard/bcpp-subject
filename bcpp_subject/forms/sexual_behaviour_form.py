@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import YES, DWTA, NO
+from edc_constants.constants import YES, NO
 
 from ..models import SexualBehaviour
 from .form_mixins import SubjectModelFormMixin
@@ -13,10 +13,9 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
         cleaned_data = super().clean()
         self.validate_with_previous_instance()
         self.not_required_if(
-            NO, DWTA, field='ever_sex', field_required='lifetime_sex_partners')
+            NO, field='ever_sex', field_required='lifetime_sex_partners')
         self.not_required_if(
-            NO, DWTA, field='ever_sex', field_required='last_year_partners')
-
+            NO, field='ever_sex', field_required='last_year_partners')
         if (cleaned_data.get('last_year_partners')
                 and cleaned_data.get('lifetime_sex_partners')
                 and int(cleaned_data.get('last_year_partners'))
@@ -31,14 +30,18 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
                 int(cleaned_data.get('last_year_partners')) > 0,
                 field_required='more_sex')
 
-        self.required_if(YES, field='ever_sex', field_required='first_sex')
+        # FIXME: if NO this should be not required else may be left NULL or not
+        self.not_required_if(NO, field='ever_sex', field_required='first_sex')
         self.validate_first_sex_age()
         self.applicable_if(
             YES, field='ever_sex', field_applicable='first_sex_partner_age')
         self.validate_other_specify(
             'first_sex_partner_age', other_stored_value='gte_19')
-        self.required_if(YES, field='ever_sex', field_required='condom')
-        self.required_if(YES, field='ever_sex', field_required='alcohol_sex')
+        # FIXME: if NO this should be not required else may be left NULL or not
+        self.not_required_if(NO, field='ever_sex', field_required='condom')
+        # FIXME: if NO this should be not required else may be left NULL or not
+        self.not_required_if(
+            NO, field='ever_sex', field_required='alcohol_sex')
         return cleaned_data
 
     def validate_first_sex_age(self):

@@ -2,7 +2,7 @@ from edc_dashboard.view_mixins import (
     ShowHideViewMixin, SubjectIdentifierViewMixin,
     MetaDataViewMixin)
 
-from household.views.mixins import (
+from household.view_mixins import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
     HouseholdLogEntryViewMixin)
 from member.views import HouseholdMemberViewMixin

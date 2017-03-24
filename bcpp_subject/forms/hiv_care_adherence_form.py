@@ -2,7 +2,7 @@ from inspect import currentframe
 
 from django import forms
 
-from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE
+from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE, DWTA
 
 from ..models import HivCareAdherence
 from .form_mixins import SubjectModelFormMixin
@@ -23,12 +23,13 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
             NO, field='medical_care', field_applicable='no_medical_care')
         self.validate_other_specify('no_medical_care')
         self.applicable_if(
-            NO, field='ever_taken_arv', field_applicable='why_no_arv')
+            NO, DWTA, field='ever_taken_arv', field_applicable='why_no_arv')
         self.validate_other_specify('why_no_arv')
 
         self.validate_art_part1()
 
-        self.required_if(NO, field='on_arv', field_required='arv_stop_date')
+        self.required_if(
+            NO, field='on_arv', field_required='arv_stop_date')
         self.applicable_if_true(
             cleaned_data.get('arv_stop_date'), field_applicable='arv_stop')
         self.validate_art_regimen()
@@ -75,7 +76,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
         cleaned_data = self.cleaned_data
         m2m_field = m2m_field or 'arvs'
         field_other = field_other or 'arv_other'
-        if (cleaned_data.get('on_arv') == NO
+        if (cleaned_data.get('on_arv') == [NO, DWTA]
                 and cleaned_data.get(m2m_field)):
             raise forms.ValidationError({
                 m2m_field:
@@ -124,7 +125,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
         cleaned_data = self.cleaned_data
         self.required_if(
             YES, field='on_arv', field_required='is_first_regimen')
-        if (cleaned_data.get('on_arv') == NO
+        if (cleaned_data.get('on_arv') == [NO, DWTA]
                 and not cleaned_data.get('is_first_regimen')):
             self.prev_art_regimen_not_required()
 
@@ -154,7 +155,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                 raise forms.ValidationError({
                     'adherence_4_wk':
                     'This field is applicable'})
-        elif cleaned_data.get('on_arv') == NO:
+        elif cleaned_data.get('on_arv') in [NO, DWTA]:
             if cleaned_data.get('adherence_4_day') != NOT_APPLICABLE:
                 raise forms.ValidationError({
                     'adherence_4_day':
@@ -167,7 +168,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
     def validate_hospitalization_part1(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('hospitalized_art_start') == YES:
-            if cleaned_data.get('ever_taken_arv') == NO:
+            if cleaned_data.get('ever_taken_arv') in [NO, DWTA]:
                 raise forms.ValidationError({
                     'hospitalized_art_start':
                     'This field is not applicable'})
@@ -180,7 +181,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
                     'hospitalized_art_start_reason':
                     'This field is applicable'})
         elif cleaned_data.get('hospitalized_art_start') == NO:
-            if cleaned_data.get('ever_taken_arv') == NO:
+            if cleaned_data.get('ever_taken_arv') in [NO, DWTA]:
                 raise forms.ValidationError({
                     'hospitalized_art_start':
                     'This field is not applicable'})
@@ -263,7 +264,7 @@ class HivCareAdherenceForm(SubjectModelFormMixin):
             raise forms.ValidationError({
                 'clinic_receiving_from':
                 'This field is required'})
-        elif (cleaned_data.get('on_arv') == NO
+        elif (cleaned_data.get('on_arv') == [NO, DWTA]
               and cleaned_data.get('clinic_receiving_from')):
             raise forms.ValidationError({
                 'clinic_receiving_from':

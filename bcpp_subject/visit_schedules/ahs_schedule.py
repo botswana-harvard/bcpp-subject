@@ -4,7 +4,6 @@ from edc_visit_schedule.schedule import Schedule
 from .crfs_ahs import crfs_ahs
 from .requisitions import requisitions
 
-# schedule for existing participants
 ahs_schedule = Schedule(name='ahs_schedule', title='AHS')
 
 ahs_schedule.add_visit(
