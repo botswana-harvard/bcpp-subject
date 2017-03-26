@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 from edc_base.model_managers import HistoricalRecords
-from edc_constants.choices import YES_NO_DWTA
+from edc_constants.choices import YES_NO_DWTA, YES_NO_NA_DWTA
 from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import ALCOHOL_SEX, PARTNER_AGE
@@ -61,8 +61,8 @@ class SexualBehaviour (CrfModelMixin):
                      'living outside of the community?',
         max_length=25,
         null=True,
-        blank=True,
-        choices=YES_NO_DWTA,
+        # blank=True,
+        choices=YES_NO_NA_DWTA,
         help_text='',
     )
 
@@ -94,8 +94,8 @@ class SexualBehaviour (CrfModelMixin):
                      'you or your partner use a condom?',
         max_length=25,
         null=True,
-        blank=True,
-        choices=YES_NO_DWTA,
+        # blank=True,
+        choices=YES_NO_NA_DWTA,
         help_text='',
     )
 
@@ -104,7 +104,7 @@ class SexualBehaviour (CrfModelMixin):
                      ' you or your partner drinking alcohol?',
         max_length=25,
         null=True,
-        blank=True,
+        # blank=True,
         choices=ALCOHOL_SEX,
         help_text='',
     )

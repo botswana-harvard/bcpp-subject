@@ -1242,6 +1242,7 @@ CATTLEPOST_LANDS_CHOICE = (
 )
 
 ALCOHOL_SEX = (
+    (NOT_APPLICABLE, _('Not Applicable')),
     ('Neither of us', _('Neither of us')),
     ('My partner', _('My partner')),
     ('Myself', _('Myself')),
