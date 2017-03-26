@@ -22,7 +22,7 @@ class Education (CrfModelMixin):
     working = models.CharField(
         verbose_name="Are you currently working?",
         choices=YES_NO_DWTA,
-        max_length=3,
+        max_length=4,
         help_text="",
     )
 
