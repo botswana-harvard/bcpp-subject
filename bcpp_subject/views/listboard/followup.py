@@ -13,6 +13,7 @@ class ListboardView(BaseListboardView):
 
     model = SubjectConsent
     model_wrapper_class = SubjectConsentModelWrapper
+    navbar_item_selected = 'follow-up'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
