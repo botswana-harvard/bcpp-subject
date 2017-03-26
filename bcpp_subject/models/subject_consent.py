@@ -43,7 +43,7 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
         """
         registration_options = super().registration_options
         registration_options.update(
-            registration_identifier=self.household_member.internal_identifier)
+            registration_identifier=self.household_member.internal_identifier.hex)
         return registration_options
 
     def registration_raise_on_illegal_value_change(self, registered_subject):
