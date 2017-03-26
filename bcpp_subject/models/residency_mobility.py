@@ -3,8 +3,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc_base.model_managers import HistoricalRecords
+from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE_DWTA
 from edc_constants.constants import NOT_APPLICABLE, YES, NO
-from edc_constants.choices import YES_NO, YES_NO_DWTA
 
 from ..choices import LENGTH_RESIDENCE_CHOICE, NIGHTS_AWAY_CHOICE, CATTLEPOST_LANDS_CHOICE
 from .hic_enrollment import HicEnrollment
@@ -38,7 +38,7 @@ class ResidencyMobility (CrfModelMixin):
     intend_residency = models.CharField(
         verbose_name='Do you intend to move out of the community in the next 12 months?',
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_UNSURE_DWTA,
         help_text='',
     )
 
