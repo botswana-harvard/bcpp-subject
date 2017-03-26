@@ -172,7 +172,7 @@ class SexualPartnerMixin (models.Model):
             'To the best of your knowledge, did he/she ever have '
             'other sex partners while you two were having a sexual relationship?'),
         max_length=25,
-        choices=YES_NO_UNSURE,
+        choices=YES_NO_UNSURE_DWTA,
         null=True,
         help_text="")
 
