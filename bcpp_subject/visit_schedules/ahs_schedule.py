@@ -24,11 +24,11 @@ ahs_schedule.add_visit(
     requisitions=requisitions,
     crfs=crfs_ahs)
 
-ahs_schedule.add_visit(
-    code='T3',
-    title='3rd Annual Survey',
-    timepoint=3,
-    base_interval=3,
-    base_interval_unit=YEARS,
-    requisitions=requisitions,
-    crfs=crfs_ahs)
+# ahs_schedule.add_visit(
+#     code='T3',
+#     title='3rd Annual Survey',
+#     timepoint=3,
+#     base_interval=3,
+#     base_interval_unit=YEARS,
+#     requisitions=requisitions,
+#     crfs=crfs_ahs)
