@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.model_managers import HistoricalRecords
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO_DWTA
 
 from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION, EDUCATION_CHOICE
 
@@ -21,7 +21,7 @@ class Education (CrfModelMixin):
 
     working = models.CharField(
         verbose_name="Are you currently working?",
-        choices=YES_NO,
+        choices=YES_NO_DWTA,
         max_length=3,
         help_text="",
     )
