@@ -312,6 +312,7 @@ JOB_TYPE = (
     ('agric', _('Self-employed in agriculture')),
     ('self full-time', _('Self-employed making money, full time')),
     ('self part-time', _('Self-employed making money, part time')),
+    (DWTA, _('Don\'t want to answer')),
     (OTHER, _('Other')),
 )
 
@@ -347,6 +348,7 @@ REASON_UNEMPLOYED = (
     ('retired', _('Retired')),
     (OTHER, _('Other')),
     ('not looking', _('Not looking for work')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -381,6 +383,7 @@ JOB_DESCRIPTION = (
     ('teacher', _('Teacher')),
     ('hcw', _('Health care worker')),
     ('other_professional', _('Other professional')),
+    (DWTA, _('Don\'t want to answer')),
     (OTHER, _('Other')),
 )
 
@@ -1242,6 +1245,7 @@ CATTLEPOST_LANDS_CHOICE = (
 )
 
 ALCOHOL_SEX = (
+    (NOT_APPLICABLE, _('Not Applicable')),
     ('Neither of us', _('Neither of us')),
     ('My partner', _('My partner')),
     ('Myself', _('Myself')),
