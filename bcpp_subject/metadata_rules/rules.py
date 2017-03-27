@@ -446,6 +446,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     """Ensures a venous blood draw requisition is required if insufficient
     volume in the capillary (microtube).
     """
+# removed for ESS/final AHS survey as per smoyo
 #     venous_for_vol = RequisitionRule(
 #         logic=Logic(
 #             predicate=PF(
