@@ -3,8 +3,7 @@ from django import forms
 from edc_constants.constants import YES, NO, DWTA
 
 from ..models import SexualBehaviour
-from .form_mixins import SubjectModelFormMixin
-from bcpp_subject.forms.form_mixins import PreviousAppointmentFormMixin
+from .form_mixins import SubjectModelFormMixin, PreviousAppointmentFormMixin
 
 
 class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
@@ -40,7 +39,7 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
             optional_if_dwta=True)
         self.validate_first_sex_age()
         self.applicable_if(
-            YES, field='ever_sex', field_applicable='first_sex_partner_age')
+            YES, DWTA, field='ever_sex', field_applicable='first_sex_partner_age')
         self.validate_other_specify(
             'first_sex_partner_age', other_stored_value='gte_19')
         self.not_required_if(
@@ -72,10 +71,11 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
         except SexualBehaviour.DoesNotExist:
             pass
         else:
-            if cleaned_data.get('ever_sex') != YES:
+            if cleaned_data.get('ever_sex') not in [YES, DWTA]:
                 raise forms.ValidationError({
                     'ever_sex':
-                    'Expected \'Yes\' as previously reported on {}.'.format(
+                    'Expected \'Yes\' as previously reported on {}. '
+                    '(DWTA is also acceptable)'.format(
                         self.previous_appointment_rdate.date().strftime(
                             '%Y-%m-%d'))})
 

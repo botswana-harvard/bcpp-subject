@@ -1,4 +1,5 @@
-from edc_constants.constants import NO, YES, POS, NEG, FEMALE, IND, NOT_SURE
+from edc_constants.constants import (
+    NO, YES, POS, NEG, FEMALE, IND, NOT_SURE)
 from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_metadata.rules.crf_rule import CrfRule
 from edc_metadata.rules.decorators import register
@@ -111,11 +112,9 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = CrfRule(
         logic=Logic(
-            # TODO: add back this PF('out_patient',
-            # lambda x: True if (x == NO or x == REFUSE) else False)
-            predicate=P('out_patient', 'eq', NO),
-            consequence=NOT_REQUIRED,
-            alternative=REQUIRED),
+            predicate=P('out_patient', 'eq', YES),
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.outpatientcare'])
 
     hospitalized = CrfRule(
@@ -447,15 +446,16 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     """Ensures a venous blood draw requisition is required if insufficient
     volume in the capillary (microtube).
     """
-    venous_for_vol = RequisitionRule(
-        logic=Logic(
-            predicate=PF(
-                'insufficient_vol', 'blood_draw_type',
-                func=lambda x, y: True if x == YES and y == CAPILLARY else False),
-            consequence=REQUIRED,
-            alternative=NOT_REQUIRED),
-        target_model='bcpp_subject.subjectrequisition',
-        target_panels=[venous_panel], )
+# removed for ESS/final AHS survey as per smoyo
+#     venous_for_vol = RequisitionRule(
+#         logic=Logic(
+#             predicate=PF(
+#                 'insufficient_vol', 'blood_draw_type',
+#                 func=lambda x, y: True if x == YES and y == CAPILLARY else False),
+#             consequence=REQUIRED,
+#             alternative=NOT_REQUIRED),
+#         target_model='bcpp_subject.subjectrequisition',
+#         target_panels=[venous_panel], )
 
     serve_sti_form = CrfRule(
         logic=Logic(

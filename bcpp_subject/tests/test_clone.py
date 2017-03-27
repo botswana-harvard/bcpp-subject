@@ -2,10 +2,11 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase, tag
 
-from edc_constants.constants import NOT_APPLICABLE, YES
+from edc_constants.constants import YES
 
-from member.models.household_member import HouseholdMember
 from member.clone import Clone
+from member.constants import ABLE_TO_PARTICIPATE
+from member.models.household_member import HouseholdMember
 
 from ..constants import T1, T2
 
@@ -65,7 +66,7 @@ class TestClone(SubjectMixin, TestCase):
             report_datetime=next_household_structure.enumerated_datetime)
         new_member.save()
 
-        new_member.inability_to_participate = NOT_APPLICABLE
+        new_member.inability_to_participate = ABLE_TO_PARTICIPATE
         new_member.study_resident = YES
         new_member.save()
 
