@@ -11,7 +11,6 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
 
     def clean(self):
         cleaned_data = super().clean()
-        self.validate_with_previous_instance()
         self.not_required_if(
             NO, DWTA, field='ever_sex',
             field_required='lifetime_sex_partners',
@@ -62,22 +61,6 @@ class SexualBehaviourForm (PreviousAppointmentFormMixin, SubjectModelFormMixin):
             raise forms.ValidationError({
                 'first_sex': 'Invalid. Participant is {} years old.'.format(
                     age_in_years)})
-
-    def validate_with_previous_instance(self):
-        cleaned_data = self.cleaned_data
-        try:
-            SexualBehaviour.objects.get(
-                subject_visit__appointment=self.previous_appointment,
-                ever_sex=YES)
-        except SexualBehaviour.DoesNotExist:
-            pass
-        else:
-            if cleaned_data.get('ever_sex') != YES:
-                raise forms.ValidationError({
-                    'ever_sex':
-                    'Expected \'Yes\' as previously reported on {}.'.format(
-                        self.previous_appointment_rdate.date().strftime(
-                            '%Y-%m-%d'))})
 
     class Meta:
         model = SexualBehaviour
