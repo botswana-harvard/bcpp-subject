@@ -9,13 +9,14 @@ from edc_constants.constants import YES, NO, NEG, IND, NOT_APPLICABLE
 from edc_map.site_mappers import site_mappers
 
 from bcpp.communities import is_intervention
-
-from .test_mixins import SubjectMixin
-from ..constants import ELISA, MICROTUBE
 from bcpp_subject.constants import T1, T2
-from member.models.household_member.household_member import HouseholdMember
-from ..models import Appointment
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
+from member.constants import ABLE_TO_PARTICIPATE
+from member.models.household_member.household_member import HouseholdMember
+
+from ..constants import ELISA, MICROTUBE
+from ..models import Appointment
+from .test_mixins import SubjectMixin
 
 
 class TestReferral(SubjectMixin, TestCase):
@@ -65,7 +66,7 @@ class TestReferral(SubjectMixin, TestCase):
             report_datetime=next_household_structure.enumerated_datetime)
         new_member.save()
 
-        new_member.inability_to_participate = NOT_APPLICABLE
+        new_member.inability_to_participate = ABLE_TO_PARTICIPATE
         new_member.study_resident = YES
         new_member.save()
 
@@ -102,7 +103,7 @@ class TestReferral(SubjectMixin, TestCase):
             report_datetime=next_household_structure.enumerated_datetime)
         new_household_member.save()
 
-        new_household_member.inability_to_participate = NOT_APPLICABLE
+        new_household_member.inability_to_participate = ABLE_TO_PARTICIPATE
         new_household_member.study_resident = YES
         new_household_member.save()
 

@@ -8,12 +8,12 @@ from edc_base_test.exceptions import TestMixinError
 from edc_base_test.mixins import (
     AddVisitMixin, CompleteCrfsMixin as BaseCompleteCrfsMixin)
 from edc_base_test.mixins import LoadListDataMixin, DatesTestMixin
-from edc_constants.constants import NO, YES, NOT_APPLICABLE, MALE
+from edc_constants.constants import NO, YES, MALE
 from edc_metadata.models import CrfMetadata
 
 from household.tests.household_test_mixin import HouseholdTestMixin
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
-from member.constants import HEAD_OF_HOUSEHOLD
+from member.constants import HEAD_OF_HOUSEHOLD, ABLE_TO_PARTICPATE
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models import HouseholdMember
@@ -243,7 +243,7 @@ class SubjectTestMixin:
             report_datetime=next_household_structure.enumerated_datetime)
         new_household_member.save()
 
-        new_household_member.inability_to_participate = NOT_APPLICABLE
+        new_household_member.inability_to_participate = ABLE_TO_PARTICPATE
         new_household_member.study_resident = YES
         new_household_member.save()
 
