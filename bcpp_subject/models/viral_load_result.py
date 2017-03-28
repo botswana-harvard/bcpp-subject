@@ -1,4 +1,4 @@
-from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from django_crypto_fields.fields import EncryptedCharField
 from django.db import models
 
 from edc_base.model_managers import HistoricalRecords
@@ -48,7 +48,7 @@ class ViralLoadResult(CrfModelMixin):
         verbose_name="Result Value",
         help_text=("copies/ml"),)
 
-    comment = EncryptedTextField(
+    comment = models.TextField(
         verbose_name="Comment",
         max_length=250,
         blank=True,
