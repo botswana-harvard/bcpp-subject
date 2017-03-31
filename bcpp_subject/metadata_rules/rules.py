@@ -157,8 +157,8 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     currently_pregnant = CrfRule(
         logic=Logic(
             predicate=PF(
-                'has_tested', 'has_record', 'other_record',
-                func=lambda x, y, z: True if x == YES and (y == YES or z == YES) else False),
+                'has_tested', 'other_record',
+                func=lambda x, y: True if x == YES and y == YES else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
