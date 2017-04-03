@@ -72,6 +72,7 @@ class SexualBehaviour (CrfModelMixin):
             'If you can\'t recall the exact age, please give a best guess.'),
         null=True,
         blank=True,
+        validators=[MinValueValidator(1), MaxValueValidator(64)],
         help_text='Note:leave blank if participant does not want to respond.')
 
     first_sex_partner_age = models.CharField(
