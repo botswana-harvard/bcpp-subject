@@ -28,7 +28,8 @@ from .funcs import (
     func_requires_second_partner_forms,
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
-    func_requires_vl)
+    func_requires_vl,
+    func_requires_hivtestreview)
 from bcpp_subject.constants import CAPILLARY
 
 
@@ -135,7 +136,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     has_record = CrfRule(
         logic=Logic(
-            predicate=P('has_record', 'eq', YES),
+            predicate=func_requires_hivtestreview,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivtestreview'])
@@ -154,7 +155,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['hivuntested'])
 
-    currently_pregnant = CrfRule(
+    other_record = CrfRule(
         logic=Logic(
             predicate=PF(
                 'has_tested', 'other_record',
@@ -162,13 +163,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
-
-#     other_record = CrfRule(
-#         logic=Logic(
-#             predicate=P('other_record', 'eq', YES),
-#             consequence=REQUIRED,
-#             alternative=NOT_REQUIRED),
-#         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
