@@ -180,6 +180,19 @@ def func_requires_hivuntested(visit_instance, *args):
     return False
 
 
+def func_requires_hivtestreview(visit_instance, *args):
+    """Only for ESS."""
+    try:
+        obj = HivTestingHistory.objects.get(
+            subject_visit=visit_instance)
+    except:
+        pass
+    else:
+        if obj and obj.has_record == YES:
+            return True
+    return False
+
+
 def func_anonymous_member(visit_instance, *args):
     try:
         household_member = HouseholdMember.objects.get(
