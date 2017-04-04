@@ -33,8 +33,7 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
             referral = Referral(subject_visit)
             for field in sender._meta.get_fields():
                 try:
-                    if not field.name == 'referral_code':
-                        value = getattr(referral, field.name)
+                    value = getattr(referral, field.name)
                 except AttributeError:
                     pass
                 else:
