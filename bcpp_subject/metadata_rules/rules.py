@@ -497,17 +497,17 @@ class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
         source_model = 'bcpp_subject.elisahivresult'
 
 
-# @register()
-# class RequisitionRuleGroup6(BaseRequisitionRuleGroup):
-#
-#     venous_for_vol = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_requires_venous,
-#             consequence=REQUIRED,
-#             alternative=NOT_REQUIRED),
-#         target_model='bcpp_subject.subjectrequisition',
-#         target_panels=[venous_panel], )
-#
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_model = 'bcpp_subject.subjectrequisition'
+@register()
+class RequisitionRuleGroup6(BaseRequisitionRuleGroup):
+
+    venous_for_vol = RequisitionRule(
+        logic=Logic(
+            predicate=func_requires_venous,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[venous_panel], )
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_model = 'bcpp_subject.subjectrequisition'
