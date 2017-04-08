@@ -8,6 +8,8 @@ from ..models import (
     HicEnrollment, HivTestingHistory, HivResult,
     SexualBehaviour, is_circumcised)
 from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
+from bcpp_subject.models.subject_requisition import SubjectRequisition
+from bcpp_subject.constants import MICROTUBE
 
 
 def is_hic_enrolled(visit_instance):
@@ -167,6 +169,20 @@ def func_requires_vl(visit_instance, *args):
     return False
 
 
+def func_requires_venous(visit_instance, *args):
+    try:
+        SubjectRequisition.objects.get(
+            is_drawn=NO,
+            panel_name=MICROTUBE,
+            subject_visit=visit_instance,
+            reason_not_drawn='collection_failed')
+    except:
+        pass
+    else:
+        return True
+    return False
+
+
 def func_requires_hivuntested(visit_instance, *args):
     """Only for ESS."""
     try:
@@ -176,6 +192,19 @@ def func_requires_hivuntested(visit_instance, *args):
         pass
     else:
         if obj and obj.has_tested == NO:
+            return True
+    return False
+
+
+def func_requires_hivtestreview(visit_instance, *args):
+    """Only for ESS."""
+    try:
+        obj = HivTestingHistory.objects.get(
+            subject_visit=visit_instance)
+    except:
+        pass
+    else:
+        if obj and obj.has_record == YES:
             return True
     return False
 

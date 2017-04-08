@@ -4,7 +4,7 @@ from ..forms import SexualBehaviourForm
 
 from .test_mixins import SubjectMixin
 
-from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE
+from edc_constants.constants import YES, NO, OTHER, NOT_APPLICABLE, DWTA
 
 
 class TestSexualBehaviourForm(SubjectMixin, TestCase):
@@ -20,12 +20,27 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
             'last_year_partners': 1,
             'condom': YES,
             'alcohol_sex': 'Myself',
-            'first_sex_partner_age': 'lte_18', }
+            'first_sex': 16,
+            'first_sex_partner_age': 'lte_18', 
+            }
 
     def test_form_is_valid(self):
         form = SexualBehaviourForm(data=self.options)
         self.assertTrue(form.is_valid())
         self.assertTrue(form.save())
+
+    def test_last_year_partners_none(self):
+        self.options.update(last_year_partners=0, more_sex=NOT_APPLICABLE)
+        form = SexualBehaviourForm(data=self.options)
+        self.assertTrue(form.is_valid())
+        self.assertTrue(form.save())
+
+    def test_not_applicable_for_required_field(self):
+        self.options.update(more_sex=NOT_APPLICABLE,
+                            condom=NOT_APPLICABLE,
+                            alcohol_sex=NOT_APPLICABLE)
+        form = SexualBehaviourForm(data=self.options)
+        self.assertFalse(form.is_valid())
 
     def test_had_sex_and_lifetime_sex_partners(self):
         """ Assert participant has never had sex, cannot have none lifetime partners
@@ -100,9 +115,10 @@ class TestSexualBehaviourForm(SubjectMixin, TestCase):
         form = SexualBehaviourForm(data=self.options)
         self.assertFalse(form.is_valid())
 
-        self.options.update(ever_sex=NO, lifetime_sex_partners=0,
-                            last_year_partners=0, more_sex=None,
-                            first_sex=None, condom=None, alcohol_sex=None,
+        self.options.update(ever_sex=NO, lifetime_sex_partners=None,
+                            last_year_partners=None, more_sex=NOT_APPLICABLE,
+                            first_sex=None, condom=NOT_APPLICABLE,
+                            alcohol_sex=NOT_APPLICABLE,
                             first_sex_partner_age=NOT_APPLICABLE)
         form = SexualBehaviourForm(data=self.options)
         self.assertTrue(form.is_valid())

@@ -40,6 +40,11 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
                     setattr(instance, field.name, value)
             instance.referral_appt_date = referral.referral_appt.referral_appt_datetime
             instance.scheduled_appt_date = referral.referral_appt.original_scheduled_appt_date
+            try:
+                if not instance.referral_code:
+                    instance.referral_code = 'pending'
+            except AttributeError:
+                pass
 
 
 @receiver(post_delete, weak=False, sender=SubjectConsent,
