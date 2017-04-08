@@ -17,7 +17,6 @@ def listboard_urls():
     urlpatterns = []
     listboard_configs = [
         ('listboard_url', ListboardView, 'listboard'),
-        ('followup_listboard_url', ListboardView, 'followup_listboard'),
         ('anonymous_listboard_url', AnonymousListboardView, 'anonymous_listboard')]
 
     for listboard_url_name, listboard_view_class, label in listboard_configs:
