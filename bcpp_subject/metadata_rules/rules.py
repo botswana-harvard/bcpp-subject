@@ -28,8 +28,10 @@ from .funcs import (
     func_requires_second_partner_forms,
     func_requires_third_partner_forms,
     func_requires_todays_hiv_result,
-    func_requires_vl)
-from bcpp_subject.constants import CAPILLARY
+    func_requires_vl,
+    func_requires_hivtestreview,
+    func_requires_venous)
+from bcpp_subject.constants import CAPILLARY, MICROTUBE
 
 
 @register()
@@ -135,7 +137,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     has_record = CrfRule(
         logic=Logic(
-            predicate=P('has_record', 'eq', YES),
+            predicate=func_requires_hivtestreview,
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivtestreview'])
@@ -154,21 +156,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative=NOT_REQUIRED),
         target_models=['hivuntested'])
 
-    currently_pregnant = CrfRule(
+    other_record = CrfRule(
         logic=Logic(
             predicate=PF(
-                'has_tested', 'has_record', 'other_record',
-                func=lambda x, y, z: True if x == YES and (y == YES or z == YES) else False),
+                'has_tested', 'other_record',
+                func=lambda x, y: True if x == YES and y == YES else False),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivresultdocumentation'])
-
-#     other_record = CrfRule(
-#         logic=Logic(
-#             predicate=P('other_record', 'eq', YES),
-#             consequence=REQUIRED,
-#             alternative=NOT_REQUIRED),
-#         target_models=['hivresultdocumentation'])
 
     require_todays_hiv_result = CrfRule(
         logic=Logic(
@@ -441,21 +436,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
-        target_panels=[elisa_panel, ], )
-
-    """Ensures a venous blood draw requisition is required if insufficient
-    volume in the capillary (microtube).
-    """
-# removed for ESS/final AHS survey as per smoyo
-#     venous_for_vol = RequisitionRule(
-#         logic=Logic(
-#             predicate=PF(
-#                 'insufficient_vol', 'blood_draw_type',
-#                 func=lambda x, y: True if x == YES and y == CAPILLARY else False),
-#             consequence=REQUIRED,
-#             alternative=NOT_REQUIRED),
-#         target_model='bcpp_subject.subjectrequisition',
-#         target_panels=[venous_panel], )
+        target_panels=[elisa_panel], )
 
     serve_sti_form = CrfRule(
         logic=Logic(
@@ -514,3 +495,19 @@ class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
     class Meta:
         app_label = 'bcpp_subject'
         source_model = 'bcpp_subject.elisahivresult'
+
+
+@register()
+class RequisitionRuleGroup6(BaseRequisitionRuleGroup):
+
+    venous_for_vol = RequisitionRule(
+        logic=Logic(
+            predicate=func_requires_venous,
+            consequence=REQUIRED,
+            alternative=NOT_REQUIRED),
+        target_model='bcpp_subject.subjectrequisition',
+        target_panels=[venous_panel], )
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_model = 'bcpp_subject.subjectrequisition'
