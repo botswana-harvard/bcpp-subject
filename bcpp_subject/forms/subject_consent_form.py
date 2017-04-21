@@ -35,6 +35,20 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         self.household_info()
         return cleaned_data
 
+    def validate_max_age(self):
+        cleaned_data = self.cleaned_data
+        is_consented = self._meta.model.objects.filter(
+            identity=cleaned_data.get('identity')).exists()
+        if self.age:
+            if self.age.years > self.consent_config.age_max and not is_consented:
+                raise forms.ValidationError(
+                    'Subject\'s age is %(age)s. Subject is not eligible for '
+                    'consent. Maximum age of consent is %(max)s.',
+                    params={
+                        'age': self.age.years,
+                        'max': self.consent_config.age_max},
+                    code='invalid')
+
     def validate_with_enrollment_checklist(self):
         household_member = self.cleaned_data.get('household_member')
         initials = self.cleaned_data.get('initials')

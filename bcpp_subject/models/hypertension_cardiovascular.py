@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 from edc_constants.choices import YES_NO_NA, YES_NO
@@ -6,7 +7,6 @@ from edc_constants.constants import NOT_SURE, DWTA, NOT_APPLICABLE
 from ..choices import HEALTH_CARE_FACILITY
 from .list_models import Medication
 from .model_mixins import CrfModelMixin
-from django.core.validators import RegexValidator
 
 REASONS_BP = (
     ('afraid', 'I am afraid to know my blood pressure'),
@@ -23,6 +23,7 @@ REASONS_BM = (
     ('no_time', 'I do not have time'),
     ('painful', 'I was told it is painful'),
     ('not_ready', 'I am not ready'),
+    ('pregnancy', 'Not applicable (pregnancy)'),
     (NOT_SURE, 'I am not sure why'),
     (DWTA, 'Don\'t want to answer'),
     (NOT_APPLICABLE, 'Not applicable'),

@@ -32,6 +32,13 @@ class TbSymtomsManager(CrfModelManager):
 
 class TbSymptoms (CrfModelMixin):
 
+    """
+    A user form to capture basic TB symptoms.
+
+    This data is not collected for a formal referral. RA may do
+    an informal verbal referral.
+
+    """
     cough = models.CharField(
         verbose_name=(
             "Does the participant currently have a COUGH that "
