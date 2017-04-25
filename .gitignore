@@ -3,7 +3,6 @@ test-*
 .project
 .settings/*
 db.sqlite*
-bcpp_subject/migrations/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
