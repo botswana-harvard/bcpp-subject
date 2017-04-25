@@ -14,6 +14,8 @@ from member.models import HouseholdInfo, EnrollmentChecklist
 
 from ..models import SubjectConsent, HicEnrollment
 from ..patterns import subject_identifier
+from bcpp_subject.utils.update_internal_identifier import rbd_household_member
+from member.models.household_member.household_member import HouseholdMember
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
@@ -160,6 +162,35 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                     'Got %(gender)s <> %(hm_gender)s'.format(
                         household_member.gender, gender)})
 
+    def clinic_member_consent(self, ess_member, identity):
+        """Link a member being consented to a clinic member.
+        """
+        registered_subject = RegisteredSubject.objects.get(identifier=identity)
+        ess_member_dob = EnrollmentChecklist.objects.get(
+            household_member=ess_member).dob
+        if (ess_member.first_name == registered_subject.first_name and
+            ess_member.last_name == registered_subject.last_name and
+            ess_member.gender == registered_subject.gender and
+                ess_member_dob == registered_subject.dob):
+            pass
+
+    def rbd_household_member(self, identity=None):
+        """Returns a household_member instance if identity matches for a
+        household in 0000-00 or None.
+        """
+        try:
+            registered_subject = RegisteredSubject.objects.get(identity=identity)
+        except RegisteredSubject.DoesNotExist:
+            rbd_household_member = None
+        else:
+            try:
+                rbd_household_member = HouseholdMember.objects.get(
+                    internal_identifier=registered_subject.registration_identifier,
+                    household_structure__household__plot__plot_identifier__endswith='0000-00')
+            except HouseholdMember.DoesNotExist:
+                rbd_household_member = None
+        return rbd_household_member
+
     def clean_identity_with_unique_fields(self):
         """Overrides default."""
         exclude_options = {}
@@ -168,6 +199,22 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         first_name = self.cleaned_data.get('first_name')
         initials = self.cleaned_data.get('initials')
         dob = self.cleaned_data.get('dob')
+
+        rbd_household_member = self.rbd_household_member(identity=identity)
+        if rbd_household_member:
+            if household_member.internal_identifier != rbd_household_member.internal_identifier:
+                household_member.internal_identifier = rbd_household_member.internal_identifier
+                household_member.save()
+                household_member = HouseholdMember.objects.get(id=household_member.id)
+                try:
+                    registered_subject = RegisteredSubject.objects.get(identity=identity)
+                except RegisteredSubject.DoesNotExist:
+                    raise forms.ValidationError(
+                        f'{RegisteredSubject._meta.verbose_name} should exist.')
+                self.cleaned_data.update(
+                    household_member=household_member,
+                    subject_identifier=registered_subject.subject_identifier)
+
         unique_together_form = self.unique_together_string(
             first_name, initials, dob)
         if re.match(subject_identifier, household_member.subject_identifier):
