@@ -198,18 +198,17 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
 
         existing_rbd_household_member = rbd_household_member(identity=identity)
         if existing_rbd_household_member:
-            if household_member.internal_identifier != existing_rbd_household_member.internal_identifier:
-                household_member.internal_identifier = existing_rbd_household_member.internal_identifier
-                household_member.save()
-                household_member = HouseholdMember.objects.get(id=household_member.id)
-                try:
-                    registered_subject = RegisteredSubject.objects.get(identity=identity)
-                except RegisteredSubject.DoesNotExist:
-                    raise forms.ValidationError(
-                        f'{RegisteredSubject._meta.verbose_name} should exist.')
-                self.cleaned_data.update(
-                    household_member=household_member,
-                    subject_identifier=registered_subject.subject_identifier)
+            household_member.internal_identifier = existing_rbd_household_member.internal_identifier
+            household_member.save()
+            household_member = HouseholdMember.objects.get(id=household_member.id)
+            try:
+                registered_subject = RegisteredSubject.objects.get(identity=identity)
+            except RegisteredSubject.DoesNotExist:
+                raise forms.ValidationError(
+                    f'{RegisteredSubject._meta.verbose_name} should exist.')
+            self.cleaned_data.update(
+                household_member=household_member,
+                subject_identifier=registered_subject.subject_identifier)
 
         unique_together_form = self.unique_together_string(
             first_name, initials, dob)

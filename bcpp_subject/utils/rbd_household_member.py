@@ -1,3 +1,6 @@
+from edc_registration.models import RegisteredSubject
+
+from member.models import HouseholdMember
 
 
 def rbd_household_member(identity=None):

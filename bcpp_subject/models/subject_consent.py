@@ -118,19 +118,18 @@ class SubjectConsent(
         existing_rbd_household_member = rbd_household_member(identity=self.identity)
         household_member = self.household_member
         if existing_rbd_household_member:
-            if household_member.internal_identifier != existing_rbd_household_member.internal_identifier:
-                try:
-                    registered_subject = RegisteredSubject.objects.get(
-                        identity=self.identity)
-                except RegisteredSubject.DoesNotExist:
-                    raise RegisteredSubjectError(
-                        f'{RegisteredSubject._meta.verbose_name} should exist.')
-                household_member.internal_identifier = existing_rbd_household_member.internal_identifier
-                household_member.save()
-                self.subject_identifier = registered_subject.subject_identifier
-                household_member = HouseholdMember.objects.get(
-                    id=household_member.id)
-                self.household_member = household_member
+            try:
+                registered_subject = RegisteredSubject.objects.get(
+                    identity=self.identity)
+            except RegisteredSubject.DoesNotExist:
+                raise RegisteredSubjectError(
+                    f'{RegisteredSubject._meta.verbose_name} should exist.')
+            household_member.internal_identifier = existing_rbd_household_member.internal_identifier
+            household_member.save()
+            self.subject_identifier = registered_subject.subject_identifier
+            household_member = HouseholdMember.objects.get(
+                id=household_member.id)
+            self.household_member = household_member
         if not self.id:
             self.survey_schedule = self.household_member.survey_schedule_object.field_value
             if re.match(subject_identifier, self.household_member.subject_identifier):
