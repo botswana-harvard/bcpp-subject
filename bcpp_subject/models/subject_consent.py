@@ -29,6 +29,7 @@ from ..managers import SubjectConsentManager
 from ..patterns import subject_identifier
 from .model_mixins import SearchSlugModelMixin
 from .utils import is_minor
+from ..utils import rbd_household_member
 
 
 class Manager(SubjectConsentManager, SearchSlugManager):
@@ -113,35 +114,18 @@ class SubjectConsent(
             self.survey_schedule_object.name,
             self.version)
 
-    def rbd_household_member(self, identity=None):
-        """Returns a household_member instance if identity matches for a
-        household in 0000-00 or None.
-        """
-        try:
-            registered_subject = RegisteredSubject.objects.get(identity=identity)
-        except RegisteredSubject.DoesNotExist:
-            rbd_household_member = None
-        else:
-            try:
-                rbd_household_member = HouseholdMember.objects.get(
-                    internal_identifier=registered_subject.registration_identifier,
-                    household_structure__household__plot__plot_identifier__endswith='0000-00')
-            except HouseholdMember.DoesNotExist:
-                rbd_household_member = None
-        return rbd_household_member
-
     def save(self, *args, **kwargs):
-        rbd_household_member = self.rbd_household_member(identity=self.identity)
+        existing_rbd_household_member = rbd_household_member(identity=self.identity)
         household_member = self.household_member
-        if rbd_household_member:
-            if household_member.internal_identifier != rbd_household_member.internal_identifier:
+        if existing_rbd_household_member:
+            if household_member.internal_identifier != existing_rbd_household_member.internal_identifier:
                 try:
                     registered_subject = RegisteredSubject.objects.get(
                         identity=self.identity)
                 except RegisteredSubject.DoesNotExist:
                     raise RegisteredSubjectError(
                         f'{RegisteredSubject._meta.verbose_name} should exist.')
-                household_member.internal_identifier = rbd_household_member.internal_identifier
+                household_member.internal_identifier = existing_rbd_household_member.internal_identifier
                 household_member.save()
                 self.subject_identifier = registered_subject.subject_identifier
                 household_member = HouseholdMember.objects.get(
