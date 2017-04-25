@@ -14,7 +14,6 @@ from member.models import HouseholdInfo, EnrollmentChecklist
 
 from ..models import SubjectConsent, HicEnrollment
 from ..patterns import subject_identifier
-from bcpp_subject.utils.update_internal_identifier import rbd_household_member
 from member.models.household_member.household_member import HouseholdMember
 
 tz = pytz.timezone(settings.TIME_ZONE)
