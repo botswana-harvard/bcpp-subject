@@ -117,7 +117,7 @@ def enrollment_checklist_anonymous_on_post_save(
 @receiver(post_delete, weak=False, sender=EnrollmentChecklistAnonymous,
           dispatch_uid="enrollment_checklist_anonymous_on_post_delete")
 def enrollment_checklist_anonymous_on_post_delete(
-        sender, instance, raw, created, using, **kwargs):
+        sender, instance, using, **kwargs):
     instance.household_member.anonymousconsent.delete()
     instance.household_member.delete()
 
