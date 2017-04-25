@@ -19,6 +19,7 @@ from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
 
 fake = Faker()
+post_delete.providing_args = set(["instance", "using", "raw"])
 
 
 @receiver(post_save, weak=False,
@@ -49,14 +50,15 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
 
 @receiver(post_delete, weak=False, sender=SubjectConsent,
           dispatch_uid="subject_consent_on_post_delete")
-def subject_consent_on_post_delete(sender, instance, using, **kwargs):
-    try:
-        enrollment = Enrollment.objects.get(
-            consent_identifier=instance.consent_identifier)
-    except Enrollment.DoesNotExist:
-        pass
-    else:
-        enrollment.delete()
+def subject_consent_on_post_delete(sender, instance, raw, using, **kwargs):
+    if not raw:
+        try:
+            enrollment = Enrollment.objects.get(
+                consent_identifier=instance.consent_identifier)
+        except Enrollment.DoesNotExist:
+            pass
+        else:
+            enrollment.delete()
 
 
 @receiver(post_save, weak=False, dispatch_uid='consent_on_post_save')
@@ -98,7 +100,7 @@ def enrollment_checklist_anonymous_on_post_save(
                 household_member=instance.household_member,
                 consent_datetime=get_utcnow(),
                 gender=instance.gender,
-                dob=dob,
+                dob=dob.date(),
                 citizen=NO,
                 identity=identity,
                 confirm_identity=identity,
@@ -117,9 +119,10 @@ def enrollment_checklist_anonymous_on_post_save(
 @receiver(post_delete, weak=False, sender=EnrollmentChecklistAnonymous,
           dispatch_uid="enrollment_checklist_anonymous_on_post_delete")
 def enrollment_checklist_anonymous_on_post_delete(
-        sender, instance, using, **kwargs):
-    instance.household_member.anonymousconsent.delete()
-    instance.household_member.delete()
+        sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        instance.household_member.anonymousconsent.delete()
+        instance.household_member.delete()
 
 
 @receiver(post_save, weak=False, sender=EnrollmentChecklist,
@@ -173,13 +176,14 @@ def enrollment_checklist_on_post_save(
 
 @receiver(post_delete, weak=False, sender=EnrollmentChecklist,
           dispatch_uid="enrollment_checklist_on_post_delete")
-def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
-    EnrollmentLoss.objects.filter(
-        household_member=instance.household_member).delete()
-    instance.household_member.enrollment_checklist_completed = False
-    instance.household_member.eligible_subject = False
-    instance.household_member.visit_attempts -= 1
-    if instance.household_member.visit_attempts < 0:
-        instance.household_member.visit_attempts = 0
-    instance.household_member.appointment_set.all().delete()
-    instance.household_member.save()
+def enrollment_checklist_on_post_delete(sender, instance, using, raw, **kwargs):
+    if not raw:
+        EnrollmentLoss.objects.filter(
+            household_member=instance.household_member).delete()
+        instance.household_member.enrollment_checklist_completed = False
+        instance.household_member.eligible_subject = False
+        instance.household_member.visit_attempts -= 1
+        if instance.household_member.visit_attempts < 0:
+            instance.household_member.visit_attempts = 0
+        instance.household_member.appointment_set.all().delete()
+        instance.household_member.save()
