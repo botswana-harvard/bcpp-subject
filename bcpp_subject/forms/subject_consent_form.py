@@ -10,10 +10,11 @@ from edc_constants.constants import NOT_APPLICABLE, YES, NO
 from edc_registration.models import RegisteredSubject
 
 from member.constants import HEAD_OF_HOUSEHOLD
-from member.models import HouseholdInfo, EnrollmentChecklist
+from member.models import HouseholdInfo, EnrollmentChecklist, HouseholdMember
 
 from ..models import SubjectConsent, HicEnrollment
 from ..patterns import subject_identifier
+from ..utils import rbd_household_member
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
@@ -174,6 +175,18 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
                     'Got %(gender)s <> %(hm_gender)s'.format(
                         household_member.gender, gender)})
 
+    def clinic_member_consent(self, ess_member, identity):
+        """Link a member being consented to a clinic member.
+        """
+        registered_subject = RegisteredSubject.objects.get(identifier=identity)
+        ess_member_dob = EnrollmentChecklist.objects.get(
+            household_member=ess_member).dob
+        if (ess_member.first_name == registered_subject.first_name and
+            ess_member.last_name == registered_subject.last_name and
+            ess_member.gender == registered_subject.gender and
+                ess_member_dob == registered_subject.dob):
+            pass
+
     def clean_identity_with_unique_fields(self):
         """Overrides default."""
         exclude_options = {}
@@ -182,6 +195,21 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         first_name = self.cleaned_data.get('first_name')
         initials = self.cleaned_data.get('initials')
         dob = self.cleaned_data.get('dob')
+
+        existing_rbd_household_member = rbd_household_member(identity=identity)
+        if existing_rbd_household_member:
+            household_member.internal_identifier = existing_rbd_household_member.internal_identifier
+            household_member.save()
+            household_member = HouseholdMember.objects.get(id=household_member.id)
+            try:
+                registered_subject = RegisteredSubject.objects.get(identity=identity)
+            except RegisteredSubject.DoesNotExist:
+                raise forms.ValidationError(
+                    f'{RegisteredSubject._meta.verbose_name} should exist.')
+            self.cleaned_data.update(
+                household_member=household_member,
+                subject_identifier=registered_subject.subject_identifier)
+
         unique_together_form = self.unique_together_string(
             first_name, initials, dob)
         if re.match(subject_identifier, household_member.subject_identifier):
