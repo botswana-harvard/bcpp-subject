@@ -133,22 +133,23 @@ class ReferralAppt(object):
         the referral code and a scheduled appointment date.
         """
         clinic_type = None
-        if self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
-            clinic_type = 'IDCC'
-        elif 'MASA' in self.referral_code:
-            clinic_type = 'IDCC'
-        elif 'TST-HIV' in self.referral_code:
-            clinic_type = 'VCT'
-        elif 'TST-CD4' in self.referral_code:
-            clinic_type = 'IDCC'
-        elif ('POS!-PR' in self.referral_code
-              or 'POS#-PR' in self.referral_code
-              or 'POS#-AN' in self.referral_code):
-            clinic_type = 'IDCC'
-        elif '-PR' in self.referral_code or '-AN' in self.referral_code:
-            clinic_type = 'ANC'
-        elif 'SMC' in self.referral_code:
-            clinic_type = 'SMC'
+        if self.referral_code:
+            if self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
+                clinic_type = 'IDCC'
+            elif 'MASA' in self.referral_code:
+                clinic_type = 'IDCC'
+            elif 'TST-HIV' in self.referral_code:
+                clinic_type = 'VCT'
+            elif 'TST-CD4' in self.referral_code:
+                clinic_type = 'IDCC'
+            elif ('POS!-PR' in self.referral_code
+                  or 'POS#-PR' in self.referral_code
+                  or 'POS#-AN' in self.referral_code):
+                clinic_type = 'IDCC'
+            elif '-PR' in self.referral_code or '-AN' in self.referral_code:
+                clinic_type = 'ANC'
+            elif 'SMC' in self.referral_code:
+                clinic_type = 'SMC'
         return clinic_type
 
     @property

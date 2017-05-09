@@ -42,7 +42,8 @@ lab_profile.add_panel(elisa_panel)
 
 venous_panel = RequisitionPanel('Venous (HIV)', wb, abbreviation='VEN')
 venous_processing_profile = ProcessingProfile('venous', wb)
-venous_processing_profile.add_process(pl, 1)
+venous_processing_profile.add_process(pl, 2)
+venous_processing_profile.add_process(bc, 1)
 venous_panel.processing_profile = venous_processing_profile
 lab_profile.add_processing_profile(venous_processing_profile)
 lab_profile.add_panel(venous_panel)

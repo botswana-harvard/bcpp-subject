@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_fields import OtherCharField
-from edc_base.model_validators import date_not_future
+from edc_base.model_validators import date_not_future, date_is_future
 from edc_constants.choices import (
     YES_NO_DWTA, YES_NO_NA, NOT_APPLICABLE, YES_NO, YES_NO_NA_DWTA)
 
@@ -239,6 +239,7 @@ class HivCareAdherence (CrfModelMixin):
 
     next_appointment_date = models.DateField(
         verbose_name='When is your next appointment at this facility?',
+        validators=[date_is_future],
         null=True,
         blank=True,
         help_text=''
