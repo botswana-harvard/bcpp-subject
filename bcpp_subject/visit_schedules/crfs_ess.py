@@ -16,6 +16,7 @@ _crfs_ess = (
     Crf(show_order=100, model='bcpp_subject.recentpartner', required=True),
     Crf(show_order=110, model='bcpp_subject.secondpartner', required=True),
     Crf(show_order=120, model='bcpp_subject.thirdpartner', required=True),
+    Crf(show_order=130, model='bcpp_subject.substanceuse', required=True),
     Crf(show_order=140, model='bcpp_subject.hivmedicalcare', required=True),
     Crf(show_order=145, model='bcpp_subject.accesstocare', required=False),
     Crf(show_order=150, model='bcpp_subject.circumcision', required=True),
