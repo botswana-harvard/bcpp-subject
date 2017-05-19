@@ -11,7 +11,8 @@ from .model_mixins import CrfModelMixin
 class HivRelatedIllness (CrfModelMixin):
 
     """A model completed by the user to record any potentially
-    HIV-related illness in the past 12 months."""
+    HIV-related illness in the past 12 months.
+    """
 
     sti_dx = models.ManyToManyField(
         StiIllnesses,
