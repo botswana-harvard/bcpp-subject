@@ -1,13 +1,12 @@
 from django.apps import apps as django_apps
-from django.test import TestCase
+from django.test import TestCase, tag
 
-from edc_sync.test_mixins import SyncTestSerializerMixin
-from ..sync_models import sync_models
-
-from .test_mixins import CompleteCrfsMixin, SubjectMixin
 from edc_sync.models import OutgoingTransaction
-from django.test.utils import tag
+from edc_sync.test_mixins import SyncTestSerializerMixin
+
 from ..constants import E0
+from ..sync_models import sync_models
+from .test_mixins import CompleteCrfsMixin, SubjectMixin
 
 
 class TestNaturalKey(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):

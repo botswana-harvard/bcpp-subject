@@ -176,7 +176,7 @@ def func_requires_venous(visit_instance, *args):
             panel_name=MICROTUBE,
             subject_visit=visit_instance,
             reason_not_drawn='collection_failed')
-    except:
+    except SubjectRequisition.DoesNotExist:
         pass
     else:
         return True
@@ -188,7 +188,7 @@ def func_requires_hivuntested(visit_instance, *args):
     try:
         obj = HivTestingHistory.objects.get(
             subject_visit=visit_instance)
-    except:
+    except HivTestingHistory.DoesNotExist:
         pass
     else:
         if obj and obj.has_tested == NO:
@@ -201,7 +201,7 @@ def func_requires_hivtestreview(visit_instance, *args):
     try:
         obj = HivTestingHistory.objects.get(
             subject_visit=visit_instance)
-    except:
+    except HivTestingHistory.DoesNotExist:
         pass
     else:
         if obj and obj.has_record == YES:

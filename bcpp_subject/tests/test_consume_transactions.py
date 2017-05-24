@@ -20,14 +20,13 @@ from member.models.household_head_eligibility import HouseholdHeadEligibility
 from member.models.household_member.household_member import HouseholdMember
 from member.models.representative_eligibility import RepresentativeEligibility
 from plot.models import Plot, PlotLog, PlotLogEntry
-from edc_sync.test_mixins import SyncTestSerializerMixin
 
 from .test_mixins import CompleteCrfsMixin
 from bcpp_subject.constants import E0
 
 
 @tag('TestConsumeIncomingTransactions')
-class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):
+class TestConsumeIncomingTransactions(SubjectMixin, CompleteCrfsMixin, TestCase):
 
     def setUp(self):
         super().setUp()
@@ -119,12 +118,6 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         survey_schedule = self.get_survey_schedule(index=2)
         subject_visit = self.make_subject_visit_for_consented_subject_male(
             E0, survey_schedule=survey_schedule, **consent_data_male)
-        verbose = False
-        self.sync_test_natural_keys_by_schedule(
-            visits=[subject_visit],
-            verbose=verbose,
-            visit_attr='subject_visit'
-        )
         client_crfs = self.delete_crfs(subject_visit=subject_visit)
         self.delete_enrollment_records()
         for outgoing in OutgoingTransaction.objects.all():
@@ -155,11 +148,13 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
             try:
                 self.assertTrue(Crf.objects.get(subject_visit=subject_visit))
             except Crf.DoesNotExist:
-                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
+                self.fail("Failed to sync and consume all models! Got {}".format(
+                    Crf._meta.model_name))
 
     @tag('test_apply_incoming')
     def test_crfs_incoming_transactions_bhs(self):
-        client_crfs = self.delete_crfs(subject_visit=self.subject_visit_male_t0)
+        client_crfs = self.delete_crfs(
+            subject_visit=self.subject_visit_male_t0)
         self.delete_enrollment_records()
         for outgoing in OutgoingTransaction.objects.all():
             data = outgoing.__dict__
@@ -186,9 +181,11 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         for crf in client_crfs:
             Crf = crf.__class__
             try:
-                self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
+                self.assertTrue(Crf.objects.get(
+                    subject_visit=self.subject_visit_male_t0))
             except Crf.DoesNotExist:
-                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
+                self.fail("Failed to sync and consume all models! Got {}".format(
+                    Crf._meta.model_name))
 
     @tag('test_created_incoming_tx')
     def test_delete_enrollment_records(self):

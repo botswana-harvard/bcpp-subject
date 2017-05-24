@@ -19,21 +19,17 @@ from member.models.household_head_eligibility import HouseholdHeadEligibility
 from member.models.household_member.household_member import HouseholdMember
 from member.models.representative_eligibility import RepresentativeEligibility
 from plot.models import Plot, PlotLog, PlotLogEntry
-from edc_sync.test_mixins import SyncTestSerializerMixin
-
-from .test_mixins import CompleteCrfsMixin
-
-
 from django.conf import settings
 from django.core.files import File
 from model_mommy import mommy
 
-from bcpp_subject.tests.test_mixins import SubjectMixin
 from edc_sync.utils.export_outgoing_transactions import export_outgoing_transactions
+
+from .test_mixins import CompleteCrfsMixin
 
 
 class TestConsumeIncomingTransactions(
-        SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):
+        SubjectMixin, CompleteCrfsMixin, TestCase):
 
     def setUp(self):
         super().setUp()
@@ -123,7 +119,8 @@ class TestConsumeIncomingTransactions(
             consume=True,
         )
 
-        client_crfs = self.delete_crfs(subject_visit=self.subject_visit_male_t0)
+        client_crfs = self.delete_crfs(
+            subject_visit=self.subject_visit_male_t0)
         self.delete_enrollment_records()
 
         for crf in client_crfs:
@@ -141,9 +138,11 @@ class TestConsumeIncomingTransactions(
         for crf in client_crfs:
             Crf = crf.__class__
             try:
-                self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
+                self.assertTrue(Crf.objects.get(
+                    subject_visit=self.subject_visit_male_t0))
             except Crf.DoesNotExist:
-                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
+                self.fail("Failed to sync and consume all models! Got {}".format(
+                    Crf._meta.model_name))
 
     def test_delete_enrollment_records(self):
         self.delete_enrollment_records()
