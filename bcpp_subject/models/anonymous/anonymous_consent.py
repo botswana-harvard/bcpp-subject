@@ -8,7 +8,7 @@ from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
-from edc_dashboard.model_mixins import (
+from edc_search.model_mixins import (
     SearchSlugModelMixin as BaseSearchSlugModelMixin, SearchSlugManager)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin

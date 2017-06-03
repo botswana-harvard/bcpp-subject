@@ -134,18 +134,7 @@ communityengagement = Recipe(
 
 correctconsent = Recipe(
     CorrectConsent,
-    report_datetime=get_utcnow(),
-    old_first_name=fake.first_name,
-    new_first_name=fake.first_name,
-    old_last_name=fake.first_name,
-    new_last_name=fake.first_name,
-    old_initials='LL',
-    new_initials='LA',
-    old_dob=fake.dob_for_consenting_adult,
-    new_dob=fake.dob_for_consenting_adult,
-    old_gender='F',
-    new_gender='M',
-)
+    report_datetime=get_utcnow())
 
 livewith = Recipe(
     LiveWith,

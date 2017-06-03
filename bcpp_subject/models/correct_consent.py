@@ -15,6 +15,8 @@ from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
+from member.models.enrollment_checklist import EnrollmentChecklist
+from edc_registration.models import RegisteredSubject
 
 
 class CorrectConsentMixin:
@@ -58,7 +60,10 @@ class CorrectConsentMixin:
                                 old_value))
 
     def update_household_member_and_enrollment_checklist(self):
-        enrollment_checklist = self.subject_consent.household_member.enrollment_checklist
+        try:
+            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.subject_consent.household_member)
+        except EnrollmentChecklist.DoesNotExist:
+            enrollment_checklist = None
         enrollment_checklist = self.update_name_and_initials(
             enrollment_checklist)
         enrollment_checklist = self.update_gender(enrollment_checklist)
@@ -66,6 +71,7 @@ class CorrectConsentMixin:
         enrollment_checklist = self.update_guardian_name(enrollment_checklist)
         enrollment_checklist = self.update_is_literate(enrollment_checklist)
         self.update_witness()
+        self.update_last_name()
         if enrollment_checklist:
             self.subject_consent.household_member.user_modified = self.update_user_modified()
             enrollment_checklist.user_modified = self.update_user_modified()
@@ -148,9 +154,19 @@ class CorrectConsentMixin:
         return enrollment_checklist
 
     def update_last_name(self):
-        if self.new_last_name:
-            return self.new_last_name
-        return None
+        try:
+            registered_subject = RegisteredSubject.objects.get(
+                subject_identifier=self.subject_consent.subject_identifier)
+        except RegisteredSubject.DoesNotExist:
+            raise ValidationError('Registered subject can not be None')
+        else:
+            registered_subject.las_name = self.new_last_name
+            registered_subject.save(update_fields=['last_name'])
+        subject_consents = SubjectConsent.objects.filter(
+            subject_identifier=self.subject_consent.subject_identifier)
+        for subject_consent in subject_consents:
+            subject_consent.las_name = self.new_last_name
+            subject_consent.save(update_fields=['last_name'])
 
     def update_witness(self):
         if self.new_witness_name:

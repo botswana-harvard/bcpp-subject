@@ -1,10 +1,11 @@
 # coding=utf-8
-
+import configparser
 import sys
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from django.core.management.color import color_style
+from pathlib import PurePath
+style = color_style()
 
 
 # Quick-start development settings - unsuitable for production
@@ -13,11 +14,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')78^w@s3^kt)6lu6()tomqjg#8_%!381-nx5dtu#i=kn@68h_^'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+APP_NAME = 'bcpp_subject'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.113.201.173', 'localhost']
+CONFIG_FILE = '{}.conf'.format(APP_NAME)
+if DEBUG:
+    ETC_DIR = '/etc'
+#     ETC_DIR = str(PurePath(BASE_DIR).joinpath('etc'))
+else:
+    ETC_DIR = '/etc'
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.113.201.166']
 
+CONFIG_PATH = os.path.join(ETC_DIR, APP_NAME, CONFIG_FILE)
+sys.stdout.write(style.SUCCESS('Reading config from {}\n'.format(CONFIG_PATH)))
+
+config = configparser.RawConfigParser()
+config.read(os.path.join(CONFIG_PATH))
 
 # Application definition
 
@@ -167,7 +181,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+STATIC_ROOT = config['django'].get(
+    'static_root', os.path.join(BASE_DIR, APP_NAME, 'static'))
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'bcpp_subject', 'media')
-CURRENT_MAP_AREA = 'test_community'
-DEVICE_ID = '99'
+MEDIA_ROOT = config['django'].get(
+    'media_root', os.path.join(BASE_DIR, APP_NAME, 'media'))
+MEDIA_URL = '/media/'
+
+# etc ini file attributes
+# if DEBUG:
+#     KEY_PATH = os.path.join(BASE_DIR, 'crypto_fields')
+# else:
+KEY_PATH = config['django_crypto_fields'].get('key_path')
+CURRENT_MAP_AREA = config['edc_map'].get('map_area', 'test_community')
+DEVICE_ID = config['edc_device'].get('device_id', '99')
+DEVICE_ROLE = config['edc_device'].get('role')
+LABEL_PRINTER = config['edc_label'].get('label_printer', 'label_printer')
+SURVEY_GROUP_NAME = config['survey'].get('group_name')
+SURVEY_SCHEDULE_NAME = config['survey'].get('schedule_name')
+ANONYMOUS_ENABLED = config['bcpp'].get('anonymous_enabled')
+DEVICE_IDS = config['deployment'].get('device_ids').split(',')

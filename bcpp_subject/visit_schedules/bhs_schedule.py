@@ -3,7 +3,11 @@ from edc_visit_schedule.schedule import Schedule
 from .crfs_bhs import crfs_bhs
 from .requisitions import requisitions
 
-bhs_schedule = Schedule(name='bhs_schedule', title='BHS')
+bhs_schedule = Schedule(
+    name='bhs_schedule',
+    title='BHS',
+    enrollment_model='bcpp_subject.enrollmentbhs',
+    disenrollment_model='bcpp_subject.disenrollmentbhs',)
 
 bhs_schedule.add_visit(
     code='T0',
