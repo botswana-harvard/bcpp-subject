@@ -3,9 +3,10 @@ import arrow
 from django import forms
 
 from edc_base.modelform_mixins import (
-    CommonCleanModelFormMixin, OtherSpecifyValidationMixin,
-    ApplicableValidationMixin, Many2ManyModelValidationMixin,
-    RequiredFieldValidationMixin, JSONModelFormMixin)
+    CommonCleanModelFormMixin, JSONModelFormMixin)
+from edc_base.modelform_validators import (
+    OtherSpecifyFieldValidator, ManyToManyFieldValidator,
+    ApplicableFieldValidator, RequiredFieldValidator)
 from edc_constants.constants import NO, DWTA, YES
 
 from ..constants import DAYS, MONTHS, YEARS
@@ -13,10 +14,10 @@ from ..models import SubjectVisit, PartnerResidency, SexualBehaviour, HivTesting
 
 
 class SubjectModelFormMixin(CommonCleanModelFormMixin,
-                            OtherSpecifyValidationMixin,
-                            ApplicableValidationMixin,
-                            Many2ManyModelValidationMixin,
-                            RequiredFieldValidationMixin,
+                            OtherSpecifyFieldValidator,
+                            ApplicableFieldValidator,
+                            ManyToManyFieldValidator,
+                            RequiredFieldValidator,
                             JSONModelFormMixin,
                             forms.ModelForm):
 
