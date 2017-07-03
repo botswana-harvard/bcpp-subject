@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 
 from edc_appointment.views import AppointmentModelWrapper
-from edc_dashboard.wrappers.model_wrapper import ModelWrapper
+from edc_model_wrapper.wrappers import ModelWrapper
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
 
