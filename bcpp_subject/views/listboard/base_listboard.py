@@ -4,9 +4,9 @@ from edc_constants.constants import MALE
 from edc_dashboard.view_mixins import AppConfigViewMixin
 from edc_dashboard.views import ListboardView
 
-from household.view_mixins import HouseholdQuerysetViewMixin
+from household_dashboard.view_mixins import HouseholdQuerysetViewMixin
 from survey import SurveyViewMixin
-from plot.view_mixins import PlotQuerysetViewMixin
+from plot_dashboard.view_mixins import PlotQuerysetViewMixin
 
 
 class BaseListboardView(SurveyViewMixin, AppConfigViewMixin, EdcBaseViewMixin,

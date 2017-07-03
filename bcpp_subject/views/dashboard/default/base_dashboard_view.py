@@ -2,10 +2,10 @@ from edc_dashboard.view_mixins import (
     ShowHideViewMixin, SubjectIdentifierViewMixin,
     MetaDataViewMixin)
 
-from household.view_mixins import (
+from household_dashboard.view_mixins import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
     HouseholdLogEntryViewMixin)
-from member.views import HouseholdMemberViewMixin
+from member_dashboard.views.mixins import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
 from ..appointment_view_mixin import AppointmentViewMixin
