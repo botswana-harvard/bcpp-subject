@@ -58,7 +58,7 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                     registered_subject.identity,
                     self.identity))
         if (registered_subject.registration_identifier
-            and uuid.UUID(registered_subject.registration_identifier) !=
+            and uuid.UUID(registered_subject.registration_identifier) != 
                 self.household_member.internal_identifier):
             raise RegisteredSubjectError(
                 'Internal Identifier may not be changed. Expected {}. '
@@ -140,7 +140,7 @@ class SubjectConsent(
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return ((self.subject_identifier, self.version, ) +
+        return ((self.subject_identifier, self.version,) + 
                 self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
 
@@ -149,4 +149,4 @@ class SubjectConsent(
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
-        ordering = ('-created', )
+        ordering = ('-created',)

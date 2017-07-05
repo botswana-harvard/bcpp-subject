@@ -11,16 +11,16 @@ from edc_base_test.mixins import LoadListDataMixin, DatesTestMixin
 from edc_constants.constants import NO, YES, MALE
 from edc_metadata.models import CrfMetadata
 
-from household.tests.household_test_mixin import HouseholdTestMixin
+# from household.tests.household_test_mixin import HouseholdTestMixin
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import HEAD_OF_HOUSEHOLD, ABLE_TO_PARTICIPATE
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models import HouseholdMember
-from member.tests.mixins import MemberTestMixin
-from plot.tests.plot_test_mixin import PlotTestMixin
-from survey.tests import (
-    SurveyTestMixin, DatesTestMixin as SurveyDatesTestMixin)
+# from member.tests.mixins import MemberTestMixin
+# from plot.tests.plot_test_mixin import PlotTestMixin
+# from survey.tests import (
+#     SurveyTestMixin, DatesTestMixin as SurveyDatesTestMixin)
 
 from ..constants import T0, E0
 from ..models import Appointment
@@ -305,10 +305,10 @@ class CompleteCrfsMixin(BaseCompleteCrfsMixin):
                                'show_order')
 
 
-class SubjectMixin(PlotTestMixin, HouseholdTestMixin, SurveyTestMixin,
-                   MemberTestMixin, CompleteCrfsMixin, AddVisitMixin,
-                   SubjectTestMixin, SurveyDatesTestMixin,
-                   DatesTestMixin, LoadListDataMixin):
-
-    bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
-    list_data = list_data
+# class SubjectMixin(PlotTestMixin, HouseholdTestMixin, SurveyTestMixin,
+#                    MemberTestMixin, CompleteCrfsMixin, AddVisitMixin,
+#                    SubjectTestMixin, SurveyDatesTestMixin,
+#                    DatesTestMixin, LoadListDataMixin):
+#
+#     bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
+#     list_data = list_data

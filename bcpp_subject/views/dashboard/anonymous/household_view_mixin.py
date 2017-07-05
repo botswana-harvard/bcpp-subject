@@ -1,4 +1,4 @@
-from household.view_mixins import HouseholdViewMixin as BaseHouseholdViewMixin
+from household_dashboard.view_mixins import HouseholdViewMixin as BaseHouseholdViewMixin
 from plot.utils import get_anonymous_plot
 
 
