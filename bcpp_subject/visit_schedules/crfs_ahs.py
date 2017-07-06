@@ -1,7 +1,7 @@
 from edc_map.site_mappers import site_mappers
 from edc_visit_schedule.visit import Crf
 
-from bcpp.communities import is_intervention
+from bcpp_community import is_intervention
 
 _crfs_ahs = (
     Crf(show_order=10, model='bcpp_subject.residencymobility', required=True),

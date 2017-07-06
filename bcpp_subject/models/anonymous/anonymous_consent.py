@@ -14,7 +14,7 @@ from edc_search.model_mixins import (
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
-from bcpp.surveys import ANONYMOUS_SURVEY
+from bcpp_community.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S

@@ -8,7 +8,7 @@ from django.test import TestCase, tag
 from edc_constants.constants import YES, NO, NEG, IND
 from edc_map.site_mappers import site_mappers
 
-from bcpp_communities import is_intervention
+from bcpp_community import is_intervention
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import ABLE_TO_PARTICIPATE
 from member.models.household_member.household_member import HouseholdMember
