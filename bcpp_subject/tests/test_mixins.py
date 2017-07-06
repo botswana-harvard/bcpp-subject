@@ -305,8 +305,7 @@ class BcppCrfTestHelper(CrfTestHelper):
                                'show_order')
 
 
-class SubjectMixin(SubjectTestMixin, SurveyDatesTestMixin,
-                   DatesTestMixin, LoadListDataMixin):
+class SubjectMixin(SubjectTestMixin, SurveyDatesTestMixin, DatesTestMixin):
 
     household_test_helper = HouseholdTestHelper()
     member_test_helper = MemberTestHelper()
