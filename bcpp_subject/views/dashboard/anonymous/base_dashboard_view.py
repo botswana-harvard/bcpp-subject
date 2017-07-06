@@ -6,6 +6,7 @@ from household_dashboard.view_mixins import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
     HouseholdLogEntryViewMixin)
 from member_dashboard.views.mixins import HouseholdMemberViewMixin
+
 from survey.view_mixins import SurveyViewMixin
 
 from ..appointment_view_mixin import AppointmentViewMixin
