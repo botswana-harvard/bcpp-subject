@@ -279,6 +279,10 @@ class SubjectTestMixin:
             report_datetime=report_datetime)
 
 
+class BcppSurveyDatesTestMixin(SurveyDatesTestMixin):
+    site_survey_group_name = 'bcpp-survey'
+
+
 class BcppCrfTestHelper(CrfTestHelper):
 
     def complete_required_subject_crfs(self, visit_codes, subject_identifier):
@@ -305,7 +309,7 @@ class BcppCrfTestHelper(CrfTestHelper):
                                'show_order')
 
 
-class SubjectMixin(SubjectTestMixin, SurveyDatesTestMixin, DatesTestMixin):
+class SubjectMixin(SubjectTestMixin, BcppSurveyDatesTestMixin, DatesTestMixin):
 
     household_test_helper = HouseholdTestHelper()
     member_test_helper = MemberTestHelper()

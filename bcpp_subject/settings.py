@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'edc_visit_schedule.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
+    'edc_timepoint.apps.AppConfig',
     #     'bcpp.apps.AppConfig',
     #     'bcpp.apps.EdcMetadataAppConfig',
     #     'bcpp.apps.EdcIdentifierAppConfig',
