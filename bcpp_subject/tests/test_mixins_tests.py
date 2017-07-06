@@ -1,9 +1,8 @@
 from django.test import TestCase, tag
 
-from edc_base_test.exceptions import TestMixinError
 from household.models.household_structure.household_structure import HouseholdStructure
 
-from .test_mixins import SubjectMixin
+from .test_mixins import SubjectMixin, TestMixinError
 from edc_constants.constants import MALE, FEMALE
 from dateutil.relativedelta import relativedelta
 from survey.site_surveys import site_surveys
@@ -12,7 +11,8 @@ from survey.site_surveys import site_surveys
 class TestMixinsTests(SubjectMixin, TestCase):
 
     def setUp(self):
-        self.household_structure = self.make_household_ready_for_enumeration(make_hoh=False)
+        self.household_structure = self.make_household_ready_for_enumeration(
+            make_hoh=False)
 
     def test_make_consent_no_member(self):
         obj = self.add_subject_consent()
@@ -36,7 +36,8 @@ class TestMixinsTests(SubjectMixin, TestCase):
             household_structure, age_in_years=32, gender=MALE)
         obj = self.add_subject_consent(household_member)
         self.assertEqual(obj.gender, MALE)
-        self.assertEqual(obj.dob, (self.get_utcnow() - relativedelta(years=32)).date())
+        self.assertEqual(obj.dob, (self.get_utcnow() -
+                                   relativedelta(years=32)).date())
 
 
 @tag('erik1')
