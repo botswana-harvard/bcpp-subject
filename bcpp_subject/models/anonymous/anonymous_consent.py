@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from edc_base.model_mixins import BaseUuidModel
@@ -13,7 +14,6 @@ from edc_search.model_mixins import (
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
-from bcpp.consents import ANONYMOUS_CONSENT_GROUP
 from bcpp.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
@@ -97,7 +97,7 @@ class AnonymousConsent(
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
-        consent_group = ANONYMOUS_CONSENT_GROUP
+        consent_group = settings.ANONYMOUS_CONSENT_GROUP
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))

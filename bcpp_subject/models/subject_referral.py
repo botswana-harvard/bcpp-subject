@@ -1,14 +1,11 @@
 from django.db import models
 
+from bcpp_referral.model_mixins import SubjectReferralModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
 
-from ..choices import (
-    REFERRAL_APPT_COMMENTS,
-    REFERRAL_LETTER_YES_NO_REFUSED)
-
-from ..referral.model_mixins import SubjectReferralModelMixin
+from ..choices import REFERRAL_APPT_COMMENTS, REFERRAL_LETTER_YES_NO_REFUSED
 from .model_mixins import CrfModelMixin
 
 

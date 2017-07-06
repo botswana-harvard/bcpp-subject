@@ -39,7 +39,7 @@
 #         BcppAppConfigurat                                                            ion().prep_survey_for_tests()
 # #         site_lab_tracker.autodiscover()
 # #         BcppSubjectVisitSchedule().build()
-# #         site_rule_groups.autodiscover()
+# #         site_metadata_rules.autodiscover()
 #         for _ in range(2):
 #             RegisteredSubjectFactory(identity='317918515')
 # 

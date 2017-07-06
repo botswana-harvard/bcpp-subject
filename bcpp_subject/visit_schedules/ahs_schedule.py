@@ -1,9 +1,11 @@
+from dateutil.relativedelta import relativedelta
+
 from edc_visit_schedule.constants import YEARS
-from edc_visit_schedule import Schedule, Visit
+from edc_visit_schedule.schedule import Schedule
+from edc_visit_schedule.visit import Visit
 
 from .crfs_ahs import crfs_ahs
 from .requisitions import requisitions
-from dateutil.relativedelta import relativedelta
 
 ahs_schedule = Schedule(
     name='ahs_schedule',
@@ -11,7 +13,7 @@ ahs_schedule = Schedule(
     enrollment_model='bcpp_subject.enrollmentahs',
     disenrollment_model='bcpp_subject.disenrollmentahs',)
 
-visit1 = Visit(
+ahs_visit1 = Visit(
     code='T1',
     title='1st Annual Survey',
     timepoint=1,
@@ -21,7 +23,7 @@ visit1 = Visit(
     requisitions=requisitions,
     crfs=crfs_ahs)
 
-visit2 = Visit(
+ahs_visit2 = Visit(
     code='T2',
     title='2nd Annual Survey',
     timepoint=2,
@@ -31,9 +33,6 @@ visit2 = Visit(
     requisitions=requisitions,
     crfs=crfs_ahs)
 
-ahs_schedule.add_visit(visit=visit1)
-ahs_schedule.add_visit(visit=visit2)
-
 # ahs_schedule.add_visit(
 #     code='T3',
 #     title='3rd Annual Survey',
@@ -42,3 +41,6 @@ ahs_schedule.add_visit(visit=visit2)
 #     base_interval_unit=YEARS,
 #     requisitions=requisitions,
 #     crfs=crfs_ahs)
+
+ahs_schedule.add_visit(visit=ahs_visit1)
+ahs_schedule.add_visit(visit=ahs_visit2)

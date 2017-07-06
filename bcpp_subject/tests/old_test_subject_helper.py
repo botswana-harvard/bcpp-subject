@@ -296,7 +296,7 @@ class TestSubjectHelper(RuleGroupMixin, TestCase):
                 NOT_REQUIRED, T0, VIRAL_LOAD,
                 self.subject_visit_male.subject_identifier).count())
 
-        # site_rule_groups.autodiscover()
+        # site_metadata_rules.autodiscover()
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
@@ -362,7 +362,7 @@ class TestSubjectHelper(RuleGroupMixin, TestCase):
                 NOT_REQUIRED, T0, VIRAL_LOAD,
                 self.subject_visit_male.subject_identifier))
 
-        # site_rule_groups.autodiscover()
+        # site_metadata_rules.autodiscover()
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)

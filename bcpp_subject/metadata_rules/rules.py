@@ -8,10 +8,9 @@ from edc_metadata.rules.predicate import P, PF
 from edc_metadata.rules.requisition_rule import RequisitionRule
 from edc_metadata.rules.rule_group import RuleGroup
 
-from ..constants import VENOUS
 from ..labs import (
     microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel)
-from ..models import ResourceUtilization, SubjectVisit
+from ..models import SubjectVisit
 from .funcs import (
     func_anonymous_member,
     func_hiv_positive,
@@ -31,7 +30,6 @@ from .funcs import (
     func_requires_vl,
     func_requires_hivtestreview,
     func_requires_venous)
-from bcpp_subject.constants import CAPILLARY, MICROTUBE
 
 
 @register()
@@ -128,7 +126,6 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        #  source_fk = (SubjectVisit, 'subject_visit')
         source_model = 'bcpp_subject.resourceutilization'
 
 
@@ -432,7 +429,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
     """
     elisa_for_ind = RequisitionRule(
         logic=Logic(
-            P('hiv_result', 'eq', IND),
+            predicate=P('hiv_result', 'eq', IND),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_model='bcpp_subject.subjectrequisition',
@@ -447,7 +444,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     elisa_result = CrfRule(
         logic=Logic(
-            P('hiv_result', 'eq', IND),
+            predicate=P('hiv_result', 'eq', IND),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['bcpp_subject.elisahivresult'])
@@ -463,7 +460,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     serve_hiv_care_adherence = CrfRule(
         logic=Logic(
-            P('verbal_hiv_result', 'eq', POS),
+            predicate=P('verbal_hiv_result', 'eq', POS),
             consequence=REQUIRED,
             alternative=NOT_REQUIRED),
         target_models=['hivcareadherence', 'hivmedicalcare'])

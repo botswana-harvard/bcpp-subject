@@ -2,11 +2,10 @@ import sys
 
 from django.apps import apps as django_apps
 
-from edc_constants.constants import (
-    POS, YES, NEG, NO, NAIVE, UNK, IND)
+from edc_constants.constants import POS, YES, NEG, NO, NAIVE, UNK, IND, DEFAULTER, ON_ART
 
+from .constants import ART_PRESCRIPTION
 from .model_values import ModelValues
-from .constants import ART_PRESCRIPTION, DEFAULTER, ON_ART
 
 
 class ValuesSetter:
