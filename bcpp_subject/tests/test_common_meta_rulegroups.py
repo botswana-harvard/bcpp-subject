@@ -5,12 +5,11 @@ from django.test import TestCase, tag
 from edc_constants.constants import NO, YES, POS, NEG, IND, UNK, NOT_SURE
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
 
+from ..constants import E0
 from ..constants import VIRAL_LOAD, RESEARCH_BLOOD_DRAW
-
+from ..models import CircumcisionBenefits
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
-from ..constants import E0
-from bcpp_subject.models.list_models import CircumcisionBenefits
 
 
 @tag("COMMON_RULES")

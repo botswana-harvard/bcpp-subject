@@ -1,5 +1,4 @@
 from model_mommy import mommy
-
 from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
@@ -7,15 +6,12 @@ from django.test.utils import tag
 
 from edc_constants.constants import NO, YES, POS, NEG, UNK, DWTA, NOT_APPLICABLE, IND
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
-
+from edc_metadata.models import RequisitionMetadata, CrfMetadata
 from member.models.household_member import HouseholdMember
 
-from ..constants import E0
-
+from ..constants import E0, MICROTUBE, ELISA, CAPILLARY
 from .rule_group_mixins import RuleGroupMixin
 from .test_mixins import SubjectMixin
-from bcpp_subject.constants import MICROTUBE, ELISA, CAPILLARY
-from edc_metadata.models import RequisitionMetadata, CrfMetadata
 
 
 @tag('ESSRULE')

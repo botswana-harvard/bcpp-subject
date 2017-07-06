@@ -1,35 +1,26 @@
 from django.test import TestCase
 from django.test.utils import tag
 
-from bcpp_subject.models.appointment import Appointment
-from bcpp_subject.models.subject_consent import SubjectConsent
-from bcpp_subject.models.subject_visit import SubjectVisit
-from bcpp_subject.tests.test_mixins import SubjectMixin
-
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from edc_sync.models import OutgoingTransaction, IncomingTransaction
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-
 from household.models.household import Household
 from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
-
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models.household_head_eligibility import HouseholdHeadEligibility
 from member.models.household_member.household_member import HouseholdMember
 from member.models.representative_eligibility import RepresentativeEligibility
 from plot.models import Plot, PlotLog, PlotLogEntry
 
-from .test_mixins import CompleteCrfsMixin
-from bcpp_subject.constants import E0
+from ..constants import E0
+from ..models import Appointment, SubjectConsent, SubjectVisit
+from .test_mixins import SubjectMixin
 
 
 @tag('TestConsumeIncomingTransactions')
-class TestConsumeIncomingTransactions(SubjectMixin, CompleteCrfsMixin, TestCase):
-
-    def setUp(self):
-        super().setUp()
+class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
 
     def delete_crfs(self, subject_visit):
         deleted_crfs = []

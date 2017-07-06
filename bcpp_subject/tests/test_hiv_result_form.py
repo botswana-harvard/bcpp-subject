@@ -3,11 +3,10 @@ from model_mommy import mommy
 from django.test import TestCase
 
 from edc_constants.constants import YES, NO, NEG
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE, DECLINED
 
 from ..forms import HivResultForm
 from .test_mixins import SubjectMixin
-from bcpp_subject.constants import DECLINED
 
 
 class TestHivResultForm(SubjectMixin, TestCase):

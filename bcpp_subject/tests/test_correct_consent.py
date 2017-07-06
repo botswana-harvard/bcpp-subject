@@ -1,15 +1,13 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
-
 from model_mommy import mommy
-
 from faker import Faker
 
-from ..constants import T0
-
-from .test_mixins import SubjectMixin
-from bcpp_subject.models.subject_consent import SubjectConsent
 from edc_registration.models import RegisteredSubject
-from django.core.exceptions import ValidationError
+
+from ..constants import T0
+from ..models import SubjectConsent
+from .test_mixins import SubjectMixin
 
 fake = Faker()
 

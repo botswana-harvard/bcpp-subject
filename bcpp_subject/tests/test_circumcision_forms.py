@@ -4,7 +4,7 @@ from django.test import TestCase
 from model_mommy import mommy
 
 from edc_constants.constants import YES
-from edc_base_test.utils import get_utcnow
+from edc_protocol.tests import get_utcnow
 
 from ..forms import CircumcisedForm, UncircumcisedForm
 
@@ -15,7 +15,8 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
+        health_benefits_smc = mommy.make_recipe(
+            'bcpp_subject.circumcision_benefits')
         self.options = {
             'created': get_utcnow(),
             'modified': get_utcnow(),
@@ -49,7 +50,8 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        health_benefits_smc = mommy.make_recipe('bcpp_subject.circumcision_benefits')
+        health_benefits_smc = mommy.make_recipe(
+            'bcpp_subject.circumcision_benefits')
 
         self.options = {
             'created': get_utcnow(),

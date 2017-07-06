@@ -1,8 +1,6 @@
-from model_mommy import mommy
-
 from django.test import TestCase
-
 from edc_constants.constants import YES, NO, NEG, POS, OTHER
+from model_mommy import mommy
 
 from ..forms import RecentPartnerForm
 from .test_mixins import SubjectMixin

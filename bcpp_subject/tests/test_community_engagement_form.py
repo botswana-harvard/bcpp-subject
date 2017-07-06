@@ -3,12 +3,8 @@ from django.test import TestCase
 from edc_constants.constants import YES, DWTA
 
 from ..forms import CommunityEngagementForm
-
+from ..models.list_models import NeighbourhoodProblems, Diagnoses
 from .test_mixins import SubjectMixin
-
-from ..models.list_models import NeighbourhoodProblems
-
-from bcpp_subject.models.list_models import Diagnoses
 
 
 class TestCommunityEngagementForm(SubjectMixin, TestCase):

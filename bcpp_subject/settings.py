@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'member_clone.apps.AppConfig',
     'plot.apps.AppConfig',
     'enumeration.apps.AppConfig',
+    'bcpp_communities.apps.AppConfig',
     'bcpp_referral.apps.AppConfig',
     'bcpp_subject.apps.EdcAppointmentAppConfig',
     'bcpp_subject.apps.EdcVisitTrackingAppConfig',

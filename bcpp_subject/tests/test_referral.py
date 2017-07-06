@@ -5,16 +5,15 @@ from model_mommy import mommy
 
 from django.test import TestCase, tag
 
-from edc_constants.constants import YES, NO, NEG, IND, NOT_APPLICABLE
+from edc_constants.constants import YES, NO, NEG, IND
 from edc_map.site_mappers import site_mappers
 
-from bcpp.communities import is_intervention
-from bcpp_subject.constants import T1, T2
+from bcpp_communities import is_intervention
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import ABLE_TO_PARTICIPATE
 from member.models.household_member.household_member import HouseholdMember
 
-from ..constants import ELISA, MICROTUBE
+from ..constants import ELISA, MICROTUBE, T1, T2
 from ..models import Appointment
 from .test_mixins import SubjectMixin
 

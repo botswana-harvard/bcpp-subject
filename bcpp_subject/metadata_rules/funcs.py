@@ -1,7 +1,7 @@
 from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_registration.models import RegisteredSubject
 
-from bcpp.surveys import BCPP_YEAR_3
+from bcpp_community.surveys import BCPP_YEAR_3
 from member.models import HouseholdMember
 
 from ..constants import MICROTUBE

@@ -1,11 +1,8 @@
 from django.test import TestCase
-
 from edc_constants.constants import NO, YES
-
 from model_mommy import mommy
 
 from ..forms import MedicalDiagnosesForm
-
 from .test_mixins import SubjectMixin
 
 

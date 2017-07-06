@@ -3,10 +3,9 @@ from datetime import date, timedelta
 from django.test import TestCase
 
 from edc_constants.choices import NEG
-from edc_base.utils import get_utcnow
+from edc_protocol.tests import get_utcnow
 
 from ..forms import HivTestReviewForm
-
 from .test_mixins import SubjectMixin
 
 

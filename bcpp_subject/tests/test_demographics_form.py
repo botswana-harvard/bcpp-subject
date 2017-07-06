@@ -1,7 +1,7 @@
 from django.test import TestCase
 from model_mommy import mommy
 
-from member.models.household_member import HouseholdMember
+from member.models import HouseholdMember
 
 from ..constants import WIDOWED, MARRIED
 from ..forms import DemographicsForm

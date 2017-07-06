@@ -3,7 +3,6 @@ from django.test import TestCase
 from edc_constants.constants import NO
 
 from ..forms import LabourMarketWagesForm
-
 from .test_mixins import SubjectMixin
 
 

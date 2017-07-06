@@ -1,11 +1,10 @@
+from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
-
+from edc_constants.constants import MALE, FEMALE
 from household.models.household_structure.household_structure import HouseholdStructure
+from survey.site_surveys import site_surveys
 
 from .test_mixins import SubjectMixin, TestMixinError
-from edc_constants.constants import MALE, FEMALE
-from dateutil.relativedelta import relativedelta
-from survey.site_surveys import site_surveys
 
 
 class TestMixinsTests(SubjectMixin, TestCase):

@@ -1,10 +1,8 @@
 from django.test import TestCase, tag
-
 from edc_constants.constants import NO, NOT_APPLICABLE
 from model_mommy import mommy
 
 from ..forms import HypertensionCardiovascularForm
-
 from .test_mixins import SubjectMixin
 
 

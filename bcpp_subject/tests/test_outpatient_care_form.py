@@ -2,9 +2,8 @@ from django.test import TestCase
 
 from edc_constants.constants import YES, NO
 
+from ..forms import OutpatientCareForm
 from .test_mixins import SubjectMixin
-
-from bcpp_subject.forms.outpatient_care_form import OutpatientCareForm
 
 
 class TestOutpatientCareForm(SubjectMixin, TestCase):

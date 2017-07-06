@@ -3,7 +3,6 @@ from django.test import TestCase
 from edc_constants.constants import YES, NO, POS, NEG, DWTA, NOT_APPLICABLE
 
 from ..forms import HivTestingHistoryForm
-
 from .test_mixins import SubjectMixin
 
 

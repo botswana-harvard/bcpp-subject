@@ -4,12 +4,11 @@ from django.test import TestCase, tag
 
 from edc_constants.constants import YES
 
-from member.clone import Clone
+from member_clone.clone import Clone
 from member.constants import ABLE_TO_PARTICIPATE
-from member.models.household_member import HouseholdMember
+from member.models import HouseholdMember
 
 from ..constants import T1, T2
-
 from .test_mixins import SubjectMixin
 
 

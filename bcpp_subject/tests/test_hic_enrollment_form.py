@@ -1,19 +1,16 @@
 import arrow
 
 from model_mommy import mommy
-
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 
 from edc_constants.constants import NEG, YES, NO, POS
-from edc_base_test.utils import get_utcnow
-
-from .test_mixins import SubjectMixin
-
+from edc_protocol.tests import get_utcnow
 from member.models.enrollment_checklist import EnrollmentChecklist
 
-from bcpp_subject.forms.hic_enrollment_form import HicEnrollmentForm
-from bcpp_subject.models import SubjectLocator, HivResult, SubjectConsent, ResidencyMobility
+from ..forms import HicEnrollmentForm
+from ..models import SubjectLocator, HivResult, SubjectConsent, ResidencyMobility
+from .test_mixins import SubjectMixin
 
 
 class TestHicEnrollmentForm(SubjectMixin, TestCase):
@@ -129,7 +126,8 @@ class TestHicEnrollmentForm(SubjectMixin, TestCase):
         self.assertFalse(form.is_valid())
 
     def test_get_hiv_status_today(self):
-        hiv_result = HivResult.objects.get(subject_visit=self.subject_visit_female)
+        hiv_result = HivResult.objects.get(
+            subject_visit=self.subject_visit_female)
         hiv_result.hiv_result = POS
         hiv_result.save()
         form = HicEnrollmentForm(data=self.options)

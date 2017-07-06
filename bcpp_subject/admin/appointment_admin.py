@@ -1,17 +1,13 @@
 from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
-from edc_visit_schedule.admin import (
-    visit_schedule_fieldset_tuple, visit_schedule_fields)
-
+from edc_visit_schedule.admin import visit_schedule_fieldset_tuple, visit_schedule_fields
 from survey.admin import survey_fieldset_tuple, survey_fields
-
-from .modeladmin_mixins import ModelAdminMixin
-
-from ..models import Appointment
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import AppointmentForm
+from ..models import Appointment
+from .modeladmin_mixins import ModelAdminMixin
 
 
 @admin.register(Appointment, site=bcpp_subject_admin)

@@ -5,7 +5,6 @@ from edc_metadata.rules import P, PF, register
 from edc_metadata.rules import RequisitionRule, RequisitionRuleGroup
 
 from ..labs import microtube_panel, rdb_panel, viral_load_panel, elisa_panel, venous_panel
-from ..models import SubjectVisit
 from .funcs import (
     func_anonymous_member,
     func_hiv_positive,
