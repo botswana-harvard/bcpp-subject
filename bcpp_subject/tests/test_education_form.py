@@ -6,7 +6,6 @@ from edc_constants.constants import YES, NO
 
 from ..forms import EducationForm
 from ..models import SubjectLocator
-
 from .test_mixins import SubjectMixin
 
 
