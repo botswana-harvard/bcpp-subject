@@ -1,7 +1,6 @@
 git+https://github.com/botswana-harvard/edc-base@develop#egg=edc_base
 git+https://github.com/erikvw/django-crypto-fields@develop#egg=django_crypto_fields
 git+https://github.com/erikvw/django-revision@develop#egg=django_revision
-
 git+https://github.com/botswana-harvard/edc-appointment@develop#egg=edc-appointment
 git+https://github.com/botswana-harvard/edc-consent@develop#egg=edc_consent
 git+https://github.com/botswana-harvard/edc-constants@develop#egg=edc_constants
@@ -21,14 +20,18 @@ git+https://github.com/botswana-harvard/edc-sync@develop#egg=edc-sync
 git+https://github.com/botswana-harvard/edc-timepoint@develop#egg=edc_timepoint
 git+https://github.com/botswana-harvard/edc-visit-schedule@develop#egg=edc_visit_schedule
 git+https://github.com/botswana-harvard/edc-visit-tracking@develop#egg=edc_visit_tracking
-
 git+https://github.com/botswana-harvard/enumeration@develop#egg=enumeration
 git+https://github.com/botswana-harvard/household@develop#egg=household
+git+https://github.com/botswana-harvard/household-dashboard@develop#egg=household-dashboard
 git+https://github.com/botswana-harvard/member@develop#egg=member
-git+https://github.com/botswana-harvard/survey@develop#egg=survey
+git+https://github.com/botswana-harvard/member-dashboard@develop#egg=member-dashboard
+git+https://github.com/botswana-harvard/member-form-validators@develop#egg=member-form-validators
 git+https://github.com/botswana-harvard/plot@develop#egg=plot
-
+git+https://github.com/botswana-harvard/plot-dashboard@develop#egg=plot-dashboard
+git+https://github.com/botswana-harvard/plot-form-validators@develop#egg=plot-form-validators
+git+https://github.com/botswana-harvard/survey@develop#egg=survey
 git+https://github.com/botswana-harvard/bcpp@develop#egg=bcpp
+git+https://github.com/botswana-harvard/bcpp-referral@develop#egg=bcpp-referral
 
 # git+https://github.com/botswana-harvard/example-survey@develop#egg=example_survey
 # git+https://github.com/botswana-harvard/edc-example@develop#egg=edc_example
