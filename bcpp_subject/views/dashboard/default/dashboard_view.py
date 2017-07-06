@@ -3,13 +3,12 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_dashboard.view_mixins import (
-    DashboardViewMixin as EdcDashboardViewMixin, AppConfigViewMixin)
+from edc_dashboard.view_mixins import AppConfigViewMixin
+from edc_dashboard.view_mixins import DashboardViewMixin as EdcDashboardViewMixin
 
 from ....models import SubjectConsent, SubjectOffstudy
-from ...wrappers import (
-    CrfModelWrapper, SubjectVisitModelWrapper, RequisitionModelWrapper,
-    SubjectConsentModelWrapper)
+from ...wrappers import CrfModelWrapper, RequisitionModelWrapper
+from ...wrappers import SubjectVisitModelWrapper, SubjectConsentModelWrapper
 from .base_dashboard_view import BaseDashboardView
 
 

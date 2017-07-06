@@ -1,5 +1,4 @@
-from edc_visit_schedule.view_mixins import (
-    VisitScheduleViewMixin as BaseVisitScheduleViewMixin)
+from edc_visit_schedule.view_mixins import VisitScheduleViewMixin as BaseVisitScheduleViewMixin
 
 
 class VisitScheduleViewMixin(BaseVisitScheduleViewMixin):

@@ -3,10 +3,9 @@ from edc_dashboard.view_mixins import (
     MetaDataViewMixin)
 
 from bcpp_referral.referral_view_mixin import ReferralViewMixin
-from household_dashboard.view_mixins import (
-    HouseholdViewMixin, HouseholdStructureViewMixin,
-    HouseholdLogEntryViewMixin)
-from member_dashboard.views.mixins import HouseholdMemberViewMixin
+from household_dashboard.view_mixins import HouseholdViewMixin, HouseholdStructureViewMixin
+from household_dashboard.view_mixins import HouseholdLogEntryViewMixin
+from member_dashboard.view_mixins import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
 from ..appointment_view_mixin import AppointmentViewMixin

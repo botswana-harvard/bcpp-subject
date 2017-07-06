@@ -4,8 +4,8 @@ from faker import Faker
 from faker.providers import BaseProvider
 from model_mommy.recipe import Recipe, seq, related
 
-from edc_base_test.faker import EdcBaseProvider
-from edc_base_test.utils import get_utcnow
+from edc_consent.tests import EdcConsentProvider
+from edc_protocol.tests import get_utcnow
 from edc_constants.choices import YES, NO, POS, NEG, NOT_APPLICABLE
 
 from .constants import ZERO
@@ -54,7 +54,7 @@ class DateProvider(BaseProvider):
 
 
 fake = Faker()
-fake.add_provider(EdcBaseProvider)
+fake.add_provider(EdcConsentProvider)
 fake.add_provider(DateProvider)
 
 # fake.add_provider(EdcLabProvider)

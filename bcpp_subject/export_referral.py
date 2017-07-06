@@ -1,6 +1,8 @@
-from bcpp_subject.models.subject_locator import SubjectLocator
 from django.db.models.aggregates import Max
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+
+
+from .models import SubjectLocator
 
 
 class ExportReferral:

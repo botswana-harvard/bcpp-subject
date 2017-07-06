@@ -1,18 +1,18 @@
 import json
-import dateutil.parser
 import io
+
+from bcpp_referral.referral import Referral
+from decimal import Decimal
 from django.apps import apps as django_apps
-from bcpp_subject.models import SubjectConsent, SubjectVisit
-from bcpp_subject.referral.referral import Referral
-from bcpp_subject.tests.test_mixins import SubjectMixin
 from django.test import TestCase
+from django.utils import timezone
+from edc_constants.constants import YES
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-from bcpp_subject.models.subject_requisition import SubjectRequisition
-from decimal import Decimal
-from django.utils import timezone
 from json import JSONDecoder
-from edc_constants.constants import YES
+
+from ..models import SubjectConsent, SubjectVisit, SubjectRequisition
+from .test_mixins import SubjectMixin
 
 # Read existing bhs data entered by CB's
 

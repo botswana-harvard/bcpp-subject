@@ -1,11 +1,9 @@
-from edc_dashboard.view_mixins.subject_dashboard import (
-    AppointmentViewMixin as BaseAppointmentMixin)
-
+from edc_appointment.constants import NEW_APPT
+from edc_dashboard.view_mixins import AppointmentViewMixin as BaseAppointmentMixin
 from member.models import HouseholdMember
 
 from ...models import Appointment
 from ..wrappers import AppointmentModelWrapper
-from edc_appointment.constants import NEW_APPT
 
 
 class AppointmentViewMixin(BaseAppointmentMixin):

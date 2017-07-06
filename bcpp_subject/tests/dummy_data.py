@@ -8,22 +8,24 @@ from edc_constants.constants import YES, NO, NEG, OTHER, NOT_APPLICABLE
 
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from household.models import Household, HouseholdStructure
-from household.tests.mixin import HouseholdMixin
+from household.tests import HouseholdTestHelper
 from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import EnrollmentChecklist, HouseholdMember
 from plot.constants import ACCESSIBLE, RESIDENTIAL_HABITABLE
 from plot.models import PlotLog
 from plot.mommy_recipes import GpsProvider
 
-from .constants import T0
-from .models import Appointment
-from .models.list_models import Diagnoses, CircumcisionBenefits
+from ..constants import T0
+from ..models import Appointment
+from ..models.list_models import Diagnoses, CircumcisionBenefits
 
 fake = Faker()
 fake.add_provider(GpsProvider)
 
 
 class TestDummyData:
+
+    household_helper = HouseholdTestHelper()
 
     def subject_visit(self, gender, omang):
         report_datetime = datetime.today()

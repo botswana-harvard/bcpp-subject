@@ -1,6 +1,7 @@
 from edc_visit_schedule.visit import Requisition
 
-from ..labs import rdb_panel, microtube_panel, viral_load_panel, venous_panel, elisa_panel
+from ..labs import rdb_panel, microtube_panel, viral_load_panel
+from ..labs import venous_panel, elisa_panel
 
 requisitions = (
     Requisition(
