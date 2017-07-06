@@ -5,7 +5,7 @@ from django.db import transaction
 from edc_map.classes import Mapper, site_mappers
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc_constants.constants import REQUIRED, NOT_REQUIRED, KEYED
-from edc.subject.rule_groups.classes import site_rule_groups
+from edc.subject.rule_groups.classes import site_metadata_rules
 
 from bhp066.apps.bcpp_lab.models import AliquotType, Panel
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
@@ -239,7 +239,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
 #         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
 #         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups.autodiscover()
+#         site_metadata_rules.autodiscover()
 #         today_date = date.today()
 #         last_year_date = today_date - timedelta(days=365)
 #         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
@@ -271,7 +271,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment,
 #                                                            lab_entry__requisition_panel__name='Viral Load',
 #                                                            entry_status=REQUIRED).count() == 1)
-#         site_rule_groups._registry = {}
+#         site_metadata_rules._registry = {}
 
 #     def tests_hiv_result7(self):
 #         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -285,7 +285,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment,
 #                                                            lab_entry__requisition_panel__name='Viral Load',
 #                                                            entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups.autodiscover()
+#         site_metadata_rules.autodiscover()
 #         today_date = date.today()
 #         last_year_date = today_date - timedelta(days=365)
 #         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS',
@@ -323,7 +323,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(
 #             appointment=self.subject_visit_male.appointment,
 #             lab_entry__requisition_panel__name='Viral Load', entry_status=REQUIRED).count() == 1)
-#         site_rule_groups._registry = {}
+#         site_metadata_rules._registry = {}
 
     def tests_hiv_result8(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -344,7 +344,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
@@ -368,7 +368,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=REQUIRED).count() == 1)
-        site_rule_groups._registry = {}
+        site_metadata_rules._registry = {}
 
     def tests_hiv_result7(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -376,7 +376,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
@@ -400,7 +400,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=REQUIRED).count() == 1)
-        site_rule_groups._registry = {}
+        site_metadata_rules._registry = {}
 
     def tests_hiv_result8(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -408,7 +408,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
         self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='hivresult', entry_status=REQUIRED).count() == 1)
         self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='pima', entry_status=NOT_REQUIRED).count() == 1)
@@ -417,7 +417,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Venous (HIV)', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='ELISA', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups._registry = {}
+        site_metadata_rules._registry = {}
 
     def tests_hiv_result9(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -426,7 +426,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
 >>>>>>> master
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG',
                                  has_record='No', other_record='No')
         self.assertTrue(ScheduledEntryMetaData.objects.filter(
@@ -450,7 +450,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment,
             lab_entry__requisition_panel__name='ELISA', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups._registry = {}
+        site_metadata_rules._registry = {}
 
 #     def tests_hiv_result9(self):
 #         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -464,7 +464,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(
 #             appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load',
 #             entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups.autodiscover()
+#         site_metadata_rules.autodiscover()
 #         HivTestingHistoryFactory(
 #             subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
 #         panel = Panel.objects.get(name='Microtube')
@@ -491,7 +491,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 #         self.assertTrue(RequisitionMetaData.objects.filter(
 #             appointment=self.subject_visit_male.appointment,
 #             lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-#         site_rule_groups._registry = {}
+#         site_metadata_rules._registry = {}
 
     def tests_hiv_result10(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
@@ -512,7 +512,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         HivTestingHistoryFactory(
             subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
         panel = Panel.objects.get(name='Microtube')
@@ -539,4 +539,4 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         self.assertTrue(RequisitionMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load',
             entry_status=REQUIRED).count() == 1)
-        site_rule_groups._registry = {}
+        site_metadata_rules._registry = {}

@@ -1,15 +1,13 @@
-from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE
+from edc_constants.constants import POS, NEG, NO, YES, FEMALE, NAIVE, DEFAULTER, ON_ART
 from edc_registration.models import RegisteredSubject
 
 from bcpp.surveys import BCPP_YEAR_3
 from member.models import HouseholdMember
 
-from ..models import (
-    HicEnrollment, HivTestingHistory, HivResult,
-    SexualBehaviour, is_circumcised)
-from ..subject_helper import SubjectHelper, DEFAULTER, ON_ART
-from bcpp_subject.models.subject_requisition import SubjectRequisition
-from bcpp_subject.constants import MICROTUBE
+from ..constants import MICROTUBE
+from ..models import HicEnrollment, HivTestingHistory, HivResult
+from ..models import SubjectRequisition, SexualBehaviour, is_circumcised
+from ..subject_helper import SubjectHelper
 
 
 def is_hic_enrolled(visit_instance):

@@ -12,7 +12,7 @@ from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, YES, NO
 # from edc.subject.appointment.models import Appointment
 # from edc.subject.lab_tracker.classes import site_lab_tracker
 # from edc.subject.registration.models import RegisteredSubject
-# from edc.subject.rule_groups.classes import site_rule_groups
+# from edc.subject.rule_groups.classes import site_metadata_rules
 # from edc.core.bhp_variables.models import StudySite
 # from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 # 
@@ -54,7 +54,7 @@ class BaseRuleGroupTestSetup(TestCase):
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         BcppAppConfiguration().prep_survey_for_tests()
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')

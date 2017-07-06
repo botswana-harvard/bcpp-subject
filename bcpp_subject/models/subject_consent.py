@@ -115,15 +115,17 @@ class SubjectConsent(
             self.version)
 
     def save(self, *args, **kwargs):
-        existing_rbd_household_member = rbd_household_member(identity=self.identity)
+        existing_rbd_household_member = rbd_household_member(
+            identity=self.identity)
         household_member = self.household_member
         if existing_rbd_household_member:
             try:
                 registered_subject = RegisteredSubject.objects.get(
                     identity=self.identity)
-            except RegisteredSubject.DoesNotExist:
+            except RegisteredSubject.DoesNotExist as e:
                 raise RegisteredSubjectError(
-                    f'{RegisteredSubject._meta.verbose_name} should exist.')
+                    f'{RegisteredSubject._meta.verbose_name} should exist. '
+                    f'Got {e}') from e
             household_member.internal_identifier = existing_rbd_household_member.internal_identifier
             household_member.save()
             self.subject_identifier = registered_subject.subject_identifier

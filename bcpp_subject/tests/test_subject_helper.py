@@ -2,10 +2,9 @@ from datetime import date, timedelta
 
 from django.test import TestCase, tag
 
-from edc_constants.constants import (
-    NEG, POS, UNK, YES, IND, NAIVE, NO)
+from edc_constants.constants import NEG, POS, UNK, YES, IND, NAIVE, NO, DEFAULTER, ON_ART
 
-from ..subject_helper import SubjectHelper, DEFAULTER, ART_PRESCRIPTION, ON_ART
+from ..subject_helper import SubjectHelper, ART_PRESCRIPTION
 from ..tests.test_mixins import SubjectMixin
 
 from model_mommy import mommy

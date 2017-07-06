@@ -1,8 +1,9 @@
 from django import forms
 
+from bcpp_referral.utils import get_required_crf
+
 from ..models import SubjectReferral
 from .form_mixins import SubjectModelFormMixin
-from ..referral import get_required_crf
 
 
 class SubjectReferralForm(SubjectModelFormMixin):

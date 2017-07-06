@@ -7,7 +7,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
-from edc.subject.rule_groups.classes import site_rule_groups
+from edc.subject.rule_groups.classes import site_metadata_rules
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
 from edc_map.site_mappers import site_mappers
@@ -47,7 +47,7 @@ class TestCorrectConsent(TestCase):
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         self.study_site = StudySite.objects.get(site_code='01')
         self.community = 'test_community'
         self.survey = Survey.objects.all()[0]

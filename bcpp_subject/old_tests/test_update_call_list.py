@@ -9,7 +9,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import site_rule_groups
+from edc.subject.rule_groups.classes import site_metadata_rules
 from edc.core.bhp_variables.models import StudySite
 from edc_map.site_mappers import site_mappers
 from edc_constants.constants import NO
@@ -56,7 +56,7 @@ class TestUpdateCallList(TestCase):
         self.app_config.prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         self.mapper = site_mappers.get_current_mapper()
 #         self.app_config.prep_survey_for_tests()
 

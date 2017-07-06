@@ -1,35 +1,31 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-
+from django.db import transaction
+from django.db.utils import IntegrityError
 from faker import Faker
 from model_mommy import mommy
 
 from edc_base_test.exceptions import TestMixinError
-from edc_base_test.mixins import (
-    AddVisitMixin, CompleteCrfsMixin as BaseCompleteCrfsMixin)
+from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin as BaseCompleteCrfsMixin
 from edc_base_test.mixins import LoadListDataMixin, DatesTestMixin
+from edc_consent.site_consents import site_consents
 from edc_constants.constants import NO, YES, MALE
 from edc_metadata.models import CrfMetadata
+from edc_registration.models import RegisteredSubject
 
-# from household.tests.household_test_mixin import HouseholdTestMixin
+from household.tests import HouseholdTestHelper
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import HEAD_OF_HOUSEHOLD, ABLE_TO_PARTICIPATE
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models import HouseholdMember
-# from member.tests.mixins import MemberTestMixin
-# from plot.tests.plot_test_mixin import PlotTestMixin
-# from survey.tests import (
-#     SurveyTestMixin, DatesTestMixin as SurveyDatesTestMixin)
+from member.tests import MemberTestHelper
+from plot.tests import PlotTestHelper
+from survey.tests import SurveyTestHelper, DatesTestMixin as SurveyDatesTestMixin
 
-from ..constants import T0, E0
+from ..constants import T0, E0, T2
 from ..models import Appointment
-from edc_consent.site_consents import site_consents
-from django.db.utils import IntegrityError
-from bcpp_subject.models.subject_consent import SubjectConsent
-from django.db import transaction
-from edc_registration.models import RegisteredSubject
-from bcpp_subject.constants import T2
+from ..models import SubjectConsent
 
 fake = Faker()
 
@@ -305,10 +301,14 @@ class CompleteCrfsMixin(BaseCompleteCrfsMixin):
                                'show_order')
 
 
-# class SubjectMixin(PlotTestMixin, HouseholdTestMixin, SurveyTestMixin,
-#                    MemberTestMixin, CompleteCrfsMixin, AddVisitMixin,
-#                    SubjectTestMixin, SurveyDatesTestMixin,
-#                    DatesTestMixin, LoadListDataMixin):
-#
-#     bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
-#     list_data = list_data
+class SubjectMixin(CompleteCrfsMixin, AddVisitMixin,
+                   SubjectTestMixin, SurveyDatesTestMixin,
+                   DatesTestMixin, LoadListDataMixin):
+
+    household_test_helper = HouseholdTestHelper()
+    member_test_helper = MemberTestHelper()
+    plot_test_helper = PlotTestHelper()
+    survey_test_helper = SurveyTestHelper()
+
+    bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
+    list_data = list_data
