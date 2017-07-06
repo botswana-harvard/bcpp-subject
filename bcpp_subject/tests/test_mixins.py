@@ -5,13 +5,14 @@ from django.db.utils import IntegrityError
 from faker import Faker
 from model_mommy import mommy
 
-from edc_base_test.exceptions import TestMixinError
-from edc_base_test.mixins import AddVisitMixin, CompleteCrfsMixin as BaseCompleteCrfsMixin
-from edc_base_test.mixins import LoadListDataMixin, DatesTestMixin
+from edc_base.tests import ListdataTestHelper
+from edc_consent.tests import DatesTestMixin
 from edc_consent.site_consents import site_consents
 from edc_constants.constants import NO, YES, MALE
 from edc_metadata.models import CrfMetadata
+from edc_metadata.tests import CrfTestHelper
 from edc_registration.models import RegisteredSubject
+from edc_visit_tracking.tests import VisitTestHelper
 
 from household.tests import HouseholdTestHelper
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
@@ -24,10 +25,13 @@ from plot.tests import PlotTestHelper
 from survey.tests import SurveyTestHelper, DatesTestMixin as SurveyDatesTestMixin
 
 from ..constants import T0, E0, T2
-from ..models import Appointment
-from ..models import SubjectConsent
+from ..models import Appointment, SubjectConsent
 
 fake = Faker()
+
+
+class TestMixinError(Exception):
+    pass
 
 
 class SubjectTestMixin:
@@ -275,7 +279,7 @@ class SubjectTestMixin:
             report_datetime=report_datetime)
 
 
-class CompleteCrfsMixin(BaseCompleteCrfsMixin):
+class BcppCrfTestHelper(CrfTestHelper):
 
     def complete_required_subject_crfs(self, visit_codes, subject_identifier):
         """Complete all required CRFs for a visit(s) using mommy defaults."""
@@ -301,14 +305,16 @@ class CompleteCrfsMixin(BaseCompleteCrfsMixin):
                                'show_order')
 
 
-class SubjectMixin(CompleteCrfsMixin, AddVisitMixin,
-                   SubjectTestMixin, SurveyDatesTestMixin,
+class SubjectMixin(SubjectTestMixin, SurveyDatesTestMixin,
                    DatesTestMixin, LoadListDataMixin):
 
     household_test_helper = HouseholdTestHelper()
     member_test_helper = MemberTestHelper()
     plot_test_helper = PlotTestHelper()
     survey_test_helper = SurveyTestHelper()
+    visit_test_helper = VisitTestHelper()
+    crf_test_helper = BcppCrfTestHelper()
+    listdata_test_helper = ListdataTestHelper()
 
     bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
     list_data = list_data
