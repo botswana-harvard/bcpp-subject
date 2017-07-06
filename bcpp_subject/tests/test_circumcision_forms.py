@@ -7,10 +7,10 @@ from edc_constants.constants import YES
 from edc_protocol.tests import get_utcnow
 
 from ..forms import CircumcisedForm, UncircumcisedForm
-
 from .test_mixins import SubjectMixin
 
 
+@tag('1')
 class TestCircumcisedForm(SubjectMixin, TestCase):
 
     def setUp(self):
@@ -33,14 +33,16 @@ class TestCircumcisedForm(SubjectMixin, TestCase):
         }
 
     def test_circumcision_form_valid(self):
-        """Assert that the form is valid."""
+        """Assert that the form is valid.
+        """
         form = CircumcisedForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertTrue(form.save())
 
     def test_circumcision_health_benefits_smc_none(self):
-        """Assert that the form is not valid if health_benefits_smc is None."""
+        """Assert that the form is not valid if
+        health_benefits_smc is None.
+        """
         self.options.update(health_benefits_smc=None)
         form = CircumcisedForm(data=self.options)
         self.assertFalse(form.is_valid())
@@ -69,13 +71,15 @@ class TestUncircumcisedForm(SubjectMixin, TestCase):
         }
 
     def test_uncircumcision_form_valid(self):
-        """Assert that the form is valid."""
+        """Assert that the form is valid.
+        """
         form = UncircumcisedForm(data=self.options)
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_uncircumcision_health_benefits_smc_none(self):
-        """Assert that the form is not valid if health_benefits_smc is None."""
+        """Assert that the form is not valid if
+        health_benefits_smc is None.
+        """
         self.options.update(health_benefits_smc=None)
         form = UncircumcisedForm(data=self.options)
         self.assertFalse(form.is_valid())

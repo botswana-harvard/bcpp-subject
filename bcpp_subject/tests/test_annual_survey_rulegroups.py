@@ -7,7 +7,7 @@ from django.test import TestCase, tag
 
 from edc_constants.constants import NO, YES, POS, NEG, DECLINED
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED, KEYED
-from edc_metadata.models import CrfMetadata, RequisitionMetadata
+from edc_metadata.models import CrfMetadata
 
 from ..constants import T0, T1, T2, MICROTUBE, VIRAL_LOAD, RESEARCH_BLOOD_DRAW
 
@@ -27,22 +27,6 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
         self.bhs_subject_visit_male = self.make_subject_visit_for_consented_subject_male(
             T0, survey_schedule=self.survey_schedule, **self.consent_data)
         self.subject_identifier = self.bhs_subject_visit_male.subject_identifier
-
-    def crf_metadata_obj(self, model, entry_status, visit_code):
-        return CrfMetadata.objects.filter(
-            entry_status=entry_status,
-            model=model,
-            visit_code=visit_code,
-            subject_identifier=self.subject_identifier)
-
-    def requisition_metadata_obj(
-            self, model, entry_status, visit_code, panel_name):
-        return RequisitionMetadata.objects.filter(
-            entry_status=entry_status,
-            model=model,
-            subject_identifier=self.subject_identifier,
-            panel_name=panel_name,
-            visit_code=visit_code)
 
     def hivtest_review(self, subject_visit, hiv_status, report_datetime=None):
         report_datetime = report_datetime or self.get_utcnow()
@@ -196,7 +180,8 @@ class TestAnnualRuleSurveyRuleGroups(SubjectMixin, TestCase):
             NO, self.bhs_subject_visit_male.report_datetime)
 
         self.assertEqual(
-            self.crf_metadata_obj('bcpp_subject.pimacd4', REQUIRED, T0).count(),
+            self.crf_metadata_obj('bcpp_subject.pimacd4',
+                                  REQUIRED, T0).count(),
             1)
         self.assertEqual(self.requisition_metadata_obj(
             'bcpp_subject.subjectrequisition', REQUIRED,
