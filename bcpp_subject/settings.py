@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'bcpp_community.apps.AppConfig',
     'bcpp_referral.apps.AppConfig',
     'bcpp_metadata_rules.apps.AppConfig',
+    'bcpp_subject_dashboard.apps.AppConfig',
     'bcpp_status.apps.AppConfig',
     'bcpp_subject.apps.EdcAppointmentAppConfig',
     'bcpp_subject.apps.EdcVisitTrackingAppConfig',
