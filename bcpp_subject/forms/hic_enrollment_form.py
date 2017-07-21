@@ -4,7 +4,7 @@ from edc_base.utils import age
 from edc_constants.constants import YES, NO, NEG, IND
 from bcpp_status import StatusHelper
 
-from ..models import ElisaHivResult, HivResult, SubjectConsent
+from ..models import HicEnrollment, ElisaHivResult, HivResult, SubjectConsent
 from ..models import SubjectLocator, ResidencyMobility
 from .form_mixins import SubjectModelFormMixin
 
