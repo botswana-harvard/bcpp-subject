@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'enumeration.apps.AppConfig',
     'bcpp_community.apps.AppConfig',
     'bcpp_referral.apps.AppConfig',
+    'bcpp_metadata_rules.apps.AppConfig',
     'bcpp_subject.apps.EdcAppointmentAppConfig',
     'bcpp_subject.apps.EdcVisitTrackingAppConfig',
     'bcpp_subject.apps.EdcDeviceAppConfig',
@@ -163,5 +164,5 @@ if 'test' in sys.argv:
             return None
 
     MIGRATION_MODULES = DisableMigrations()
-    PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher', )
+    PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
     DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
