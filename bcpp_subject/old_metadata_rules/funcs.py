@@ -7,7 +7,7 @@ from member.models import HouseholdMember
 from ..constants import MICROTUBE
 from ..models import HicEnrollment, HivTestingHistory, HivResult
 from ..models import SubjectRequisition, SexualBehaviour, is_circumcised
-from ..subject_helper import SubjectHelper
+from bcpp_subject.old_subject_helper import SubjectHelper
 
 
 def is_hic_enrolled(visit_instance):

@@ -13,7 +13,7 @@ from survey.site_surveys import site_surveys
 from ..constants import (
     T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD, ELISA)
 from ..models import Appointment
-from ..subject_helper import SubjectHelper
+from bcpp_subject.old_subject_helper import SubjectHelper
 from .rule_group_mixins import RuleGroupMixin
 
 
