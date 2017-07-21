@@ -4,11 +4,11 @@ from edc_constants.constants import UUID_PATTERN
 
 from household.patterns import household_identifier
 from survey.patterns import survey_schedule, survey
+from bcpp_subject_dashboard.views import ListboardView, DashboardView
+from bcpp_subject_dashboard.views import AnonymousDashboardView, AnonymousListboardView
 
 from .admin_site import bcpp_subject_admin
 from .patterns import subject_identifier
-from .views import ListboardView, DashboardView
-from .views import AnonymousDashboardView, AnonymousListboardView
 
 app_name = 'bcpp_subject'
 
