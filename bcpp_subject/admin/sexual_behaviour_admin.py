@@ -4,9 +4,9 @@ from django.utils.safestring import mark_safe
 from edc_base.fieldsets import Remove, FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_constants.constants import YES
+from bcpp_visit_schedule.constants import T0
 
 from ..admin_site import bcpp_subject_admin
-from ..constants import T0
 from ..forms import SexualBehaviourForm
 from ..models import SexualBehaviour
 

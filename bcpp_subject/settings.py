@@ -12,6 +12,7 @@ from edc_device.constants import CENTRAL_SERVER
 SECRET_KEY = ')78^w@s3^kt)6lu6()tomqjg#8_%!381-nx5dtu#i=kn@68h_^'
 
 APP_NAME = 'bcpp_subject'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ETC_DIR = str(PurePath(BASE_DIR).joinpath('etc'))
 DEBUG = True

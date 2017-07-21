@@ -4,9 +4,10 @@ from edc_constants.constants import NEG, POS, IND, DECLINED
 
 from ..models import HivResult, SubjectRequisition, HicEnrollment
 
+from bcpp_subject.constants import NOT_PERFORMED, CAPILLARY
+from bcpp_labs.labs import microtube_panel
+
 from .form_mixins import SubjectModelFormMixin
-from bcpp_subject.constants import NOT_PERFORMED, CAPILLARY, VENOUS
-from bcpp_subject.labs import microtube_panel
 
 
 class HivResultForm (SubjectModelFormMixin):

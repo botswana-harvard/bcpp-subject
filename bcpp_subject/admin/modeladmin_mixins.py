@@ -14,7 +14,7 @@ from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 from edc_base.fieldsets.fieldlist import Remove
 
-from ..constants import T0, T1, T2, T3, E0
+from bcpp_visit_schedule.constants import T0, T1, T2, T3, E0
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,

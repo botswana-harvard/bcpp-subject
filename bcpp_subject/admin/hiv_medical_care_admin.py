@@ -2,12 +2,12 @@ from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_base.fieldsets.fieldlist import Remove
+from bcpp_visit_schedule.constants import T1, T2, T3
 
 
 from ..admin_site import bcpp_subject_admin
 from ..models import HivMedicalCare
 from ..forms import HivMedicalCareForm
-from ..constants import T1, T2, T3
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
