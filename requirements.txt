@@ -34,7 +34,10 @@ git+https://github.com/botswana-harvard/bcpp@develop#egg=bcpp
 git+https://github.com/botswana-harvard/bcpp-communities@develop#egg=bcpp-communities
 git+https://github.com/botswana-harvard/bcpp-referral@develop#egg=bcpp-referral
 git+https://github.com/botswana-harvard/bcpp-metadata-rules@develop#egg=bcpp-metadata-rules
+<<<<<<< HEAD
+=======
 git+https://github.com/botswana-harvard/bcpp-status@develop#egg=bcpp-status
 
 # git+https://github.com/botswana-harvard/example-survey@develop#egg=example_survey
 # git+https://github.com/botswana-harvard/edc-example@develop#egg=edc_example
+>>>>>>> 1486729ff3193721d392d7d00e2d7b5029d3bc2d

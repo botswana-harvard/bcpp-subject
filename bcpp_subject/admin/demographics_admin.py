@@ -1,13 +1,14 @@
 from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
+from edc_base.fieldsets.fieldset import Fieldset
+
+from bcpp_visit_schedule.constants import T0, E0
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import DemographicsForm
 from ..models import Demographics
-from ..constants import T0, E0
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_base.fieldsets.fieldset import Fieldset
 
 
 religion_and_ethnicity_fieldset = Fieldset(

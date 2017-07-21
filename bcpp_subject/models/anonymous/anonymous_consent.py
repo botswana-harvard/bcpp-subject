@@ -12,6 +12,7 @@ from edc_constants.choices import YES_NO
 from edc_search.model_mixins import (
     SearchSlugModelMixin as BaseSearchSlugModelMixin, SearchSlugManager)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_reference.model_mixins import ReferenceModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
 from bcpp_community.surveys import ANONYMOUS_SURVEY
@@ -46,7 +47,7 @@ class AnonymousConsent(
         NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
-        SearchSlugModelMixin,
+        SearchSlugModelMixin, ReferenceModelMixin,
         BaseUuidModel):
 
     """ A model completed by the user that captures the ICF.

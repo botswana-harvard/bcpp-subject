@@ -2,11 +2,11 @@ from django.contrib import admin
 
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from edc_base.fieldsets import Remove
+from bcpp_visit_schedule.constants import E0
 
 from ..admin_site import bcpp_subject_admin
 from ..forms import HivUntestedForm
 from ..models import HivUntested
-from ..constants import E0
 
 from .modeladmin_mixins import CrfModelAdminMixin
 

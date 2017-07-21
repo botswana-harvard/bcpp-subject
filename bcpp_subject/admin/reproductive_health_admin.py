@@ -3,9 +3,9 @@ from django.utils.safestring import mark_safe
 
 from edc_base.fieldsets import Remove, FormLabel
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
+from bcpp_visit_schedule.constants import T0, E0
 
 from ..admin_site import bcpp_subject_admin
-from ..constants import T0, E0
 from ..forms import ReproductiveHealthForm
 from ..models import ReproductiveHealth
 from .modeladmin_mixins import CrfModelAdminMixin
