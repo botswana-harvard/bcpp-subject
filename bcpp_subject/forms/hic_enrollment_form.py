@@ -4,10 +4,8 @@ from edc_base.utils import age
 from edc_constants.constants import YES, NO, NEG, IND
 from bcpp_status import StatusHelper
 
-from ..models import (
-    HicEnrollment, ElisaHivResult, HivResult, SubjectConsent,
-    SubjectLocator, ResidencyMobility)
-
+from ..models import ElisaHivResult, HivResult, SubjectConsent
+from ..models import SubjectLocator, ResidencyMobility
 from .form_mixins import SubjectModelFormMixin
 
 
@@ -84,7 +82,7 @@ class HicEnrollmentForm (SubjectModelFormMixin):
                 raise forms.ValidationError(
                     'Please complete {} first.'.format(
                         ElisaHivResult._meta.verbose_name))
-        status_helper = StatusHelper(cleaned_data.get('subject_visit'))
+        status_helper = StatusHelper(visit=cleaned_data.get('subject_visit'))
         if status_helper.final_hiv_status != NEG:
             raise forms.ValidationError(
                 'Please review \'hiv_result\' in Today\'s Hiv '

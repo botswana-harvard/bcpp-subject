@@ -7,7 +7,7 @@ from edc_map.site_mappers import site_mappers
 
 from ..models import (
     ReproductiveHealth, ResidencyMobility, is_circumcised, HivCareAdherence)
-from ..subject_helper import SubjectHelper, ON_ART, DEFAULTER
+from bcpp_subject.old_subject_helper import SubjectHelper, ON_ART, DEFAULTER
 from .choices import REFERRAL_CODES
 from .referral_appt import ReferralAppt
 from bcpp_subject.referral.constants import URGENT_REFERRALS
