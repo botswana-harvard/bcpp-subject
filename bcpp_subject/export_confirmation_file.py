@@ -5,9 +5,8 @@ from django.apps import apps as django_apps
 from django.db.models import Q
 from datetime import datetime
 
-from bcpp_subject.models import SubjectVisit, SubjectConsent
-from bcpp_subject.sync_models import sync_models
-from bcpp_subject.models.model_mixins import CrfModelMixin
+from .models import SubjectVisit, SubjectConsent, CrfModelMixin
+from .sync_models import sync_models
 
 
 class MismatchVerification(Exception):
@@ -127,7 +126,8 @@ class ExportConfirmationFile:
             data.append(temp_data)
         filename = '{}_consents_data-{}.json'.format(
             self.community, datetime.today().strftime("%Y%m%d%H%m"))
-        filename = os.path.join(self.edc_sync_file_app.outgoing_folder, filename)
+        filename = os.path.join(
+            self.edc_sync_file_app.outgoing_folder, filename)
         self.file_write(filename=filename).write(data=data)
         if self.verbose:
             print("Created {} with {}".format(filename, len(data)))

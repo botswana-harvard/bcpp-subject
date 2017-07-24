@@ -40,6 +40,7 @@ from .list_models import (
     FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
     NeighbourhoodProblems, ResidentMostLikely)
 from .medical_diagnoses import MedicalDiagnoses
+from .model_mixins import CrfModelMixin, CrfModelManager
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
 from .participation import Participation
