@@ -3,7 +3,7 @@ from datetime import date, datetime, time
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from ...utils import ExportConfirmationFile
+from ...export_confirmation_file import ExportConfirmationFile
 
 
 class Command(BaseCommand):
