@@ -4,8 +4,6 @@ from django.conf import settings
 
 class AppConfig(DjangoApponfig):
     name = 'bcpp_subject'
-    listboard_template_name = 'bcpp_subject/listboard.html'
-    dashboard_template_name = 'bcpp_subject/dashboard.html'
     base_template_name = 'edc_base/base.html'
 
     def ready(self):
