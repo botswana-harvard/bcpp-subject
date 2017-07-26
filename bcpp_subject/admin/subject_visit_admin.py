@@ -65,7 +65,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
     def view_on_site(self, obj):
         try:
             return reverse(
-                'bcpp_subject:dashboard_url', kwargs=dict(
+                'bcpp_subject_dashboard:dashboard_url', kwargs=dict(
                     household_identifier=(
                         obj.household_member.household_structure.
                         household.household_identifier),

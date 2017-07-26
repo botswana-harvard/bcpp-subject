@@ -61,7 +61,8 @@ class CorrectConsentMixin:
 
     def update_household_member_and_enrollment_checklist(self):
         try:
-            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.subject_consent.household_member)
+            enrollment_checklist = EnrollmentChecklist.objects.get(
+                household_member=self.subject_consent.household_member)
         except EnrollmentChecklist.DoesNotExist:
             enrollment_checklist = None
         enrollment_checklist = self.update_name_and_initials(
@@ -371,7 +372,7 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
         ret = None
         dashboard_type = self.subject_consent.registered_subject.subject_type.lower()
         if self.appointment:
-            url = reverse('subject_dashboard_url',
+            url = reverse('bcpp_subject_dashboard:dashboard_url',
                           kwargs={'dashboard_type': dashboard_type,
                                   'dashboard_model': 'appointment',
                                   'dashboard_id': self.appointment.pk,

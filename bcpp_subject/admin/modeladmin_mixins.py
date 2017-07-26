@@ -34,7 +34,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                          FormAsJSONModelAdminMixin,
                          admin.ModelAdmin):
 
-    post_url_on_delete_name = 'bcpp_subject:dashboard_url'
+    post_url_on_delete_name = 'bcpp_subject_dashboard:dashboard_url'
     instructions = (
         'Please complete the questions below. Required questions are in bold. '
         'When all required questions are complete click SAVE. '
@@ -58,7 +58,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         household_member = obj.subject_visit.household_member
         try:
             return reverse(
-                'bcpp_subject:dashboard_url', kwargs=dict(
+                'bcpp_subject_dashboard:dashboard_url', kwargs=dict(
                     subject_identifier=household_member.subject_identifier,
                     household_identifier=(household_member.household_structure.
                                           household.household_identifier),
