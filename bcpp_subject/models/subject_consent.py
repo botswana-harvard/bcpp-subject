@@ -58,7 +58,7 @@ class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationMod
                     registered_subject.identity,
                     self.identity))
         if (registered_subject.registration_identifier
-            and uuid.UUID(registered_subject.registration_identifier) != 
+            and uuid.UUID(registered_subject.registration_identifier) !=
                 self.household_member.internal_identifier):
             raise RegisteredSubjectError(
                 'Internal Identifier may not be changed. Expected {}. '
@@ -142,9 +142,15 @@ class SubjectConsent(
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return ((self.subject_identifier, self.version,) + 
+        return ((self.subject_identifier, self.version,) +
                 self.household_member.natural_key())
     natural_key.dependencies = ['bcpp_subject.household_member']
+
+    @property
+    def visit_code(self):
+        """Returns a value for edc_reference.
+        """
+        return 'CONSENT'
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'

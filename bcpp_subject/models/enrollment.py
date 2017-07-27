@@ -151,6 +151,10 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
         super().save(*args, **kwargs)
 
     @property
+    def visit_code(self):
+        return 'T0'
+
+    @property
     def extra_create_appointment_options(self):
         return dict(
             survey=self.survey_object.field_value,

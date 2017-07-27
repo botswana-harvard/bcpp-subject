@@ -96,6 +96,12 @@ class AnonymousConsent(
                             survey_name=ANONYMOUS_SURVEY).survey_field_value
         super().save(*args, **kwargs)
 
+    @property
+    def visit_code(self):
+        """Returns a value for edc_reference.
+        """
+        return 'CONSENT'
+
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
         consent_group = settings.ANONYMOUS_CONSENT_GROUP
