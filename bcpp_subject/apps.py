@@ -4,7 +4,7 @@ from django.conf import settings
 
 class AppConfig(DjangoApponfig):
     name = 'bcpp_subject'
-    base_template_name = 'edc_base/base.html'
+    admin_site_name = 'bcpp_subject_admin'
 
     def ready(self):
         from bcpp_subject.models.signals import (
