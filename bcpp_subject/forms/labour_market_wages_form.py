@@ -12,7 +12,7 @@ from .form_mixins import SubjectModelFormMixin
 class LabourMarketWagesForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(LabourMarketWagesForm, self).clean()
+        cleaned_data = super().clean()
         try:
             subject_locator = SubjectLocator.objects.get(
                 subject_identifier=cleaned_data.get(

@@ -7,7 +7,7 @@ from .form_mixins import SubjectModelFormMixin
 class ResourceUtilizationForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(ResourceUtilizationForm, self).clean()
+        cleaned_data = super().clean()
 
         if cleaned_data.get('money_spent') and not cleaned_data.get('medical_cover'):
             if (cleaned_data.get('money_spent') > 0):

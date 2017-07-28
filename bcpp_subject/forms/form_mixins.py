@@ -23,10 +23,6 @@ class SubjectModelFormMixin(CommonCleanModelFormMixin,
 
     visit_model = SubjectVisit
 
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
-
 
 class PreviousAppointmentFormMixin:
 
@@ -86,7 +82,6 @@ class SexualPartnerFormMixin:
 
     def clean(self):
         cleaned_data = super().clean()
-
         try:
             subject_behaviour = SexualBehaviour.objects.get(
                 subject_visit=cleaned_data.get('subject_visit'))

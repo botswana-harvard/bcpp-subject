@@ -7,7 +7,7 @@ from .form_mixins import SubjectModelFormMixin, MobileTestModelFormMixin
 class PimaVlForm (MobileTestModelFormMixin, SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(PimaVlForm, self).clean()
+        cleaned_data = super().clean()
         self.applicable_if(YES, field='test_done', field_applicable='location')
         self.required_if(
             YES, field='test_done', field_required='test_datetime')

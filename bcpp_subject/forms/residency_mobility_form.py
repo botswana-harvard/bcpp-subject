@@ -18,7 +18,7 @@ class ResidencyMobilityForm (SubjectModelFormMixin):
     }}
 
     def clean(self):
-        cleaned_data = super(ResidencyMobilityForm, self).clean()
+        cleaned_data = super().clean()
         instance = None
         if self.instance.id:
             instance = self.instance

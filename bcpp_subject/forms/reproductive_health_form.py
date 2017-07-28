@@ -13,7 +13,7 @@ class ReproductiveHealthForm (SubjectModelFormMixin):
             'to prevent pregnancy?')}}}
 
     def clean(self):
-        cleaned_data = super(ReproductiveHealthForm, self).clean()
+        cleaned_data = super().clean()
         if ((cleaned_data.get('when_pregnant') and cleaned_data.get('when_pregnant') == 'No') and
             (cleaned_data.get('gestational_weeks') or
              (cleaned_data.get('pregnancy_hiv_tested') != 'N/A' or

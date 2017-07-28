@@ -9,7 +9,7 @@ from .form_mixins import SubjectModelFormMixin
 class CeaEnrollmentChecklistForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super().clean()
         # TODO: these are the same as from consent, messages should be the
         # same of code should be mixed in.
         # If not a citizen, are they legall married to a Botswana citizen

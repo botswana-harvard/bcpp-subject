@@ -7,7 +7,7 @@ from .form_mixins import SubjectModelFormMixin
 class HypertensionCardiovascularForm(SubjectModelFormMixin):
 
     def clean(self):
-
+        cleaned_data = super().clean()
         self.applicable_if(
             YES, field='tobacco',
             field_applicable='tobacco_current')
@@ -54,7 +54,7 @@ class HypertensionCardiovascularForm(SubjectModelFormMixin):
             YES, field='bm', field_required='hip_reading_one')
         self.required_if(
             YES, field='bm', field_required='hip_reading_two')
-        return self.cleaned_data
+        return cleaned_data
 
     class Meta:
 

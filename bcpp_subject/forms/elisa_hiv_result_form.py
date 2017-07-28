@@ -10,7 +10,7 @@ class ElisaHivResultForm (SubjectModelFormMixin):
 
     def clean(self):
 
-        cleaned_data = super(ElisaHivResultForm, self).clean()
+        cleaned_data = super().clean()
         instance = None
         if self.instance.id:
             instance = self.instance

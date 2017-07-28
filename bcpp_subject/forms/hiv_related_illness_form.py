@@ -1,5 +1,3 @@
-from django import forms
-
 from edc_constants.constants import NONE, OTHER
 
 from ..models import HivRelatedIllness

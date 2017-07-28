@@ -10,7 +10,7 @@ class ParticipationForm (SubjectModelFormMixin):
 
     def clean(self):
 
-        cleaned_data = super(ParticipationForm, self).clean()
+        cleaned_data = super().clean()
         if (cleaned_data.get('full') == NO
                 and cleaned_data.get('participation_type') == NOT_APPLICABLE):
             raise forms.ValidationError(

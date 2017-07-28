@@ -16,7 +16,7 @@ class MedicalDiagnosesForm (SubjectModelFormMixin):
     }
 
     def clean(self):
-        cleaned_data = super(MedicalDiagnosesForm, self).clean()
+        cleaned_data = super().clean()
 
         if cleaned_data.get('diagnoses'):
             self.m2m_single_selection_if(NONE, m2m_field='diagnoses')

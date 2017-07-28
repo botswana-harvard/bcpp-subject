@@ -9,7 +9,7 @@ from .form_mixins import SubjectModelFormMixin
 class Cd4HistoryForm (SubjectModelFormMixin):
 
     def clean(self):
-        cleaned_data = super(Cd4HistoryForm, self).clean()
+        cleaned_data = super().clean()
         if (cleaned_data.get('record_available') == YES
                 and not cleaned_data.get('last_cd4_count')
                 and not cleaned_data.get('last_cd4_drawn_date')):

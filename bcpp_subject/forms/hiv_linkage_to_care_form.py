@@ -1,6 +1,6 @@
 from django import forms
 
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES
 
 from ..models import HivLinkageToCare, HivCareAdherence
 from .form_mixins import SubjectModelFormMixin
