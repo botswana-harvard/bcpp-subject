@@ -1,7 +1,7 @@
 from bcpp_visit_schedule.constants import T0, T1, T2, T3, E0
-from bcpp_subject_form_validators import MARRIED, ALONE, NOT_PERFORMED, CAPILLARY
-from bcpp_subject_form_validators import CANCER, HEART_DISEASE, TUBERCULOSIS, STI, ZERO
-from bcpp_subject_form_validators import DAYS, MONTHS, YEARS
+from bcpp_subject_form_validators.constants import MARRIED, ALONE, NOT_PERFORMED, CAPILLARY
+from bcpp_subject_form_validators.constants import CANCER, HEART_DISEASE, TUBERCULOSIS, STI, ZERO
+from bcpp_subject_form_validators.constants import DAYS, MONTHS, YEARS
 
 # ABBOTT_VIRAL_LOAD = 'Viral Load (Abbott)'
 ANNUAL = 'annual'
