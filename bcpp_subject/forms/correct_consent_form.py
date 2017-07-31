@@ -6,6 +6,8 @@ from ..models import CorrectConsent
 
 class CorrectConsentForm(forms.ModelForm):
 
+    # form_validator_cls = CorrectConsentFormValidator
+
     def clean(self):
         # FIXME:
         cleaned_data = super().clean()

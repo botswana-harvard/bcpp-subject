@@ -12,6 +12,8 @@ from ..models import SubjectVisit
 class SubjectVisitForm (VisitFormMixin, RequiresConsentModelFormMixin,
                         CommonCleanModelFormMixin, forms.ModelForm):
 
+    form_validator_cls = None
+
     def validate_reason_and_info_source(self):
         pass
 

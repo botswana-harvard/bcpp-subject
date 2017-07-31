@@ -8,9 +8,10 @@ from .form_mixins import SubjectModelFormMixin
 
 class SubjectReferralForm(SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     def clean(self):
         cleaned_data = super().clean()
-
         required_crf = get_required_crf(
             subject_visit=cleaned_data.get('subject_visit'))
         if required_crf:

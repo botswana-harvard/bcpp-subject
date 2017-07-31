@@ -1,13 +1,20 @@
 from django import forms
 
 from edc_constants.constants import YES, NO
+from bcpp_subject_form_validators import EducationFormValidator as BaseFormValidator
 
 from ..models import Education, SubjectLocator
-
 from .form_mixins import SubjectModelFormMixin
 
 
+class EducationFormValidator(BaseFormValidator):
+
+    subject_locator_model = 'bcpp_subject.subjectlocator'
+
+
 class EducationForm (SubjectModelFormMixin):
+
+    form_validator_cls = EducationFormValidator
 
     def clean(self):
         cleaned_data = super().clean()
@@ -26,55 +33,7 @@ class EducationForm (SubjectModelFormMixin):
                     'answer in the Locator')
         except SubjectLocator.DoesNotExist:
             pass
-        self.working_no()
-        # retirement
-        if (cleaned_data.get('reason_unemployed') == 'retired'
-                and not cleaned_data.get('monthly_income')):
-            raise forms.ValidationError(
-                'If participant is retired, how much of the retirement '
-                'benefit is received monthly?')
-        # student/apprentice/volunteer
-        if (cleaned_data.get('reason_unemployed') == 'student'
-                and not cleaned_data.get('monthly_income')):
-            raise forms.ValidationError(
-                'If participant is student/apprentice/volunteer, '
-                'how much payment is received monthly?')
-        # validating for those employed
-        self.working_yes()
         return cleaned_data
-
-    def working_yes(self):
-        cleaned_data = self.cleaned_data
-        if cleaned_data.get('working') == YES:
-            if cleaned_data.get('reason_unemployed'):
-                raise forms.ValidationError(
-                    'You have provided unemployment details yet have '
-                    'indicated that participant is working')
-            if not cleaned_data.get('job_type'):
-                raise forms.ValidationError(
-                    'If participant is working, provide the job type')
-            if not cleaned_data.get('job_description'):
-                raise forms.ValidationError(
-                    'If participant is employed, what is the job description')
-            if not cleaned_data.get('monthly_income'):
-                raise forms.ValidationError(
-                    'If participant is employed, what is his/her monthly income?')
-
-    def working_no(self):
-        cleaned_data = self.cleaned_data
-        if cleaned_data.get('working') == NO:
-            if cleaned_data.get('job_type'):
-                raise forms.ValidationError(
-                    'If participant is not working, do not give job type')
-            if cleaned_data.get('job_description'):
-                raise forms.ValidationError(
-                    'Participant is not working, please do not provide '
-                    'any job description')
-            # give reason for unemployment
-            if not cleaned_data.get('reason_unemployed'):
-                raise forms.ValidationError(
-                    'If participant is not working, provide reason for '
-                    'unemployment')
 
     class Meta:
         model = Education

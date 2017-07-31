@@ -1,4 +1,4 @@
-from edc_constants.constants import YES, DWTA
+from bcpp_subject_form_validators import UncircumcisedFormValidator
 
 from ..models import Uncircumcised
 from .form_mixins import SubjectModelFormMixin
@@ -6,18 +6,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class UncircumcisedForm (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.m2m_required_if(
-            YES, field='circumcised', m2m_field='health_benefits_smc')
-        self.m2m_single_selection_if(
-            DWTA, m2m_field='health_benefits_smc')
-        self.validate_other_specify('reason_circ')
-
-        self.applicable_if(
-            YES, field='service_facilities', field_applicable='aware_free')
-
-        return cleaned_data
+    form_validator_cls = UncircumcisedFormValidator
 
     class Meta:
         model = Uncircumcised

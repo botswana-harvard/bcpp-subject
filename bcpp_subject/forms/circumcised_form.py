@@ -1,3 +1,4 @@
+from bcpp_subject_form_validators import CircumcisedFormValidator
 from edc_constants.constants import YES, DWTA, NOT_SURE
 
 from ..models import Circumcised
@@ -5,6 +6,8 @@ from .form_mixins import SubjectModelFormMixin
 
 
 class CircumcisedForm (SubjectModelFormMixin):
+
+    form_validator_cls = CircumcisedFormValidator
 
     def clean(self):
         cleaned_data = super().clean()

@@ -1,13 +1,17 @@
+from bcpp_subject_form_validators import HivTestedFormValidator as BaseFormValidator
+
 from ..models import HivTested
-from .form_mixins import SubjectModelFormMixin, HivTestFormMixin
+from .form_mixins import SubjectModelFormMixin
 
 
-class HivTestedForm (HivTestFormMixin, SubjectModelFormMixin):
+class HivTestedFormValidator(BaseFormValidator):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.validate_other_specify('where_hiv_test')
-        return cleaned_data
+    hiv_testing_history_model = 'bcpp_subject.hivtestinghistory'
+
+
+class HivTestedForm (SubjectModelFormMixin):
+
+    form_validator_cls = HivTestedFormValidator
 
     class Meta:
         model = HivTested

@@ -1,5 +1,6 @@
 from django import forms
 
+from bcpp_subject_form_validators import CircumcisionFormValidator
 from edc_constants.constants import YES, NOT_APPLICABLE
 
 from ..models import Circumcision
@@ -7,6 +8,8 @@ from .form_mixins import SubjectModelFormMixin
 
 
 class CircumcisionForm (SubjectModelFormMixin):
+
+    form_validator_cls = CircumcisionFormValidator
 
     def clean(self):
         cleaned_data = super().clean()

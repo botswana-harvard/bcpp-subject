@@ -200,9 +200,11 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
         if existing_rbd_household_member:
             household_member.internal_identifier = existing_rbd_household_member.internal_identifier
             household_member.save()
-            household_member = HouseholdMember.objects.get(id=household_member.id)
+            household_member = HouseholdMember.objects.get(
+                id=household_member.id)
             try:
-                registered_subject = RegisteredSubject.objects.get(identity=identity)
+                registered_subject = RegisteredSubject.objects.get(
+                    identity=identity)
             except RegisteredSubject.DoesNotExist:
                 raise forms.ValidationError(
                     f'{RegisteredSubject._meta.verbose_name} should exist.')
@@ -301,6 +303,8 @@ class ConsentModelFormMixin(BaseConsentModelFormMixin, forms.ModelForm):
 
 
 class SubjectConsentForm(ConsentModelFormMixin, forms.ModelForm):
+
+    form_validator_cls = None
 
     class Meta:
         model = SubjectConsent

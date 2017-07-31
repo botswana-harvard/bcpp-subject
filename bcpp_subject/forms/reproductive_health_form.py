@@ -7,6 +7,8 @@ from .form_mixins import SubjectModelFormMixin
 
 class ReproductiveHealthForm (SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     optional_attrs = {ANNUAL: {
         'label': {'family_planning': (
             'Since we spoke with you at our last visit, have you used any methods'

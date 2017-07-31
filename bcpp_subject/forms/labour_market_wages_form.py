@@ -4,12 +4,12 @@ from edc_constants.constants import YES
 
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
 from ..models import LabourMarketWages, Grant, SubjectLocator
-
-
 from .form_mixins import SubjectModelFormMixin
 
 
 class LabourMarketWagesForm (SubjectModelFormMixin):
+
+    form_validator_cls = None
 
     def clean(self):
         cleaned_data = super().clean()
@@ -40,7 +40,6 @@ class LabourMarketWagesForm (SubjectModelFormMixin):
         if monthly_answer > household_answer:
             raise forms.ValidationError(
                 'Amount in household cannot be less than monthly income')
-
         return cleaned_data
 
     def validate_employed_reason(self):
@@ -65,15 +64,14 @@ class LabourMarketWagesForm (SubjectModelFormMixin):
 class GrantForm (forms.ModelForm):
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super().clean()
         # grant information required only when participant says YES to
         # receiving grant(s) at some point
         labour_market_wages = cleaned_data.get('labour_market_wages')
         if labour_market_wages.govt_grant == 'No':
             raise forms.ValidationError(
                 'Don\'t fill out the Grant information')
-
-        return super(GrantForm, self).clean()
+        return cleaned_data
 
     class Meta:
         model = Grant

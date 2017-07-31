@@ -8,6 +8,8 @@ from .form_mixins import SubjectModelFormMixin
 
 class OutpatientCareForm (SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     def clean(self):
         cleaned_data = super().clean()
         self.subject_visit = cleaned_data.get('subject_visit')

@@ -11,6 +11,8 @@ from .form_mixins import SubjectModelFormMixin
 
 class HicEnrollmentForm (SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     def clean(self):
         cleaned_data = super().clean()
         try:
