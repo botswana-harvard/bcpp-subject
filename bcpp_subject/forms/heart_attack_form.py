@@ -1,4 +1,4 @@
-from edc_constants.constants import OTHER
+from bcpp_subject_form_validators import HeartAttackFormValidator
 
 from ..models import HeartAttack
 from .form_mixins import SubjectModelFormMixin
@@ -6,11 +6,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class HeartAttackForm (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.m2m_other_specify(
-            OTHER, m2m_field='dx_heart_attack', field_other='dx_heart_attack_other')
-        return cleaned_data
+    form_validator_cls = HeartAttackFormValidator
 
     class Meta:
         model = HeartAttack

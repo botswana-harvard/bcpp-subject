@@ -1,18 +1,12 @@
-from django import forms
+from bcpp_subject_form_validators import PimaCd4FormValidator
 
 from ..models import PimaCd4
-from .form_mixins import SubjectModelFormMixin, MobileTestModelFormMixin
+from .form_mixins import SubjectModelFormMixin
 
 
-class PimaCd4Form (MobileTestModelFormMixin, SubjectModelFormMixin):
+class PimaCd4Form (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if (cleaned_data.get('result_value')
-                and cleaned_data.get('result_value') > 3000):
-            forms.ValidationError({
-                'result_value': 'Invalid result value.'})
-        return cleaned_data
+    form_validator_cls = PimaCd4FormValidator
 
     class Meta:
         model = PimaCd4

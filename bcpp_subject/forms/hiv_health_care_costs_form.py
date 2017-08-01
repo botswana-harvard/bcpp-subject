@@ -1,4 +1,4 @@
-from edc_constants.constants import YES, NO
+from bcpp_subject_form_validators import HivHealthCareCostsFormValidator
 
 from ..models import HivHealthCareCosts
 from .form_mixins import SubjectModelFormMixin
@@ -6,19 +6,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class HivHealthCareCostsForm (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super().clean()
-
-        self.applicable_if(
-            NO, field='hiv_medical_care', field_applicable='reason_no_care')
-        self.applicable_if(
-            YES, field='hiv_medical_care', field_applicable='place_care_received')
-        self.applicable_if(
-            YES, field='hiv_medical_care', field_applicable='care_regularity')
-        self.applicable_if(
-            YES, field='hiv_medical_care', field_applicable='doctor_visits')
-
-        return cleaned_data
+    form_validator_cls = HivHealthCareCostsFormValidator
 
     class Meta:
         model = HivHealthCareCosts

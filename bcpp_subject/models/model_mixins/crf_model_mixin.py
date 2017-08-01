@@ -8,6 +8,7 @@ from edc_base.utils import get_utcnow
 from edc_metadata.model_mixins.updates import UpdatesCrfMetadataModelMixin
 from edc_offstudy.model_mixins import OffstudyMixin
 from edc_protocol.validators import datetime_not_before_study_start
+from edc_reference.model_mixins import ReferenceModelMixin
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
 from edc_visit_tracking.model_mixins import (
     CrfModelMixin as VisitTrackingCrfModelMixin, PreviousVisitModelMixin)
@@ -31,7 +32,7 @@ class CrfModelManager(VisitTrackingCrfModelManager):
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     RequiresConsentMixin, PreviousVisitModelMixin,
                     UpdatesCrfMetadataModelMixin,
-                    FormAsJSONModelMixin, BaseUuidModel):
+                    FormAsJSONModelMixin, ReferenceModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`).
     """

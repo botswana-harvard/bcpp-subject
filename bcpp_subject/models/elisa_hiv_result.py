@@ -10,7 +10,7 @@ from .model_mixins import CrfModelMixin
 from .subject_requisition import SubjectRequisition
 
 
-class ElisaHivResult (CrfModelMixin):
+class ElisaHivResult(CrfModelMixin):
 
     hiv_result = models.CharField(
         verbose_name="HIV test result from the Elisa",

@@ -6,9 +6,11 @@ from ..models import CorrectConsent
 
 class CorrectConsentForm(forms.ModelForm):
 
+    # form_validator_cls = CorrectConsentFormValidator
+
     def clean(self):
         # FIXME:
-        cleaned_data = self.cleaned_data
+        cleaned_data = super().clean()
         self.instance.compare_old_fields_to_consent(
             CorrectConsent(**cleaned_data), ValidationError)
         return cleaned_data

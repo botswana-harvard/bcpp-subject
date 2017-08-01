@@ -6,9 +6,8 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
 from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 
-from bcpp.surveys import (
-    BHS_SURVEY, AHS_SURVEY, ESS_SURVEY,
-    ANONYMOUS_SURVEY, BCPP_YEAR_3)
+from bcpp_community.surveys import BHS_SURVEY, AHS_SURVEY, ESS_SURVEY
+from bcpp_community.surveys import ANONYMOUS_SURVEY, BCPP_YEAR_3
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S
@@ -150,6 +149,10 @@ class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
         self.survey_schedule = (
             self.household_member.survey_schedule_object.field_value)
         super().save(*args, **kwargs)
+
+    @property
+    def visit_code(self):
+        return 'T0'
 
     @property
     def extra_create_appointment_options(self):

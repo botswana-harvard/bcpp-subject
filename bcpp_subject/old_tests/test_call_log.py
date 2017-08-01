@@ -7,7 +7,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
-from edc.subject.rule_groups.classes import site_rule_groups
+from edc.subject.rule_groups.classes import site_metadata_rules
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
 
@@ -39,7 +39,7 @@ class TestCallLog(TestCase):
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
         self.study_site = StudySite.objects.get(site_code='17')
         self.survey = Survey.objects.all().first()
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')

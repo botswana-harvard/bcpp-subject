@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from bcpp_subject.tests.test_mixins import SubjectMixin
-from edc_sync.utils.export_outgoing_transactions import export_outgoing_transactions
+# from edc_sync.utils.export_outgoing_transactions import export_outgoing_transactions
+from .test_mixins import SubjectMixin
 
 
 class TestExportOutgoingTransactions(SubjectMixin, TestCase):

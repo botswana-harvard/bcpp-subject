@@ -8,7 +8,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import site_rule_groups
+from edc.subject.rule_groups.classes import site_metadata_rules
 from edc.core.bhp_variables.models import StudySite
 
 from edc_constants.choices import YES, NO, NOT_APPLICABLE
@@ -56,7 +56,7 @@ class TestSubjectConsentForm(TestCase):
         self.app_config.prep_survey_for_tests()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
-        site_rule_groups.autodiscover()
+        site_metadata_rules.autodiscover()
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 

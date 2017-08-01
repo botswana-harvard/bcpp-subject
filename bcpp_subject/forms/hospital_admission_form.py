@@ -6,6 +6,8 @@ from .form_mixins import SubjectModelFormMixin
 
 class HospitalAdmissionForm (SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     def validate_admission_nights_value_eq_zero(self):
         cleaned_data = self.cleaned_data
         if cleaned_data.get('admission_nights'):

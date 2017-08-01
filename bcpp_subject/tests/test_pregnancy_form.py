@@ -1,14 +1,10 @@
 from datetime import date, timedelta
-
+from django.test import TestCase
+from edc_constants.choices import NO, YES
 from model_mommy import mommy
 
-from django.test import TestCase
-
 from ..forms import PregnancyForm
-
 from .test_mixins import SubjectMixin
-
-from edc_constants.choices import NO, YES
 
 
 class TestPregnancyForm(SubjectMixin, TestCase):

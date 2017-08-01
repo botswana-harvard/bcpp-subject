@@ -75,6 +75,10 @@ class HicEnrollment (CrfModelMixin):
 
     history = HistoricalRecords()
 
+    def __str__(self):
+        return (f'{self.subject_visit.subject_identifier} '
+                f'{self.subject_visit.report_datetime} {self.subject_visit.visit_code}')
+
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields')
         if not update_fields:

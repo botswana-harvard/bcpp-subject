@@ -1,13 +1,12 @@
+from bcpp_subject_form_validators import TuberculosisFormValidator
+
 from ..models import Tuberculosis
 from .form_mixins import SubjectModelFormMixin
 
 
 class TuberculosisForm (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.validate_other_specify('tb_dx')
-        return cleaned_data
+    form_validator_cls = TuberculosisFormValidator
 
     class Meta:
         model = Tuberculosis

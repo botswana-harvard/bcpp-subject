@@ -1,10 +1,11 @@
-from bcpp_subject.tests.test_mixins import SubjectMixin
-from django.test import TestCase, tag
-from survey.site_surveys import site_surveys
-from member.models.household_member.household_member import HouseholdMember
 from dateutil.relativedelta import relativedelta
-from bcpp_subject.models.subject_consent import SubjectConsent
+from django.test import TestCase, tag
 from edc_registration.models import RegisteredSubject
+from member.models.household_member.household_member import HouseholdMember
+from survey.site_surveys import site_surveys
+
+from ..models import SubjectConsent
+from .test_mixins import SubjectMixin
 
 
 class TestHouseholdMember(SubjectMixin, TestCase):

@@ -1,17 +1,18 @@
 from django import forms
+from django.conf import settings
 
 from edc_base.modelform_mixins import CommonCleanModelFormMixin
 from edc_consent.modelform_mixins import RequiresConsentModelFormMixin
 from edc_consent.site_consents import site_consents
 from edc_visit_tracking.form_mixins import VisitFormMixin
 
-from bcpp.consents import ANONYMOUS_CONSENT_GROUP
-
 from ..models import SubjectVisit
 
 
 class SubjectVisitForm (VisitFormMixin, RequiresConsentModelFormMixin,
                         CommonCleanModelFormMixin, forms.ModelForm):
+
+    form_validator_cls = None
 
     def validate_reason_and_info_source(self):
         pass
@@ -23,7 +24,7 @@ class SubjectVisitForm (VisitFormMixin, RequiresConsentModelFormMixin,
         if cleaned_data.get('household_member').anonymous:
             consent_object = site_consents.get_consent(
                 report_datetime=report_datetime,
-                consent_group=ANONYMOUS_CONSENT_GROUP,
+                consent_group=settings.ANONYMOUS_CONSENT_GROUP,
                 consent_model=self._meta.model._meta.anonymous_consent_model)
         else:
             consent_object = site_consents.get_consent(

@@ -1,0 +1,97 @@
+aiohttp==2.2.3
+argh==0.26.2
+arrow==0.10.0
+asn1crypto==0.22.0
+async-timeout==1.2.1
+-e git+https://github.com/botswana-harvard/bcpp.git@34a89d953d72e556cd9e3c4c478f43d80eaf3007#egg=bcpp
+-e git+https://github.com/botswana-harvard/bcpp-community.git@6ad6dae92c3a2c22747b5443b17cbf25c9da3d7b#egg=bcpp_community
+-e git+https://github.com/botswana-harvard/bcpp-labs.git@da6606b727190b16e7343314fb3b4ff0af9cc79c#egg=bcpp_labs
+-e git+https://github.com/botswana-harvard/bcpp-metadata-rules.git@7d39acd1109eee8598d2e070b4e8955a82a7d37e#egg=bcpp_metadata_rules
+-e git+https://github.com/botswana-harvard/bcpp-referral.git@5bb102043c0b5b5891a9310f3e020ff62c8eb602#egg=bcpp_referral
+-e git+https://github.com/botswana-harvard/bcpp-status.git@70bfc2bf951338952246e697894404cec0dca5d1#egg=bcpp_status
+-e git+https://github.com/botswana-harvard/bcpp-subject-dashboard.git@81cc7840cb589a9092cf00f7b2da51bebf506dc9#egg=bcpp_subject_dashboard
+-e git+https://github.com/botswana-harvard/bcpp-visit-schedule.git@0b0613a57f621de762e2c754117911a1f6e639d6#egg=bcpp_visit_schedule
+bcrypt==3.1.3
+certifi==2017.4.17
+cffi==1.10.0
+chardet==3.0.4
+cryptography==1.9
+Django==1.11.2
+django-braces==1.11.0
+django-cors-headers==2.1.0
+django-crispy-forms==1.6.1
+-e git+https://github.com/erikvw/django-crypto-fields.git@45f145b6f9c42a98da273a75e204c76669ea508a#egg=django_crypto_fields
+django-extensions==1.7.9
+django-ipware==1.1.6
+django-js-reverse==0.7.3
+-e git+https://github.com/erikvw/django-revision.git@a8c3670ee3e88bed4d891c6ea974f3858338d0d2#egg=django_revision
+django-simple-history==1.9.0
+django-tz-detect==0.2.8
+djangorestframework==3.6.3
+-e git+https://github.com/botswana-harvard/edc-appointment.git@57b9880e2954cfd0d4d79b1401375939cc8ef0df#egg=edc_appointment
+-e git+https://github.com/botswana-harvard/edc-base.git@a1578f825003851f80fce06558337d197b13f7e1#egg=edc_base
+-e git+https://github.com/botswana-harvard/edc-base-test.git@4c6adabed4915968597ab26a359c0f9f300e0077#egg=edc_base_test
+-e git+https://github.com/botswana-harvard/edc-consent.git@e544e69e7b62cb93d949b42d00a390ab08fb9a2f#egg=edc_consent
+-e git+https://github.com/botswana-harvard/edc-constants.git@40f5a548c340f02af63d7aafec2c285eeec2b4e5#egg=edc_constants
+-e git+https://github.com/botswana-harvard/edc-dashboard.git@1b9e192e2446c745af63ad7bd956a9a15f14eb47#egg=edc_dashboard
+-e git+https://github.com/botswana-harvard/edc-device.git@5755994561427ab4a9858346ab32249772e8f98c#egg=edc_device
+-e git+https://github.com/botswana-harvard/edc-identifier.git@b590f66ac5b7221b025192cad11d029168b654a1#egg=edc_identifier
+-e git+https://github.com/botswana-harvard/edc-lab.git@796f2d7fe36e826ad8c0763317d4571fe9b01f5b#egg=edc_lab
+-e git+https://github.com/botswana-harvard/edc-label.git@7e11a4e7e240741e4874d3631836729ce653bbf5#egg=edc_label
+-e git+https://github.com/botswana-harvard/edc-locator.git@8427acb20b634b6c6866be16fc213bbb2261ca97#egg=edc_locator
+-e git+https://github.com/botswana-harvard/edc-map.git@a80bf7f4eb56a88de432581166e9d351f226f35e#egg=edc_map
+edc-meta-data==0.2.dev0
+-e git+https://github.com/botswana-harvard/edc-metadata.git@90e2414181a16442b936f82b7702718024515cdc#egg=edc_metadata
+-e git+https://github.com/botswana-harvard/edc-model-wrapper.git@8f669cdfbe743276e8df741415213ff6e63edf27#egg=edc_model_wrapper
+-e git+https://github.com/botswana-harvard/edc-off-study.git@4a6f78f76d74336acfb11aa938760f7719e04163#egg=edc_offstudy
+-e git+https://github.com/botswana-harvard/edc-protocol.git@238767d3f958c5a2a6334568429e6ca46c0d0e21#egg=edc_protocol
+-e git+https://github.com/botswana-harvard/edc-reference.git@05f3526d91832b42d16ac8d8a0f6bee008bb7e6d#egg=edc_reference
+-e git+https://github.com/botswana-harvard/edc-registration.git@4fddd3230ab00bce7136e6b4b5922b2849c83f0a#egg=edc_registration
+-e git+https://github.com/botswana-harvard/edc-search.git@aa58e4ab891c6059969953df4c21852c6eb25fdc#egg=edc_search
+-e git+https://github.com/botswana-harvard/edc-sync.git@d2040473c8bfee8c24eadc35d4af778ded746f16#egg=edc_sync
+-e git+https://github.com/botswana-harvard/edc-sync-files.git@153dcabf86c91c6f3e6acc1a8c318ee9d069a07e#egg=edc_sync_files
+-e git+https://github.com/botswana-harvard/edc-timepoint.git@feae8c3a510cd861f070225fda0ba0e67eb9e328#egg=edc_timepoint
+-e git+https://github.com/botswana-harvard/edc-visit-schedule.git@e13c01152a2ae018676d60cf255564a806105c08#egg=edc_visit_schedule
+-e git+https://github.com/botswana-harvard/edc-visit-tracking.git@93b3aa5895de9d49ba66c55c36380a24680a5df2#egg=edc_visit_tracking
+-e git+https://github.com/botswana-harvard/enumeration.git@829e3c43639ca107970a7d0d445c0bc8765c669f#egg=enumeration
+Fabric3==1.13.1.post1
+Faker==0.7.16
+geopy==1.11.0
+gitdb2==2.0.2
+GitPython==2.1.5
+gunicorn==19.7.1
+-e git+https://github.com/botswana-harvard/household.git@7c11702fd363c1495f719a446b9574c9230cbc79#egg=household
+-e git+https://github.com/botswana-harvard/household-dashboard.git@a52bf0ac48bb5b602577178ffba33165e0b4b96b#egg=household_dashboard
+hurry.filesize==0.9
+idna==2.5
+-e git+https://github.com/botswana-harvard/member.git@e49c2295b11f187b294a98b227ec5936fe646c4d#egg=member
+-e git+https://github.com/botswana-harvard/member-clone.git@e05d2d173102df6bfc3c417f98b9f66c12817cf7#egg=member_clone
+-e git+https://github.com/botswana-harvard/member-dashboard.git@227ff731fcc7eed53d7d44d07625b4d3e6dc5049#egg=member_dashboard
+-e git+https://github.com/botswana-harvard/member-form-validators.git@8854f56b4f9d0e40a0ce9914db67cb947595ac24#egg=member_form_validators
+model-mommy==1.3.2
+multidict==3.1.3
+mysqlclient==1.3.10
+olefile==0.44
+paramiko==2.2.0
+pathtools==0.1.2
+Pillow==4.1.1
+-e git+https://github.com/botswana-harvard/plot.git@5c0fdb68b967026177a24eb79c65e4b21c654570#egg=plot
+-e git+https://github.com/botswana-harvard/plot-dashboard.git@c216783f039fa0dbe39fcb78e6060b8594f814d0#egg=plot_dashboard
+-e git+https://github.com/botswana-harvard/plot-form-validators.git@0ad220c81a232948d12e2232c7cd12af548510da#egg=plot_form_validators
+pyasn1==0.2.3
+pycparser==2.17
+pycrypto==2.6.1
+pycups==1.9.73
+PyNaCl==1.1.2
+python-dateutil==2.6.0
+pytz==2017.2
+PyYAML==3.12
+reportlab==3.4.0
+requests==2.17.3
+six==1.10.0
+smmap2==2.0.3
+-e git+https://github.com/botswana-harvard/survey.git@6e3c9e4e27549906a4eabaf722b3b8ab4e971b01#egg=survey
+toolz==0.8.2
+urllib3==1.21.1
+watchdog==0.8.3
+yarl==0.12.0

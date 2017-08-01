@@ -1,4 +1,4 @@
-from edc_identifier.subject.classes import SubjectIdentifier
+from edc_identifier.subject_identifier import SubjectIdentifier
 
 
 class ConsentedSubjectIdentifier(SubjectIdentifier):
@@ -8,4 +8,5 @@ class ConsentedSubjectIdentifier(SubjectIdentifier):
     model (which is a subclass of BaseSubject)."""
 
     def __init__(self, site_code, using=None):
-        super(ConsentedSubjectIdentifier, self).__init__(site_code=site_code, using=using)
+        super(ConsentedSubjectIdentifier, self).__init__(
+            site_code=site_code, using=using)

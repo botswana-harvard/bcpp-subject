@@ -8,9 +8,10 @@ from .form_mixins import SubjectModelFormMixin
 
 class ParticipationForm (SubjectModelFormMixin):
 
-    def clean(self):
+    form_validator_cls = None
 
-        cleaned_data = super(ParticipationForm, self).clean()
+    def clean(self):
+        cleaned_data = super().clean()
         if (cleaned_data.get('full') == NO
                 and cleaned_data.get('participation_type') == NOT_APPLICABLE):
             raise forms.ValidationError(
@@ -21,7 +22,6 @@ class ParticipationForm (SubjectModelFormMixin):
             raise forms.ValidationError(
                 'If full participation is chosen, type of participation '
                 'should be \'Not Applicable\'.')
-
         return cleaned_data
 
     class Meta:

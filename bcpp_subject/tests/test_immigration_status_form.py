@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from edc_constants.constants import OTHER
 
 from ..constants import ZAMBIA, NO_PERMIT, NARNIA

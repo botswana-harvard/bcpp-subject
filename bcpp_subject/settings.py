@@ -1,11 +1,9 @@
 # coding=utf-8
-
 import sys
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+from pathlib import PurePath
+from edc_device.constants import CENTRAL_SERVER
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -13,13 +11,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')78^w@s3^kt)6lu6()tomqjg#8_%!381-nx5dtu#i=kn@68h_^'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+APP_NAME = 'bcpp_subject'
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ETC_DIR = str(PurePath(BASE_DIR).joinpath('etc'))
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.113.201.173', 'localhost']
-
-
-# Application definition
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.113.201.166']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,22 +35,32 @@ INSTALLED_APPS = [
     'edc_sync.apps.AppConfig',
     'edc_registration.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
-    'bcpp.apps.AppConfig',
-    'bcpp.apps.EdcMetadataAppConfig',
-    'bcpp.apps.EdcIdentifierAppConfig',
-    'bcpp.apps.EdcProtocolAppConfig',
-    'bcpp.apps.SurveyAppConfig',
-    'bcpp.apps.EdcMapAppConfig',
-    'bcpp.apps.EdcDeviceAppConfig',
-    'bcpp.apps.EdcBaseTestAppConfig',
-    'bcpp.apps.EdcTimepointAppConfig',
-    'bcpp.apps.EdcAppointmentAppConfig',
-    'bcpp.apps.EdcVisitTrackingAppConfig',
+    'edc_identifier.apps.AppConfig',
+    'edc_protocol.apps.AppConfig',
+    'edc_timepoint.apps.AppConfig',
+    #     'bcpp.apps.AppConfig',
+    #     'bcpp.apps.EdcMetadataAppConfig',
+    #     'bcpp.apps.EdcIdentifierAppConfig',
+    #     'bcpp.apps.EdcProtocolAppConfig',
+    #     'bcpp.apps.SurveyAppConfig',
+    #     'bcpp.apps.EdcMapAppConfig',
+    #     'bcpp.apps.EdcBaseTestAppConfig',
+    #     'bcpp.apps.EdcTimepointAppConfig',
     'household.apps.AppConfig',
     'member.apps.AppConfig',
+    'member_clone.apps.AppConfig',
     'plot.apps.AppConfig',
-    'bcpp_subject.apps.AppConfig',
     'enumeration.apps.AppConfig',
+    'bcpp_community.apps.AppConfig',
+    'bcpp_referral.apps.AppConfig',
+    'bcpp_metadata_rules.apps.AppConfig',
+    'bcpp_subject_dashboard.apps.AppConfig',
+    'bcpp_status.apps.AppConfig',
+    'bcpp_subject.apps.EdcAppointmentAppConfig',
+    'bcpp_subject.apps.EdcVisitTrackingAppConfig',
+    'bcpp_subject.apps.EdcDeviceAppConfig',
+    'bcpp_subject.apps.EdcMapAppConfig',
+    'bcpp_subject.apps.AppConfig',
 ]
 
 MIDDLEWARE = [
@@ -97,41 +105,6 @@ DATABASES = {
 }
 
 
-# and 'mysql' not in DATABASES.get('default').get('ENGINE'):
-if 'test' in sys.argv:
-    MIGRATION_MODULES = {
-        "django_crypto_fields": None,
-        "edc_call_manager": None,
-        "edc_appointment": None,
-        "edc_call_manager": None,
-        "edc_consent": None,
-        "edc_death_report": None,
-        "edc_export": None,
-        "edc_identifier": None,
-        "edc_metadata": None,
-        "edc_registration": None,
-        "edc_sync": None,
-        "edc_map": None,
-        "bcpp": None,
-        "bcpp_subject": None,
-        "plot": None,
-        "household": None,
-        "member": None,
-        "bcpp_subject": None,
-        "survey": None,
-        'admin': None,
-        "auth": None,
-        'bcpp_map': None,
-        'contenttypes': None,
-        'sessions': None,
-    }
-if 'test' in sys.argv:
-    PASSWORD_HASHERS = ('django_plainpasswordhasher.PlainPasswordHasher', )
-if 'test' in sys.argv:
-    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
-
-
-# Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -168,6 +141,31 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'bcpp_subject', 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+KEY_PATH = os.path.join(BASE_DIR, 'crypto_fields')
+GIT_DIR = BASE_DIR
+
+ANONYMOUS_SURVEY = 'ano'
+ANONYMOUS_CONSENT_GROUP = 'anonymous'
+ANONYMOUS_ENABLED = True
 CURRENT_MAP_AREA = 'test_community'
 DEVICE_ID = '99'
+DEVICE_ROLE = CENTRAL_SERVER
+SURVEY_GROUP_NAME = 'test_survey'
+SURVEY_SCHEDULE_NAME = 'year-1'
+LOAD_SURVEYS = 'manual'  # 'manual' or 'autodetect' (default)
+
+if 'test' in sys.argv:
+
+    class DisableMigrations:
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
+    PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'

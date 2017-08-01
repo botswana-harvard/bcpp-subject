@@ -2,16 +2,16 @@ from django import forms
 
 from edc_base.utils import age
 from edc_constants.constants import YES, NO, NEG, IND
+from bcpp_status import StatusHelper
 
-from ..models import (
-    HicEnrollment, ElisaHivResult, HivResult, SubjectConsent,
-    SubjectLocator, ResidencyMobility)
-
+from ..models import HicEnrollment, ElisaHivResult, HivResult, SubjectConsent
+from ..models import SubjectLocator, ResidencyMobility
 from .form_mixins import SubjectModelFormMixin
-from bcpp_subject.subject_helper.subject_helper import SubjectHelper
 
 
 class HicEnrollmentForm (SubjectModelFormMixin):
+
+    form_validator_cls = None
 
     def clean(self):
         cleaned_data = super().clean()
@@ -84,8 +84,8 @@ class HicEnrollmentForm (SubjectModelFormMixin):
                 raise forms.ValidationError(
                     'Please complete {} first.'.format(
                         ElisaHivResult._meta.verbose_name))
-        subject_helper = SubjectHelper(cleaned_data.get('subject_visit'))
-        if subject_helper.final_hiv_status != NEG:
+        status_helper = StatusHelper(visit=cleaned_data.get('subject_visit'))
+        if status_helper.final_hiv_status != NEG:
             raise forms.ValidationError(
                 'Please review \'hiv_result\' in Today\'s Hiv '
                 'Result form or in Elisa Hiv Result before '

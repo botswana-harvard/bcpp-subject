@@ -1,13 +1,18 @@
-from django import forms
+from bcpp_subject_form_validators import ResidencyMobilityFormValidator as BaseFormValidator
 
-from edc_constants.constants import YES
-
-from ..constants import ANNUAL, ZERO
+from ..constants import ANNUAL
 from ..models import ResidencyMobility
 from .form_mixins import SubjectModelFormMixin
 
 
+class ResidencyMobilityFormValidator(BaseFormValidator):
+
+    residency_mobility_model = 'bcpp_subject.residencymobility'
+
+
 class ResidencyMobilityForm (SubjectModelFormMixin):
+
+    form_validator_cls = ResidencyMobilityFormValidator
 
     optional_attrs = {ANNUAL: {
         'help_text': {'permanent_resident': (
@@ -16,42 +21,6 @@ class ResidencyMobilityForm (SubjectModelFormMixin):
             '14 nights per month in this community.'),
         }
     }}
-
-    def clean(self):
-        cleaned_data = super(ResidencyMobilityForm, self).clean()
-        instance = None
-        if self.instance.id:
-            instance = self.instance
-        else:
-            instance = ResidencyMobility(**self.cleaned_data)
-        # validating that residency status is not changed after capturing
-        # enrollment checklist
-        instance.hic_enrollment_checks(forms.ValidationError)
-        # validating residency + nights away. redmine 126
-        if (cleaned_data.get('permanent_resident') == YES and
-                cleaned_data.get('nights_away') == 'more than 6 months'):
-            raise forms.ValidationError({
-                'nights_away':
-                'Participant has spent 14 or more nights per month '
-                'in this community, nights away can\'t be '
-                'more than 6 months.'})
-
-        self.not_applicable_if(ZERO, 'nights_away', 'cattle_postlands')
-        self.validate_other_specify(
-            'cattle_postlands', other_stored_value='Other community')
-
-#         # this as in redmine issue 69
-#         if (cleaned_data.get('nights_away') == 'zero' and
-#                 cleaned_data.get('cattle_postlands') != NOT_APPLICABLE):
-#             raise forms.ValidationError(
-#                 'If participant spent zero nights away, times spent away should'
-#                 'be Not applicable')
-#         if (cleaned_data.get('nights_away') != 'zero' and
-#                 cleaned_data.get('cattle_postlands') == NOT_APPLICABLE):
-#             raise forms.ValidationError(
-#                 'Participant has spent more than zero nights away, times spent away'
-#                 'CANNOT be Not applicable')
-        return cleaned_data
 
     class Meta:
         model = ResidencyMobility

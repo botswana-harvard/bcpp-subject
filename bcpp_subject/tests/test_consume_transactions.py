@@ -1,36 +1,26 @@
 from django.test import TestCase
 from django.test.utils import tag
 
-from bcpp_subject.models.appointment import Appointment
-from bcpp_subject.models.subject_consent import SubjectConsent
-from bcpp_subject.models.subject_visit import SubjectVisit
-from bcpp_subject.tests.test_mixins import SubjectMixin
-
 from edc_metadata.models import CrfMetadata, RequisitionMetadata
 from edc_sync.models import OutgoingTransaction, IncomingTransaction
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-
 from household.models.household import Household
 from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
-
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models.household_head_eligibility import HouseholdHeadEligibility
 from member.models.household_member.household_member import HouseholdMember
 from member.models.representative_eligibility import RepresentativeEligibility
 from plot.models import Plot, PlotLog, PlotLogEntry
-from edc_sync.test_mixins import SyncTestSerializerMixin
 
-from .test_mixins import CompleteCrfsMixin
-from bcpp_subject.constants import E0
+from ..constants import E0
+from ..models import Appointment, SubjectConsent, SubjectVisit
+from .test_mixins import SubjectMixin
 
 
 @tag('TestConsumeIncomingTransactions')
-class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, CompleteCrfsMixin, TestCase):
-
-    def setUp(self):
-        super().setUp()
+class TestConsumeIncomingTransactions(SubjectMixin, TestCase):
 
     def delete_crfs(self, subject_visit):
         deleted_crfs = []
@@ -119,12 +109,6 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         survey_schedule = self.get_survey_schedule(index=2)
         subject_visit = self.make_subject_visit_for_consented_subject_male(
             E0, survey_schedule=survey_schedule, **consent_data_male)
-        verbose = False
-        self.sync_test_natural_keys_by_schedule(
-            visits=[subject_visit],
-            verbose=verbose,
-            visit_attr='subject_visit'
-        )
         client_crfs = self.delete_crfs(subject_visit=subject_visit)
         self.delete_enrollment_records()
         for outgoing in OutgoingTransaction.objects.all():
@@ -155,11 +139,13 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
             try:
                 self.assertTrue(Crf.objects.get(subject_visit=subject_visit))
             except Crf.DoesNotExist:
-                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
+                self.fail("Failed to sync and consume all models! Got {}".format(
+                    Crf._meta.model_name))
 
     @tag('test_apply_incoming')
     def test_crfs_incoming_transactions_bhs(self):
-        client_crfs = self.delete_crfs(subject_visit=self.subject_visit_male_t0)
+        client_crfs = self.delete_crfs(
+            subject_visit=self.subject_visit_male_t0)
         self.delete_enrollment_records()
         for outgoing in OutgoingTransaction.objects.all():
             data = outgoing.__dict__
@@ -186,9 +172,11 @@ class TestConsumeIncomingTransactions(SyncTestSerializerMixin, SubjectMixin, Com
         for crf in client_crfs:
             Crf = crf.__class__
             try:
-                self.assertTrue(Crf.objects.get(subject_visit=self.subject_visit_male_t0))
+                self.assertTrue(Crf.objects.get(
+                    subject_visit=self.subject_visit_male_t0))
             except Crf.DoesNotExist:
-                self.fail("Failed to sync and consume all models! Got {}".format(Crf._meta.model_name))
+                self.fail("Failed to sync and consume all models! Got {}".format(
+                    Crf._meta.model_name))
 
     @tag('test_created_incoming_tx')
     def test_delete_enrollment_records(self):

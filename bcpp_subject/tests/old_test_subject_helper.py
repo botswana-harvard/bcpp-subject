@@ -13,7 +13,7 @@ from survey.site_surveys import site_surveys
 from ..constants import (
     T1, MICROTUBE, T0, RESEARCH_BLOOD_DRAW, VIRAL_LOAD, ELISA)
 from ..models import Appointment
-from ..subject_helper import SubjectHelper
+from bcpp_subject.old_subject_helper import SubjectHelper
 from .rule_group_mixins import RuleGroupMixin
 
 
@@ -296,7 +296,7 @@ class TestSubjectHelper(RuleGroupMixin, TestCase):
                 NOT_REQUIRED, T0, VIRAL_LOAD,
                 self.subject_visit_male.subject_identifier).count())
 
-        # site_rule_groups.autodiscover()
+        # site_metadata_rules.autodiscover()
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)
@@ -362,7 +362,7 @@ class TestSubjectHelper(RuleGroupMixin, TestCase):
                 NOT_REQUIRED, T0, VIRAL_LOAD,
                 self.subject_visit_male.subject_identifier))
 
-        # site_rule_groups.autodiscover()
+        # site_metadata_rules.autodiscover()
 
         self.make_hivtesting_history(
             self.subject_visit_male, self.get_utcnow(), YES, NO, POS, YES)

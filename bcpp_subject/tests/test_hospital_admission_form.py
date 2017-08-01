@@ -2,9 +2,8 @@ from django.test import TestCase
 
 from edc_constants.constants import YES
 
-from .test_mixins import SubjectMixin
-
 from ..forms import HospitalAdmissionForm
+from .test_mixins import SubjectMixin
 
 
 class TestHospitalAdmissionForm(SubjectMixin, TestCase):

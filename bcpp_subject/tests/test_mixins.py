@@ -1,68 +1,98 @@
+
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-
+from django.apps import apps as django_apps
+from django.conf import settings
+from django.db import transaction
+from django.db.utils import IntegrityError
 from faker import Faker
 from model_mommy import mommy
 
-from edc_base_test.exceptions import TestMixinError
-from edc_base_test.mixins import (
-    AddVisitMixin, CompleteCrfsMixin as BaseCompleteCrfsMixin)
-from edc_base_test.mixins import LoadListDataMixin, DatesTestMixin
-from edc_constants.constants import NO, YES, MALE
+from edc_base.tests import ListdataTestHelper
+from edc_consent.tests import DatesTestMixin
+from edc_consent.site_consents import site_consents
+from edc_constants.constants import NO, YES, MALE, FEMALE
+from edc_map.site_mappers import site_mappers
 from edc_metadata.models import CrfMetadata
+from edc_metadata.tests import CrfTestHelper
+from edc_registration.models import RegisteredSubject
+from edc_visit_tracking.tests import VisitTestHelper
 
-from household.tests.household_test_mixin import HouseholdTestMixin
+from bcpp_community.surveys import ANONYMOUS_SURVEY, ESS_SURVEY, AHS_SURVEY
+from bcpp_community.surveys import bcpp_year_one, bcpp_year_two, bcpp_year_three
+from bcpp_community.surveys import BHS_SURVEY, BCPP_YEAR_1, BCPP_YEAR_2, BCPP_YEAR_3
+from household.tests import HouseholdTestHelper
 from household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from member.constants import HEAD_OF_HOUSEHOLD, ABLE_TO_PARTICIPATE
 from member.list_data import list_data
 from member.models.enrollment_checklist import EnrollmentChecklist
 from member.models import HouseholdMember
-from member.tests.mixins import MemberTestMixin
-from plot.tests.plot_test_mixin import PlotTestMixin
-from survey.tests import (
-    SurveyTestMixin, DatesTestMixin as SurveyDatesTestMixin)
+from member.tests import MemberTestHelper
+from plot.tests import PlotTestHelper
+from survey.tests import SurveyTestHelper, DatesTestMixin as SurveyDatesTestMixin
+from survey.site_surveys import site_surveys
 
-from ..constants import T0, E0
-from ..models import Appointment
-from edc_consent.site_consents import site_consents
-from django.db.utils import IntegrityError
-from bcpp_subject.models.subject_consent import SubjectConsent
-from django.db import transaction
-from edc_registration.models import RegisteredSubject
-from bcpp_subject.constants import T2
+from ..constants import T0, E0, T2
+from ..models import Appointment, SubjectConsent
+from .mappers import TestMapper
 
 fake = Faker()
 
 
+class TestMixinError(Exception):
+    pass
+
+
 class SubjectTestMixin:
 
-    def setUp(self):
-        super().setUp()
+    survey_helper = SurveyTestHelper()
+    household_helper = HouseholdTestHelper()
+    member_helper = MemberTestHelper()
+    plot_helper = PlotTestHelper()
 
+    survey_group_name = settings.SURVEY_GROUP_NAME
+
+    def setUp(self):
+        survey_constants = dict(
+            ANONYMOUS_SURVEY=ANONYMOUS_SURVEY,
+            ESS_SURVEY=ESS_SURVEY,
+            AHS_SURVEY=AHS_SURVEY,
+            BHS_SURVEY=BHS_SURVEY,
+            BCPP_YEAR_1=BCPP_YEAR_1,
+            BCPP_YEAR_2=BCPP_YEAR_2,
+            BCPP_YEAR_3=BCPP_YEAR_3)
+        self.survey_helper.load_test_surveys(
+            load_all=True,
+            survey_schedules=[bcpp_year_one, bcpp_year_two, bcpp_year_three],
+            group_name=self.survey_group_name,
+            constants=survey_constants)
+        django_apps.app_configs['edc_device'].device_id = '99'
+        site_mappers.registry = {}
+        site_mappers.loaded = False
+        site_mappers.register(TestMapper)
+
+        survey_schedule = site_surveys.get_survey_schedule_from_field_value(
+            f'{self.survey_group_name}.bcpp-year-3')
         self.consent_data_male = {
             'identity': '317115158', 'confirm_identity': '317115158', }
-
-        survey_schedule = self.get_survey_schedule(index=2)
-        self.subject_visit_male = self.make_subject_visit_for_consented_subject_male(
-            E0,
-            survey_schedule=survey_schedule,
+        self.subject_visit_male = self.make_subject_visit_for_consented_subject(
+            visit_code=E0, gender=MALE, survey_schedule=survey_schedule,
             **self.consent_data_male)
-
-        self.consent_data_male_t0 = {
-            'identity': '317115159', 'confirm_identity': '317115159', }
-        self.subject_visit_male_t0 = self.make_subject_visit_for_consented_subject_male(
-            T0,
-            survey_schedule=self.get_survey_schedule(index=1),
-            **self.consent_data_male_t0)
 
         self.consent_data_female = {
             'identity': '317221515',
             'confirm_identity': '317221515', }
-        survey_schedule = self.get_survey_schedule(index=2)
-        self.subject_visit_female = self.make_subject_visit_for_consented_subject_female(
-            E0,
-            survey_schedule=survey_schedule,
+        self.subject_visit_female = self.make_subject_visit_for_consented_subject(
+            visit_code=E0, gender=FEMALE, survey_schedule=survey_schedule,
             **self.consent_data_female)
+
+        survey_schedule = site_surveys.get_survey_schedule_from_field_value(
+            f'{self.survey_group_name}.bcpp-year-1')
+        self.consent_data_male_t0 = {
+            'identity': '317115159', 'confirm_identity': '317115159', }
+        self.subject_visit_male_t0 = self.make_subject_visit_for_consented_subject(
+            visit_code=T0, gender=MALE, survey_schedule=survey_schedule,
+            **self.consent_data_male_t0)
 
         self.study_site = '40'
 
@@ -179,47 +209,28 @@ class SubjectTestMixin:
                 version=consent_object.version)
         return subject_consent
 
-    def add_subject_visits(self, visit_codes, subject_identifier):
+    def add_subject_visits(self, *visit_codes, subject_identifier=None):
         return self.add_visits(
             *visit_codes,
             model_label=self.bcpp_subject_model_label,
             subject_identifier=subject_identifier)
 
-    def make_subject_visit_for_consented_subject_female(
-            self, visit_code, report_datetime=None, survey_schedule=None, **options):
-        """Returns a subject visit the given visit_code.
-
-        Creates all needed relations."""
-        household_structure = self.make_household_ready_for_enumeration(
-            survey_schedule=survey_schedule)
-        household_member = self.add_household_member(
-            household_structure=household_structure)
-        household_member = self.add_enrollment_checklist(household_member)
-        self.add_subject_consent(household_member, **options)
-        appointment = Appointment.objects.get(
-            subject_identifier=household_member.subject_identifier,
-            visit_code=visit_code)
-        household_member = HouseholdMember.objects.get(pk=household_member.pk)
-        return mommy.make_recipe(
-            'bcpp_subject.subjectvisit',
-            household_member=household_member,
-            subject_identifier=household_member.subject_identifier,
-            appointment=appointment,
-            report_datetime=report_datetime or self.get_utcnow())
-
-    def make_subject_visit_for_consented_subject_male(
-            self, visit_code, report_datetime=None, survey_schedule=None,
-            **options):
+    def make_subject_visit_for_consented_subject(
+            self, visit_code=None, report_datetime=None, survey_schedule=None,
+            gender=None, **options):
         """Returns a subject visit of a consented male member.
 
         By default this is for the first survey_schedule.
         """
-        household_structure = self.make_enumerated_household_with_male_member(
-            survey_schedule=survey_schedule)
-        household_member = self.add_household_member(
-            household_structure=household_structure, gender=MALE)
-        household_member = self.add_enrollment_checklist(household_member)
-        self.add_subject_consent(household_member, **options)
+        # member helper
+        household_structure = self.member_helper.make_household_ready_for_enumeration(
+            survey_schedule=survey_schedule, gender=gender)
+        household_member = self.member_helper.add_household_member(
+            household_structure=household_structure, gender=gender)
+        household_member = self.member_helper.add_enrollment_checklist(
+            household_member=household_member)
+
+        self.add_subject_consent(household_member=household_member, **options)
         household_member = HouseholdMember.objects.get(pk=household_member.pk)
         appointment = Appointment.objects.get(
             subject_identifier=household_member.subject_identifier,
@@ -279,7 +290,11 @@ class SubjectTestMixin:
             report_datetime=report_datetime)
 
 
-class CompleteCrfsMixin(BaseCompleteCrfsMixin):
+class BcppSurveyDatesTestMixin(SurveyDatesTestMixin):
+    site_survey_group_name = 'bcpp-survey'
+
+
+class BcppCrfTestHelper(CrfTestHelper):
 
     def complete_required_subject_crfs(self, visit_codes, subject_identifier):
         """Complete all required CRFs for a visit(s) using mommy defaults."""
@@ -305,10 +320,11 @@ class CompleteCrfsMixin(BaseCompleteCrfsMixin):
                                'show_order')
 
 
-class SubjectMixin(PlotTestMixin, HouseholdTestMixin, SurveyTestMixin,
-                   MemberTestMixin, CompleteCrfsMixin, AddVisitMixin,
-                   SubjectTestMixin, SurveyDatesTestMixin,
-                   DatesTestMixin, LoadListDataMixin):
+class SubjectMixin(SubjectTestMixin, BcppSurveyDatesTestMixin, DatesTestMixin):
+
+    visit_helper = VisitTestHelper()
+    crf_helper = BcppCrfTestHelper()
+    listdata_helper = ListdataTestHelper()
 
     bcpp_subject_model_label = 'bcpp_subject.subjectvisit'
     list_data = list_data

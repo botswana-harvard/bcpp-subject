@@ -1,4 +1,4 @@
-from django import forms
+from bcpp_subject_form_validators import ResourceUtilizationFormValidator
 
 from ..models import ResourceUtilization
 from .form_mixins import SubjectModelFormMixin
@@ -6,16 +6,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class ResourceUtilizationForm (SubjectModelFormMixin):
 
-    def clean(self):
-        cleaned_data = super(ResourceUtilizationForm, self).clean()
-
-        if cleaned_data.get('money_spent') and not cleaned_data.get('medical_cover'):
-            if (cleaned_data.get('money_spent') > 0):
-                raise forms.ValidationError(
-                    'If money was spent on medicines, were all of these '
-                    'covered by anyone else e.g. medical aid?')
-
-        return cleaned_data
+    form_validator_cls = ResourceUtilizationFormValidator
 
     class Meta:
         model = ResourceUtilization

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from edc_base.model_mixins import BaseUuidModel
@@ -8,13 +9,13 @@ from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
-from edc_dashboard.model_mixins import (
+from edc_search.model_mixins import (
     SearchSlugModelMixin as BaseSearchSlugModelMixin, SearchSlugManager)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_reference.model_mixins import ReferenceModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
-from bcpp.consents import ANONYMOUS_CONSENT_GROUP
-from bcpp.surveys import ANONYMOUS_SURVEY
+from bcpp_community.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 from survey import S
@@ -46,7 +47,7 @@ class AnonymousConsent(
         NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
-        SearchSlugModelMixin,
+        SearchSlugModelMixin, ReferenceModelMixin,
         BaseUuidModel):
 
     """ A model completed by the user that captures the ICF.
@@ -95,9 +96,15 @@ class AnonymousConsent(
                             survey_name=ANONYMOUS_SURVEY).survey_field_value
         super().save(*args, **kwargs)
 
+    @property
+    def visit_code(self):
+        """Returns a value for edc_reference.
+        """
+        return 'CONSENT'
+
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
-        consent_group = ANONYMOUS_CONSENT_GROUP
+        consent_group = settings.ANONYMOUS_CONSENT_GROUP
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))

@@ -1,9 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from edc_constants.constants import YES, NO
 
-from .test_mixins import SubjectMixin
 from ..forms import PimaCd4Form
+from .test_mixins import SubjectMixin
 
 
 @tag('PIMA')

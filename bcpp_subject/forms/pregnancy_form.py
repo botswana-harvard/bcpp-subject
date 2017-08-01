@@ -9,8 +9,10 @@ from .form_mixins import SubjectModelFormMixin
 
 class PregnancyForm (SubjectModelFormMixin):
 
+    form_validator_cls = None
+
     def clean(self):
-        cleaned_data = super(PregnancyForm, self).clean()
+        cleaned_data = super().clean()
         try:
             pregnancy_status = ReproductiveHealth.objects.get(
                 subject_visit=cleaned_data.get('subject_visit'))

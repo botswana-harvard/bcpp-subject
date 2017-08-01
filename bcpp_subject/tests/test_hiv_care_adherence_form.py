@@ -3,13 +3,11 @@ from dateutil.relativedelta import relativedelta
 
 from django.test.utils import tag
 from django.test import TestCase
-
 from edc_constants.constants import YES, NO
 
-from .test_mixins import SubjectMixin
-from ..models.list_models import ChronicDisease
 from ..forms import HivCareAdherenceForm
-from ..models.list_models import HospitalizationReason
+from ..models import ChronicDisease, HospitalizationReason
+from .test_mixins import SubjectMixin
 
 
 class TestHivCareAdherence(SubjectMixin, TestCase):

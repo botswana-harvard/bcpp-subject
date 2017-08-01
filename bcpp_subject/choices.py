@@ -1,13 +1,10 @@
 from django.utils.translation import ugettext as _
 
-from edc_constants.constants import (
-    OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK,
-    DONT_KNOW, NONE, NOT_SURE, DECLINED
-)
+from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
+from edc_constants.constants import NEG, IND, UNK, DONT_KNOW, NONE, NOT_SURE, DECLINED
 
-from .constants import (
-    MARRIED, ALONE, REFUSED, ZERO, DAYS, MONTHS, YEARS, VENOUS, CAPILLARY)
-from bcpp_subject.constants import NOT_PERFORMED
+from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS
+from .constants import NOT_PERFORMED, MONTHS, YEARS, VENOUS, CAPILLARY
 
 
 AGREE_STRONGLY = (

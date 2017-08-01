@@ -105,7 +105,7 @@ class HivCareAdherence (CrfModelMixin):
         verbose_name='Are you currently taking antiretroviral therapy (ARVs)?',
         max_length=25,
         choices=YES_NO_NA_DWTA,
-        help_text='If yes, need to answer next two questions.',   # Q11 all
+        help_text='If yes, need to answer next two questions.',  # Q11 all
     )
 
     arvs = models.ManyToManyField(
@@ -175,7 +175,7 @@ class HivCareAdherence (CrfModelMixin):
         max_length=25,
         validators=[
             RegexValidator(
-                '^[1-9][0-9]* (weeks|months)$',
+                '(^[1-9]{1} (week|month)$)|(^[1-9]{1}[0-9]+ (weeks|months)$)',
                 'Invalid format. Expected \'NN weeks\' or \'NN months\'')],
         null=True,
         blank=True,

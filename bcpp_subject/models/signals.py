@@ -7,14 +7,13 @@ from django.dispatch import receiver
 
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NO, YES
-
+from bcpp_referral.referral import Referral
 from member.models import (
     EnrollmentChecklistAnonymous, EnrollmentChecklist,
     EnrollmentLoss, HouseholdMember)
 
 from ..models.anonymous import AnonymousConsent
 from ..models.utils import is_minor
-from ..referral.referral import Referral
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
 

@@ -2,7 +2,6 @@ from django.test import TestCase
 
 from ..forms import HivRelatedIllnessForm
 from ..models.list_models import StiIllnesses
-
 from .test_mixins import SubjectMixin
 
 
