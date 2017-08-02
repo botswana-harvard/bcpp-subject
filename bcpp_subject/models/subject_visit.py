@@ -16,8 +16,9 @@ from .appointment import Appointment
 from .requires_consent_model_mixin import RequiresConsentMixin
 
 
-class SubjectVisit(ReferenceModelMixin, VisitModelMixin, CreatesMetadataModelMixin,
-                   RequiresConsentMixin, SurveyModelMixin, BaseUuidModel):
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin,
+                   RequiresConsentMixin, SurveyModelMixin,
+                   ReferenceModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering
     information for the data collected for this timepoint/appointment,
