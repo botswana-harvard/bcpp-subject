@@ -73,8 +73,7 @@ class SubjectVisitAdmin(VisitModelAdminMixin, ModelAdminMixin, admin.ModelAdmin)
                     appointment=str(obj.appointment.id),
                     survey=obj.survey_object.field_value,
                     survey_schedule=obj.survey_schedule_object.field_value))
-        except NoReverseMatch as e:
-            print(e)
+        except NoReverseMatch:
             return super().view_on_site(obj)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
