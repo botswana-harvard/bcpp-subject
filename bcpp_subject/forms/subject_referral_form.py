@@ -1,6 +1,6 @@
 from django import forms
-
 from bcpp_referral.utils import get_required_crf
+from bcpp_subject_form_validators import SubjectReferralFormValidator
 
 from ..models import SubjectReferral
 from .form_mixins import SubjectModelFormMixin
@@ -8,7 +8,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class SubjectReferralForm(SubjectModelFormMixin):
 
-    form_validator_cls = None
+    form_validator_cls = SubjectReferralFormValidator
 
     def clean(self):
         cleaned_data = super().clean()

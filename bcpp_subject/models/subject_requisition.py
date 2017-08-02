@@ -29,9 +29,11 @@ class SubjectRequisition(SearchSlugModelMixin, RequiresConsentMixin,
             'human_readable_identifier',
             'panel_name',
             'panel_object.abbreviation',
-            'identifier_prefix']
-        fields.extend(
-            [self.subject_visit.household_member.get_search_slug_fields()])
+            'identifier_prefix',
+            'subject_visit.household_member.household_structure.household.household_identifier',
+            'subject_visit.household_member.household_structure.household.plot.map_area',
+            'subject_visit.subject_identifier',
+            'subject_visit.household_member.initials']
         return fields
 
     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):

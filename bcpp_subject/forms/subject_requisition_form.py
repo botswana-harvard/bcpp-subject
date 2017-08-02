@@ -1,5 +1,5 @@
 from edc_lab.forms import RequisitionFormMixin
-from bcpp_subject_form_validators.form_validators import SubjectRequisitionFormValidator
+from bcpp_subject_form_validators import SubjectRequisitionFormValidator
 
 from ..models import SubjectRequisition
 from .form_mixins import SubjectModelFormMixin
