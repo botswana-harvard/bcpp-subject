@@ -10,7 +10,11 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('anonymous_consent_model',)
 class RequiresConsentMixin(BaseRequiresConsentMixin):
 
     def get_consent_object(self):
-        if self.household_member.anonymous:
+        try:
+            household_member = self.subject_visit.household_member
+        except AttributeError:
+            household_member = self.household_member
+        if household_member.anonymous:
             consent_object = site_consents.get_consent(
                 consent_model=self._meta.anonymous_consent_model,
                 consent_group=settings.ANONYMOUS_CONSENT_GROUP,
