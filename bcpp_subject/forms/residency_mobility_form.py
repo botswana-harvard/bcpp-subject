@@ -7,7 +7,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class ResidencyMobilityFormValidator(BaseFormValidator):
 
-    residency_mobility_model = 'bcpp_subject.residencymobility'
+    hic_enrollment_model = 'bcpp_subject.hicenrollment'
 
 
 class ResidencyMobilityForm (SubjectModelFormMixin):
