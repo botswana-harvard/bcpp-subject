@@ -5,9 +5,8 @@ class SearchSlugModelMixin(BaseMixin):
 
     def get_search_slug_fields(self):
         fields = super().get_search_slug_fields()
-        fields.append('subject_identifier')
-        fields.extend(self.household_member.get_search_slug_fields())
-        fields = list(set(fields))
+        if 'subject_identifier' not in fields:
+            fields.append('subject_identifier')
         return fields
 
     class Meta:

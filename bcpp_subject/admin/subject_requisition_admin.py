@@ -20,6 +20,7 @@ class SubjectRequisitionAdmin(CrfModelAdminMixin,
                               admin.ModelAdmin):
 
     form = SubjectRequisitionForm
+
     fieldsets = (
         (None, {
             'fields': (
