@@ -38,14 +38,6 @@ INSTALLED_APPS = [
     'edc_identifier.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
     'edc_timepoint.apps.AppConfig',
-    #     'bcpp.apps.AppConfig',
-    #     'bcpp.apps.EdcMetadataAppConfig',
-    #     'bcpp.apps.EdcIdentifierAppConfig',
-    #     'bcpp.apps.EdcProtocolAppConfig',
-    #     'bcpp.apps.SurveyAppConfig',
-    #     'bcpp.apps.EdcMapAppConfig',
-    #     'bcpp.apps.EdcBaseTestAppConfig',
-    #     'bcpp.apps.EdcTimepointAppConfig',
     'household.apps.AppConfig',
     'member.apps.AppConfig',
     'member_clone.apps.AppConfig',
@@ -160,6 +152,7 @@ LOAD_SURVEYS = 'manual'  # 'manual' or 'autodetect' (default)
 if 'test' in sys.argv:
 
     class DisableMigrations:
+
         def __contains__(self, item):
             return True
 
