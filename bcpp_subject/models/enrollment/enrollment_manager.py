@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from bcpp_community.surveys import ANONYMOUS_SURVEY, BCPP_YEAR_3
 from bcpp_community.surveys import BHS_SURVEY, AHS_SURVEY, ESS_SURVEY
 from survey import S
@@ -5,7 +6,6 @@ from survey.site_surveys import site_surveys
 
 from ...exceptions import EnrollmentError
 from ...managers import EnrollmentManager as BaseEnrollmentManager
-from .enrollment import Enrollment, EnrollmentBhs, EnrollmentAhs, EnrollmentEss, EnrollmentAno
 
 
 class EnrollmentManager(BaseEnrollmentManager):
@@ -16,6 +16,7 @@ class EnrollmentManager(BaseEnrollmentManager):
         """Returns an enrollment instance or None for the survey
         enrolled into.
         """
+        Enrollment = django_apps.get_model('bcpp_subject.enrollment')
         save = True if save is None else save
         enrollment = None
         next_survey_object = self.get_next_survey_object(
@@ -79,6 +80,10 @@ class EnrollmentManager(BaseEnrollmentManager):
     def get_enrollment_model_class(self, survey_object):
         """Returns the proxy model class for the given survey name.
         """
+        EnrollmentBhs = django_apps.get_model('bcpp_subject.enrollmentbhs')
+        EnrollmentAhs = django_apps.get_model('bcpp_subject.enrollmentahs')
+        EnrollmentEss = django_apps.get_model('bcpp_subject.enrollmentess')
+        EnrollmentAno = django_apps.get_model('bcpp_subject.enrollmentano')
         if survey_object.name == BHS_SURVEY:
             return EnrollmentBhs
         elif survey_object.name == AHS_SURVEY:
