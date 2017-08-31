@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-
 from edc_base.fieldsets import Fieldset
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from bcpp_visit_schedule.constants import T1, T2, T3, E0
@@ -12,8 +11,6 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 education_fields = (
     'education',
-    'working',
-    'job_type',
     'reason_unemployed')
 
 
@@ -33,6 +30,8 @@ class EducationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ('Employment', {
             'fields': (
                 'subject_visit',
+                'working',
+                'job_type',
                 'job_description',
                 'monthly_income'),
         }),

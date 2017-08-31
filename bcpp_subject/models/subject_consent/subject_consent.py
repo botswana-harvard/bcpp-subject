@@ -1,78 +1,34 @@
 import re
-import uuid
 
 from django.db import models
-
-from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
+from edc_base.model_mixins import BaseUuidModel
+from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
+from edc_consent.field_mixins import SampleCollectionFieldsMixin, CitizenFieldsMixin
+from edc_consent.field_mixins import VulnerabilityFieldsMixin
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
-from edc_consent.field_mixins import (
-    ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
-    SampleCollectionFieldsMixin, CitizenFieldsMixin)
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO
-from edc_search.model_mixins import SearchSlugManager
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
 from edc_registration.exceptions import RegisteredSubjectError
 from edc_registration.models import RegisteredSubject
-from edc_registration.model_mixins import (
-    UpdatesOrCreatesRegistrationModelMixin
-    as BaseUpdatesOrCreatesRegistrationModelMixin)
-
+from edc_search.model_mixins import SearchSlugManager
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyScheduleModelMixin
 
-from ..managers import SubjectConsentManager
-from ..patterns import subject_identifier
-from .model_mixins import SearchSlugModelMixin
-from .utils import is_minor
-from ..utils import rbd_household_member
+from ...managers import SubjectConsentManager
+from ...patterns import subject_identifier
+from ..model_mixins import SearchSlugModelMixin
+from ..utils import is_minor
+from ...utils import rbd_household_member
+from .updates_or_creates_registration_model_mixin import UpdatesOrCreatesRegistrationModelMixin
 
 
 class Manager(SubjectConsentManager, SearchSlugManager):
     pass
-
-
-class UpdatesOrCreatesRegistrationModelMixin(BaseUpdatesOrCreatesRegistrationModelMixin):
-
-    @property
-    def registration_options(self):
-        """Insert internal_identifier to be updated on
-        RegisteredSubject.
-        """
-        registration_options = super().registration_options
-        registration_options.update(
-            registration_identifier=self.household_member.internal_identifier.hex)
-        return registration_options
-
-    def registration_raise_on_illegal_value_change(self, registered_subject):
-        """Raises an exception if a value changes between
-        updates.
-        """
-        if registered_subject.identity != self.identity:
-            raise RegisteredSubjectError(
-                'Identity may not be changed. Expected {}. Got {}'.format(
-                    registered_subject.identity,
-                    self.identity))
-        if (registered_subject.registration_identifier
-            and uuid.UUID(registered_subject.registration_identifier) !=
-                self.household_member.internal_identifier):
-            raise RegisteredSubjectError(
-                'Internal Identifier may not be changed. Expected {}. '
-                'Got {}'.format(
-                    registered_subject.registration_identifier,
-                    self.household_member.internal_identifier))
-        if registered_subject.dob != self.dob:
-            raise RegisteredSubjectError(
-                'DoB may not be changed. Expected {}. Got {}'.format(
-                    registered_subject.dob,
-                    self.dob))
-
-    class Meta:
-        abstract = True
 
 
 class SubjectConsent(

@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NO, YES
 from bcpp_referral.referral import Referral
+from bcpp_referral.bcpp_referral_facilities import bcpp_referral_facilities
 from member.models import (
     EnrollmentChecklistAnonymous, EnrollmentChecklist,
     EnrollmentLoss, HouseholdMember)
@@ -30,7 +31,9 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
         except AttributeError:
             pass
         else:
-            referral = Referral(subject_visit)
+            referral = Referral(
+                subject_visit=subject_visit,
+                referral_facilities=bcpp_referral_facilities)
             for field in sender._meta.get_fields():
                 try:
                     value = getattr(referral, field.name)
@@ -38,8 +41,8 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
                     pass
                 else:
                     setattr(instance, field.name, value)
-            instance.referral_appt_date = referral.referral_appt.referral_appt_datetime
-            instance.scheduled_appt_date = referral.referral_appt.original_scheduled_appt_date
+            instance.referral_appt_date = referral.referral_appt_datetime
+            instance.scheduled_appt_date = referral.scheduled_appt_datetime
             try:
                 if not instance.referral_code:
                     instance.referral_code = 'pending'
