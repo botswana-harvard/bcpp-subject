@@ -1,3 +1,4 @@
+from edc_base.modelform_validators import FormValidator
 from bcpp_subject_form_validators import ReproductiveHealthFormValidator
 
 from ..constants import ANNUAL
