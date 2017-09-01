@@ -3,6 +3,7 @@ from django.db.models.deletion import PROTECT
 
 from bcpp_labs.model_mixins import SubjectRequisitionModelMixin
 from edc_base.model_mixins import BaseUuidModel
+from edc_reference.model_mixins import ReferenceModelMixin
 from edc_search.model_mixins import SearchSlugManager
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin
@@ -15,7 +16,7 @@ class Manager(VisitTrackingCrfModelManager, SearchSlugManager):
     pass
 
 
-class SubjectRequisition(RequiresConsentMixin,
+class SubjectRequisition(RequiresConsentMixin, ReferenceModelMixin,
                          SubjectRequisitionModelMixin, BaseUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
