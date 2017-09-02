@@ -1,1 +1,2 @@
+from .clinic_member_updater import ClinicMemberUpdater
 from .subject_consent import SubjectConsent
