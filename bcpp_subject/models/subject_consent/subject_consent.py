@@ -95,6 +95,10 @@ class SubjectConsent(
         """
         return 'CONSENT'
 
+    @property
+    def internal_identifier(self):
+        return self.household_member.internal_identifier
+
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'
         get_latest_by = 'consent_datetime'
