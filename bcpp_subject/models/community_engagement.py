@@ -1,12 +1,8 @@
 from django.db import models
-
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 
 from ..choices import COMMUNITY_ENGAGEMENT_CHOICE, VOTE_ENGAGEMENT_CHOICE, SOLVE_ENGAGEMENT_CHOICE
-
-from ..exceptions import CommunityEngagementError
-
 from .list_models import NeighbourhoodProblems
 from .model_mixins import CrfModelMixin, CrfModelManager
 
@@ -52,10 +48,6 @@ class CommunityEngagement (CrfModelMixin):
     objects = CrfModelManager()
 
     history = HistoricalRecords()
-
-    @property
-    def common_clean_exceptions(self):
-        return super().common_clean_exceptions + [CommunityEngagementError]
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

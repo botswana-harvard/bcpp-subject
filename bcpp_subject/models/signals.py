@@ -17,12 +17,13 @@ from ..models.anonymous import AnonymousConsent
 from ..models.utils import is_minor
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
+from .subject_referral import SubjectReferral
 
 fake = Faker()
 post_delete.providing_args = set(["instance", "using", "raw"])
 
 
-@receiver(post_save, weak=False,
+@receiver(post_save, weak=False, sender=SubjectReferral,
           dispatch_uid='referral_on_post_save')
 def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:

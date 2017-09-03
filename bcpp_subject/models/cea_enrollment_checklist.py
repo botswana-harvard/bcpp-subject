@@ -1,15 +1,11 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_not_future, eligible_if_yes
 from edc_constants.choices import YES_NO, YES_NO_REFUSED
 
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
-
 from .model_mixins import CrfModelMixin, CrfModelManager
-from edc_constants.constants import NO, YES
-from bcpp_subject.exceptions import EnrollmentError
 
 
 class CeaEnrollmentChecklist (CrfModelMixin):
@@ -98,22 +94,6 @@ class CeaEnrollmentChecklist (CrfModelMixin):
     objects = CrfModelManager()
 
     history = HistoricalRecords()
-
-    def common_clean(self):
-        """Raises an exception if subject does not pass citizenship criteria."""
-        if self.citizen == NO and not self.legal_marriage:
-            raise EnrollmentError(
-                'Enrollment criteria not valid. If participant is not a citizen, '
-                'indicate if he/she married to a Botswana citizen.')
-        if self.legal_marriage == YES and not self.marriage_certificate:
-            raise EnrollmentError(
-                'if participant is legally married to a Botswana citizen, subject must '
-                'provide the marriage certificate.')
-        if self.marriage_certificate == YES and not self.marriage_certificate_no:
-            raise EnrollmentError(
-                'Enrollment criteria not valid. if participant is legally married and '
-                'has a marriage certificate, provide the marriage certificate no.')
-        super().common_clean(self)
 
     class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
