@@ -1,3 +1,7 @@
+from django.conf import settings
+if settings.APP_NAME == 'bcpp_subject':
+    from ..tests import models
+
 from .access_to_care import AccessToCare
 from .anonymous import AnonymousConsent
 from .appointment import Appointment
@@ -58,7 +62,7 @@ from .sexual_behaviour import SexualBehaviour
 from .second_partner import SecondPartner
 from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion
-from .subject_consent import SubjectConsent
+from .subject_consent import SubjectConsent, ClinicMemberUpdater
 from .subject_locator import SubjectLocator
 from .subject_offstudy import SubjectOffstudy
 from .subject_referral import SubjectReferral

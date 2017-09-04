@@ -4,7 +4,6 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 
 from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
-from ..exceptions import CircumcisionError
 from .model_mixins import CrfModelMixin, CrfModelManager, CircumcisionModelMixin
 
 
@@ -27,8 +26,7 @@ class Circumcised (CircumcisionModelMixin, CrfModelMixin):
         choices=TIME_UNIT_CHOICE,
         null=True,
         blank=True,
-        help_text="",
-    )
+        help_text="")
 
     where_circ = models.CharField(
         verbose_name="Where were you circumcised?",
@@ -56,17 +54,6 @@ class Circumcised (CircumcisionModelMixin, CrfModelMixin):
 
     def __str__(self):
         return 'circumcised'
-
-    def common_clean(self):
-        if self.when_circ and not self.age_unit_circ:
-            raise CircumcisionError('Please complete.', 'age_unit_circ')
-        if not self.when_circ and self.age_unit_circ:
-            raise CircumcisionError('Please leave blank.', 'age_unit_circ')
-        super().common_clean()
-
-    @property
-    def common_clean_exceptions(self):
-        return super().common_clean_exceptions + [CircumcisionError]
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

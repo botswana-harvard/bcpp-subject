@@ -13,7 +13,6 @@ from edc_search.model_mixins import (
     SearchSlugModelMixin as BaseSearchSlugModelMixin, SearchSlugManager)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_reference.model_mixins import ReferenceModelMixin
-from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 
 from bcpp_community.surveys import ANONYMOUS_SURVEY
 from member.models import HouseholdMember
@@ -21,6 +20,7 @@ from survey.model_mixins import SurveyModelMixin
 from survey import S
 
 from ...managers import SubjectConsentManager
+from ..subject_consent import UpdatesOrCreatesRegistrationModelMixin
 
 
 def is_minor(dob, reference_datetime):
@@ -101,6 +101,10 @@ class AnonymousConsent(
         """Returns a value for edc_reference.
         """
         return 'CONSENT'
+
+    @property
+    def internal_identifier(self):
+        return self.household_member.internal_identifier
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'bcpp_subject'

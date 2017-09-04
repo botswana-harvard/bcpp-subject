@@ -75,7 +75,7 @@ class ResidencyMobility (CrfModelMixin):
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
-        super(ResidencyMobility, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def hic_enrollment_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
