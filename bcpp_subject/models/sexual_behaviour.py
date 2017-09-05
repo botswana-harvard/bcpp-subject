@@ -30,7 +30,8 @@ class SexualBehaviour (CrfModelMixin):
         verbose_name='In your lifetime, how many different people have you had '
                      'sex with?',
         validators=[RegexValidator(
-            r'^([1-9][0-9]*)|([0])$', 'Expected a number greater than or equal to zero')],
+            r'^(([1-9])+|[1-9]{1}([0-9])+|0)$',
+            'Expected a number greater than or equal to zero')],
         null=True,
         blank=True,
         help_text=mark_safe(
@@ -45,7 +46,8 @@ class SexualBehaviour (CrfModelMixin):
         verbose_name='In the past 12 months, how many different people have you had '
                      'sex with?',
         validators=[RegexValidator(
-            r'^([1-9][0-9]*)|([0])$', 'Expected a number greater than or equal to zero')],
+            r'^(([1-9])+|[1-9]{1}([0-9])+|0)$',
+            'Expected a number greater than or equal to zero')],
         null=True,
         blank=True,
         help_text=mark_safe(
