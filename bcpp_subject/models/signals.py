@@ -22,17 +22,17 @@ fake = Faker()
 post_delete.providing_args = set(["instance", "using", "raw"])
 
 
-@receiver(post_save, weak=False, sender=SubjectVisit,
-          dispatch_uid='update_status_helper_on_subjectvisit_post_save')
-def update_status_helper_on_subjectvisit_post_save(
-        sender, instance, raw, created, using, **kwargs):
-    """Always update status helper if visit is saved.
-    """
-    if not raw:
-        StatusHistory.objects.filter(
-            subject_identifier=instance.subject_identifier,
-            timepoint=instance.visit_code).delete()
-        StatusHelper(visit=instance, update_history=True)
+# @receiver(post_save, weak=False, sender=SubjectVisit,
+#           dispatch_uid='update_status_helper_on_subjectvisit_post_save')
+# def update_status_helper_on_subjectvisit_post_save(
+#         sender, instance, raw, created, using, **kwargs):
+#     """Always update status helper if visit is saved.
+#     """
+#     if not raw:
+#         StatusHistory.objects.filter(
+#             subject_identifier=instance.subject_identifier,
+#             timepoint=instance.visit_code).delete()
+#         StatusHelper(visit=instance, update_history=True)
 
 
 @receiver(post_save, weak=False, sender=SubjectReferral,
