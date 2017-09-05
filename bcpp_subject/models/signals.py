@@ -1,6 +1,5 @@
 from bcpp_referral.bcpp_referral_facilities import bcpp_referral_facilities
 from bcpp_referral.referral import Referral
-from bcpp_status.status_helper import StatusHelper
 from dateutil.relativedelta import relativedelta
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -15,24 +14,9 @@ from ..models.utils import is_minor
 from .enrollment import Enrollment
 from .subject_consent import SubjectConsent
 from .subject_referral import SubjectReferral
-from .subject_visit import SubjectVisit
-from bcpp_status.models import StatusHistory
 
 fake = Faker()
 post_delete.providing_args = set(["instance", "using", "raw"])
-
-
-# @receiver(post_save, weak=False, sender=SubjectVisit,
-#           dispatch_uid='update_status_helper_on_subjectvisit_post_save')
-# def update_status_helper_on_subjectvisit_post_save(
-#         sender, instance, raw, created, using, **kwargs):
-#     """Always update status helper if visit is saved.
-#     """
-#     if not raw:
-#         StatusHistory.objects.filter(
-#             subject_identifier=instance.subject_identifier,
-#             timepoint=instance.visit_code).delete()
-#         StatusHelper(visit=instance, update_history=True)
 
 
 @receiver(post_save, weak=False, sender=SubjectReferral,
