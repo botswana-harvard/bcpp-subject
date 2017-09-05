@@ -1,5 +1,6 @@
 from .circumcision_model_mixin import CircumcisionModelMixin
-from .crf_model_mixin import CrfModelManager, CrfModelMixin, CrfModelMixinNonUniqueVisit
+from .crf_model_mixin import CrfModelManager, CrfModelMixin
+# CrfModelMixinNonUniqueVisit
 from .detailed_sexual_history_mixin import DetailedSexualHistoryMixin
 from .hiv_testing_supplemental_mixin import HivTestingSupplementalMixin
 from .mobile_test_model_mixin import MobileTestModelMixin

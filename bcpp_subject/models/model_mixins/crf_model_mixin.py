@@ -1,4 +1,4 @@
-from bcpp_status.status_helper import StatusHelper
+from bcpp_status import StatusHelper
 from django.db import models
 from django.db.models.deletion import PROTECT
 from edc_base.model_managers import HistoricalRecords
@@ -28,15 +28,29 @@ class CrfModelManager(VisitTrackingCrfModelManager):
             subject_visit__visit_code=visit_code)
 
 
+class MyUpdatesCrfMetadataModelMixin(UpdatesCrfMetadataModelMixin):
+
+    status_helper_cls = StatusHelper
+
+    def run_metadata_rules_for_crf(self):
+        """Runs all the rule groups for this app label.
+
+        Gets called in the signal.
+        """
+        self.status_helper_cls(visit=self.visit, update_history=True)
+        self.visit.run_metadata_rules(visit=self.visit)
+
+    class Meta:
+        abstract = True
+
+
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     RequiresConsentMixin, PreviousVisitModelMixin,
-                    UpdatesCrfMetadataModelMixin,
+                    MyUpdatesCrfMetadataModelMixin,
                     FormAsJSONModelMixin, ReferenceModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`).
     """
-
-    status_helper_cls = StatusHelper
 
     subject_visit = models.OneToOneField(SubjectVisit, on_delete=PROTECT)
 
@@ -56,46 +70,38 @@ class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
         return self.subject_visit.natural_key()
     natural_key.dependencies = ['bcpp_subject.subjectvisit']
 
-    def run_metadata_rules_for_crf(self):
-        """Runs all the rule groups for this app label.
-
-        Gets called in the signal.
-        """
-        self.status_helper_cls(visit=self.visit, update_history=True)
-        self.visit.run_metadata_rules(visit=self.visit)
-
     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
         consent_model = 'bcpp_subject.subjectconsent'
         anonymous_consent_model = 'bcpp_subject.anonymousconsent'
         abstract = True
 
 
-class CrfModelMixinNonUniqueVisit(
-        VisitTrackingCrfModelMixin, OffstudyMixin,
-        RequiresConsentMixin, PreviousVisitModelMixin,
-        UpdatesCrfMetadataModelMixin, BaseUuidModel):
-
-    """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
-
-    subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date",
-        validators=[
-            datetime_not_future, ],
-        default=get_utcnow,
-        help_text=('If reporting today, use today\'s date/time, otherwise use '
-                   'the date/time this information was reported.'))
-
-    objects = CrfModelManager()
-
-    history = HistoricalRecords()
-
-    def natural_key(self):
-        return self.subject_visit.natural_key()
-    natural_key.dependencies = ['bcpp_subject.subjectvisit']
-
-    class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
-        consent_model = 'bcpp_subject.subjectconsent'
-        anonymous_consent_model = 'bcpp_subject.anonymousconsent'
-        abstract = True
+# class CrfModelMixinNonUniqueVisit(
+#         VisitTrackingCrfModelMixin, OffstudyMixin,
+#         RequiresConsentMixin, PreviousVisitModelMixin,
+#         UpdatesCrfMetadataModelMixin, BaseUuidModel):
+#
+#     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
+#
+#     subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
+#
+#     report_datetime = models.DateTimeField(
+#         verbose_name="Report Date",
+#         validators=[
+#             datetime_not_future, ],
+#         default=get_utcnow,
+#         help_text=('If reporting today, use today\'s date/time, otherwise use '
+#                    'the date/time this information was reported.'))
+#
+#     objects = CrfModelManager()
+#
+#     history = HistoricalRecords()
+#
+#     def natural_key(self):
+#         return self.subject_visit.natural_key()
+#     natural_key.dependencies = ['bcpp_subject.subjectvisit']
+#
+#     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
+#         consent_model = 'bcpp_subject.subjectconsent'
+#         anonymous_consent_model = 'bcpp_subject.anonymousconsent'
+#         abstract = True
