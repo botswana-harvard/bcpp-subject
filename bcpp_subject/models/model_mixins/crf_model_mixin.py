@@ -38,7 +38,7 @@ class MyUpdatesCrfMetadataModelMixin(UpdatesCrfMetadataModelMixin):
         Gets called in the signal.
         """
         self.status_helper_cls(visit=self.visit, update_history=True)
-        self.visit.run_metadata_rules(visit=self.visit)
+        super().run_metadata_rules_for_crf()
 
     class Meta:
         abstract = True
@@ -46,8 +46,8 @@ class MyUpdatesCrfMetadataModelMixin(UpdatesCrfMetadataModelMixin):
 
 class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
                     RequiresConsentMixin, PreviousVisitModelMixin,
-                    MyUpdatesCrfMetadataModelMixin,
-                    FormAsJSONModelMixin, ReferenceModelMixin, BaseUuidModel):
+                    ReferenceModelMixin, MyUpdatesCrfMetadataModelMixin,
+                    FormAsJSONModelMixin, BaseUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`).
     """
