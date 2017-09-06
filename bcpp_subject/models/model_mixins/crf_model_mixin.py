@@ -74,34 +74,3 @@ class CrfModelMixin(VisitTrackingCrfModelMixin, OffstudyMixin,
         consent_model = 'bcpp_subject.subjectconsent'
         anonymous_consent_model = 'bcpp_subject.anonymousconsent'
         abstract = True
-
-
-# class CrfModelMixinNonUniqueVisit(
-#         VisitTrackingCrfModelMixin, OffstudyMixin,
-#         RequiresConsentMixin, PreviousVisitModelMixin,
-#         UpdatesCrfMetadataModelMixin, BaseUuidModel):
-#
-#     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
-#
-#     subject_visit = models.ForeignKey(SubjectVisit, on_delete=PROTECT)
-#
-#     report_datetime = models.DateTimeField(
-#         verbose_name="Report Date",
-#         validators=[
-#             datetime_not_future, ],
-#         default=get_utcnow,
-#         help_text=('If reporting today, use today\'s date/time, otherwise use '
-#                    'the date/time this information was reported.'))
-#
-#     objects = CrfModelManager()
-#
-#     history = HistoricalRecords()
-#
-#     def natural_key(self):
-#         return self.subject_visit.natural_key()
-#     natural_key.dependencies = ['bcpp_subject.subjectvisit']
-#
-#     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
-#         consent_model = 'bcpp_subject.subjectconsent'
-#         anonymous_consent_model = 'bcpp_subject.anonymousconsent'
-#         abstract = True
