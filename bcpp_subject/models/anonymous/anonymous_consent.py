@@ -43,12 +43,12 @@ class Manager(SubjectConsentManager, SearchSlugManager):
 
 
 class AnonymousConsent(
-        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
+        ConsentModelMixin, ReferenceModelMixin,
+        UpdatesOrCreatesRegistrationModelMixin,
         NonUniqueSubjectIdentifierModelMixin,
         SurveyModelMixin, IdentityFieldsMixin,
         PersonalFieldsMixin, SampleCollectionFieldsMixin,
-        SearchSlugModelMixin, ReferenceModelMixin,
-        BaseUuidModel):
+        SearchSlugModelMixin, BaseUuidModel):
 
     """ A model completed by the user that captures the ICF.
     """
@@ -100,7 +100,7 @@ class AnonymousConsent(
     def visit_code(self):
         """Returns a value for edc_reference.
         """
-        return 'CONSENT'
+        return 'E0'
 
     @property
     def internal_identifier(self):
