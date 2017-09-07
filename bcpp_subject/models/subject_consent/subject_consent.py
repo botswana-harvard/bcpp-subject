@@ -13,7 +13,6 @@ from edc_constants.choices import YES_NO
 from edc_constants.constants import YES, NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_map.site_mappers import site_mappers
-from edc_reference.model_mixins import ReferenceModelMixin
 from edc_search.model_mixins import SearchSlugManager
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyScheduleModelMixin
@@ -31,7 +30,7 @@ class Manager(SubjectConsentManager, SearchSlugManager):
 
 
 class SubjectConsent(
-        ConsentModelMixin, ReferenceModelMixin, UpdatesOrCreatesRegistrationModelMixin,
+        ConsentModelMixin, UpdatesOrCreatesRegistrationModelMixin,
         NonUniqueSubjectIdentifierModelMixin, SurveyScheduleModelMixin,
         IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
         SampleCollectionFieldsMixin, CitizenFieldsMixin,
