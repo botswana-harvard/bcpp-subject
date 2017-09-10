@@ -39,7 +39,7 @@ def referral_on_post_save(sender, instance, raw, created, using, **kwargs):
                 else:
                     setattr(instance, field.name, value)
             instance.referral_appt_date = referral.referral_appt_datetime
-            instance.scheduled_appt_date = referral.scheduled_appt_datetime
+            instance.scheduled_appt_date = referral.scheduled_appt_datetime.date()
             try:
                 if not instance.referral_code:
                     instance.referral_code = 'pending'
