@@ -17,7 +17,7 @@ class Command(BaseCommand):
             reference_dt.save()
             count += 1
             self.stdout.write(self.style.SUCCESS(
-                f'Succefully relaced {count} out of {total_reference_data}.'))
+                f'Succefully  re saved {count} out of {total_reference_data}.'))
 
         self.stdout.write(self.style.SUCCESS(
             f'Succefully Re-Saved {total_reference_data} reference data records.'))
