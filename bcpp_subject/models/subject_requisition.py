@@ -21,6 +21,8 @@ class SubjectRequisition(RequiresConsentMixin, SubjectRequisitionModelMixin, Bas
     objects = Manager()
 
     class Meta(VisitTrackingCrfModelMixin.Meta, RequiresConsentMixin.Meta):
+        unique_together = (
+            ('subject_visit', 'panel_name'))
         consent_model = 'bcpp_subject.subjectconsent'
         app_label = 'bcpp_subject'
         anonymous_consent_model = 'bcpp_subject.anonymousconsent'
