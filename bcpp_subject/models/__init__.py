@@ -8,6 +8,7 @@ from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
+from .cea_opd import CeaOpd
 from .circumcised import Circumcised
 from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
