@@ -1421,3 +1421,27 @@ PIMA = (
     ('Failed Blood Collection', 'Failed Blood Collection'),
     (OTHER, _('Other, specify:')),
 )
+
+TESTS_ORDERED = (
+    ('Hematology', 'Hematology'),
+    ('Chemistry', 'Chemistry'),
+    ('CD4 count', 'CD4 count'),
+    ('HIV-1 RNA (viral load)', 'HIV-1 RNA (viral load)'),
+    ('Microbiology', 'Microbiology'),
+    ('Radiology', 'Radiology'),
+    ('Pathology', 'Pathology'),
+    (OTHER, 'Other (specify)'),
+)
+
+MEDICATION_PRESCRIBED = (
+    ('Antiretroviral medications', 'Antiretroviral medications'),
+    ('Antituberculosis treatment', 'Antituberculosis treatment'),
+    ('Isoniazid preventive therapy', 'Isoniazid preventive therapy'),
+    ('Cotrimoxazole prophylaxis', 'Cotrimoxazole prophylaxis'),
+    ('Antibiotic treatment', 'Antibiotic treatment'),
+    ('Anthihypertensive', 'Anthihypertensive'),
+    ('Diabetes treatment', 'Diabetes treatment'),
+    ('Prenatal vitamin', 'Prenatal vitamin'),
+    ('Paracetamol', 'Paracetamol, profen, or other medicine for treating pain'),
+    (OTHER, 'Other (specify)'),
+)

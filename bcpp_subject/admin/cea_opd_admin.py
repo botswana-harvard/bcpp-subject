@@ -20,7 +20,8 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'times_care_sought',
                 'times_care_obtained',
                 'lab_tests_ordered',
-                'lab_tests_performed',
+                'tests_ordered',
+                'procedures_performed',
                 'lab_test',
                 'medication',
                 'medication_prescribed',
@@ -31,5 +32,6 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
     radio_fields = {
         'care_sought': admin.VERTICAL,
         'lab_tests_ordered': admin.VERTICAL,
-        'lab_tests_performed': admin.VERTICAL,
+        'procedures_performed': admin.VERTICAL,
+        'tests_ordered': admin.VERTICAL,
         'medication_prescribed': admin.VERTICAL, }
