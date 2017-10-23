@@ -21,12 +21,16 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'times_care_obtained',
                 'lab_tests_ordered',
                 'tests_ordered',
+                'ordered_other'
                 'procedures_performed',
-                'lab_test',
+                'procedure',
                 'medication',
                 'medication_prescribed',
+                'prescribed_other'
                 'further_evaluation',
                 'evaluation_referred',
+                'cd4_date',
+                'cd4_result'
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
@@ -34,4 +38,6 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
         'lab_tests_ordered': admin.VERTICAL,
         'procedures_performed': admin.VERTICAL,
         'tests_ordered': admin.VERTICAL,
-        'medication_prescribed': admin.VERTICAL, }
+        'medication': admin.VERTICAL,
+        'medication_prescribed': admin.VERTICAL,
+        'further_evaluation': admin.VERTICAL}
