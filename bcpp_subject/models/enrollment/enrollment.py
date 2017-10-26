@@ -8,8 +8,10 @@ from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 
-from .bcpp_appointment_creator import BcppAppointmentCreator
+from .bcpp_appointment_creator import BcppAppointmentCreator, BcppAhsAppointmentCreator
 from .enrollment_manager import EnrollmentManager, EnrollmentProxyModelManager
+from bcpp_community.surveys import BCPP_YEAR_1, BCPP_YEAR_2, BCPP_YEAR_3
+from survey.site_surveys import site_surveys
 
 
 class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
@@ -88,7 +90,43 @@ class EnrollmentBhs(Enrollment):
 
 class EnrollmentAhs(Enrollment):
 
+    appointment_creator_cls = BcppAhsAppointmentCreator
+
     objects = EnrollmentProxyModelManager()
+
+    @property
+    def map_area(self):
+        return self.household_member.household_structure.household.plot.map_area
+
+    @property
+    def survey_object(self):
+        return site_surveys.get_survey_from_field_value(self.get_survey)
+
+    @property
+    def get_survey(self):
+        survey_schedule_items = self.get_survey_schedule.split('.')
+        if BCPP_YEAR_1 in survey_schedule_items:
+            survey = f'bcpp-survey.bcpp-year-1.ahs.{self.map_area}'
+        elif BCPP_YEAR_2 in survey_schedule_items:
+            survey = f'bcpp-survey.bcpp-year-2.ahs.{self.map_area}'
+        elif BCPP_YEAR_3 in survey_schedule_items:
+            survey = f'bcpp-survey.bcpp-year-3.ahs.{self.map_area}'
+        return survey
+
+    @property
+    def survey_schedule_object(self):
+        return site_surveys.get_survey_schedule_from_field_value(
+            self.get_survey_schedule)
+
+    @property
+    def get_survey_schedule(self):
+        return self.get_household_member.survey_schedule
+
+    @property
+    def get_household_member(self):
+        return HouseholdMember.objects.filter(
+            subject_identifier=self.subject_identifier).order_by(
+                'created').last()
 
     class Meta:
         proxy = True
