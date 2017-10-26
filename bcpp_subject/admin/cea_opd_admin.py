@@ -1,11 +1,9 @@
 from django.contrib import admin
-
 from edc_base.modeladmin_mixins import audit_fieldset_tuple
 
 from ..admin_site import bcpp_subject_admin
-from ..models import CeaOpd
 from ..forms import CeaOpdForm
-
+from ..models import CeaOpd
 from .modeladmin_mixins import ModelAdminMixin
 
 
@@ -16,6 +14,7 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
+                'subject_visit',
                 'care_sought',
                 'times_care_sought',
                 'times_care_obtained',
