@@ -20,16 +20,16 @@ class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'times_care_obtained',
                 'lab_tests_ordered',
                 'tests_ordered',
-                'ordered_other'
+                'ordered_other',
                 'procedures_performed',
                 'procedure',
                 'medication',
                 'medication_prescribed',
-                'prescribed_other'
+                'prescribed_other',
                 'further_evaluation',
                 'evaluation_referred',
                 'cd4_date',
-                'cd4_result'
+                'cd4_result',
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
