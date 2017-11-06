@@ -1,9 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_constants.choices import YES_NO, YES_NO_REFUSED
-
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
+from edc_constants.choices import YES_NO, YES_NO_REFUSED
+
 from ..choices import TESTS_ORDERED, MEDICATION_PRESCRIBED
 from .model_mixins import CrfModelMixin, CrfModelManager
 
@@ -112,4 +112,4 @@ class CeaOpd (CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
-        verbose_name = "CEA  OPD Questions"
+        verbose_name = "CEA  OPD Question"

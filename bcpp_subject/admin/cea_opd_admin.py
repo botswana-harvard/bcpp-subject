@@ -4,13 +4,14 @@ from edc_base.modeladmin_mixins import audit_fieldset_tuple
 from ..admin_site import bcpp_subject_admin
 from ..forms import CeaOpdForm
 from ..models import CeaOpd
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(CeaOpd, site=bcpp_subject_admin)
-class CeaOpdAdmin(ModelAdminMixin, admin.ModelAdmin):
+class CeaOpdAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CeaOpdForm
+
     fieldsets = (
         (None, {
             'fields': [
