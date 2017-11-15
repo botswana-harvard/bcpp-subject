@@ -1,6 +1,6 @@
+from bcpp_labs.model_mixins import SubjectRequisitionModelMixin
 from django.db import models
 from django.db.models.deletion import PROTECT
-from bcpp_labs.model_mixins import SubjectRequisitionModelMixin
 from edc_base.model_mixins import BaseUuidModel
 from edc_search.model_mixins import SearchSlugManager
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager

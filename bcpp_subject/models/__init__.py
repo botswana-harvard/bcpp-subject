@@ -1,6 +1,4 @@
 from django.conf import settings
-if settings.APP_NAME == 'bcpp_subject':
-    from ..tests import models
 
 from .access_to_care import AccessToCare
 from .anonymous import AnonymousConsent
@@ -76,3 +74,7 @@ from .tuberculosis import Tuberculosis
 from .uncircumcised import Uncircumcised
 from .utils import is_circumcised
 from .viral_load_result import ViralLoadResult
+
+
+if settings.APP_NAME == 'bcpp_subject':
+    from ..tests import models
