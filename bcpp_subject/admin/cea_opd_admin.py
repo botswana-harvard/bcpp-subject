@@ -16,7 +16,6 @@ class CeaOpdAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': [
                 'subject_visit',
-                'care_sought',
                 'times_care_sought',
                 'times_care_obtained',
                 'lab_tests_ordered',
@@ -34,7 +33,6 @@ class CeaOpdAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             ]}), audit_fieldset_tuple)
 
     radio_fields = {
-        'care_sought': admin.VERTICAL,
         'lab_tests_ordered': admin.VERTICAL,
         'procedures_performed': admin.VERTICAL,
         'tests_ordered': admin.VERTICAL,

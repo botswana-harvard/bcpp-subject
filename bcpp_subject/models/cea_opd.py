@@ -10,14 +10,6 @@ from .model_mixins import CrfModelMixin, CrfModelManager
 
 class CeaOpd (CrfModelMixin):
 
-    care_sought = models.CharField(
-        verbose_name="In the last 3 months, did you seek care at a Government"
-        "Primary Health Clinic/Post? Not including any"
-        " visits for which you were hospitalized",
-        max_length=7,
-        choices=YES_NO_REFUSED,
-        help_text="")
-
     times_care_sought = models.IntegerField(
         verbose_name=(
             "In the last 3 months, how many times did you seek care"
