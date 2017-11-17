@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext as _
-
-from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 from edc_constants.constants import NEG, IND, UNK, DONT_KNOW, NONE, NOT_SURE, DECLINED
+from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 
 from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS
 from .constants import NOT_PERFORMED, MONTHS, YEARS, VENOUS, CAPILLARY
@@ -1430,6 +1429,7 @@ TESTS_ORDERED = (
     ('Microbiology', 'Microbiology'),
     ('Radiology', 'Radiology'),
     ('Pathology', 'Pathology'),
+    (NOT_APPLICABLE, 'Not Applicable'),
     (OTHER, 'Other (specify)'),
 )
 
@@ -1443,5 +1443,6 @@ MEDICATION_PRESCRIBED = (
     ('Diabetes treatment', 'Diabetes treatment'),
     ('Prenatal vitamin', 'Prenatal vitamin'),
     ('Paracetamol', 'Paracetamol, profen, or other medicine for treating pain'),
+    (NOT_APPLICABLE, 'Not Applicable'),
     (OTHER, 'Other (specify)'),
 )

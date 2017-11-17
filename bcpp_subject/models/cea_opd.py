@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
-from edc_constants.choices import YES_NO, YES_NO_REFUSED
+from edc_constants.choices import YES_NO, YES_NO_REFUSED, YES_NO_NA
 
 from ..choices import TESTS_ORDERED, MEDICATION_PRESCRIBED
 from .model_mixins import CrfModelMixin, CrfModelManager
@@ -32,7 +32,7 @@ class CeaOpd (CrfModelMixin):
         verbose_name=(
             "For the most recent time that you sought care, were any lab tests ordered? "),
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text="If yes, indicate which of the following were ordered ")
 
     tests_ordered = models.CharField(
@@ -49,18 +49,20 @@ class CeaOpd (CrfModelMixin):
     procedures_performed = models.CharField(
         verbose_name=" For the most recent time that you sought care, were any procedures performed?  ",
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text="")
 
     procedure = models.CharField(
         verbose_name="If yes, describe ",
         max_length=25,
+        null=True,
+        blank=True,
         help_text="")
 
     medication = models.CharField(
         verbose_name="For the most recent time that you sought care, were any medications prescribed? ",
         max_length=6,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text="")
 
     medication_prescribed = models.CharField(
@@ -80,25 +82,28 @@ class CeaOpd (CrfModelMixin):
         verbose_name="For the most recent time that you sought care,"
         " were you referred for further evaluation or treatment?  ",
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text="")
 
     evaluation_referred = models.CharField(
         verbose_name="If yes, describe what you were referred for, and to whom you were referred.",
         max_length=50,
+        blank=True,
         help_text="")
 
     cd4_date = models.DateField(
-        verbose_name='date of CD4 count for HIV-infected participants',
+        verbose_name='Date of most recent CD4 count',
         validators=[date_not_future],
         null=True,
-        blank=True)
+        blank=True,
+        help_text='For HIV-infected participants')
 
     cd4_result = models.IntegerField(
-        verbose_name='CD4 Result',
+        verbose_name='Result of most recent CD4 count',
         validators=[MinValueValidator(1), MaxValueValidator(999)],
         null=True,
-        help_text='in units/mm^3')
+        blank=True,
+        help_text='For HIV-infected participants, in units/mm^3')
 
     objects = CrfModelManager()
 
