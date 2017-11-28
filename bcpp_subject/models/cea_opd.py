@@ -32,7 +32,7 @@ class CeaOpd (CrfModelMixin):
         verbose_name=(
             "For the most recent time that you sought care, were any lab tests ordered? "),
         max_length=3,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         help_text="If yes, indicate which of the following were ordered ")
 
     tests_ordered = models.CharField(
