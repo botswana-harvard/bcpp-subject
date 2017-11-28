@@ -2,6 +2,7 @@ from .access_to_care_admin import AccessToCareAdmin
 from .anonymous import AnonymousConsentAdmin
 from .appointment_admin import AppointmentAdmin
 from .cancer_admin import CancerAdmin
+from .cea_opd_admin import CeaOpdAdmin
 from .circumcised_admin import CircumcisedAdmin
 from .circumcision_admin import CircumcisionAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin

@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext as _
-
-from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 from edc_constants.constants import NEG, IND, UNK, DONT_KNOW, NONE, NOT_SURE, DECLINED
+from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 
 from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS
 from .constants import NOT_PERFORMED, MONTHS, YEARS, VENOUS, CAPILLARY
@@ -1420,4 +1419,30 @@ PIMA = (
     ('Multiple PIMA malfunction', 'Multiple PIMA malfunction'),
     ('Failed Blood Collection', 'Failed Blood Collection'),
     (OTHER, _('Other, specify:')),
+)
+
+TESTS_ORDERED = (
+    ('Hematology', 'Hematology'),
+    ('Chemistry', 'Chemistry'),
+    ('CD4 count', 'CD4 count'),
+    ('HIV-1 RNA (viral load)', 'HIV-1 RNA (viral load)'),
+    ('Microbiology', 'Microbiology'),
+    ('Radiology', 'Radiology'),
+    ('Pathology', 'Pathology'),
+    (NOT_APPLICABLE, 'Not Applicable'),
+    (OTHER, 'Other (specify)'),
+)
+
+MEDICATION_PRESCRIBED = (
+    ('Antiretroviral medications', 'Antiretroviral medications'),
+    ('Antituberculosis treatment', 'Antituberculosis treatment'),
+    ('Isoniazid preventive therapy', 'Isoniazid preventive therapy'),
+    ('Cotrimoxazole prophylaxis', 'Cotrimoxazole prophylaxis'),
+    ('Antibiotic treatment', 'Antibiotic treatment'),
+    ('Anthihypertensive', 'Anthihypertensive'),
+    ('Diabetes treatment', 'Diabetes treatment'),
+    ('Prenatal vitamin', 'Prenatal vitamin'),
+    ('Paracetamol', 'Paracetamol, profen, or other medicine for treating pain'),
+    (NOT_APPLICABLE, 'Not Applicable'),
+    (OTHER, 'Other (specify)'),
 )

@@ -178,14 +178,13 @@ def enrollment_checklist_on_post_save(
 
 @receiver(post_delete, weak=False, sender=EnrollmentChecklist,
           dispatch_uid="enrollment_checklist_on_post_delete")
-def enrollment_checklist_on_post_delete(sender, instance, using, raw, **kwargs):
-    if not raw:
-        EnrollmentLoss.objects.filter(
-            household_member=instance.household_member).delete()
-        instance.household_member.enrollment_checklist_completed = False
-        instance.household_member.eligible_subject = False
-        instance.household_member.visit_attempts -= 1
-        if instance.household_member.visit_attempts < 0:
-            instance.household_member.visit_attempts = 0
-        instance.household_member.appointment_set.all().delete()
-        instance.household_member.save()
+def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
+    EnrollmentLoss.objects.filter(
+        household_member=instance.household_member).delete()
+    instance.household_member.enrollment_checklist_completed = False
+    instance.household_member.eligible_subject = False
+    instance.household_member.visit_attempts -= 1
+    if instance.household_member.visit_attempts < 0:
+        instance.household_member.visit_attempts = 0
+    instance.household_member.appointment_set.all().delete()
+    instance.household_member.save()
