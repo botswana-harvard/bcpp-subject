@@ -1,12 +1,9 @@
-from bcpp_subject_form_validators import CeaOpdFormValidator
-
 from ..models import CeaOpd
 from .form_mixins import SubjectModelFormMixin
 
 
 class CeaOpdForm (SubjectModelFormMixin):
-
-    form_validator_cls = CeaOpdFormValidator
+    pass
 
     class Meta:
         model = CeaOpd
