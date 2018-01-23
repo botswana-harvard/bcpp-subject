@@ -20,6 +20,53 @@ class CeaOpd (CrfModelMixin):
         verbose_name=(
             "Of the times you sought care, how many times were you able to obtain care?"),
         help_text="")
+    
+    tb_care = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for TB?"),
+        help_text="TB Diagnosis or Treatment")
+    
+    hiv_related = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for HIV related?"),
+        help_text="Routine HIV-related care(such as ART start, refill, routine monitoring")
+    
+    hiv_related_none_tb = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for HIV-related illness than TB?"),
+        help_text="Diagnosis or Treatment of HIV-related illness other than TB(e.g ARV toxicity,illness)")
+
+    pregnancy_related = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for Pregnancy related care?"),
+        help_text="Pregnancy related care (e.g. antenatal, postnatal care")
+    
+    injury_accident = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for Injury or Accident?"),
+        help_text="Injury or accident")
+    
+    chronic_disease = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for Chronic disease care?"),
+        help_text="Chronic disease-related care(e.g high blood pressure, diabetes, depression")
+    
+    cancer_care = models.IntegerField(
+        verbose_name=(
+            "Of the times you sought care, how many times were you seeking care for Cancer?"),
+        help_text="Cancer diagnosis, treatment")
+
+    other_care = OtherCharField(
+        null=True,
+        blank=True,
+        verbose_name='If other medical care, please specify:',
+        max_length=15)
+    
+    other_care_count = OtherCharField(
+        null=True,
+        blank=True,
+        verbose_name='If other, please specify the number of times care sort for other medical care:',
+        max_length=15)
 
     marriage_certificate_no = models.CharField(
         verbose_name=("What is the marriage certificate number?"),
