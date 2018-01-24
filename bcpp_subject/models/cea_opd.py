@@ -124,7 +124,7 @@ class CeaOpd (CrfModelMixin):
 
     medication_prescribed = models.ManyToManyField(
         Medication_Prescribed,
-        related_name='tests_ordered',
+        related_name='medication_prescribed',
         blank=True,
         verbose_name="If yes, indicate which of the following were prescribed.")
 
