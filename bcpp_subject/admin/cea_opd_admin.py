@@ -11,6 +11,8 @@ from .modeladmin_mixins import CrfModelAdminMixin
 class CeaOpdAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CeaOpdForm
+    
+    filter_horizontal = ('tests_ordered', 'medication_prescribed',)
 
     fieldsets = (
         (None, {
