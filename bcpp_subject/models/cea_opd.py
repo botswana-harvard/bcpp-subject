@@ -4,7 +4,7 @@ from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
-from .list_models import Tests_Ordered, Medication_Prescribed
+from .list_models import TestsOrdered, MedicationPrescribed
 from .model_mixins import CrfModelMixin, CrfModelManager
 
 
@@ -93,7 +93,7 @@ class CeaOpd (CrfModelMixin):
         choices=YES_NO)
 
     tests_ordered = models.ManyToManyField(
-        Tests_Ordered,
+        TestsOrdered,
         related_name='tests_ordered',
         blank=True,
         verbose_name="If yes, indicate which of the following were ordered.")
@@ -123,7 +123,7 @@ class CeaOpd (CrfModelMixin):
         choices=YES_NO_NA)
 
     medication_prescribed = models.ManyToManyField(
-        Medication_Prescribed,
+        MedicationPrescribed,
         related_name='medication_prescribed',
         blank=True,
         verbose_name="If yes, indicate which of the following were prescribed.")

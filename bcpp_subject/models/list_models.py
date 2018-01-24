@@ -43,14 +43,14 @@ class LiveWith (ListModelMixin, BaseUuidModel):
         verbose_name_plural = "Living with"
 
 
-class Tests_Ordered (ListModelMixin, BaseUuidModel):
+class TestsOrdered (ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name_plural = "Tests Ordered"
 
 
-class Medication_Prescribed (ListModelMixin, BaseUuidModel):
+class MedicationPrescribed (ListModelMixin, BaseUuidModel):
 
     class Meta(ListModelMixin.Meta):
         app_label = "bcpp_subject"

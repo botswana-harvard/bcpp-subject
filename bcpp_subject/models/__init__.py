@@ -41,8 +41,8 @@ from .labour_market_wages import LabourMarketWages
 from .list_models import (
     Arv, CircumcisionBenefits, Diagnoses, HeartDisease,
     FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
-    NeighbourhoodProblems, ResidentMostLikely, Tests_Ordered,
-    Medication_Prescribed)
+    NeighbourhoodProblems, ResidentMostLikely, TestsOrdered,
+    MedicationPrescribed)
 from .medical_diagnoses import MedicalDiagnoses
 from .model_mixins import CrfModelMixin, CrfModelManager
 from .non_pregnancy import NonPregnancy
