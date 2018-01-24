@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext as _
-
-from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 from edc_constants.constants import NEG, IND, UNK, DONT_KNOW, NONE, NOT_SURE, DECLINED
+from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS
 
 from .constants import MARRIED, ALONE, REFUSED, ZERO, DAYS
 from .constants import NOT_PERFORMED, MONTHS, YEARS, VENOUS, CAPILLARY
@@ -1421,3 +1420,4 @@ PIMA = (
     ('Failed Blood Collection', 'Failed Blood Collection'),
     (OTHER, _('Other, specify:')),
 )
+

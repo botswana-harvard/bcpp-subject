@@ -8,8 +8,10 @@ from edc_visit_schedule.model_mixins import EnrollmentModelMixin
 from member.models import HouseholdMember
 from survey.model_mixins import SurveyModelMixin
 
-from .bcpp_appointment_creator import BcppAppointmentCreator
+from .bcpp_appointment_creator import BcppAppointmentCreator, BcppAhsAppointmentCreator
 from .enrollment_manager import EnrollmentManager, EnrollmentProxyModelManager
+from bcpp_community.surveys import BCPP_YEAR_1, BCPP_YEAR_2, BCPP_YEAR_3
+from survey.site_surveys import site_surveys
 
 
 class Enrollment(EnrollmentModelMixin, SurveyModelMixin,
@@ -88,7 +90,36 @@ class EnrollmentBhs(Enrollment):
 
 class EnrollmentAhs(Enrollment):
 
+    appointment_creator_cls = BcppAhsAppointmentCreator
+
     objects = EnrollmentProxyModelManager()
+
+    @property
+    def map_area(self):
+        return self.household_member.household_structure.household.plot.map_area
+
+    def get_survey_object(self, survey=None):
+        return site_surveys.get_survey_from_field_value(survey)
+
+    def get_survey_schedule(self, household_member=None):
+        return household_member.survey_schedule
+
+    def get_household_member(self, visit_code=None):
+        if visit_code == 'T1':
+            try:
+                return HouseholdMember.objects.get(
+                    survey_schedule=f'bcpp-survey.bcpp-year-2.{self.map_area}',
+                    subject_identifier=self.subject_identifier)
+            except HouseholdMember.DoesNotExist:
+                pass
+        elif visit_code == 'T2':
+            try:
+                return HouseholdMember.objects.get(
+                    survey_schedule=f'bcpp-survey.bcpp-year-3.{self.map_area}',
+                    subject_identifier=self.subject_identifier)
+            except HouseholdMember.DoesNotExist:
+                pass
+        return None
 
     class Meta:
         proxy = True

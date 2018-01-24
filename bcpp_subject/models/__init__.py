@@ -1,6 +1,4 @@
 from django.conf import settings
-if settings.APP_NAME == 'bcpp_subject':
-    from ..tests import models
 
 from .access_to_care import AccessToCare
 from .anonymous import AnonymousConsent
@@ -8,6 +6,7 @@ from .appointment import Appointment
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
+from .cea_opd import CeaOpd
 from .circumcised import Circumcised
 from .circumcision import Circumcision
 from .clinic_questionnaire import ClinicQuestionnaire
@@ -42,7 +41,8 @@ from .labour_market_wages import LabourMarketWages
 from .list_models import (
     Arv, CircumcisionBenefits, Diagnoses, HeartDisease,
     FamilyPlanning, MedicalCareAccess, LiveWith, PartnerResidency,
-    NeighbourhoodProblems, ResidentMostLikely)
+    NeighbourhoodProblems, ResidentMostLikely, TestsOrdered,
+    MedicationPrescribed)
 from .medical_diagnoses import MedicalDiagnoses
 from .model_mixins import CrfModelMixin, CrfModelManager
 from .non_pregnancy import NonPregnancy
@@ -75,3 +75,7 @@ from .tuberculosis import Tuberculosis
 from .uncircumcised import Uncircumcised
 from .utils import is_circumcised
 from .viral_load_result import ViralLoadResult
+
+
+if settings.APP_NAME == 'bcpp_subject':
+    from ..tests import models
