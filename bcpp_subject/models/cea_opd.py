@@ -4,7 +4,7 @@ from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
-from ..choices import TESTS_ORDERED, MEDICATION_PRESCRIBED
+from .list_models import Tests_Ordered, Medication_Prescribed
 from .model_mixins import CrfModelMixin, CrfModelManager
 
 
@@ -13,14 +13,12 @@ class CeaOpd (CrfModelMixin):
     times_care_sought = models.IntegerField(
         verbose_name=(
             "In the last 3 months, how many times did you seek care"
-            " at a Government Primary Health Clinic/Post?"),
-        help_text="")
+            " at a Government Primary Health Clinic/Post?"))
 
     times_care_obtained = models.IntegerField(
         verbose_name=(
             "Of the times you sought care, how many times were you able to"
-            "obtain care?"),
-        help_text="")
+            "obtain care?"))
 
     tb_care = models.IntegerField(
         verbose_name=(
@@ -76,8 +74,8 @@ class CeaOpd (CrfModelMixin):
     other_care_count = OtherCharField(
         null=True,
         blank=True,
-        verbose_name="If other, please specify the number of times care sort" 
-        "for other medical care:",
+        verbose_name=("If other, please specify the number of times care sort"
+                      "for other medical care:"),
         max_length=15)
 
     marriage_certificate_no = models.CharField(
@@ -90,15 +88,15 @@ class CeaOpd (CrfModelMixin):
     lab_tests_ordered = models.CharField(
         verbose_name=(
             "For the most recent time that you sought care, were any lab"
-            "tests ordered? "),
+            "tests ordered?"),
         max_length=3,
-        choices=YES_NO,
-        help_text="If yes, indicate which of the following were ordered ")
+        choices=YES_NO)
 
-    tests_ordered = models.CharField(
-        max_length=25,
-        choices=TESTS_ORDERED,
-        help_text="")
+    tests_ordered = models.ManyToManyField(
+        Tests_Ordered,
+        related_name='tests_ordered',
+        blank=True,
+        verbose_name="If yes, indicate which of the following were ordered.")
 
     ordered_other = OtherCharField(
         null=True,
@@ -108,31 +106,27 @@ class CeaOpd (CrfModelMixin):
 
     procedures_performed = models.CharField(
         verbose_name=" For the most recent time that you sought care, were"
-        "any procedures performed?  ",
+        "any procedures performed? ",
         max_length=3,
-        choices=YES_NO_NA,
-        help_text="")
+        choices=YES_NO_NA)
 
     procedure = models.CharField(
-        verbose_name="If yes, describe ",
+        verbose_name="If yes, describe:",
         max_length=25,
         null=True,
-        blank=True,
-        help_text="")
+        blank=True)
 
     medication = models.CharField(
         verbose_name="For the most recent time that you sought care, were"
-        "any medications prescribed? ",
+        "any medications prescribed?",
         max_length=6,
-        choices=YES_NO_NA,
-        help_text="")
+        choices=YES_NO_NA)
 
-    medication_prescribed = models.CharField(
-        verbose_name=(
-            "If yes, indicate which of the following were prescribed "),
-        max_length=50,
-        choices=MEDICATION_PRESCRIBED,
-        help_text="")
+    medication_prescribed = models.ManyToManyField(
+        Medication_Prescribed,
+        related_name='tests_ordered',
+        blank=True,
+        verbose_name="If yes, indicate which of the following were prescribed.")
 
     prescribed_other = OtherCharField(
         null=True,
@@ -142,17 +136,15 @@ class CeaOpd (CrfModelMixin):
 
     further_evaluation = models.CharField(
         verbose_name="For the most recent time that you sought care,"
-        " were you referred for further evaluation or treatment?  ",
+        " were you referred for further evaluation or treatment?",
         max_length=3,
-        choices=YES_NO_NA,
-        help_text="")
+        choices=YES_NO_NA)
 
     evaluation_referred = models.CharField(
         verbose_name="If yes, describe what you were referred for, and to"
         "whom you were referred.",
         max_length=50,
-        blank=True,
-        help_text="")
+        blank=True)
 
     cd4_date = models.DateField(
         verbose_name='Date of most recent CD4 count',

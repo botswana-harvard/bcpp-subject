@@ -44,7 +44,5 @@ class CeaOpdAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     radio_fields = {
         'lab_tests_ordered': admin.VERTICAL,
         'procedures_performed': admin.VERTICAL,
-        'tests_ordered': admin.VERTICAL,
         'medication': admin.VERTICAL,
-        'medication_prescribed': admin.VERTICAL,
         'further_evaluation': admin.VERTICAL}
