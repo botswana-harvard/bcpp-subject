@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
-from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO_NA, YES_NO_NA_DWTA_DNK
 
 from .list_models import TestsOrdered, MedicationPrescribed
 from .model_mixins import CrfModelMixin, CrfModelManager
@@ -85,7 +85,7 @@ class CeaOpd (CrfModelMixin):
             "For the most recent time that you sought care, were any lab"
             "tests ordered?"),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO_NA_DWTA_DNK)
 
     tests_ordered = models.ManyToManyField(
         TestsOrdered,
@@ -103,7 +103,7 @@ class CeaOpd (CrfModelMixin):
         verbose_name=" For the most recent time that you sought care, were"
         "any procedures performed? ",
         max_length=3,
-        choices=YES_NO_NA)
+        choices=YES_NO_NA_DWTA_DNK)
 
     procedure = models.CharField(
         verbose_name="If yes, describe:",
