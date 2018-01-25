@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_base.model_validators import date_not_future
-from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO_NA, YES_NO_NA_DWTA_DNK
 
 from .list_models import TestsOrdered, MedicationPrescribed
 from .model_mixins import CrfModelMixin, CrfModelManager
@@ -17,53 +17,48 @@ class CeaOpd (CrfModelMixin):
 
     times_care_obtained = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you able to"
+            "Of the times you sought care, how many times were you able to "
             "obtain care?"))
 
     tb_care = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking"
-            "care for TB?"),
-        help_text="TB Diagnosis or Treatment")
+            "Of the times you sought care, how many times were you seeking "
+            "care for TB Diagnosis or Treatment?"))
 
     hiv_related = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking"
-            "care for HIV related?"),
-        help_text="Routine HIV-related care(such as ART start, refill,routine"
+            "Of the times you sought care, how many times were you seeking "
+            "care for Routine HIV-related care?"),
+        help_text="(such as ART start, refill,routine"
         "monitoring")
 
     hiv_related_none_tb = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking"
-            "care for HIV-related illness than TB?"),
-        help_text="Diagnosis or Treatment of HIV-related illness other than"
-        "TB(e.g ARV toxicity,illness)")
+            "Of the times you sought care, how many times were you seeking "
+            "Diagnosis or Treatment of HIV-related illness other than?"))
 
     pregnancy_related = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking"
+            "Of the times you sought care, how many times were you seeking "
             "care for Pregnancy related care?"),
         help_text="Pregnancy related care (e.g. antenatal, postnatal care")
 
     injury_accident = models.IntegerField(
         verbose_name=(
             "Of the times you sought care, how many times were you seeking"
-            "care for Injury or Accident?"),
-        help_text="Injury or accident")
+            "care for Injury or Accident?"))
 
     chronic_disease = models.IntegerField(
         verbose_name=(
             "Of the times you sought care, how many times were you seeking"
-            "care for Chronic disease care?"),
+            "care for Chronic disease-related care?"),
         help_text="Chronic disease-related care(e.g high blood pressure,"
         "diabetes, depression")
 
     cancer_care = models.IntegerField(
         verbose_name=(
             "Of the times you sought care, how many times were you seeking"
-            "care for Cancer?"),
-        help_text="Cancer diagnosis, treatment")
+            "care for Cancer diagnosis, treatment?"))
 
     other_care = OtherCharField(
         null=True,
@@ -90,7 +85,7 @@ class CeaOpd (CrfModelMixin):
             "For the most recent time that you sought care, were any lab"
             "tests ordered?"),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO_NA_DWTA_DNK)
 
     tests_ordered = models.ManyToManyField(
         TestsOrdered,
@@ -108,7 +103,7 @@ class CeaOpd (CrfModelMixin):
         verbose_name=" For the most recent time that you sought care, were"
         "any procedures performed? ",
         max_length=3,
-        choices=YES_NO_NA)
+        choices=YES_NO_NA_DWTA_DNK)
 
     procedure = models.CharField(
         verbose_name="If yes, describe:",
@@ -126,7 +121,7 @@ class CeaOpd (CrfModelMixin):
         MedicationPrescribed,
         related_name='medication_prescribed',
         blank=True,
-        verbose_name="If yes, indicate which of the following were prescribed.")
+        verbose_name="If yes,indicate which of the following were prescribed.")
 
     prescribed_other = OtherCharField(
         null=True,
