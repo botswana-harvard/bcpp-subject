@@ -34,8 +34,9 @@ class CeaOpd (CrfModelMixin):
 
     hiv_related_none_tb = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking "
-            "Diagnosis or Treatment of HIV-related illness other than?"))
+            "0f the times you sought care, how many times were you seeking "
+            "care for diagnosis or treatment of HIV related illness other "
+             "than TB (e,g ARV toxicity, illness)?"))
 
     pregnancy_related = models.IntegerField(
         verbose_name=(
@@ -57,20 +58,21 @@ class CeaOpd (CrfModelMixin):
 
     cancer_care = models.IntegerField(
         verbose_name=(
-            "Of the times you sought care, how many times were you seeking"
-            "care for Cancer diagnosis, treatment?"))
+            "Of the times you sought care, how many times were you seeking "
+            "care for cancer care (diagnosis, treatment)?"))
 
     other_care = OtherCharField(
         null=True,
         blank=True,
-        verbose_name='If other medical care, please specify:',
+        verbose_name="Of the times you sought care, how many times were you "
+        "seeking care for other medical conditions (not mentioned above)?",
         max_length=15)
 
     other_care_count = OtherCharField(
         null=True,
         blank=True,
-        verbose_name=("If other, please specify the number of times care sort"
-                      "for other medical care:"),
+        verbose_name=(" If other, please specify the number of times you "
+                      "sought care for other medical conditions."),
         max_length=15)
 
     marriage_certificate_no = models.CharField(
