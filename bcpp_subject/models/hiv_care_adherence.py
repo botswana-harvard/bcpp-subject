@@ -239,7 +239,8 @@ class HivCareAdherence (CrfModelMixin):
 
     next_appointment_date = models.DateField(
         verbose_name='When is your next appointment at this facility?',
-        validators=[date_is_future],
+        # validation commented out for data cleaning follow ups
+        # validators=[date_is_future],
         null=True,
         blank=True,
         help_text=''
