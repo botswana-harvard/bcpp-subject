@@ -17,6 +17,8 @@ class CorrectConsentAdmin(admin.ModelAdmin):
             'fields': (
                 'subject_consent',
                 'report_datetime',
+                'old_identity',
+                'new_identity',
                 'old_last_name',
                 'new_last_name',
                 'old_first_name',
@@ -33,8 +35,8 @@ class CorrectConsentAdmin(admin.ModelAdmin):
                 'new_may_store_samples',
                 'old_is_literate',
                 'new_is_literate',
-                'new_witness_name',
                 'old_witness_name',
+                'new_witness_name',
             )}),
         audit_fieldset_tuple,
     )
