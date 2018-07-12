@@ -1,9 +1,6 @@
-<<<<<<< Updated upstream
 from dateutil.relativedelta import relativedelta
 
-=======
 from datetime import date
->>>>>>> Stashed changes
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
