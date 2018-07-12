@@ -1,5 +1,9 @@
+<<<<<<< Updated upstream
 from dateutil.relativedelta import relativedelta
 
+=======
+from datetime import date
+>>>>>>> Stashed changes
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -11,6 +15,7 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES, NO
+from household.models import HouseholdLogEntry
 
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
@@ -24,6 +29,7 @@ class CorrectConsentMixin:
     """A model linked to the subject consent to record corrections."""
 
     def save(self, *args, **kwargs):
+        self.complete_household_log_entry()
         self.compare_old_fields_to_consent()
         self.update_household_member_and_enrollment_checklist()
         super(CorrectConsentMixin, self).save(*args, **kwargs)
@@ -60,6 +66,19 @@ class CorrectConsentMixin:
                                 field.name.split('old_')[1],
                                 field.name,
                                 subject_consent_value, old_value))
+
+    def complete_household_log_entry(self):
+        members = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+        for memb in members:
+            try:
+                HouseholdLogEntry.objects.get(
+                    household_log__household_structure=memb.household_structure,
+                    report_datetime=date.today())
+            except HouseholdLogEntry.DoesNotExist:
+                HouseholdLogEntry.objects.create(
+                    household_log=memb.household_structure.householdlog,
+                    report_datetime=date.today(),
+                    household_status='Eligible Representative Present')
 
     def update_household_member_and_enrollment_checklist(self):
         try:
