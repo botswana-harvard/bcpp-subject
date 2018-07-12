@@ -12,7 +12,7 @@ from django_crypto_fields.fields import (FirstnameField, EncryptedCharField,
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_not_future
-from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
+from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES, NO
 
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
@@ -37,18 +37,21 @@ class CorrectConsentMixin:
         instance = instance or self
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
+                is_literate_new = getattr(instance, 'new_is_literate')
                 old_value = getattr(instance, field.name)
                 new_value = getattr(
                     instance, 'new_{}'.format(field.name.split('old_')[1]))
-                if (not old_value and new_value) or (old_value and not new_value):
+                if (is_literate_new == NO and field.name == 'old_witness_name' and not old_value):
+                    pass
+                elif (not old_value and new_value) or (old_value and not new_value):
                     raise exception_cls(
                         'Both the old and new value must '
                         'be provided. Got \'{}\' and \'{}\'. See {}'.format(
                             old_value, new_value, field.name))
-                elif old_value and new_value and old_value == new_value:
-                    raise exception_cls(
-                        'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
-                            old_value, new_value, field.name))
+                if old_value and new_value and old_value == new_value:
+                        raise exception_cls(
+                            'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
+                                old_value, new_value, field.name))
                 elif old_value and new_value:
                     subject_consent_value = getattr(instance.subject_consent,
                                                     field.name.split('old_')[1])
@@ -58,8 +61,7 @@ class CorrectConsentMixin:
                             "Got \'{}\'.".format(
                                 field.name.split('old_')[1],
                                 field.name,
-                                subject_consent_value,
-                                old_value))
+                                subject_consent_value, old_value))
 
     def update_household_member_and_enrollment_checklist(self):
         try:
