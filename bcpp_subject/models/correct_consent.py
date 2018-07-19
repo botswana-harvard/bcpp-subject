@@ -19,7 +19,7 @@ from household.models import HouseholdLogEntry
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
-from member.models.enrollment_checklist import EnrollmentChecklist, HouseholdMember
+from member.models import EnrollmentChecklist, HouseholdMember
 from edc_registration.models import RegisteredSubject
 
 
