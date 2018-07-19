@@ -19,7 +19,7 @@ from household.models import HouseholdLogEntry
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
-from member.models import EnrollmentChecklist, HouseholdMember
+from member.models.enrollment_checklist import EnrollmentChecklist, HouseholdMember
 from edc_registration.models import RegisteredSubject
 
 
@@ -147,6 +147,9 @@ class CorrectConsentMixin:
                 self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
                 self.subject_consent.save()
             self.subject_consent.dob = self.new_dob
+            enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
+            self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
+            self.subject_consent.save()
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=self.subject_consent.household_member)
@@ -189,23 +192,6 @@ class CorrectConsentMixin:
                     member.enrollmentchecklist.save(update_fields=['initials'])
                 except:
                     pass
-
-    def update_omang_number(self):
-        try:
-            registered_subject = RegisteredSubject.objects.get(
-                subject_identifier=self.subject_consent.subject_identifier)
-        except RegisteredSubject.DoesNotExist:
-            raise ValidationError('Registered subject can not be None')
-        else:
-            registered_subject.identity = self.new_identity
-            registered_subject.save(update_fields=[
-                'identity', 'identity_or_pk'])
-        subject_consents = SubjectConsent.objects.filter(
-            subject_identifier=self.subject_consent.subject_identifier)
-        for subject_consent in subject_consents:
-            subject_consent.identity = self.new_identity
-            subject_consent.save(update_fields=[
-                'identity', 'confirm_identity'])
 
     def update_witness(self):
         if self.new_witness_name:
