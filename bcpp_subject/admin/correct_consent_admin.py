@@ -33,8 +33,8 @@ class CorrectConsentAdmin(admin.ModelAdmin):
                 'new_may_store_samples',
                 'old_is_literate',
                 'new_is_literate',
-                'new_witness_name',
                 'old_witness_name',
+                'new_witness_name',
             )}),
         audit_fieldset_tuple,
     )

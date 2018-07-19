@@ -17,7 +17,7 @@ from household.models import HouseholdLogEntry
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
-from member.models.enrollment_checklist import EnrollmentChecklist
+from member.models.enrollment_checklist import EnrollmentChecklist, HouseholdMember
 from edc_registration.models import RegisteredSubject
 
 
@@ -139,11 +139,12 @@ class CorrectConsentMixin:
 
     def update_dob(self, enrollment_checklist):
         if self.new_dob:
-            self.subject_consent.household_member.age_in_years = relativedelta(
-                self.subject_consent.consent_datetime, self.new_dob).years
             if enrollment_checklist:
                 enrollment_checklist.dob = self.new_dob
             self.subject_consent.dob = self.new_dob
+            enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
+            self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
+            self.subject_consent.save()
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=self.subject_consent.household_member)
@@ -173,19 +174,19 @@ class CorrectConsentMixin:
         return enrollment_checklist
 
     def update_last_name(self):
-        try:
-            registered_subject = RegisteredSubject.objects.get(
-                subject_identifier=self.subject_consent.subject_identifier)
-        except RegisteredSubject.DoesNotExist:
-            raise ValidationError('Registered subject can not be None')
-        else:
-            registered_subject.las_name = self.new_last_name
-            registered_subject.save(update_fields=['last_name'])
-        subject_consents = SubjectConsent.objects.filter(
-            subject_identifier=self.subject_consent.subject_identifier)
-        for subject_consent in subject_consents:
-            subject_consent.las_name = self.new_last_name
-            subject_consent.save(update_fields=['last_name'])
+        if self.new_last_name:
+            self.subject_consent.last_name = self.new_last_name
+            self.subject_consent.save(update_fields=['last_name'])
+            self.subject_consent.save()
+            household_member = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+            for member in household_member:
+                try:
+                    member.initials = self.subject_consent.initials
+                    member.enrollmentchecklist.initials = self.subject_consent.initials
+                    member.save(update_fields=['initials'])
+                    member.enrollmentchecklist.save(update_fields=['initials'])
+                except:
+                    pass
 
     def update_witness(self):
         if self.new_witness_name:
@@ -348,7 +349,7 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
     )
 
     old_witness_name = LastnameField(
-        verbose_name="Witness\'s Last and first name (illiterates only)",
+        verbose_name="Old Witness\'s Last and first name (illiterates only)",
         validators=[
             RegexValidator(
                 '^[A-Z]{1,50}\, [A-Z]{1,50}$',
@@ -362,7 +363,7 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
     )
 
     new_witness_name = LastnameField(
-        verbose_name="Witness\'s Last and first name (illiterates only)",
+        verbose_name="New Witness\'s Last and first name (illiterates only)",
         validators=[
             RegexValidator(
                 '^[A-Z]{1,50}\, [A-Z]{1,50}$',
