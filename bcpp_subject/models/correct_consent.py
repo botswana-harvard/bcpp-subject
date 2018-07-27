@@ -19,8 +19,11 @@ from household.models import HouseholdLogEntry
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
-from member.models import EnrollmentChecklist, HouseholdMember
+from member.models import (EnrollmentChecklist, HouseholdMember,
+                           RepresentativeEligibility, HouseholdHeadEligibility)
 from edc_registration.models import RegisteredSubject
+from member.constants import HEAD_OF_HOUSEHOLD
+from edc_base.utils import get_utcnow
 
 
 class CorrectConsentMixin:
@@ -28,7 +31,7 @@ class CorrectConsentMixin:
     """A model linked to the subject consent to record corrections."""
 
     def save(self, *args, **kwargs):
-        self.complete_household_log_entry()
+        self.complete_required_forms()
         self.compare_old_fields_to_consent()
         self.update_household_member_and_enrollment_checklist()
         super(CorrectConsentMixin, self).save(*args, **kwargs)
@@ -66,7 +69,7 @@ class CorrectConsentMixin:
                                 field.name,
                                 subject_consent_value, old_value))
 
-    def complete_household_log_entry(self):
+    def complete_required_forms(self):
         members = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
         for memb in members:
             try:
@@ -78,6 +81,29 @@ class CorrectConsentMixin:
                     household_log=memb.household_structure.householdlog,
                     report_datetime=date.today(),
                     household_status='Eligible Representative Present')
+            try:
+                RepresentativeEligibility.objects.get(
+                    household_structure=memb.household_structure)
+            except RepresentativeEligibility.DoesNotExist:
+                RepresentativeEligibility.objects.create(
+                    household_structure=memb.household_structure,
+                    report_datetime=get_utcnow(),
+                    aged_over_18=YES,
+                    household_residency=YES,
+                    verbal_script=YES
+                    )
+            if memb.relation == HEAD_OF_HOUSEHOLD:
+                try:
+                    HouseholdHeadEligibility.objects.get(household_member=memb,
+                                                         household_member__household_structure=memb.household_structure)
+                except HouseholdHeadEligibility.DoesNotExist:
+                    HouseholdHeadEligibility.objects.create(
+                        household_member=memb,
+                        report_datetime=get_utcnow(),
+                        aged_over_18=YES,
+                        household_residency=YES,
+                        verbal_script=YES
+                    )
 
     def update_household_member_and_enrollment_checklist(self):
         try:
@@ -93,6 +119,7 @@ class CorrectConsentMixin:
         enrollment_checklist = self.update_is_literate(enrollment_checklist)
         self.update_witness()
         self.update_last_name()
+        self.update_dob(enrollment_checklist)
         if enrollment_checklist:
             self.subject_consent.household_member.user_modified = self.update_user_modified()
             enrollment_checklist.user_modified = self.update_user_modified()
@@ -145,11 +172,8 @@ class CorrectConsentMixin:
                 enrollment_checklist.dob = self.new_dob
                 enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
                 self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
-                self.subject_consent.save()
-            self.subject_consent.dob = self.new_dob
-            enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
-            self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
-            self.subject_consent.save()
+                self.subject_consent.dob = self.new_dob
+            self.subject_consent.save(update_fields=['dob', 'user_modified'])
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=self.subject_consent.household_member)
