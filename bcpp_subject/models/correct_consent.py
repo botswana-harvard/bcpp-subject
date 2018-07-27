@@ -171,15 +171,17 @@ class CorrectConsentMixin:
         if self.new_dob:
             if enrollment_checklist:
                 enrollment_checklist.dob = self.new_dob
-                enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
+                enrollment_checklist.save(update_fields=['dob', 'age_in_years', 'user_modified'])
                 
             household_member = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
             for member in household_member:
                 try:
                     member.age_in_years = age(self.new_dob, member.report_datetime)
-                    member.save(update_fields=['age_in_years'])
+                    member.save(update_fields=['age_in_years', 'user_modified'])
                 except:
                     pass
+            self.subject_consent.dob = self.new_dob
+            self.subject_consent.save(update_fields=['dob', 'user_modified'])
             subject_consents = SubjectConsent.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
             for consent in subject_consents:
                 try:
