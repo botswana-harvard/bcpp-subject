@@ -11,6 +11,7 @@ from django_crypto_fields.fields import FirstnameField, EncryptedCharField, Last
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_validators import datetime_not_future
+from edc_base.utils import age
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES, NO
 from household.models import HouseholdLogEntry
 
@@ -169,9 +170,21 @@ class CorrectConsentMixin:
             if enrollment_checklist:
                 enrollment_checklist.dob = self.new_dob
                 enrollment_checklist.save(update_fields=['dob', 'age_in_years'])
-                self.subject_consent.household_member.age_in_years = enrollment_checklist.age_in_years
-                self.subject_consent.dob = self.new_dob
-            self.subject_consent.save(update_fields=['dob', 'user_modified'])
+                
+            household_member = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+            for member in household_member:
+                try:
+                    member.age_in_years = age(self.new_dob, member.report_datetime)
+                    member.save(update_fields=['age_in_years'])
+                except:
+                    pass
+            subject_consents = SubjectConsent.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+            for consent in subject_consents:
+                try:
+                    consent.dob = self.new_dob
+                    consent.save(update_fields=['dob', 'user_modified'])
+                except:
+                    pass
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=self.subject_consent.household_member)
