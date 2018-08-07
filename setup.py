@@ -11,9 +11,9 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='bcpp-subject',
-    version='0.1.52',
-    author=u'Erik van Widenfelt',
-    author_email='ew2789@gmail.com',
+    version='0.1.53',
+    author=u'Coulson Thabo Kgathi',
+    author_email='ckgathi@gmail.com',
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/botswana-harvard/bcpp-subject',
