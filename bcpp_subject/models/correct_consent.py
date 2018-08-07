@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+from datetime import date, datetime
 
 from datetime import date
 from django.core.exceptions import ValidationError
@@ -6,7 +7,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.deletion import PROTECT
 from django.urls import reverse
-from django_crypto_fields.fields import FirstnameField, EncryptedCharField, LastnameField
+from django_crypto_fields.fields import (FirstnameField, EncryptedCharField,
+                                         LastnameField, IdentityField)
 
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_managers import HistoricalRecords
@@ -277,6 +279,14 @@ class CorrectConsent(CorrectConsentMixin, BaseUuidModel):
         validators=[
             datetime_not_future],
     )
+
+    old_identity = IdentityField(
+        null=True,
+        blank=True)
+
+    new_identity = IdentityField(
+        null=True,
+        blank=True)
 
     old_first_name = FirstnameField(
         null=True,

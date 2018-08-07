@@ -17,6 +17,8 @@ class CorrectConsentAdmin(admin.ModelAdmin):
             'fields': (
                 'subject_consent',
                 'report_datetime',
+                'old_identity',
+                'new_identity',
                 'old_last_name',
                 'new_last_name',
                 'old_first_name',
