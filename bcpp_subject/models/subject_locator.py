@@ -6,6 +6,7 @@ from edc_base.model_validators.bw import BWCellNumber, BWTelephoneNumber
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_constants.choices import YES_NO_NA, YES, NOT_APPLICABLE
+from edc_consent.exceptions import SiteConsentError
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_locator.model_mixins import LocatorModelMixin
 
@@ -142,6 +143,26 @@ class SubjectLocator(LocatorModelMixin, RequiresConsentMixin, BaseUuidModel):
                         'Physical Address:\n{physical_address}').format(
                             info=info, physical_address=self.physical_address)
         return info
+    
+    def common_clean(self):
+        consent_object = self.get_consent_object()
+        self.consent_version = consent_object.version
+        try:
+            subject_identifier = self.appointment.subject_identifier
+        except AttributeError:
+            subject_identifier = self.subject_identifier
+        try:
+            if not subject_identifier:
+                raise SiteConsentError(
+                    'Cannot lookup {} instance for subject. '
+                    'Got \'subject_identifier\' is None.'.format(
+                        consent_object.model._meta.label_lower))
+            options = dict(
+                subject_identifier=subject_identifier,
+                version=consent_object.version)
+            consent_object.model.objects.get(**options)
+        except consent_object.model.DoesNotExist:
+            pass
 
     class Meta(RequiresConsentMixin.Meta):
         app_label = 'bcpp_subject'
