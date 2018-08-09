@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='bcpp-subject',
-    version='0.1.53',
+    version='0.1.54',
     author=u'Coulson Thabo Kgathi',
     author_email='ckgathi@gmail.com',
     packages=find_packages(),
