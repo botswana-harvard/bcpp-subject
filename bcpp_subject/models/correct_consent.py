@@ -121,6 +121,7 @@ class CorrectConsentMixin:
         self.update_witness()
         self.update_last_name()
         self.update_dob(enrollment_checklist)
+        self.subject_consent.may_store_samples = self.new_may_store_samples if self.new_may_store_samples else self.subject_consent.may_store_samples
         if enrollment_checklist:
             self.subject_consent.household_member.user_modified = self.update_user_modified()
             enrollment_checklist.user_modified = self.update_user_modified()
@@ -134,7 +135,7 @@ class CorrectConsentMixin:
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name',
-                'is_verified', 'is_verified_datetime',
+                'is_verified', 'is_verified_datetime', 'may_store_samples',
                 'verified_by', 'user_modified'])
         else:
             self.subject_consent.household_member.save(
@@ -142,7 +143,7 @@ class CorrectConsentMixin:
                                'gender', 'age_in_years', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
-                'is_literate', 'witness_name', 'dob', 'guardian_name',
+                'is_literate', 'witness_name', 'dob', 'guardian_name', 'may_store_samples',
                 'is_verified', 'is_verified_datetime', 'verified_by', 'user_modified'])
 
     def update_initials(self, first_name, last_name):
