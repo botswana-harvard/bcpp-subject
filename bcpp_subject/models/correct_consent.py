@@ -1,7 +1,15 @@
-from dateutil.relativedelta import relativedelta
-from datetime import date, datetime
-
 from datetime import date
+from datetime import date, datetime
+from edc_base.model_managers import HistoricalRecords
+from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_validators import datetime_not_future
+from edc_base.utils import age
+from edc_base.utils import get_utcnow
+from member.constants import HEAD_OF_HOUSEHOLD
+from member.models import (EnrollmentChecklist, HouseholdMember,
+                           RepresentativeEligibility, HouseholdHeadEligibility)
+
+from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -9,22 +17,13 @@ from django.db.models.deletion import PROTECT
 from django.urls import reverse
 from django_crypto_fields.fields import (FirstnameField, EncryptedCharField,
                                          LastnameField, IdentityField)
-
-from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_managers import HistoricalRecords
-from edc_base.model_validators import datetime_not_future
-from edc_base.utils import age
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES, NO
+from edc_registration.models import RegisteredSubject
 from household.models import HouseholdLogEntry
 
 from ..managers import CorrectConsentManager
 from .hic_enrollment import HicEnrollment
 from .subject_consent import SubjectConsent
-from member.models import (EnrollmentChecklist, HouseholdMember,
-                           RepresentativeEligibility, HouseholdHeadEligibility)
-from edc_registration.models import RegisteredSubject
-from member.constants import HEAD_OF_HOUSEHOLD
-from edc_base.utils import get_utcnow
 
 
 class CorrectConsentMixin:
@@ -56,9 +55,9 @@ class CorrectConsentMixin:
                         'be provided. Got \'{}\' and \'{}\'. See {}'.format(
                             old_value, new_value, field.name))
                 if old_value and new_value and old_value == new_value:
-                        raise exception_cls(
-                            'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
-                                old_value, new_value, field.name))
+                    raise exception_cls(
+                        'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
+                            old_value, new_value, field.name))
                 elif old_value and new_value:
                     subject_consent_value = getattr(instance.subject_consent,
                                                     field.name.split('old_')[1])
@@ -71,7 +70,8 @@ class CorrectConsentMixin:
                                 subject_consent_value, old_value))
 
     def complete_required_forms(self):
-        members = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+        members = HouseholdMember.objects.filter(
+            subject_identifier=self.subject_consent.subject_identifier)
         for memb in members:
             try:
                 HouseholdLogEntry.objects.get(
@@ -92,7 +92,7 @@ class CorrectConsentMixin:
                     aged_over_18=YES,
                     household_residency=YES,
                     verbal_script=YES
-                    )
+                )
             if memb.relation == HEAD_OF_HOUSEHOLD:
                 try:
                     HouseholdHeadEligibility.objects.get(household_member=memb,
@@ -118,6 +118,7 @@ class CorrectConsentMixin:
         enrollment_checklist = self.update_dob(enrollment_checklist)
         enrollment_checklist = self.update_guardian_name(enrollment_checklist)
         enrollment_checklist = self.update_is_literate(enrollment_checklist)
+        self.update_may_store_samples()
         self.update_witness()
         self.update_last_name()
         self.update_dob(enrollment_checklist)
@@ -134,7 +135,7 @@ class CorrectConsentMixin:
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name',
-                'is_verified', 'is_verified_datetime',
+                'is_verified', 'is_verified_datetime', 'may_store_samples',
                 'verified_by', 'user_modified'])
         else:
             self.subject_consent.household_member.save(
@@ -142,7 +143,7 @@ class CorrectConsentMixin:
                                'gender', 'age_in_years', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
-                'is_literate', 'witness_name', 'dob', 'guardian_name',
+                'is_literate', 'witness_name', 'dob', 'guardian_name', 'may_store_samples',
                 'is_verified', 'is_verified_datetime', 'verified_by', 'user_modified'])
 
     def update_initials(self, first_name, last_name):
@@ -171,18 +172,23 @@ class CorrectConsentMixin:
         if self.new_dob:
             if enrollment_checklist:
                 enrollment_checklist.dob = self.new_dob
-                enrollment_checklist.save(update_fields=['dob', 'age_in_years', 'user_modified'])
-                
-            household_member = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+                enrollment_checklist.save(
+                    update_fields=['dob', 'age_in_years', 'user_modified'])
+
+            household_member = HouseholdMember.objects.filter(
+                subject_identifier=self.subject_consent.subject_identifier)
             for member in household_member:
                 try:
-                    member.age_in_years = age(self.new_dob, member.report_datetime)
-                    member.save(update_fields=['age_in_years', 'user_modified'])
+                    member.age_in_years = age(
+                        self.new_dob, member.report_datetime)
+                    member.save(
+                        update_fields=['age_in_years', 'user_modified'])
                 except:
                     pass
             self.subject_consent.dob = self.new_dob
             self.subject_consent.save(update_fields=['dob', 'user_modified'])
-            subject_consents = SubjectConsent.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+            subject_consents = SubjectConsent.objects.filter(
+                subject_identifier=self.subject_consent.subject_identifier)
             for consent in subject_consents:
                 try:
                     consent.dob = self.new_dob
@@ -222,7 +228,8 @@ class CorrectConsentMixin:
             self.subject_consent.last_name = self.new_last_name
             self.subject_consent.save(update_fields=['last_name'])
             self.subject_consent.save()
-            household_member = HouseholdMember.objects.filter(subject_identifier=self.subject_consent.subject_identifier)
+            household_member = HouseholdMember.objects.filter(
+                subject_identifier=self.subject_consent.subject_identifier)
             for member in household_member:
                 try:
                     member.initials = self.subject_consent.initials
@@ -235,6 +242,12 @@ class CorrectConsentMixin:
     def update_witness(self):
         if self.new_witness_name:
             self.subject_consent.witness_name = self.new_witness_name
+
+    def update_may_store_samples(self):
+        if self.new_may_store_samples:
+            self.subject_consent.may_store_samples = self.new_may_store_samples
+            self.subject_consent.save(update_fields=['may_store_samples'])
+            self.subject_consent.save()
 
     def update_name_and_initials(self, enrollment_checklist):
         """Updates the firstname, lastname, initals and verifies the initials are valid."""
